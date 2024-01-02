@@ -1,0 +1,85 @@
+buildscript {
+    ext {
+        queryDslVersion = "5.0.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.17'
+    id 'io.spring.dependency-management' version '1.1.4'
+    //querydsl 추가
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
+
+group = 'board'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '11';
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+
+//    JSP 쓸거야?????
+//    implementation 'javax.servlet:jstl:1.2'
+//    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.82'
+//    runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+
+
+    // mysql
+    implementation group: 'com.mysql', name: 'mysql-connector-j'
+
+    // 전자지갑 쓸거야???
+//    implementation group: 'com.oracle.database.security', name: 'oraclepki', version: '19.7.0.0'
+//    implementation group: 'com.oracle.database.security', name: 'osdt_core', version: '19.7.0.0'
+//    implementation group: 'com.oracle.database.security', name: 'osdt_cert', version: '19.7.0.0'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    //querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+}
+
+tasks.named('bootBuildImage') {
+    builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+//querydsl 추가 시작
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
