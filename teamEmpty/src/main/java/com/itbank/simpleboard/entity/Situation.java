@@ -16,10 +16,14 @@ public class Situation {
 
     // 학생번호
     @Id
+    private Long idx;
+
+    @OneToOne
     @JoinColumn(name = "student_idx")
-    private Long student_idx;
+    private Student student_idx;
 
     // 상태
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status_type student_status;
 

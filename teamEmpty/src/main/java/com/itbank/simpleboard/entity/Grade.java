@@ -21,6 +21,7 @@ public class Grade {
     // 학생번호 (외래키)
 //    @JoinColumn(name = "student_idx")
 //    private Student student_idx;
+    private Long idx;
 
     // 강의번호 (외래키)
 //    @JoinColumn(name = "lecture_idx")

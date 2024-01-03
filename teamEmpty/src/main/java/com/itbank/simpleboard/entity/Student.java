@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.entity;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -15,22 +16,31 @@ public class Student {
     private Long student_idx;
 
     // 학번
+    @Column(nullable = false, unique = true)
     private Integer student_num;
 
     // 학년
+    @Column(nullable = false)
     private Integer student_grade;
 
     // 장학금아이디
-//    @JoinColumn(name = "schoolarship_idx")
-//    private Schoolarship schoolarship_idx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "schoolarship_idx")
+    private Scholarship schoolarship_idx;
 
     // 기본키
-//    private User user_idx;
+    @OneToOne
+    @JoinColumn(name = "user_idx")
+    private User user_idx;
 
     // 지도교수번호
-//    private Professor professor_idx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_idx")
+    private Professor professor_idx;
 
 //     학과번호
-//    private Major major_idx;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major_idx")
+    private Major major_idx;
 
 }
