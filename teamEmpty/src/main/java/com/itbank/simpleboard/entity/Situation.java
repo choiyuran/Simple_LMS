@@ -14,12 +14,17 @@ import java.util.Date;
 @AllArgsConstructor
 public class Situation {
 
-    // 학생번호
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long situationId;
+
+    // 학생번호
+    @OneToOne
     @JoinColumn(name = "student_idx")
-    private Long student_idx;
+    private Student student_idx;
 
     // 상태
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status_type student_status;
 
