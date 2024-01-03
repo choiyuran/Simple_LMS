@@ -1,16 +1,19 @@
 package com.itbank.simpleboard.entity;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity @Getter
+@Entity @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Table(name = "users")
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_idx")
     private Long user_idx;   // 유저 생성 번호
 
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false, unique = true, length = 50)
     private String user_id; // 아이디
 
     @Column(name = "user_pw", nullable = false)
@@ -22,7 +25,7 @@ public class User {
     @Column(name = "user_name", nullable = false)
     private String user_name;   // 사용자 이름
 
-    @Column(name = "user_security", nullable = false, unique = true)
+    @Column(name = "user_security", nullable = false, unique = true, length = 15)
     private String security;   // 주민번호
 
     @Column(name = "user_address", nullable = false)
