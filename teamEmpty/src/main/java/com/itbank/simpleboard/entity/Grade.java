@@ -19,6 +19,7 @@ public class Grade {
 
     @Id
     // 학생번호 (외래키)
+    private Long student_idx;
 //    @JoinColumn(name = "student_idx")
 //    private Student student_idx;
 
