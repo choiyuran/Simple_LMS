@@ -21,7 +21,7 @@ public class Lecture {
     private Long idx;
 
     // 강의명
-    @Column(name = "lecture_name")
+    @Column(name = "lecture_name", nullable = false)
     private String name;
 
     // 강의소개
@@ -29,7 +29,7 @@ public class Lecture {
     private String intro;
 
     // 수강 학점
-    @Column(name = "lecture_credit")
+    @Column(name = "lecture_credit", nullable = false)
     private Integer credit;
 
     // 수강 요일
@@ -45,12 +45,15 @@ public class Lecture {
     private Integer end;
 
     // 수강 강의타입
-    @Column(name = "lecture_type")
+    @Column(name = "lecture_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Lecture_Type type;
     
     // 교수번호
     // 연관관계 만들어라
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professor_idx", nullable = false)
+    private Professor professor;
     
     // 최대 인원수
     @Column(name = "max_count")
@@ -61,15 +64,21 @@ public class Lecture {
     private Integer currentCount;
 
     // 강의 학기
-    @Column(name = "lecture_semester")
+    @Column(name = "lecture_semester", nullable = false)
     private String semester;
 
     // 학년
-    @Column(name = "lecture_grade")
+    @Column(name = "lecture_grade", nullable = false)
     private Integer grade;
 
     // 학과번호 연관관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "major_idx")
+    private Major major;
 
-    // 강의실 번호 연관관계
+    // 강의실 번호 연관 관계
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lecture_room")
+    private LectureRoom lectureRoom;
 
 }

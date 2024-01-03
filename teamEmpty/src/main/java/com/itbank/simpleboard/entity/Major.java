@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,12 +20,16 @@ public class Major {
     private Long idx;
 
     // 전공 이름
-    @Column(name = "major_name")
+    @Column(name = "major_name", nullable = false)
     private String name;
     
     // 등록금
-    @Column(name = "major_tuition")
+    @Column(name = "major_tuition", unique = true)
     private Integer tuition;
 
+    // 단과대학
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "colleage_idx")
+    private College college;
 
 }
