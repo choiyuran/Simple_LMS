@@ -1,7 +1,5 @@
 package com.itbank.simpleboard.entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,28 +7,19 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-// 성적
-public class Grade {
+@Table(name = "enrollment")
+public class Enrollment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "grade_idx")
+    @Column(name = "enrollment_idx")
     private Long idx;
 
-    // 학생번호 (외래키)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_idx")
     private Student student;
 
-//     강의번호 (외래키)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_idx")
     private Lecture lecture;
-
-    // 학점
-    @Column(name = "grade_score")
-    private String score;
-
 }

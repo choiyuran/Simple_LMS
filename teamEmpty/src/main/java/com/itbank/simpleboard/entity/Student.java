@@ -21,8 +21,8 @@ public class Student {
     private Integer student_grade;
 
     // 장학금아이디
-//    @JoinColumn(name = "schoolarship_idx")
-//    private Schoolarship schoolarship_idx;
+//    @JoinColumn(name = "scholarship_idx")
+//    private Scholarship scholarship_idx;
 
     // 기본키
 //    private User user_idx;
