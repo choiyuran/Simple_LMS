@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_idx")
-    private Long user_idx;   // 유저 생성 번호
+    private Long idx;   // 유저 생성 번호
 
     @Column(name = "user_id", nullable = false, unique = true, length = 50)
     private String user_id; // 아이디

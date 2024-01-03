@@ -22,9 +22,9 @@ public class Professor {
 
     @OneToOne
     @JoinColumn(name="user_idx")
-    private User user_idx;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
-    private Major major_idx;    // 학과 번호
+    private Major major;    // 학과 번호
 }

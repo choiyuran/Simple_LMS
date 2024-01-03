@@ -16,12 +16,12 @@ public class Situation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long situationId;
+    private Long idx;
 
     // 학생번호
     @OneToOne
     @JoinColumn(name = "student_idx")
-    private Student student_idx;
+    private Student student;
 
     // 상태
     @Column(nullable = false)
