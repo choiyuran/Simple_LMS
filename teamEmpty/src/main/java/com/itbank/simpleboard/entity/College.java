@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +15,7 @@ public class College {
     // 단과대학 번호
     @Id
     @Column(name="college_idx")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
     // 단과대학_이름

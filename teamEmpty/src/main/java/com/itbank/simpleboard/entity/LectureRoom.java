@@ -23,5 +23,9 @@ public class LectureRoom {
     @Column(name="class_room")
     private Integer room;
 
+    // 단과대학 번호를 외래키로 참조
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="college_idx")
+    private College college;
 
 }
