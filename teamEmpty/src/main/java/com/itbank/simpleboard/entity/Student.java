@@ -1,7 +1,6 @@
 package com.itbank.simpleboard.entity;
 
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 

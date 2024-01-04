@@ -80,5 +80,9 @@ public class Lecture {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_room")
     private LectureRoom lectureRoom;
-
+    
+    // 수강 평가 열람 상태
+    @Column(name = "evaluation_visible")
+    @Enumerated(EnumType.STRING)
+    private YesOrNo visible;
 }
