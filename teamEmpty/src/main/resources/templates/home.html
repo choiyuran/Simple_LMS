@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:insert="layout/header :: head">
 </head>
 <body>
-  <h1 th:text="안녕">test</h1>
+<!--header/footer 붙이는 방법-->
+<header th:insert="layout/header :: header"></header>
+<footer th:insert="layout/header :: footer"></footer>
 </body>
 </html>
