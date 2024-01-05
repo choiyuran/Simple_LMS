@@ -22,11 +22,6 @@ public class Student {
     @Column(nullable = false)
     private Integer student_grade;
 
-    // 장학금아이디
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scholarship_idx")
-    private Scholarship scholarship;
-
     // 기본키
     @OneToOne
     @JoinColumn(name = "user_idx")

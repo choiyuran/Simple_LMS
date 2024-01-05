@@ -29,4 +29,12 @@ public class Scholarship {
     // 금액
     @Column(name = "scholarship_price")
     private Integer price;
+
+    // 수여 년도
+    @Column(name = "scholarship_year")
+    private Integer year;
+
+    // 수여 분기
+    @Column(name = "scholarship_quarter")
+    private Integer quarter;
 }
