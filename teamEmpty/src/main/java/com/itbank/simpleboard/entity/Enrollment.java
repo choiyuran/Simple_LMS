@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Table(name = "enrollment")
 public class Enrollment {
-
+// 수강 현황
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "enrollment_idx")
