@@ -1,5 +1,23 @@
 @charset "UTF-8";
 
+@keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
 *{
     padding: 0;
     margin: 0;
@@ -17,6 +35,7 @@ body{
     left: -200px;
     height: 100%;
     z-index: -1;
+    animation: slideInFromLeft 1.5s ease-out;
 }
 
 .wave2{
@@ -25,6 +44,7 @@ body{
     right: -200px;
     height: 100%;
     z-index: -1;
+    animation: slideInFromRight 1.5s ease-out;
 }
 
 .container{
