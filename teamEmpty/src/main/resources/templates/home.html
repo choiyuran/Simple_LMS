@@ -4,11 +4,84 @@
 </head>
 <body>
 <!--header/footer 붙이는 방법-->
-<header th:insert="layout/header :: body"></header>
-<div class="container">
-    <img src="/img/undraw_profile">
+<header th:insert="layout/header :: header"></header>
 
-</div>
+<!--<div class="container">-->
+<!--    <img src="/img/undraw_profile">-->
+<main>
+    <div class="d-flex justify-content-center align-items-start" style="min-width: 100em;">
+        <div>
+            <div class="main-img text-center">
+                <img src="pxfuel.jpg" alt="">
+                <!-- 메인 페이지 div-->
+                <div class="d-flex justify-content-center align-items-start" style="min-width: 100em;">
+                    <div class="main-page">
+                        <div class="d-flex">
+                            <!-- 공지 사항 -->
+                            <div class="main-notice">
+                                <h3>
+                                    <a href="/">공지사항</a>
+                                </h3>
+                                <div class="main-split"></div>
+                                <table>
+                                    <!-- DB에서 내용 꺼내와서 채워넣기 -->
+                                    <tr>
+                                        <th>번호</th>
+                                        <th>제목</th>
+                                        <th>작성일</th>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td>2024-01-07</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td>2024-01-07</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td>2024-01-07</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td>2024-01-07</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td>2024-01-07</td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="main-calendar">
+                                <h3>
+                                    <a href="/">학사일정</a>
+                                </h3>
+                                <div class="main-split"></div>
+                                <table>
+                                    <!-- DB에서 내용 꺼내와서 채워넣기 -->
+                                    <tr>
+                                        <td>1</td>
+                                        <td>2</td>
+                                        <td>3</td>
+                                        <td>4</td>
+                                        <td>5</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--    </div>-->
 <footer th:insert="layout/header :: footer"></footer>
 </body>
 </html>

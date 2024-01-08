@@ -17,6 +17,11 @@ public class HomeController {
 //        에러 테스트용 예외발생 코드
 //        int n = 10 / 0;
 //        System.out.println(n);
+        return "home";
+    }
+
+    @GetMapping("/list")
+    public String list(){
         return "student/lectureList";
     }
 
