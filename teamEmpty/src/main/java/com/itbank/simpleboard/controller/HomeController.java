@@ -17,7 +17,7 @@ public class HomeController {
 //        에러 테스트용 예외발생 코드
 //        int n = 10 / 0;
 //        System.out.println(n);
-        return "layout/header";
+        return "student/lectureList";
     }
 
 }
