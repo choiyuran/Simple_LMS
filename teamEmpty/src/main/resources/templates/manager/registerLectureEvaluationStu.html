@@ -1,199 +1,203 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<head th:insert = "layout/header :: head">
 </head>
+<style>
+    h4 {
+        text-align: center;
+    }
+
+    table {
+        width: 640px;
+        margin: auto;
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    .title {
+        background-color: darkgray;
+        padding-right: 30px;
+        padding-left: 30px;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        text-align: center;
+        border: 1px solid black;
+    }
+
+    .content {
+        border: 1px solid black;
+    }
+
+    input {
+        border: none;
+    }
+
+    .check {
+        width: 640px;
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+
+    .check2 {
+        width: 640px;
+        margin: auto;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .radio-margin {
+        margin-right: 25px;
+    }
+
+    .radio-title {
+        margin-bottom: 5px;
+    }
+</style>
 <body>
-    <style>
-        h4 {
-            text-align: center;
-        }
-        table {
-            width: 640px;
-            margin: auto;
-            border: 1px solid black;
-            border-collapse: collapse;
-            
-        }
-        .title {
-            background-color: darkgray;
-            padding-right: 30px;
-            padding-left: 30px;
-            padding-bottom: 5px;
-            padding-top: 5px;
-            text-align: center;
-            border: 1px solid black;
-        }
-        .content {
-            border: 1px solid black;
-        }
-        input {
-            border: none;
-        }
-        .check {       
-            width: 640px;
-            margin: auto;     
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-        .check2 {       
-            width: 640px;
-            margin: auto;     
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-        .radio-margin {
-            margin-right: 25px;
-        }
-        .radio-title {
-            margin-bottom: 5px;
-        }
-    </style>
 
+<header th:insert = "layout/header :: header" ></header>
 <div class="container mt-4">
-  <h4>강의 평가 설문지</h4>
-  
-  <div class="w-50 m-auto mt-4" style="background-color: darkgray; border: black;">
+    <h4>강의 평가 설문지</h4>
+
+    <div class="w-75 m-auto mt-4" style="background-color: darkgray; border: black;">
     <pre>    
- 본 설문지는 수업개선의 기초 및 교육의 질적인 향상을 위해서 실시합니다.
- 그러므로 성실하게 작성하여 주시기 바랍니다.
- (A) 매우 그렇다. (B) 그렇다. (C) 그저 그렇다. (D) 그렇지 않다. (E) 매우 그렇지 않다.
- 중 하나를 선택하여 주세요.
+         본 설문지는 수업개선의 기초 및 교육의 질적인 향상을 위해서 실시합니다.
+         그러므로 성실하게 작성하여 주시기 바랍니다.
+         (A) 매우 그렇다. (B) 그렇다. (C) 그저 그렇다. (D) 그렇지 않다. (E) 매우 그렇지 않다.
+         중 하나를 선택하여 주세요.
     </pre>
-  </div>
+    </div>
 
-  <table>
-    <tr>
-        <th class="title">전공</th>
-        <td class="content"><input></td>
-        <th class="title">작성자</th>
-        <td class="content"><input></td>
-    </tr>
+    <table class="m-auto">
+        <tr>
+            <th class="title">전공</th>
+            <td class="content"><input></td>
+            <th class="title">작성자</th>
+            <td class="content"><input></td>
+        </tr>
 
-    <tr>
-        <th class="title">학번</th>
-        <td class="content"><input></td>
-        <th class="title">강의명</th>
-        <td class="content"><input></td>
-    </tr>
-  </table>
+        <tr>
+            <th class="title">학번</th>
+            <td class="content"><input></td>
+            <th class="title">강의명</th>
+            <td class="content"><input></td>
+        </tr>
+    </table>
 
 
-
-<div class="check">
-  <div class="radio-title">
-    강의 내용이 강의 계획서대로 진행되었다.
-  </div>
-
-  <div style="display: flex;">
-        <div class="form-check radio-margin">
-          <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>A
-          <label class="form-check-label" for="radio1"></label>
+    <div class="check m-auto">
+        <div class="radio-title">
+            강의 내용이 강의 계획서대로 진행되었다.
         </div>
-        <div class="form-check radio-margin">
-            <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">B
-            <label class="form-check-label" for="radio2"></label>
+
+        <div style="display: flex;">
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio1" name="optradio" value="option1" checked>A
+                <label class="form-check-label" for="radio1"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio2" name="optradio" value="option2">B
+                <label class="form-check-label" for="radio2"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio3" name="optradio" value="option3">C
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio4" name="optradio" value="option4">D
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="radio5" name="optradio" value="option5">E
+                <label class="form-check-label"></label>
+            </div>
         </div>
-        <div class="form-check radio-margin">
-            <input type="radio" class="form-check-input" id="radio3" name="optradio" value="option3" >C
-            <label class="form-check-label"></label>
+    </div>
+
+    <div class="check m-auto">
+        <div class="radio-title">
+            나는 이 수업을 전체적으로 우수하다고 평가한다.
         </div>
-        <div class="form-check radio-margin">
-            <input type="radio" class="form-check-input"id="radio4" name="optradio" value="option4" >D
-            <label class="form-check-label"></label>
+
+        <div class="d-flex">
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio2_1" name="optradio" value="radio2_1" checked>A
+                <label class="form-check-label" for="radio1"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio2_2" name="optradio" value="radio2_2">B
+                <label class="form-check-label" for="radio2"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio2_3" name="optradio" value="radio2_3">C
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio2_4" name="optradio" value="radio2_4">D
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="radio2_5" name="optradio" value="radio2_5">E
+                <label class="form-check-label"></label>
+            </div>
         </div>
-        <div class="form-check">
-            <input type="radio" class="form-check-input" id="radio5" name="optradio" value="option5" >E
-            <label class="form-check-label"></label>
+    </div>
+
+    <div class="check m-auto">
+        <div class="radio-title">
+            나는 이 수업을 통하여 많은 지식을 얻었다.
         </div>
-  </div>
+
+        <div style="display: flex;">
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio3_1" name="optradio" value="radio3_1" checked>A
+                <label class="form-check-label" for="radio1"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio3_2" name="optradio1" value="radio3_2">B
+                <label class="form-check-label" for="radio2"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio3_3" name="optradio2" value="radio3_3">C
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check radio-margin">
+                <input type="radio" class="form-check-input" id="radio3_4" name="optradio3" value="radio3_4">D
+                <label class="form-check-label"></label>
+            </div>
+            <div class="form-check">
+                <input type="radio" class="form-check-input" id="radio3_5" name="optradio" value="radio3_5">E
+                <label class="form-check-label"></label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="check m-auto">
+        <div class="radio-title">
+            개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
+        </div>
+        <div>
+            <textarea rows="5" cols="80"></textarea>
+        </div>
+    </div>
+
+    <div class="check2 m-auto">
+        <div class="radio-title">
+            개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
+        </div>
+        <div>
+            <textarea rows="5" cols="80"></textarea>
+        </div>
+    </div>
+
+    <div class="w-50 m-auto">
+        <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
+        <button type="button" class="btn btn-outline-secondary">취소</button>
+    </div>
+
 </div>
-
-<div class="check">
-    <div class="radio-title">
-      나는 이 수업을 전체적으로 우수하다고 평가한다.
-    </div>
-  
-    <div style="display: flex;">
-          <div class="form-check radio-margin">
-            <input type="radio" class="form-check-input" id="radio2_1" name="optradio" value="radio2_1" checked>A
-            <label class="form-check-label" for="radio1"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input" id="radio2_2" name="optradio" value="radio2_2">B
-              <label class="form-check-label" for="radio2"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input" id="radio2_3" name="optradio" value="radio2_3" >C
-              <label class="form-check-label"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input"id="radio2_4" name="optradio" value="radio2_4" >D
-              <label class="form-check-label"></label>
-          </div>
-          <div class="form-check">
-              <input type="radio" class="form-check-input" id="radio2_5" name="optradio" value="radio2_5" >E
-              <label class="form-check-label"></label>
-          </div>
-    </div>
-</div>
-
-<div class="check">
-    <div class="radio-title">
-      나는 이 수업을 통하여 많은 지식을 얻었다.
-    </div>
-  
-    <div style="display: flex;">
-          <div class="form-check radio-margin">
-            <input type="radio" class="form-check-input" id="radio3_1" name="optradio" value="radio3_1" checked>A
-            <label class="form-check-label" for="radio1"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input" id="radio3_2" name="optradio" value="radio3_2">B
-              <label class="form-check-label" for="radio2"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input" id="radio3_3" name="optradio" value="radio3_3" >C
-              <label class="form-check-label"></label>
-          </div>
-          <div class="form-check radio-margin">
-              <input type="radio" class="form-check-input"id="radio3_4" name="optradio" value="radio3_4" >D
-              <label class="form-check-label"></label>
-          </div>
-          <div class="form-check">
-              <input type="radio" class="form-check-input" id="radio3_5" name="optradio" value="radio3_5" >E
-              <label class="form-check-label"></label>
-          </div>
-    </div>
-</div>
-
-
-<div class="check">
-    <div class="radio-title">
-        개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
-    </div>
-    <div>
-        <textarea rows="5" cols="80"></textarea>
-    </div>
-</div>
-
-<div class="check2">
-    <div class="radio-title">
-        개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
-    </div>
-    <div>
-        <textarea rows="5" cols="80"></textarea>
-    </div>
-</div>
-
-<div class="w-50 m-auto">
-    <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
-    <button type="button" class="btn btn-outline-secondary">취소</button>
-</div>
-
+<footer th:insert="layout/header :: footer"></footer>
 </body>
 </html>
