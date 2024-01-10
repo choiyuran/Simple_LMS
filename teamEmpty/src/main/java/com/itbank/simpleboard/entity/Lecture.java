@@ -71,6 +71,10 @@ public class Lecture {
     @Column(name = "lecture_grade", nullable = false)
     private Integer grade;
 
+    // 강의 계획서
+    @Column(name = "lecture_plan")
+    private String plan;
+    
     // 학과번호 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
