@@ -1,7 +1,15 @@
 package com.itbank.simpleboard.entity;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Entity
 public class Scholarship_Award {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -85,4 +85,7 @@ public class Lecture {
     @Column(name = "evaluation_visible")
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
+
+    @Column(name = "lecture_plan")
+    private String lecturePlan;
 }
