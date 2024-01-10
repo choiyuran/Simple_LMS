@@ -52,7 +52,7 @@ article.include_sideBar {
 article.include_sideBar > div.logo {
     height: 250px;
     width: 300px;
-    background-image: url("centum_university/3.png");
+    background-image: url('/img/1.png');
     background-size: 100%;
     margin-top: -30px;
 }
