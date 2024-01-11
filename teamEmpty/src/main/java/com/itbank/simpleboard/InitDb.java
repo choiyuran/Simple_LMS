@@ -1,14 +1,15 @@
 package com.itbank.simpleboard;
 
-import com.itbank.simpleboard.entity.College;
-import com.itbank.simpleboard.entity.LectureRoom;
-import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -17,16 +18,108 @@ public class InitDb {
 
     @PostConstruct
     public void init() {
+        try {
+            initService.insertCalendar();
+            initService.dbInit3();
+            initService.dbInit6();
+            initService.dbInit4();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Component
     @Transactional
     @RequiredArgsConstructor
     static class InitService {
+
         private final EntityManager em;
-        public void dbInit1() {
-            
+
+
+        public void insertCalendar() throws Exception {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+
+            Date startDate1 = sdf.parse("2024/01/01");
+            Date endDate1 = sdf.parse("2024/01/31");
+
+            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
+            em.persist(calendar1);
+
+            Date startDate2 = sdf.parse("2024/06/01");
+            Date endDate2 = sdf.parse("2024/06/30");
+
+            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
+            em.persist(calendar2);
+
+            Date startDate3 = sdf.parse("2024/12/01");
+            Date endDate3 = sdf.parse("2024/12/31");
+
+            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
+            em.persist(calendar3);
         }
+
+        public void dbInit3() {
+            Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
+            em.persist(scholarship1);
+            Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
+            em.persist(scholarship2);
+            Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
+            em.persist(scholarship3);
+        }
+
+        public void dbInit4() throws ParseException {
+            User user1 = new User("professor1", "1234", "1234", "교수1", "111111-1111111", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.교수);
+            User user2 = new User("professor2", "1234", "1234", "교수2", "222222-2222222", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.교수);
+            User user3 = new User("professor3", "1234", "1234", "교수3", "333333-3333333", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.교수);
+            em.persist(user1);
+            em.persist(user2);
+            em.persist(user3);
+
+            User user4 = new User("manager1", "1234", "1234", "교직원1", "444444-4444444", "서울특별시 강남", "010-1234-1234", "test1@naver.com", User_role.교직원);
+            User user5 = new User("manager2", "1234", "1234", "교직원2", "555555-5555555", "서울특별시 강북", "010-1234-1234", "test2@naver.com", User_role.교직원);
+            User user6 = new User("manager3", "1234", "1234", "교직원3", "666666-6666666", "부산광역시 수영구", "010-1234-1234", "test3@naver.com", User_role.교직원);
+            em.persist(user4);
+            em.persist(user5);
+            em.persist(user6);
+
+            User user7 = new User("24000001", "1234", "1234", "학생1", "777777-7777777", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.학생);
+            User user8 = new User("24000002", "1234", "1234", "학생2", "888888-8888888", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.학생);
+            User user9 = new User("24000003", "1234", "1234", "학생3", "999999-9999999", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.학생);
+            em.persist(user7);
+            em.persist(user8);
+            em.persist(user9);
+
+            Major major1 = em.find(Major.class, 1L);
+            Major major2 = em.find(Major.class, 2L);
+            Major major3 = em.find(Major.class, 3L);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date utilDate = sdf.parse("2024/11/02");
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            Professor professor1 = new Professor("hi", user1, major1, sqlDate);
+            Professor professor2 = new Professor("hi", user2, major2, sqlDate);
+            Professor professor3 = new Professor("hi", user2, major3, sqlDate);
+            em.persist(professor1);
+            em.persist(professor2);
+            em.persist(professor3);
+
+            Manager manager1 = new Manager("hi", user4, sqlDate);
+            Manager manager2 = new Manager("hi", user5, sqlDate);
+            Manager manager3 = new Manager("hi", user6, sqlDate);
+            em.persist(manager1);
+            em.persist(manager2);
+            em.persist(manager3);
+
+            Student student1 = new Student(24000001, 1, user7, professor1, major1, sqlDate);
+            Student student2 = new Student(24000002, 2, user8, professor2, major2, sqlDate);
+            Student student3 = new Student(24000003, 3, user9, professor3, major3, sqlDate);
+            em.persist(student1);
+            em.persist(student2);
+            em.persist(student3);
+        }
+
 
         public void dbInit6() {
             College college1 = new College("사범대학","인문관1");
@@ -71,6 +164,5 @@ public class InitDb {
             em.persist(lectureRoom5);
             em.persist(lectureRoom6);
         }
-
     }
 }

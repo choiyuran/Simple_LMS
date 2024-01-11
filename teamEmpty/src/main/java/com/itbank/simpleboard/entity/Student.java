@@ -41,11 +41,12 @@ public class Student {
     @Column(name = "enterance_date")
     private Date enteranceDate;
 
-    public Student(Integer student_num, Integer student_grade, User user, Professor professor, Major major) {
+    public Student(Integer student_num, Integer student_grade, User user, Professor professor, Major major, Date enteranceDate) {
         this.student_num = student_num;
         this.student_grade = student_grade;
         this.user = user;
         this.professor = professor;
         this.major = major;
+        this.enteranceDate = enteranceDate;
     }
 }
