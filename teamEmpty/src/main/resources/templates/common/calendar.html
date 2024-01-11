@@ -7,5 +7,20 @@
 </head>
 <body>
 
+    <table>
+        <tr>
+            <th>글번호</th>
+            <th>제목</th>
+            <th>시작일</th>
+            <th>종료일</th>
+        </tr>
+        <tr th:each="calendar : ${calendar}">
+            <td th:text="${calendar.idx}"></td>
+            <td th:text="${calendar.title}"></td>
+            <td th:text="${#dates.format(calendar.start_date, 'yyyy-MM-dd')}"></td>
+            <td th:text="${#dates.format(calendar.end_date, 'yyyy-MM-dd')}"></td>
+        </tr>
+    </table>
+
 </body>
 </html>
