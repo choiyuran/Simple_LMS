@@ -33,4 +33,6 @@ public class AcademicCalendar {
     @Column(name="calendar_end_date")
     private Date end_date;
 
+
+
 }
