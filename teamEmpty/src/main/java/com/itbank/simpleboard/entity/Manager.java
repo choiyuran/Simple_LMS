@@ -26,8 +26,9 @@ public class Manager {
     @Column(name = "hire_date")
     private Date hireDate;
 
-    public Manager(String manager_img, User user) {
+    public Manager(String manager_img, User user, Date hireDate) {
         this.manager_img = manager_img;
         this.user = user;
+        this.hireDate = hireDate;
     }
 }
