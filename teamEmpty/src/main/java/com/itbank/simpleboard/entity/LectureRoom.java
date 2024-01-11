@@ -28,4 +28,8 @@ public class LectureRoom {
     @JoinColumn(name="college_idx")
     private College college;
 
+    public LectureRoom(Integer room, College college) {
+        this.room = room;
+        this.college = college;
+    }
 }

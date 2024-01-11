@@ -33,4 +33,9 @@ public class Grade {
     @Column(name = "grade_score")
     private String score;
 
+    public Grade(Student student, Lecture lecture, String score) {
+        this.student = student;
+        this.lecture = lecture;
+        this.score = score;
+    }
 }

@@ -1,8 +1,11 @@
 package com.itbank.simpleboard.entity;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor
 public class Scholarship_Award {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "award_idx")
@@ -15,4 +18,9 @@ public class Scholarship_Award {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "scholarship_idx")
     private Scholarship scholarship;
+
+    public Scholarship_Award(Student student, Scholarship scholarship) {
+        this.student = student;
+        this.scholarship = scholarship;
+    }
 }

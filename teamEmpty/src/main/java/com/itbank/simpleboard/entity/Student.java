@@ -37,4 +37,11 @@ public class Student {
     @JoinColumn(name = "major_idx")
     private Major major;
 
+    public Student(Integer student_num, Integer student_grade, User user, Professor professor, Major major) {
+        this.student_num = student_num;
+        this.student_grade = student_grade;
+        this.user = user;
+        this.professor = professor;
+        this.major = major;
+    }
 }

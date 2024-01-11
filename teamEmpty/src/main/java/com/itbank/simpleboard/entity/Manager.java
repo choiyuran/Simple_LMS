@@ -21,4 +21,9 @@ public class Manager {
     @OneToOne
     @JoinColumn(name="user_idx")
     private User user;
+
+    public Manager(String manager_img, User user) {
+        this.manager_img = manager_img;
+        this.user = user;
+    }
 }
