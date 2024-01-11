@@ -89,4 +89,23 @@ public class Lecture {
     @Column(name = "evaluation_visible")
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
+
+    public Lecture(String name, String intro, Integer credit, String day, Integer start, Integer end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom, YesOrNo visible) {
+        this.name = name;
+        this.intro = intro;
+        this.credit = credit;
+        this.day = day;
+        this.start = start;
+        this.end = end;
+        this.type = type;
+        this.professor = professor;
+        this.maxCount = maxCount;
+        this.currentCount = currentCount;
+        this.semester = semester;
+        this.grade = grade;
+        this.plan = plan;
+        this.major = major;
+        this.lectureRoom = lectureRoom;
+        this.visible = visible;
+    }
 }

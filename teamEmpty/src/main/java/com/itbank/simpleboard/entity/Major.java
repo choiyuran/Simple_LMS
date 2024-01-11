@@ -32,4 +32,9 @@ public class Major {
     @JoinColumn(name = "colleage_idx")
     private College college;
 
+    public Major(String name, Integer tuition, College college) {
+        this.name = name;
+        this.tuition = tuition;
+        this.college = college;
+    }
 }

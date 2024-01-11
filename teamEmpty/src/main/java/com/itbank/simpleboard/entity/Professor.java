@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 
 @Entity @Getter
@@ -27,4 +28,13 @@ public class Professor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
     private Major major;    // 학과 번호
+
+    @Column(name = "hire_date")
+    private Date hireDate;
+
+    public Professor(String professor_img, User user, Major major) {
+        this.professor_img = professor_img;
+        this.user = user;
+        this.major = major;
+    }
 }

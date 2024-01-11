@@ -34,6 +34,10 @@ public class Situation {
     // 종료일
     private Date end_date;
 
-
-
+    public Situation(Student student, Status_type student_status, Date start_date, Date end_date) {
+        this.student = student;
+        this.student_status = student_status;
+        this.start_date = start_date;
+        this.end_date = end_date;
+    }
 }
