@@ -64,4 +64,10 @@ public class HomeController {
         return "common/register";
     }
 
+
+    @GetMapping("/studentModify")
+    public String studentModify() {
+        return "student/studentModify";
+    }
+
 }
