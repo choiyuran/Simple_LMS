@@ -3,6 +3,7 @@ package com.itbank.simpleboard.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Data
@@ -36,6 +37,9 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
     private Major major;
+
+    @Column(name = "enterance_date")
+    private Date enteranceDate;
 
     public Student(Integer student_num, Integer student_grade, User user, Professor professor, Major major) {
         this.student_num = student_num;
