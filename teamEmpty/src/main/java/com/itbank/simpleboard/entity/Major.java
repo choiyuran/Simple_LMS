@@ -29,7 +29,7 @@ public class Major {
 
     // 단과대학
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "colleage_idx")
+    @JoinColumn(name = "college_idx")
     private College college;
 
     public Major(String name, Integer tuition, College college) {
@@ -37,4 +37,5 @@ public class Major {
         this.tuition = tuition;
         this.college = college;
     }
+
 }
