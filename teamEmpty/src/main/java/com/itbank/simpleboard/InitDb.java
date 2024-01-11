@@ -1,10 +1,5 @@
 package com.itbank.simpleboard;
 
-import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Scholarship;
-import com.itbank.simpleboard.entity.College;
-import com.itbank.simpleboard.entity.LectureRoom;
-import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -40,7 +35,6 @@ public class InitDb {
     @Transactional
     @RequiredArgsConstructor
     static class InitService {
-
         private final EntityManager em;
 
         public void dbInit4() {
@@ -130,6 +124,8 @@ public class InitDb {
             Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
             em.persist(scholarship3);
         }
+
+
 
         public void dbInit6() {
             College college1 = new College("사범대학","인문관1");
