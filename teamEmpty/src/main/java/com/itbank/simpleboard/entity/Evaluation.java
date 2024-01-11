@@ -41,4 +41,13 @@ public class Evaluation {
     @OneToOne
     @JoinColumn(name = "enrollment_idx")
     private Enrollment enrollment;
+
+    public Evaluation(Integer q1, Integer q2, Integer q3, String q4, String q5, Enrollment enrollment) {
+        this.q1 = q1;
+        this.q2 = q2;
+        this.q3 = q3;
+        this.q4 = q4;
+        this.q5 = q5;
+        this.enrollment = enrollment;
+    }
 }

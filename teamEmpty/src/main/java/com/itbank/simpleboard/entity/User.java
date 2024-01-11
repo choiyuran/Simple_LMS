@@ -40,4 +40,16 @@ public class User {
     @Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
     private User_role role;
+
+    public User(String user_id, String user_pw, String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
+        this.user_id = user_id;
+        this.user_pw = user_pw;
+        this.salt = salt;
+        this.user_name = user_name;
+        this.security = security;
+        this.address = address;
+        this.pnum = pnum;
+        this.email = email;
+        this.role = role;
+    }
 }

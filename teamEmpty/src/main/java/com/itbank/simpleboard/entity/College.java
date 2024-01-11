@@ -26,4 +26,8 @@ public class College {
     @Column(name="college_location")
     private String location;
 
+    public College(String name, String location) {
+        this.name = name;
+        this.location = location;
+    }
 }

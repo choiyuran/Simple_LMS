@@ -37,4 +37,12 @@ public class Scholarship {
     // 수여 분기
     @Column(name = "scholarship_quarter")
     private Integer quarter;
+
+    public Scholarship(String category, String name, Integer price, Integer year, Integer quarter) {
+        this.category = category;
+        this.name = name;
+        this.price = price;
+        this.year = year;
+        this.quarter = quarter;
+    }
 }

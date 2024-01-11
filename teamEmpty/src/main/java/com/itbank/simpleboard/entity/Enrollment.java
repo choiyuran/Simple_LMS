@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name = "enrollment")
+@NoArgsConstructor
 public class Enrollment {
 // 수강 현황
     @Id
@@ -22,4 +23,9 @@ public class Enrollment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_idx")
     private Lecture lecture;
+
+    public Enrollment(Student student, Lecture lecture) {
+        this.student = student;
+        this.lecture = lecture;
+    }
 }

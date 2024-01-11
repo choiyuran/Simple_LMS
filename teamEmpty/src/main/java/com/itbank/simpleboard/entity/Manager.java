@@ -19,9 +19,15 @@ public class Manager {
     // 직원 사진
     private String manager_img;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name="user_idx")
     private User user;
 
-    private Date hire_date; // 입사일
+    @Column(name = "hire_date")
+    private Date hireDate;
+
+    public Manager(String manager_img, User user) {
+        this.manager_img = manager_img;
+        this.user = user;
+    }
 }
