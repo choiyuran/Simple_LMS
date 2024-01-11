@@ -35,7 +35,7 @@ public class InitDb {
         private final EntityManager em;
 
 
-        public void insertCalendar() throws Exception{
+        public void insertCalendar() throws Exception {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
             Date startDate1 = sdf.parse("2024/01/01");
@@ -55,13 +55,15 @@ public class InitDb {
 
             AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
             em.persist(calendar3);
-    }
+        }
+
         public void dbInit3() {
-            Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금",1000000,2024,1);
+            Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
             em.persist(scholarship1);
-            Scholarship scholarship2 = new Scholarship("내부", "근로장학금",2000000,2024,2);
+            Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
             em.persist(scholarship2);
-            Scholarship scholarship3 = new Scholarship("외부", "국가장학금",300000,2024,3);
+            Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
             em.persist(scholarship3);
         }
+    }
 }
