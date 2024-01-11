@@ -34,5 +34,9 @@ public class AcademicCalendar {
     private Date end_date;
 
 
-
+    public AcademicCalendar(String title, Date start_date, Date end_date) {
+        this.title = title;
+        this.start_date = start_date;
+        this.end_date = end_date;
+    }
 }
