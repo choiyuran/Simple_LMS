@@ -24,7 +24,7 @@ public class Major {
     private String name;
     
     // 등록금
-    @Column(name = "major_tuition", unique = true)
+    @Column(name = "major_tuition")
     private Integer tuition;
 
     // 단과대학

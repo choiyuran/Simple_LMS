@@ -32,9 +32,10 @@ public class Professor {
     @Column(name = "hire_date")
     private Date hireDate;
 
-    public Professor(String professor_img, User user, Major major) {
+    public Professor(String professor_img, User user, Major major, Date hireDate) {
         this.professor_img = professor_img;
         this.user = user;
         this.major = major;
+        this.hireDate = hireDate;
     }
 }
