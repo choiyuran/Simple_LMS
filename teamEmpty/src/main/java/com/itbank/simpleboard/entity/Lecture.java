@@ -38,11 +38,11 @@ public class Lecture {
 
     // 수강 시작 시간(시)
     @Column(name = "lecture_start")
-    private Integer start;
+    private String start;
 
     // 수강 끝 식단
     @Column(name = "lecture_end")
-    private Integer end;
+    private String end;
 
     // 수강 강의타입
     @Column(name = "lecture_type", nullable = false)
@@ -90,7 +90,7 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
 
-    public Lecture(String name, String intro, Integer credit, String day, Integer start, Integer end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom, YesOrNo visible) {
+    public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom, YesOrNo visible) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;
