@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ProfessorController {
     private final ProfessorService professorService;
 
-    @GetMapping("/lectureList")
+    @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchCondition condition) {
         return "professor/lectureList";
     }
