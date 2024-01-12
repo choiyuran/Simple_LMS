@@ -93,3 +93,10 @@ article.include_sideBar > nav > ul > li.ul_item > div > ol > li {
     width: fit-content;
     margin: 10px auto;
 }
+ol > li > a {
+    text-decoration: none;
+    color: white;
+}
+ol > li > a:hover{
+    text-decoration: none;
+}

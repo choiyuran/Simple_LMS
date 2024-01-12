@@ -55,4 +55,8 @@ public class ManagerService {
     public List<Major> selectAllMajor() {
         return  majorRepository.findAll();
     }
+
+    public Major selectOne(Long idx) {
+        return majorRepository.findById(idx).get();
+    }
 }

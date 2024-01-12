@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <form>
+        <table class="table table-bordered">
+            <tr>
+                <th>학과명</th>
+                <td>
+                    <label>
+                        <input type="text" th:value="${major.name}">
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <th>등록금</th>
+                <td>
+                    <label>
+                        <input type="text" th:value="${major.tuition}">
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <th>단과대학</th>
+                <td>
+                    <label>
+                        <input type="text" th:value="${major.college.name}">
+                    </label>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <button class="btn btn-primary"><a th:href="@{/manager/majorUpdate/{idx}(idx=${major.idx})}">수정 완료</a></button>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>

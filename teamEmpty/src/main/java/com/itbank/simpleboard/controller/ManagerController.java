@@ -7,10 +7,8 @@ import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -38,7 +36,7 @@ public class ManagerController {
         return mav;
     }
 
-    @GetMapping("/registerMajor")
+    @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
         ModelAndView mav = new ModelAndView("manager/registerMajor");
         List<College> list = managerService.selectAllCollege();
@@ -63,6 +61,14 @@ public class ManagerController {
         return mav;
     }
 
+    @GetMapping("/majorView/{idx}")           // 학과 view
+    public ModelAndView majorView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("manager/majorView");
+        Major major = managerService.selectOne(idx);
+        mav.addObject("major", major);
+        return mav;
+    }
 
+//    @GetMapping("/majorUpdate/{idx}")           // 학과 정보 수정
 
 }
