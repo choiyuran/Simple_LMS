@@ -89,6 +89,15 @@ public class InitDb {
                 em.persist(student1);
                 em.persist(student2);
                 em.persist(student3);
+
+                Situation situation1 = new Situation(student1, Status_type.재학, new Date(), null);
+                Situation situation2 = new Situation(student2, Status_type.재학, new Date(), null);
+                Situation situation3 = new Situation(student3, Status_type.재학, new Date(), null);
+
+                em.persist(situation1);
+                em.persist(situation2);
+                em.persist(situation3);
+
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
