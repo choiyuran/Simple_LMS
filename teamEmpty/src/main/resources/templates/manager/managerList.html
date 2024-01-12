@@ -34,15 +34,20 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="row : ${managerList}">
+            <tr th:if="${#lists.isEmpty(managerList)}">
+                <td colspan="6" style="text-align: center; height: 100px; vertical-align: middle;">
+                    <h5>조건에 해당하는 결과가 존재하지 않습니다.</h5>
+                </td>
+            </tr>
+            <tr th:unless="${#lists.isEmpty(managerList)}" th:each="row : ${managerList}">
                 <td th:text="${row.getManagerImg()}"></td>
-                <td th:text="${row.getMamagerId()}"></td>
-                <td th:text="${row.getMamagerName()}"></td>
-                <td th:text="${row.getMamagerPnum()}"></td>
+                <td th:text="${row.getManagerId()}"></td>
+                <td th:text="${row.getManagerName()}"></td>
+                <td th:text="${row.getManagerPnum()}"></td>
                 <td th:text="${row.getManagerEmail()}"></td>
                 <td th:text="${row.getManagerHireDate()}"></td>
-             </tr>
 
+             </tr>
             </tbody>
         </table>
     </div>

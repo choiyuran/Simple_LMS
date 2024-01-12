@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +12,13 @@ public class ManagerDTO {
     private String managerImg;
 
     // 아이디
-    private String mamagerId;
+    private String managerId;
 
     // 이름
-    private String mamagerName;
+    private String managerName;
 
     // 연락처
-    private String mamagerPnum;
+    private String managerPnum;
 
     // 이메일
     private String managerEmail;
@@ -25,11 +26,12 @@ public class ManagerDTO {
     // 입사일
     private Date managerHireDate;
 
-    public ManagerDTO(String managerImg, String mamagerId, String mamagerName, String mamagerPnum, String managerEmail, Date managerHireDate) {
+    @QueryProjection
+    public ManagerDTO(String managerImg, String managerId, String managerName, String managerPnum, String managerEmail, Date managerHireDate) {
         this.managerImg = managerImg;
-        this.mamagerId = mamagerId;
-        this.mamagerName = mamagerName;
-        this.mamagerPnum = mamagerPnum;
+        this.managerId = managerId;
+        this.managerName = managerName;
+        this.managerPnum = managerPnum;
         this.managerEmail = managerEmail;
         this.managerHireDate = managerHireDate;
     }

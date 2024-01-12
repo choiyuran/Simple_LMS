@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.professor;
 import com.itbank.simpleboard.dto.LectureListDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.dto.QLectureListDto;
+import com.itbank.simpleboard.entity.QLecture;
 import com.itbank.simpleboard.entity.QLectureRoom;
 import com.itbank.simpleboard.entity.QMajor;
 import com.itbank.simpleboard.entity.QProfessor;
