@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 전체 강의 리스트 -->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:insert="layout/header :: head">
 </head>
 <body>
-
+<header th:insert="layout/header :: header"></header>
+<main>
+    <table>
+        <th>
+            <td th:text="강의명">제목열1</td>
+            <td th:text="'강의 소개'">제목열2</td>
+            <td th:text="'수강 학점'">제목열3</td>
+            <td th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</td>
+            <td th:text="'강의 타입'">제목열5</td>
+            <td th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</td>
+            <td th:text="'강의 학기'">제목열7</td>
+            <td th:text="학년">제목열8</td>
+        </th>
+    </table>
+</main>
+<footer th:insert="layout/header :: footer"></footer>
 </body>
 </html>
