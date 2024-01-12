@@ -11,24 +11,28 @@
         <tr>
             <td th:text="강의명">제목열1</td>
             <td th:text="'강의 소개'">제목열2</td>
-            <td th:text="'수강 학점'">제목열3</td>
+            <td th:text="'교수'">제목열3</td>
+            <td th:text="'수강 학점'">제목열4</td>
             <td th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</td>
-            <td th:text="'강의 타입'">제목열5</td>
+            <td th:text="'강의 타입'">제목열6</td>
             <td th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</td>
-            <td th:text="'강의 학기'">제목열7</td>
-            <td th:text="학년">제목열8</td>
+            <td th:text="'강의 학기'">xxxx년 x학기</td>
+            <td th:text="학년">제목열9</td>
+            <td th:text="강의실">제목열10</td>
         </tr>
         </thead>
         <tbody>
         <tr th:each="row : ${LectureList}">
             <td th:text="${row.getName()}"></td>
             <td th:text="${row.getIntro()}"></td>
+            <td th:text="${row.getProfessor_name()}"></td>
             <td th:text="${row.getCredit()}"></td>
             <td th:text="${row.getDay()}"></td>
             <td th:text="${row.getType()}"></td>
             <td th:text="${row.getCurrentCount()} + '/' + ${row.getMaxCount()}"></td>
             <td th:text="${row.getSemester()}"></td>
-            <td th:text="${row.getGrade()}"></td>
+            <td th:text="${row.getGrade()} + '학년'"></td>
+            <td th:text="${row.getLocation()} + ' ' + ${row.getLectureRoom()}"></td>
         </tr>
         </tbody>
     </table>

@@ -46,11 +46,11 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         QLectureRoom.lectureRoom.room
                 ))
                 .from(lecture)
-                .leftJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
-                .leftJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .leftJoin(lecture.major, QMajor.major)
-                .leftJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
-                .leftJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
                 .where(
                         nameContain(condition.getName()),
                         typeEq(condition.getType()),
