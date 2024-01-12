@@ -1,7 +1,7 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.repository.AcademicCalendarRepository;
-import com.itbank.simpleboard.repository.CollegeRepository;
+
+import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
