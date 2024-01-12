@@ -5,14 +5,12 @@ import lombok.Data;
 @Data
 public class LectureSearchCondition {
     // 강의 리스트 검색 조건
-    // 강의명, 학점, 요일, 타입, 학기, 학년, 담당 교수, 학과(전공), 강의평가
+    // 강의명, 타입, 학기, 학년, 담당 교수, 학과(전공)
     private String name;
-    private Integer credit;
-    private String day;
     private String type;
-    private String semester;
+    private Integer year;
+    private Integer semester;
     private Integer grade;
-    private Long professor;
-    private Long major;
-    private String visible;
+    private Long professor; // "내 강의 보기"를 누르면 현재 로그인 된 교수 계정의 idx가 넘어가게
+    private String major;
 }
