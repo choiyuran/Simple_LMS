@@ -25,11 +25,13 @@ public class ManagerService {
         return collegeRepository.findAll();
     }
 
-
     public Major addMajor(MajorDto major) {
         College college = collegeRepository.findById(major.getCollege_idx()).get();
         Major major1 = new Major(major.getName(),major.getTuition(),college);
         return majorRepository.save(major1);
+    }
 
+    public List<Major> selectAllMajor() {
+        return  majorRepository.findAll();
     }
 }

@@ -19,8 +19,8 @@ public class ManagerController {
 
     @Autowired
     private ManagerService managerService;
-
-    @GetMapping("/registerMajor")
+    
+    @GetMapping("/registerMajor")                 // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
         ModelAndView mav = new ModelAndView("manager/registerMajor");
         List<College> list = managerService.selectAllCollege();
@@ -28,7 +28,7 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/registerMajor")
+    @PostMapping("/registerMajor")              // 학과 등록
     public String registerMajor(MajorDto major) {
         Major addMajor = managerService.addMajor(major);
         if(addMajor != null) {
@@ -37,6 +37,13 @@ public class ManagerController {
         return "manager/registerMajor";
     }
 
+    @GetMapping("/majorList")       // 학과 목록
+    public ModelAndView majorList() {
+        ModelAndView mav = new ModelAndView("manager/majorList");
+        List<Major> list = managerService.selectAllMajor();
+        mav.addObject("list", list);
+        return mav;
+    }
 
 
 
