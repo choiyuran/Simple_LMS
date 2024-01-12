@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -19,8 +21,24 @@ public class ManagerController {
 
     @Autowired
     private ManagerService managerService;
-    
-    @GetMapping("/registerMajor")                 // 학과 등록 페이지로 이동
+
+
+    @GetMapping("/managerList") // 교직원 명단 조회
+    public ModelAndView list(){
+        ModelAndView mav = new ModelAndView("manager/managerList");
+        List<ManagerDTO> managerList = managerService.findAllManager();
+        mav.addObject("managerList",managerList);
+        return mav;
+    }
+    @PostMapping("/managerList")    // 교직원 명단 검색 조회
+    public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue){
+        ModelAndView mav = new ModelAndView("manager/managerList");
+        List<ManagerDTO> managerList = managerService.findAllManager();
+        mav.addObject("managerList",managerList);
+        return mav;
+    }
+
+    @GetMapping("/registerMajor")
     public ModelAndView registerMajor() {
         ModelAndView mav = new ModelAndView("manager/registerMajor");
         List<College> list = managerService.selectAllCollege();

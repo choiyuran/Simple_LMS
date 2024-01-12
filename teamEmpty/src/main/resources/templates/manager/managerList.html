@@ -1,11 +1,53 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<!--교직원 리스트-->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<!--강의 리스트-->
+<head th:insert="layout/header :: head">
 </head>
 <body>
+<header th:insert="layout/header :: header"> </header>
 
+<main>
+    <div class="container mt-3">
+        <h2>교직원 명단</h2>
+        <hr>
+        <div class="selectBox flex">
+            <form method="POST">
+                <select name="searchType">
+                    <option value="name"> 이름</option>
+                    <option value="phone">전화번호</option>
+                </select>
+                <input type="text" name="searchValue" placeholder="검색어 입력">
+                <input type="submit" value="검색">
+            </form>
+        </div>
+
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>직원사진</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>연락처</th>
+                <th>이메일</th>
+                <th>입사일</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${managerList}">
+                <td th:text="${row.getManagerImg()}"></td>
+                <td th:text="${row.getMamagerId()}"></td>
+                <td th:text="${row.getMamagerName()}"></td>
+                <td th:text="${row.getMamagerPnum()}"></td>
+                <td th:text="${row.getManagerEmail()}"></td>
+                <td th:text="${row.getManagerHireDate()}"></td>
+             </tr>
+
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:insert="layout/header :: footer"></footer> <!-- footer 부분 수정 -->
 </body>
 </html>

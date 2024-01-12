@@ -40,7 +40,7 @@ public class Lecture {
     @Column(name = "lecture_start")
     private String start;
 
-    // 수강 끝 식단
+    // 수강 끝 시간
     @Column(name = "lecture_end")
     private String end;
 
