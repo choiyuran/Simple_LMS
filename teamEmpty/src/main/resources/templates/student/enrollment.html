@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!--수강 신청-->
+<head th:insert="layout/header :: head"></head>
+<body>
+<header th:insert="layout/header :: header"></header>
+<main>
+    <div class="container mt-3">
+        <form method="post">
+        <table class="table table-bordered">
+            <tr>
+                <td th:text="'강의명'"></td>
+                <td th:text="'수강 학점'"></td>
+                <td th:text="'강의 시작시간'"></td>
+                <td th:text="'강의 끝시간'"></td>
+                <td th:text="'강의 타입'"></td>
+                <td th:text="'현재 수강자 수 / 최대 인원 수'"></td>
+                <td th:text="'강의 학기'"></td>
+                <td th:text="'학년'"></td>
+                <td th:text="'신청하기'"></td>
+            </tr>
+            <tr th:each="item:${list}">
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.credit}"></td>
+                <td th:text="${item.start}"></td>
+                <td th:text="${item.end}"></td>
+                <td th:text="${item.type}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.semester}"></td>
+                <td th:text="${item.grade}"></td>
+                <input type="hidden" th:value="${item.idx}" name="idx"/>
+                <td><button type="submit" class="btn btn-primary">수강신청</button></td>
+            </tr>
+        </table>
+        </form>
+    </div>
+</main>
+
+
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>
