@@ -1,11 +1,19 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.entity.User;
+import com.itbank.simpleboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
+    private final UserRepository userRepository;
 
     @GetMapping("/")
     public String root() {
@@ -63,5 +71,27 @@ public class HomeController {
     public String register() {
         return "common/register";
     }
+
+    // 테스트용 학생 로그인
+    @GetMapping("/logintest")
+    public String loginTest(HttpSession session) {
+        User user = userRepository.findById(7L).get();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUser_id(user.getUser_id());
+        userDTO.setIdx(user.getIdx());
+        userDTO.setUser_name(user.getUser_name());
+        userDTO.setPnum(user.getPnum());
+        userDTO.setRole(user.getRole());
+        userDTO.setEmail(user.getEmail());
+        session.setAttribute("user", userDTO);
+        return "home";
+    }
+    
+    @GetMapping("/logouttest")
+    public String logouttest(HttpSession session) {
+        session.invalidate();
+        return "home";
+    }
+
 
 }
