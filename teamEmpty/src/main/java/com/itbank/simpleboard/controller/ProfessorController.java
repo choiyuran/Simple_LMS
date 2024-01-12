@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,7 @@ public class ProfessorController {
     private final ProfessorService professorService;
 
     @GetMapping("/lectureList")
-    public String lectureList(Model model) {
+    public String lectureList(Model model, LectureSearchCondition condition) {
         return "professor/lectureList";
     }
 }
