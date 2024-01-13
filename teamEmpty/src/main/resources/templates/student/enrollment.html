@@ -6,35 +6,66 @@
 <header th:insert="layout/header :: header"></header>
 <main>
     <div class="container mt-3">
+        <!-- 검색 폼 -->
+        <form method="get" class="row">
+            <div class="form-group col-md-3">
+                <select id="searchType" name="searchType" class="form-control">
+                    <option value="all">전체</option>
+                    <option value="professor">교수</option>
+                    <option value="subject">과목</option>
+                    <option value="grade">학년</option>
+                </select>
+            </div>
+            <div class="form-group col-md-7">
+                <input type="text" id="searchKeyword" name="searchKeyword" class="form-control" placeholder="검색어를 입력하세요">
+            </div>
+            <div class="form-group col-md-2">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </form>
+
         <form method="post">
         <table class="table table-bordered">
             <tr>
                 <td th:text="'강의명'"></td>
+                <td th:text="'교수명'"></td>
                 <td th:text="'수강 학점'"></td>
                 <td th:text="'강의 시작시간'"></td>
                 <td th:text="'강의 끝시간'"></td>
                 <td th:text="'강의 타입'"></td>
-                <td th:text="'현재 수강자 수 / 최대 인원 수'"></td>
+                <td th:text="'최대 / 현재 수강자'"></td>
                 <td th:text="'강의 학기'"></td>
                 <td th:text="'학년'"></td>
                 <td th:text="'신청하기'"></td>
             </tr>
             <tr th:each="item:${list}">
                 <td th:text="${item.name}"></td>
+                <td th:text="${item.professor.user.getUser_name()}"></td>
                 <td th:text="${item.credit}"></td>
-                <td th:text="${item.start}"></td>
-                <td th:text="${item.end}"></td>
+                <td th:utext="${item.day+ '<br/>' + item.start}"></td>
+                <td th:utext="${item.day+ '<br/>' + item.end}"></td>
                 <td th:text="${item.type}"></td>
-                <td th:text="${item.name}"></td>
+                <td th:text="${item.currentCount + '명 / ' + item.maxCount + '명'}"></td>
                 <td th:text="${item.semester}"></td>
                 <td th:text="${item.grade}"></td>
-                <input type="hidden" th:value="${item.idx}" name="idx"/>
+                <input th:type="hidden" th:value="${item.idx}" th:name="idx" required/>
                 <td><button type="submit" class="btn btn-primary">수강신청</button></td>
             </tr>
         </table>
         </form>
     </div>
 </main>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const msg = [[${msg}]];
+
+    if(msg != '' && msg != null){
+        alert(msg);
+    }
+
+    /*]]>*/
+</script>
 
 
 <footer th:insert="layout/header :: footer"></footer>
