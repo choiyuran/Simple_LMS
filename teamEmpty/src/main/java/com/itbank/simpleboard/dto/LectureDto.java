@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
 @Data
-public class LectureListDto {
+public class LectureDto {
     private String name;
     private String intro;
     private Integer credit;
@@ -24,7 +24,7 @@ public class LectureListDto {
     private Integer lectureRoom;
 
     @QueryProjection
-    public LectureListDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
+    public LectureDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;

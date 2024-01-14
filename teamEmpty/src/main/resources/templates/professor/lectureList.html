@@ -6,33 +6,124 @@
 <body>
 <header th:insert="layout/header :: header"></header>
 <main>
+    <div>
+        <form method="post">
+            <label>강의명 :
+                <input type="text" name="name">
+            </label>
+            <label>학과 선택 :
+                <select name="major">
+                    <option th:text="'전공 선택'" value="">전공 선택</option>
+                    <option th:each="major : ${MajorList}" th:value="${major}" th:text="${major}" th:selected="${majorSelect == major}"></option>
+                </select>
+            </label>
+            <label>강의 타입 :
+                <select name="type">
+                    <option th:text="'강의 형태'" value=""></option>
+                    <option th:text="'전공 필수'" th:value="전공필수" th:selected="${typeSelect == '전공필수'}"></option>
+                    <option th:text="'전공 선택'" th:value="전공선택" th:selected="${typeSelect == '전공선택'}"></option>
+                    <option th:text="'필수 교양'" th:value="필수교양" th:selected="${typeSelect == '필수교양'}"></option>
+                    <option th:text="'선택 교양'" th:value="선택교양" th:selected="${typeSelect == '선택교양'}"></option>
+                </select>
+            </label>
+            <label>기간 :
+                <select name="year">
+                    <option th:text="년도" value=""></option>
+                </select>
+                <select name="semester">
+                    <option th:text="학기" value=""></option>
+                    <option th:text="1학기" th:value="1" th:selected="${semesterSelect == 1}"></option>
+                    <option th:text="2학기" th:value="2" th:selected="${semesterSelect == 2}"></option>
+                </select>
+            </label>
+            <label>학년 :
+                <select name="grade">
+                    <option th:text="학년" value=""></option>
+                    <option th:text="1학년" th:value="1" th:selected="${gradeSelect == 1}"></option>
+                    <option th:text="2학년" th:value="2" th:selected="${gradeSelect == 2}"></option>
+                    <option th:text="3학년" th:value="3" th:selected="${gradeSelect == 3}"></option>
+                    <option th:text="4학년" th:value="4" th:selected="${gradeSelect == 4}"></option>
+                </select>
+            </label>
+            <label>담당 교수 :
+                <input type="text" name="professor">
+            </label>
+            <input type="submit" th:value="검색">
+        </form>
+    </div>
     <table class="table table-bordered">
         <thead>
         <tr>
-            <td th:text="강의명">제목열1</td>
-            <td th:text="'강의 소개'">제목열2</td>
-            <td th:text="'교수'">제목열3</td>
-            <td th:text="'수강 학점'">제목열4</td>
-            <td th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</td>
-            <td th:text="'강의 타입'">제목열6</td>
-            <td th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</td>
-            <td th:text="'강의 학기'">xxxx년 x학기</td>
-            <td th:text="학년">제목열9</td>
-            <td th:text="강의실">제목열10</td>
+            <td>
+                <div th:text="강의명">제목열1</div>
+            </td>
+            <td>
+                <div th:text="'교수'">제목열2</div>
+            </td>
+            <td>
+                <div th:text="'강의 소개'">제목열3</div>
+            </td>
+            <td>
+                <div th:text="전공">제목열4</div>
+            </td>
+            <td>
+                <div th:text="'강의 타입'">제목열5</div>
+            </td>
+            <td>
+                <div th:text="'수강 학점'">제목열6</div>
+            </td>
+            <td>
+                <div th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</div>
+            </td>
+            <td>
+                <div th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</div>
+            </td>
+            <td>
+                <div th:text="'강의 학기'">xxxx년 x학기</div>
+            </td>
+            <td>
+                <div th:text="학년">제목열1</div>
+            </td>
+            <td>
+                <div th:text="강의실">제목열1</div>
+            </td>
         </tr>
         </thead>
         <tbody>
         <tr th:each="row : ${LectureList}">
-            <td th:text="${row.getName()}"></td>
-            <td th:text="${row.getIntro()}"></td>
-            <td th:text="${row.getProfessor_name()}"></td>
-            <td th:text="${row.getCredit()}"></td>
-            <td th:text="${row.getDay()}"></td>
-            <td th:text="${row.getType()}"></td>
-            <td th:text="${row.getCurrentCount()} + '/' + ${row.getMaxCount()}"></td>
-            <td th:text="${row.getSemester()}"></td>
-            <td th:text="${row.getGrade()} + '학년'"></td>
-            <td th:text="${row.getLocation()} + ' ' + ${row.getLectureRoom()}"></td>
+            <td>
+                <div th:text="${row.name}"></div>
+            </td>
+            <td>
+                <div th:text="${row.professor_name}"></div>
+            </td>
+            <td>
+                <div th:text="${row.intro}"></div>
+            </td>
+            <td>
+                <div th:text="${row.major}"></div>
+            </td>
+            <td>
+                <div th:text="${row.type}"></div>
+            </td>
+            <td>
+                <div th:text="${row.credit}"></div>
+            </td>
+            <td>
+                <div th:text="${row.day}"></div>
+            </td>
+            <td>
+                <div th:text="${row.currentCount} + '/' + ${row.maxCount}"></div>
+            </td>
+            <td>
+                <div th:text="${row.semester}"></div>
+            </td>
+            <td>
+                <div th:text="${row.grade} + '학년'"></div>
+            </td>
+            <td>
+                <div th:text="${row.location} + ' ' + ${row.lectureRoom}"></div>
+            </td>
         </tr>
         </tbody>
     </table>

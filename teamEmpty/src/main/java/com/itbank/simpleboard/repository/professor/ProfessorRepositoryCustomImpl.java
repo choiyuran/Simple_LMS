@@ -1,8 +1,8 @@
 package com.itbank.simpleboard.repository.professor;
 
-import com.itbank.simpleboard.dto.LectureListDto;
+import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
-import com.itbank.simpleboard.dto.QLectureListDto;
+import com.itbank.simpleboard.dto.QLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,9 +25,9 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<LectureListDto> getLectureListDto(LectureSearchCondition condition) {
+    public List<LectureDto> getLectureDtoList(LectureSearchCondition condition) {
         return queryFactory
-                .select(new QLectureListDto(
+                .select(new QLectureDto(
                         lecture.name,
                         lecture.intro,
                         lecture.credit,
@@ -57,12 +57,11 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         yearEq(condition.getYear()),
                         semesterEq(condition.getSemester()),
                         gradeEq(condition.getGrade()),
-                        professorEq(condition.getProfessor()),
+                        professorContain(condition.getProfessor()),
                         majorEq(condition.getMajor())
                 )
                 .fetch();
     }
-
 
     private BooleanExpression nameContain(String name) {
         return StringUtils.hasText(name) ? lecture.name.contains(name) : null;
@@ -77,30 +76,15 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     private BooleanExpression semesterEq(Integer semester) {
-        if (semester == null) {
-            return null;
-        }
-
-        // "xxxx년 x학기"에서 'x학기' 부분을 추출하기 위한 로직
-        String semesterString = String.valueOf(lecture.semester);
-        int startIndex = semesterString.lastIndexOf(" ") + 1;
-
-        if (startIndex >= semesterString.length()) {
-            return null;
-        }
-
-        String semesterSubstring = semesterString.substring(startIndex);
-
-        // 추출한 'x학기'를 사용하여 조건 생성
-        return lecture.semester.eq(semesterSubstring);
+        return semester != null ? lecture.semester.contains(semester + "학기") : null;
     }
 
     private BooleanExpression gradeEq(Integer grade) {
         return grade != null ? lecture.grade.eq(grade) : null;
     }
 
-    private BooleanExpression professorEq(Long professor) {
-        return professor != null ? QProfessor.professor.professor_idx.eq(professor) : null;
+    private BooleanExpression professorContain(String professor) {
+        return StringUtils.hasText(professor) ? QUser.user.user_name.contains(professor) : null;
     }
 
     private BooleanExpression majorEq(String major) {
