@@ -39,23 +39,23 @@
 //        private final EntityManager em;
 //
 //        public void dbInit4() {
-//            User user1 = new User("professor1", "1234", "1234", "교수1", "111111-1111111", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.교수);
-//            User user2 = new User("professor2", "1234", "1234", "교수2", "222222-2222222", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.교수);
-//            User user3 = new User("professor3", "1234", "1234", "교수3", "333333-3333333", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.교수);
+//            User user1 = new User("1234", "교수2", "222222-2222222", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.교수);
+//            User user2 = new User("1234", "교수1", "111111-1111111", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.교수);
+//            User user3 = new User("1234", "교수3", "333333-3333333", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.교수);
 //            em.persist(user1);
 //            em.persist(user2);
 //            em.persist(user3);
 //
-//            User user4 = new User("manager1", "1234", "1234", "교직원1", "444444-4444444", "서울특별시 강남", "010-1234-1234", "test1@naver.com", User_role.교직원);
-//            User user5 = new User("manager2", "1234", "1234", "교직원2", "555555-5555555", "서울특별시 강북", "010-1234-1234", "test2@naver.com", User_role.교직원);
-//            User user6 = new User("manager3", "1234", "1234", "교직원3", "666666-6666666", "부산광역시 수영구", "010-1234-1234", "test3@naver.com", User_role.교직원);
+//            User user5 = new User("1234", "교직원2", "555555-5555555", "서울특별시 강북", "010-1234-1234", "test2@naver.com", User_role.교직원);
+//            User user6 = new User("1234", "교직원3", "666666-6666666", "부산광역시 수영구", "010-1234-1234", "test3@naver.com", User_role.교직원);
+//            User user4 = new User("1234", "교직원1", "444444-4444444", "서울특별시 강남", "010-1234-1234", "test1@naver.com", User_role.교직원);
 //            em.persist(user4);
 //            em.persist(user5);
 //            em.persist(user6);
 //
-//            User user7 = new User("24000001", "1234", "1234", "학생1", "777777-7777777", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.학생);
-//            User user8 = new User("24000002", "1234", "1234", "학생2", "888888-8888888", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.학생);
-//            User user9 = new User("24000003", "1234", "1234", "학생3", "999999-9999999", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.학생);
+//            User user7 = new User("1234", "학생1", "777777-7777777", "울산광역시 남구", "010-1234-1234", "test1@naver.com", User_role.학생);
+//            User user8 = new User("1234", "학생2", "888888-8888888", "부산광역시 미남", "010-1234-1234", "test2@naver.com", User_role.학생);
+//            User user9 = new User("1234", "학생3", "999999-9999999", "부산광역시 대연동", "010-1234-1234", "test3@naver.com", User_role.학생);
 //            em.persist(user7);
 //            em.persist(user8);
 //            em.persist(user9);
