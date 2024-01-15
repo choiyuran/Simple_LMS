@@ -4,10 +4,10 @@ import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,8 +23,11 @@ public class ProfessorController {
     // 하지만 문제점이, List를 뽑아온 상태로 MajorList를 추출하다 보니, 그 다음 major 목록이 제대로 출력되지 않음
     // ex) 처음 Get에서는 9개의 전공 모두 출력 -> 신경과 검색 -> 목록이 나온 후 전공 선택 창에 "신경과"만 존재
 
+    // 1월 15일
+    // 쿼리가 2번 나가면 시간이 오래 걸리는 것 같아서 쿼리를 1번만 날리기 위해 Ajax를 사용하기 위해 코드 작성
+
     @GetMapping("/lectureList") // 강의 목록
-    public String lectureList1(Model model, LectureSearchCondition condition) {
+    public String lectureList(Model model, LectureSearchCondition condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
 
@@ -44,20 +47,34 @@ public class ProfessorController {
         return "professor/lectureList";
     }
 
-    @PostMapping("/lectureList") // 강의 목록
-    public String lectureList2(Model model, LectureSearchCondition condition) {
+//    @PostMapping("/lectureList") // 강의 목록
+//    public String lectureList2(Model model, LectureSearchCondition condition) {
+//        long startTime = System.currentTimeMillis();
+//        model.addAttribute("LectureList", professorService.getLectureDtoList(condition));
+//        model.addAttribute("MajorList", professorService.findAllMajorNames());
+//        model.addAttribute("typeSelect", condition.getType());
+//        model.addAttribute("yearSelect", condition.getYear());
+//        model.addAttribute("semesterSelect", condition.getSemester());
+//        model.addAttribute("gradeSelect", condition.getGrade());
+//        model.addAttribute("majorSelect", condition.getMajor());
+//        long endTime = System.currentTimeMillis();
+//        long elapsedTime = endTime - startTime;
+//
+//        System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
+//        return "professor/lectureList";
+//    }
+
+    @ResponseBody
+    @PutMapping("/lectureList/data")
+    public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchCondition condition) {
         long startTime = System.currentTimeMillis();
-        model.addAttribute("LectureList", professorService.getLectureDtoList(condition));
-        model.addAttribute("MajorList", professorService.findAllMajorNames());
-        model.addAttribute("typeSelect", condition.getType());
-        model.addAttribute("yearSelect", condition.getYear());
-        model.addAttribute("semesterSelect", condition.getSemester());
-        model.addAttribute("gradeSelect", condition.getGrade());
-        model.addAttribute("majorSelect", condition.getMajor());
+        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
 
         System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
-        return "professor/lectureList";
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(lectureDtoList);
     }
 }

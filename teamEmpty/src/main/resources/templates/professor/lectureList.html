@@ -7,14 +7,14 @@
 <header th:insert="layout/header :: header"></header>
 <main>
     <div>
-        <form method="post">
+        <form id="LectureSearchForm">
             <label>강의명 :
                 <input type="text" name="name">
             </label>
             <label>학과 선택 :
                 <select name="major">
                     <option th:text="'전공 선택'" value="">전공 선택</option>
-                    <option th:each="major : ${MajorList}" th:value="${major}" th:text="${major}" th:selected="${majorSelect == major}"></option>
+                    <option th:each="major : ${MajorList}" th:value="${major}" th:text="${major}"></option>
                 </select>
             </label>
             <label>강의 타입 :
@@ -48,7 +48,8 @@
             <label>담당 교수 :
                 <input type="text" name="professor">
             </label>
-            <input type="submit" th:value="검색">
+<!--            <input type="submit" th:value="검색">-->
+            <button type="button" onclick="searchLectures()">검색</button>
         </form>
     </div>
     <table class="table table-bordered">
@@ -127,6 +128,40 @@
         </tr>
         </tbody>
     </table>
+
+    <script>
+        function searchLectures() {
+            var form = document.getElementById("LectureSearchForm");
+
+            // form 엘리먼트가 올바르게 식별되었는지 확인
+            if (!form) {
+                console.error('Form 엘리먼트를 찾을 수 없습니다.');
+                return;
+            }
+
+            var formData = new FormData(form);
+
+            fetch('/lectureList/data', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 정상이 아닙니다');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('에러:', error);
+                });
+        }
+    </script>
 </main>
 <footer th:insert="layout/header :: footer"></footer>
 </body>
