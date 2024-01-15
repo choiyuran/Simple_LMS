@@ -69,8 +69,19 @@ public class ManagerController {
         return mav;
     }
 
-//    @PostMapping("/majorUpdate/{idx}")           // 학과 정보 수정
-//    public String majorUpdate() {
-//
-//    }
+    @PostMapping("/majorUpdate/{idx}")           // 학과 정보 수정
+    public String majorUpdate(@PathVariable("idx")Long idx, MajorDto param) {
+        param.setIdx(idx);
+        Major major = managerService.majorUpdate(param);
+        if(major != null) {
+            return "redirect:/manager/majorList";
+        }
+        return "redirect:/manager/majorView/" + idx;
+    }
+
+    @GetMapping("/majorDelete/{idx}")           // 학과 삭제
+    public String majorDelete(@PathVariable("idx")Long idx) {
+        Major major = managerService.majorDel(idx);
+        return "redirect:/manager/majorList";
+    }
 }

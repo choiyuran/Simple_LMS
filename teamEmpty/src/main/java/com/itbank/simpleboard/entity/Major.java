@@ -32,10 +32,15 @@ public class Major {
     @JoinColumn(name = "college_idx")
     private College college;
 
+    // 폐지 여부
+    @Column(name = "major_abolition")
+    @Enumerated(EnumType.STRING)
+    private YesOrNo abolition;
+
     public Major(String name, Integer tuition, College college) {
         this.name = name;
         this.tuition = tuition;
         this.college = college;
+        this.abolition = YesOrNo.N;
     }
-
 }

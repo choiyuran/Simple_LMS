@@ -90,7 +90,7 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
 
-    public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom, YesOrNo visible) {
+    public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;
@@ -106,6 +106,6 @@ public class Lecture {
         this.plan = plan;
         this.major = major;
         this.lectureRoom = lectureRoom;
-        this.visible = visible;
+        this.visible = YesOrNo.N;
     }
 }

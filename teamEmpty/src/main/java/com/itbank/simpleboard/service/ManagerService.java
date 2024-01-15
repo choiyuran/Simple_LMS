@@ -5,6 +5,7 @@ import com.itbank.simpleboard.entity.Manager;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.YesOrNo;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
@@ -46,6 +47,7 @@ public class ManagerService {
         return collegeRepository.findAll();
     }
 
+    @Transactional
     public Major addMajor(MajorDto major) {
         College college = collegeRepository.findById(major.getCollege_idx()).get();
         Major major1 = new Major(major.getName(),major.getTuition(),college);
@@ -53,10 +55,25 @@ public class ManagerService {
     }
 
     public List<Major> selectAllMajor() {
-        return  majorRepository.findAll();
+        return  majorRepository.findByAbolition(YesOrNo.N);
     }
 
     public Major selectOne(Long idx) {
         return majorRepository.findById(idx).get();
+    }
+
+    @Transactional
+    public Major majorUpdate(MajorDto param) {
+        Major major = majorRepository.findById(param.getIdx()).get();
+        major.setName(param.getName());
+        major.setTuition(param.getTuition());
+        return major;
+    }
+
+    @Transactional
+    public Major majorDel(Long idx) {
+        Major major = majorRepository.findById(idx).get();
+        major.setAbolition(YesOrNo.Y);
+        return major;
     }
 }
