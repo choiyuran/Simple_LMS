@@ -94,4 +94,10 @@ public class HomeController {
     }
 
 
+
+    @GetMapping("/studentModify")
+    public String studentModify() {
+        return "student/studentModify";
+    }
+
 }
