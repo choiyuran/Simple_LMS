@@ -1,8 +1,8 @@
 package com.itbank.simpleboard.repository.professor;
 
-import com.itbank.simpleboard.dto.LectureDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
-import com.itbank.simpleboard.dto.QLectureDto;
+import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,9 +25,9 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<LectureDto> getLectureDtoList(LectureSearchCondition condition) {
+    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchCondition condition) {
         return queryFactory
-                .select(new QLectureDto(
+                .select(new QProfessorLectureDto(
                         lecture.name,
                         lecture.intro,
                         lecture.credit,

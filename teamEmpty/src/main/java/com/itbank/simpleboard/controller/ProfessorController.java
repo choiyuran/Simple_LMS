@@ -1,6 +1,6 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.LectureDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ public class ProfessorController {
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList1(Model model, LectureSearchCondition condition) {
         long startTime = System.currentTimeMillis();
-        List<LectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
+        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
 
         // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
         model.addAttribute("MajorList", lectureDtoList.stream()
-                .map(LectureDto::getMajor)
+                .map(ProfessorLectureDto::getMajor)
                 .distinct()
                 .collect(Collectors.toList()));
 

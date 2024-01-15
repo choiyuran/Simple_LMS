@@ -1,6 +1,6 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.dto.LectureDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 public class ProfessorService {
     private final ProfessorRepository professorRepository;
 
-    public List<LectureDto> getLectureDtoList(LectureSearchCondition condition) {
+    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchCondition condition) {
         return professorRepository.getLectureDtoList(condition);
     }
 
