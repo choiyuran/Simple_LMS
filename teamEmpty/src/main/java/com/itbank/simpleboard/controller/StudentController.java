@@ -42,9 +42,12 @@ public class StudentController {
         UserDTO dto = (UserDTO)session.getAttribute("user");
         List<LectureDto> dtos = lectureService.selectAll();
 
+        StudentDto student = studentService.findByUserIdx(dto.getIdx());
 
         if(dto != null && dto.getRole().toString().equals("학생")){
+
             mav.setViewName("student/enrollment");
+            mav.addObject("stuIdx", student.getIdx());
             mav.addObject("list",dtos);
         }
         return mav;
@@ -52,20 +55,17 @@ public class StudentController {
     
     // 수강 신청프로세스
     @PostMapping("/enroll")
-    public ModelAndView enrollPro(Long idx, HttpSession session, RedirectAttributes ra) {
+    public ModelAndView enrollPro(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("home");
         UserDTO userDto = (UserDTO)session.getAttribute("user");
-        System.out.println("userDto : "+ userDto.toString());
+
         Long userIdx = userDto.getIdx();
         if(userDto == null){
             // 로그인 안되어 있으면 로그인 화면으로 이거는 인터셉터에서 처리도 가능하다.
             mav.setViewName("redirect:/");
         }else if(userDto.getRole().toString().equals("학생")){
-            // 학생 서비스에서 학생을 받아서 수강신청 로직을 실행해야한다.
-            StudentDto studentDto = studentService.findByUserIdx(userIdx);
-            Long studentIdx = studentDto.getIdx();
 
-            Enrollment enrollment = enrollmentService.save(studentIdx, idx);
+            Enrollment enrollment = enrollmentService.save(stuIdx, idx);
 
             if(enrollment != null) {
                 ra.addFlashAttribute("msg","수강신청되었습니다.");
@@ -77,6 +77,15 @@ public class StudentController {
             mav.setViewName("redirect:/side");
         }
         return mav;
+    }
+
+    // 수강 취소
+    @PostMapping("/cancel")
+    public String cancel(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("user");
+//        취소
+//        enrollmentService.cancel(userDTO);
+        return "redirect:/lectures";
     }
 
 }
