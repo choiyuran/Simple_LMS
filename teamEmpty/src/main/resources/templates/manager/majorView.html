@@ -6,7 +6,7 @@
 <body>
 <header th:insert="layout/header :: header"> </header>
 <div class="container mt-3">
-    <form>
+    <form method="post">
         <table class="table table-bordered">
             <tr>
                 <th>학과명</th>
@@ -33,8 +33,8 @@
                 </td>
             </tr>
         </table>
+        <button class="btn btn-primary"><a th:href="@{/manager/majorUpdate/{idx}(idx=${major.idx})}">수정 완료</a></button>
     </form>
-    <button class="btn btn-primary"><a th:href="@{/manager/majorUpdate/{idx}(idx=${major.idx})}">수정 완료</a></button>
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 </body>

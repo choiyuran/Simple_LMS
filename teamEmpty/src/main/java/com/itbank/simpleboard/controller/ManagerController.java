@@ -69,6 +69,8 @@ public class ManagerController {
         return mav;
     }
 
-//    @GetMapping("/majorUpdate/{idx}")           // 학과 정보 수정
-
+//    @PostMapping("/majorUpdate/{idx}")           // 학과 정보 수정
+//    public String majorUpdate() {
+//
+//    }
 }
