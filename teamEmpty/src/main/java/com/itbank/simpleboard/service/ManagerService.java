@@ -6,10 +6,11 @@ import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.YesOrNo;
+import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.repository.academicCalendar.AcademicCalendarRepository;
+
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepositoryCustom;
 import lombok.RequiredArgsConstructor;
