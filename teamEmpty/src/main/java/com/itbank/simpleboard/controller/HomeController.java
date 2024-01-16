@@ -6,6 +6,7 @@ import com.itbank.simpleboard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 
@@ -75,7 +76,7 @@ public class HomeController {
     // 테스트용 학생 로그인
     @GetMapping("/logintest")
     public String loginTest(HttpSession session) {
-        User user = userRepository.findById(7L).get();
+        User user = userRepository.findById(4L).get();
         UserDTO userDTO = new UserDTO();
         userDTO.setUser_id(user.getUser_id());
         userDTO.setIdx(user.getIdx());
@@ -93,11 +94,10 @@ public class HomeController {
         return "home";
     }
 
-
-
     @GetMapping("/studentModify")
     public String studentModify() {
         return "student/studentModify";
     }
+
 
 }

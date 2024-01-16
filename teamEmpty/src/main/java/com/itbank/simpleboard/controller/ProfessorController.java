@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/professor")
 public class ProfessorController {
     private final ProfessorService professorService;
 

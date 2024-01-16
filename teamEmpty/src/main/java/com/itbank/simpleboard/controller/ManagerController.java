@@ -23,7 +23,7 @@ public class ManagerController {
 
     private final ManagerService managerService;
 
-    @GetMapping("/calendar")
+    @GetMapping("/calendar")                    // 학사 일정 조회
     public String calendar(Model model){
         List<AcademicCalendar> calendar = managerService.findAll();
         model.addAttribute("calendar", calendar);
@@ -94,4 +94,14 @@ public class ManagerController {
         Major major = managerService.majorDel(idx);
         return "redirect:/manager/majorList";
     }
+
+    @GetMapping("/lectureAdd")          // 강의 등록 페이지 이동
+    public String lectureAdd() {
+        return "manager/registerLecture";
+    }
+    
+//    @PostMapping("/lectureAdd")         // 강의 등록
+//    public String lectureAdd() {
+//        return "";
+//    }
 }

@@ -126,6 +126,9 @@
         </tbody>
     </table>
 
+    <button th:if="${session.user != 'null'}"><a href="/manager/lectureAdd">등록</a></button>
+<!--    <button th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>-->
+
     <script>
         function searchLectures() {
             var form = document.getElementById("LectureSearchForm");
@@ -138,7 +141,7 @@
 
             var formData = new FormData(form);
 
-            fetch('/lectureList/data', {
+            fetch('/professor/lectureList/data', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
