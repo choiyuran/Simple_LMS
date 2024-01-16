@@ -1,11 +1,10 @@
 package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchCondition;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.itbank.simpleboard.entity.QLecture;
 import com.itbank.simpleboard.entity.QLectureRoom;
 import com.itbank.simpleboard.entity.QMajor;
 import com.itbank.simpleboard.entity.QProfessor;
@@ -29,7 +28,45 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchCondition condition) {
+    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
+        return queryFactory
+                .select(new QProfessorLectureDto(
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        QUser.user.user_name,
+                        QMajor.major.name,
+                        QCollege.college.location,
+                        QLectureRoom.lectureRoom.room
+                ))
+                .from(lecture)
+                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .where(
+                        nameContain(condition.getName()),
+                        typeEq(condition.getType()),
+                        yearEq(condition.getYear()),
+                        semesterEq(condition.getSemester()),
+                        gradeEq(condition.getGrade()),
+                        professorContain(condition.getProfessor()),
+                        majorEq(condition.getMajor())
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<ProfessorLectureDto> getMyLectureDtoList(LectureSearchConditionDto condition, Long professorIdx) {
         return queryFactory
                 .select(new QProfessorLectureDto(
                         lecture.name,
@@ -62,10 +99,12 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         semesterEq(condition.getSemester()),
                         gradeEq(condition.getGrade()),
                         professorContain(condition.getProfessor()),
-                        majorEq(condition.getMajor())
+                        majorEq(condition.getMajor()),
+                        lecture.professor.professor_idx.eq(professorIdx)
                 )
                 .fetch();
     }
+
 
     private BooleanExpression nameContain(String name) {
         return StringUtils.hasText(name) ? lecture.name.contains(name) : null;

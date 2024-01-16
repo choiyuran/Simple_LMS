@@ -1,10 +1,12 @@
 package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchCondition;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 
 import java.util.List;
 
 public interface ProfessorRepositoryCustom {
-    List<ProfessorLectureDto> getLectureDtoList(LectureSearchCondition condition);
+    List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition);
+
+    List<ProfessorLectureDto> getMyLectureDtoList(LectureSearchConditionDto condition, Long professorIdx);
 }

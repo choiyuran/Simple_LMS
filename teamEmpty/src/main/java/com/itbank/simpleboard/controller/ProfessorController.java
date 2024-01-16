@@ -1,7 +1,8 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchCondition;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -9,18 +10,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("professor")
 public class ProfessorController {
     private final ProfessorService professorService;
 
     @GetMapping("/lectureList") // 강의 목록
-    public String lectureList(Model model, LectureSearchCondition condition) {
+    public String lectureList(Model model, LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
+        // LectureDtoList를 Model에 추가
+        model.addAttribute("LectureList", lectureDtoList);
 
         // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
         model.addAttribute("MajorList", lectureDtoList.stream()
@@ -34,8 +41,13 @@ public class ProfessorController {
                 .sorted()
                 .collect(Collectors.toList()));
 
-        // LectureDtoList를 Model에 추가
-        model.addAttribute("LectureList", lectureDtoList);
+        int currentYear = LocalDate.now().getYear();
+        List<Integer> yearList = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            int year = currentYear - i;
+            yearList.add(year);
+        }
+        model.addAttribute("YearList", yearList);
 
         long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
@@ -46,7 +58,7 @@ public class ProfessorController {
 
     @ResponseBody
     @PutMapping("/lectureList/data")
-    public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchCondition condition) {
+    public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
         long endTime = System.currentTimeMillis();
@@ -56,5 +68,17 @@ public class ProfessorController {
         return ResponseEntity.ok()
                 .header("Content-Type", "application/json")
                 .body(lectureDtoList);
+    }
+
+    @GetMapping("/myLecture")
+    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition) {
+        if (session.getAttribute("professor") == null) {
+            return "redirect:/home";
+        }
+        ProfessorDto professor = (ProfessorDto) session.getAttribute("professor");
+        List<ProfessorLectureDto> myLectureDtoList = professorService.getMyLectureDtoList(condition, professor.getProfessor_idx());
+        model.addAttribute("MyList", myLectureDtoList);
+
+        return "professor/myLecture";
     }
 }
