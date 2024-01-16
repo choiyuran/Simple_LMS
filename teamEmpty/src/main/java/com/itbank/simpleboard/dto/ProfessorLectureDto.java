@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 
 @Data
-public class LectureListDto {
+public class ProfessorLectureDto {
     private String name;
     private String intro;
     private Integer credit;
@@ -17,19 +17,14 @@ public class LectureListDto {
     private String semester;
     private Integer grade;
 
-    private Long professor;
+    private String professor_name;
     private String plan;
-    private Long major;
-    private Long lectureRoom;
-    private String visible;
+    private String major;
+    private String location;
+    private Integer lectureRoom;
 
     @QueryProjection
-    public LectureListDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade) {
-        this(name, intro, credit, day, start, end, type, maxCount, currentCount, semester, grade, 0L, null, 0L, 0L, null);
-    }
-
-    @QueryProjection
-    public LectureListDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor, String plan, Long major, Long lectureRoom, String visible) {
+    public ProfessorLectureDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;
@@ -41,10 +36,10 @@ public class LectureListDto {
         this.currentCount = currentCount;
         this.semester = semester;
         this.grade = grade;
-        this.professor = professor;
+        this.professor_name = professor_name;
         this.plan = plan;
         this.major = major;
+        this.location = location;
         this.lectureRoom = lectureRoom;
-        this.visible = visible;
     }
 }
