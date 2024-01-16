@@ -41,7 +41,7 @@ public class ManagerController {
     @PostMapping("/managerList")    // 교직원 명단 검색 조회
     public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue){
         ModelAndView mav = new ModelAndView("manager/managerList");
-        List<ManagerDTO> managerList = managerService.findAllManager();
+        List<ManagerDTO> managerList = managerService.searchManager(searchType,searchValue);
         mav.addObject("managerList",managerList);
         return mav;
     }

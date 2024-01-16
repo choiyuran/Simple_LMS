@@ -11,6 +11,7 @@ import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.repository.academicCalendar.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
+import com.itbank.simpleboard.repository.manager.ManagerRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,15 +37,21 @@ public class ManagerService {
         for(Manager m : managerList){
             ManagerDTO dto = new ManagerDTO();
             dto.setManagerImg(m.getManager_img());
-            dto.setMamagerId(m.getUser().getUser_id());
-            dto.setMamagerName(m.getUser().getUser_name());
-            dto.setMamagerPnum(m.getUser().getPnum());
+            dto.setManagerId(m.getUser().getUser_id());
+            dto.setManagerName(m.getUser().getUser_name());
+            dto.setManagerPnum(m.getUser().getPnum());
             dto.setManagerEmail(m.getUser().getEmail());
             dto.setManagerHireDate(m.getHireDate());
             managerDTOList.add(dto);
         }
 
         return managerDTOList;
+    }
+
+    public List<ManagerDTO> searchManager(String searchType, String searchValue) {
+        List<ManagerDTO> searchManagerList = managerRepository.findBySearchType(searchType,searchValue);
+
+        return searchManagerList;
     }
 
     public List<College> selectAllCollege() {
@@ -84,4 +91,6 @@ public class ManagerService {
     public List<AcademicCalendar> findAll() {
         return academicCalendarRepository.findAll();
     }
+
+
 }

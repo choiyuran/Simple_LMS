@@ -3,6 +3,7 @@ package com.itbank.simpleboard.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,9 +42,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private User_role role;
 
-    public User(String user_id, String user_pw, String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
-        this.user_id = user_id;
-        this.user_pw = user_pw;
+    @Column(name = "authority")
+    @Enumerated(EnumType.STRING)
+    private YesOrNo authority;  // 계정 권한
+
+
+    public User(String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
+        this.user_id = randomId();
+        this.user_pw = security.substring(security.length()-7);
         this.salt = salt;
         this.user_name = user_name;
         this.security = security;
@@ -51,5 +57,13 @@ public class User {
         this.pnum = pnum;
         this.email = email;
         this.role = role;
+        this.authority =  YesOrNo.Y;;
+    }
+
+
+
+    private String randomId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString().substring(0,8);
     }
 }
