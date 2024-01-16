@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+.calendar-title {
+    display: inline-block;
+    height: 30px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 50px;
+    font-weight: 600;
+    line-height: 30px;
+    letter-spacing: 0;
+    vertical-align: middle;
+    color: #3364c4;
+    margin-left: 30px;
+}
+
+.calendar-title .upper .current-page {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.ly-section.calendar {
+    padding: 20px;
+}
+
+.this-year {
+    margin-left: 30px;
+    border-bottom: 1px solid black;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.month {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.work {
+    padding: 10px;
+}
+
+.work:last-child {
+    border-bottom: none;
+}
+
+.tip-box {
+    background-color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+.tip {
+    font-size: 14px;
+    color: #666;
+}
+.calendar .ly-container .ly-inner .calendar-wrap .work-wrap .month {
+    width: 240px;
+    padding: 50px 0px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.work-wrap {
+    display: flex;
+    border-bottom: 1px solid #dadada;
+}
+
+.work-content {
+    width: 50%;
+}
+
+.work{
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+}
