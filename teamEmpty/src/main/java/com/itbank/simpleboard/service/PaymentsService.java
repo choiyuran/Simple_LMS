@@ -1,6 +1,5 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.repository.LectureRepository;
 import com.itbank.simpleboard.repository.PaymentsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
