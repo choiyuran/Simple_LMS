@@ -1,20 +1,25 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
+import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ProfessorService {
-
     private final ProfessorRepository professorRepository;
 
+    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchCondition condition) {
+        return professorRepository.getLectureDtoList(condition);
+    }
 
+    public List<String> findAllMajorNames() {
+        return professorRepository.findAllMajorNames();
+    }
 }

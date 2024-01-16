@@ -29,12 +29,18 @@ public class Major {
 
     // 단과대학
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "colleage_idx")
+    @JoinColumn(name = "college_idx")
     private College college;
+
+    // 폐지 여부
+    @Column(name = "major_abolition")
+    @Enumerated(EnumType.STRING)
+    private YesOrNo abolition;
 
     public Major(String name, Integer tuition, College college) {
         this.name = name;
         this.tuition = tuition;
         this.college = college;
+        this.abolition = YesOrNo.N;
     }
 }
