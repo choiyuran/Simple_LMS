@@ -9,64 +9,66 @@
     <h2>내 정보 수정</h2>
     <hr>
 
-    <div class="w-50 m-auto">
-        <div class="input-group input-group-sm mb-3" style="width: 70%;">
-            <span class="input-group-text" style="width: 20%;">이름</span>
-            <input type="text" class="form-control">
-        </div>
-
-        <div class="input-group input-group-sm mb-3" style="width: 70%;">
-            <span class="input-group-text" style="width: 20%;">학번</span>
-            <input type="text" class="form-control">
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-6 mb-3 mb-sm-0">
-                <input type="password" class="form-control form-control-user"
-                       id="exampleInputPassword" placeholder="패스워드" required>
-            </div>
-            <div class="col-sm-6">
-                <input type="password" class="form-control form-control-user"
-                       id="exampleRepeatPassword" placeholder="패스워드 확인" required>
-            </div>
-        </div>
-
-        <div class="input-group input-group-sm mb-3" style="width: 70%;">
-            <span class="input-group-text" style="width: 20%;">주소</span>
-            <input type="text" class="form-control">
-        </div>
-
-        <div class="form-group">
-            <input type="text" class="form-control form-control-user" id="phonenumber"
-                   placeholder="전화번호" required>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-8 mb-3 mb-sm-0">
-                <input type="email" class="form-control form-control-user"
-                       id="exampleInputEmail" placeholder="Email" required>
-            </div>
-            <div class="col-sm-4">
-                <button type="button" class="btn btn-primary btn-user btn-block"
-                        id="email_validation" disabled>인증하기</button>
-            </div>
-        </div>
-
-        <div class="form-group row" id="verificationField" style="display: none;">
-            <div class="col-sm-8 mb-3 mb-sm-0">
-                <input type="text" class="form-control form-control-user" id="verificationCode"
-                       placeholder="인증번호" required>
-            </div>
-            <div class="col-sm-4">
-                <button type="button" class="btn btn-primary btn-user btn-block">인증확인</button>
-            </div>
-        </div>
-
+    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${user.idx})}">
         <div class="w-50 m-auto">
-            <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">확인</button>
-            <button type="button" class="btn btn-outline-secondary">취소</button>
+            <div class="input-group input-group-sm mb-3" style="width: 70%;">
+                <span class="input-group-text" style="width: 20%;">이름</span>
+                <input type="text" class="form-control" th:value="${user.user_name}">
+            </div>
+
+            <div class="input-group input-group-sm mb-3" style="width: 70%;">
+                <span class="input-group-text" style="width: 20%;">학번</span>
+                <input type="text" class="form-control" th:value="${user.}">
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <input type="password" class="form-control form-control-user"
+                           id="exampleInputPassword" placeholder="패스워드" required>
+                </div>
+                <div class="col-sm-6">
+                    <input type="password" class="form-control form-control-user"
+                           id="exampleRepeatPassword" placeholder="패스워드 확인" required>
+                </div>
+            </div>
+
+            <div class="input-group input-group-sm mb-3" style="width: 70%;">
+                <span class="input-group-text" style="width: 20%;">주소</span>
+                <input type="text" class="form-control" th:value="${user.}">
+            </div>
+
+            <div class="form-group">
+                <input type="text" class="form-control form-control-user" id="phonenumber"
+                       placeholder="전화번호" th:value="${user.pnum}" required>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-8 mb-3 mb-sm-0">
+                    <input type="email" class="form-control form-control-user"
+                           id="exampleInputEmail" placeholder="Email" required>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-primary btn-user btn-block"
+                            id="email_validation" disabled>인증하기</button>
+                </div>
+            </div>
+
+            <div class="form-group row" id="verificationField" style="display: none;">
+                <div class="col-sm-8 mb-3 mb-sm-0">
+                    <input type="text" class="form-control form-control-user" id="verificationCode"
+                           placeholder="인증번호" required>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-primary btn-user btn-block">인증확인</button>
+                </div>
+            </div>
+
+            <div class="w-50 m-auto">
+                <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">수정</button>
+                <button type="button" class="btn btn-outline-secondary">취소</button>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 
