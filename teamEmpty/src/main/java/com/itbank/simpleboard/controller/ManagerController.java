@@ -4,21 +4,31 @@ import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.ManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+
 
 @Controller
+@RequiredArgsConstructor
 @RequestMapping("/manager")
 public class ManagerController {
 
-    @Autowired
-    private ManagerService managerService;
+    private final ManagerService managerService;
+
+    @GetMapping("/calendar")
+    public String calendar(Model model){
+        List<AcademicCalendar> calendar = managerService.findAll();
+        model.addAttribute("calendar", calendar);
+        return "common/calendar";
+    }
 
 
     @GetMapping("/managerList") // 교직원 명단 조회

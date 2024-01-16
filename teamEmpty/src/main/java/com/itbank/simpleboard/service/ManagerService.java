@@ -8,8 +8,11 @@ import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.YesOrNo;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
+import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.repository.academicCalendar.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,7 @@ public class ManagerService {
     private final ManagerRepository managerRepository;
     private final CollegeRepository collegeRepository;
     private final MajorRepository majorRepository;
+    private final AcademicCalendarRepository academicCalendarRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -75,5 +79,9 @@ public class ManagerService {
         Major major = majorRepository.findById(idx).get();
         major.setAbolition(YesOrNo.Y);
         return major;
+    }
+
+    public List<AcademicCalendar> findAll() {
+        return academicCalendarRepository.findAll();
     }
 }
