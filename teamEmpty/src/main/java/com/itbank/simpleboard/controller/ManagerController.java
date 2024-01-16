@@ -46,6 +46,26 @@ public class ManagerController {
         return mav;
     }
 
+    @PostMapping("/addmanager")   // 교직원 등록
+    public ModelAndView addManager(@RequestParam("studentId") String studentId) {
+        ModelAndView mav = new ModelAndView("manager/register");
+        mav.addObject("msg", "교직원등록");
+        return mav;
+    }
+    @PostMapping("/addstudent")   // 학생 등록
+    public ModelAndView addStudent(@RequestParam("studentId") String studentId) {
+        ModelAndView mav = new ModelAndView("manager/register");
+        mav.addObject("msg", "학생등록");
+        return mav;
+    }
+    @PostMapping("/addprofessor")   // 교수 등록
+    public ModelAndView addProfessor(@RequestParam("professorId") String professorId) {
+        ModelAndView mav = new ModelAndView("manager/register");
+        mav.addObject("msg", "교수등록");
+        return mav;
+    }
+
+
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
         ModelAndView mav = new ModelAndView("manager/registerMajor");

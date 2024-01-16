@@ -4,6 +4,7 @@
 
 <body class="bg-gradient-success">
     <header th:insert = "layout/header :: header" ></header>
+
     <div class="container">
 
         <div class="card o-hidden border-0 shadow-lg my-5">
@@ -16,7 +17,7 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">등록하기</h1>
                             </div>
-                            <form class="user" method="post">
+                            <form class="userForm" enctype="multipart/form-data" >
                                 <div class="form-group row">
                                     <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
                                         <label><input type="radio" name="userType" value="student"
@@ -31,7 +32,39 @@
 <!--                                    <input type="text" class="form-control form-control-user" id="studentId"-->
 <!--                                        placeholder="학번" name="studentId" required>-->
 <!--                                </div>-->
-                                <div class="form-group row">
+                                <div class="form-group row"> <!--class="form-group row"--><!--&gt;-->
+                                    <div class="col-lg-6">
+
+                                        <div class=" form-group text-center">
+                                            <div id="imageContainer" style="width: 100px; height: 130px; border: 1px solid rgb(128,128,128); margin: 0 auto" >
+
+                                                <img src="img/idPhoto.png" style="max-height: 100%; max-height: 100%;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group" style="margin: 0 auto">
+                                            <input type="file" class="form-control form-control-user" id="imageFile" accept="image/*"
+                                                   onchange="previewImage(this)">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                                   placeholder="성">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control form-control-user" id="exampleLastName"
+                                                   placeholder="이름">
+                                        </div>
+                                        <div class="form-group">
+
+                                            <input type="email" class="form-control form-control-user"
+                                                   id="exampleInputEmail" placeholder="Email" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!--<div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="text" class="form-control form-control-user" id="exampleFirstName"
                                             placeholder="성">
@@ -40,7 +73,7 @@
                                         <input type="text" class="form-control form-control-user" id="exampleLastName"
                                             placeholder="이름">
                                     </div>
-                                </div>
+                                </div>-->
 
                                 <div class="form-group">
                                     <input type="text" class="form-control form-control-user" id="exampleInputUserid"
@@ -58,10 +91,10 @@
 <!--                                    <span id="passwordHelp" class="col-sm-12  form-text mx-3"></span>-->
 <!--                                    <span id="passwordConfirmHelp" class="col-sm-12 form-text mx-3"></span>-->
 <!--                                </div>-->
-                                <div class="form-group row">
+                                <div class="form-group">
+                                    <!--<input type="email" class="form-control form-control-user"
+                                           id="exampleInputEmail" placeholder="Email" required>-->
                                     <div class="col-sm-8 mb-3 mb-sm-0">
-                                        <input type="email" class="form-control form-control-user"
-                                            id="exampleInputEmail" placeholder="Email" required>
                                     </div>
 <!--                                    <div class="col-sm-4">-->
 <!--                                        <button type="button" class="btn btn-primary btn-user btn-block"-->
@@ -131,43 +164,43 @@
                 const passwordHelp = document.getElementById('passwordHelp');
                 const passwordConfirmHelp = document.getElementById('passwordConfirmHelp');
 
-            // function validateEmail(email) {
-            //     var re = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
-            //     return re.test(String(email).toLowerCase());
-            // }
-            //
-            // function validatePassword(password) {
-            //     var re = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-z0-9!@#$%^&*]{8,}$/;
-            //     return re.test(String(password));
-            // }
+            function validateEmail(email) {
+                var re = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+                return re.test(String(email).toLowerCase());
+            }
 
-            // passwordInput.addEventListener('input', function () {
-            //     if (!validatePassword(passwordInput.value)) {
-            //         passwordHelp.innerHTML = "총 8자 이상 숫자, 소문자, 특수문자를 각각 하나 이상 ";
-            //         passwordHelp.style.color = "red";
+            function validatePassword(password) {
+                var re = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-z0-9!@#$%^&*]{8,}$/;
+                return re.test(String(password));
+            }
+
+            passwordInput.addEventListener('input', function () {
+                if (!validatePassword(passwordInput.value)) {
+                    passwordHelp.innerHTML = "총 8자 이상 숫자, 소문자, 특수문자를 각각 하나 이상 ";
+                    passwordHelp.style.color = "red";
+                } else {
+                    passwordHelp.innerHTML = "";
+                }
+            });
+
+            // repeatPasswordInput.addEventListener('input', function () {
+            //     if (passwordInput.value !== repeatPasswordInput.value) {
+            //         passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
+            //         passwordConfirmHelp.style.color = "red";
             //     } else {
-            //         passwordHelp.innerHTML = "";
+            //         passwordConfirmHelp.classList.add('text-primary');
+            //         passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
             //     }
             // });
-        //
-        //     repeatPasswordInput.addEventListener('input', function () {
-        //         if (passwordInput.value !== repeatPasswordInput.value) {
-        //             passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
-        //             passwordConfirmHelp.style.color = "red";
-        //         } else {
-        //             passwordConfirmHelp.classList.add('text-primary');
-        //             passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
-        //         }
-        //     });
-        //
-        //     emailInput.addEventListener('input', function () {
-        //         if (validateEmail(emailInput.value)) {
-        //             validationButton.disabled = false;
-        //         } else {
-        //             validationButton.disabled = true;
-        //         }
-        //     });
-        // }
+
+            emailInput.addEventListener('input', function () {
+                if (validateEmail(emailInput.value)) {
+                    validationButton.disabled = false;
+                } else {
+                    validationButton.disabled = true;
+                }
+            });
+        }
 
         $("#frontsecurity, #backsecurity").on("input", function () {
             var inputVal = $(this).val();
@@ -214,19 +247,43 @@
         // });
 
         function changeForm(userType) {
-            const idField = document.getElementById('idField');
+            // const idField = document.getElementById('idField');
             const form = document.querySelector(".user");
-            if (userType == 'student') {
-                idField.innerHTML = '<input type="text" class="form-control form-control-user" id="studentId" placeholder="학번" name="studentId" required>';
-                form.action = "/manager/addstudent";
-            } else if (userType == 'professor') {
-                idField.innerHTML = '<input type="text" class="form-control form-control-user" id="professorId" placeholder="교수번호" name="professorId" required>';
-                form.action = "/manager/addprofessor";
-            } else if (userType == 'manager') {
-                idField.innerHTML = '<input type="text" class="form-control form-control-user" id="managerId" placeholder="교직원사원번호" name="managerId" required>';
-                form.action = "/manager/addmanager";
+            let url;
+            if (userType === 'student') {
+                // idField.innerHTML = '<input type="text" class="form-control form-control-user" id="studentId" placeholder="학번" name="studentId" required>';
+                url = form.action = "/manager/addstudent";
+            } else if (userType === 'professor') {
+                // idField.innerHTML = '<input type="text" class="form-control form-control-user" id="professorId" placeholder="교수번호" name="professorId" required>';
+                url = form.action = "/manager/addprofessor";
+            } else if (userType === 'manager') {
+                // idField.innerHTML = '<input type="text" class="form-control form-control-user" id="managerId" placeholder="교직원사원번호" name="managerId" required>';
+                url = form.action = "/manager/addmanager";
             }
+            // 주민등록번호 뒷자리 input 요소에 autocomplete 속성 추가
+            const backsecurityInput = document.getElementById('backsecurity');
+            backsecurityInput.setAttribute('autocomplete', 'current-password');
+
+            // window.onload 이벤트 리스너에서 addEventListener 호출 수정
+            window.onload = function() {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            alert(response.message); // 결과 메시지를 alert 창으로 표시
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(error); // 에러가 발생한 경우 콘솔에 출력
+                        }
+                    });
+                });
+            };
         }
+
+
     </script>
 
 </body>
