@@ -5,7 +5,6 @@ import com.itbank.simpleboard.dto.LectureSearchCondition;
 import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.itbank.simpleboard.dto.QLectureListDto;
 import com.itbank.simpleboard.entity.QLecture;
 import com.itbank.simpleboard.entity.QLectureRoom;
 import com.itbank.simpleboard.entity.QMajor;

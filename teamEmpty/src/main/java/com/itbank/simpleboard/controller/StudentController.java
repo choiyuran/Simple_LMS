@@ -1,7 +1,6 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.LectureDto;
-import com.itbank.simpleboard.dto.LectureListDto;
 import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.*;
