@@ -5,6 +5,7 @@ import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("professor")
+@Slf4j
 public class ProfessorController {
     private final ProfessorService professorService;
 
@@ -50,9 +52,7 @@ public class ProfessorController {
         model.addAttribute("YearList", yearList);
 
         long endTime = System.currentTimeMillis();
-        long elapsedTime = endTime - startTime;
-
-        System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
+        log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/lectureList";
     }
 
@@ -62,9 +62,7 @@ public class ProfessorController {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
         long endTime = System.currentTimeMillis();
-        long elapsedTime = endTime - startTime;
-
-        System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
+        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
         return ResponseEntity.ok()
                 .header("Content-Type", "application/json")
                 .body(lectureDtoList);
@@ -75,11 +73,29 @@ public class ProfessorController {
         if (session.getAttribute("professor") == null) {
             return "redirect:/home";
         }
-        ProfessorDto professor = (ProfessorDto) session.getAttribute("professor");
-        condition.setProfessor_idx(professor.getProfessor_idx());
+        long startTime = System.currentTimeMillis();
+
+        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
         List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
         model.addAttribute("MyList", myLectureDtoList);
 
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/myLecture";
+    }
+
+    @ResponseBody
+    @PutMapping("/myLecture/data")
+    public ResponseEntity<List<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
+        long startTime = System.currentTimeMillis();
+
+        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
+        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
+
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(lectureDtoList);
     }
 }
