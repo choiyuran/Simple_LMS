@@ -29,154 +29,28 @@
                 </div>
                 <!-- 달력 랩 -->
                 <div class="calendar-wrap">
+                    <!-- 각 월에 대한 루프-->
+                    <div th:each="calendarEntry : ${calendarByMonth}">
                     <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">1월</span>
-                        </Div>
-                        <div class="work-content">
-                                <p class="day">1일</p>
-                                <p class="desc"></p>
-                            </div>
-                            <div class="work">
-                                <p class="day">1일</p>
-                                <p class="desc">222</p>
-                            </div>
-                            <div class="work">
-                                <p class="day">1일</p>
-                                <p class="desc">222</p>
-                            </div>
-                            <div class="work">
-                                <p class="day">1일</p>
-                                <p class="desc">222</p>
-                            </div>
-                            <div class="work">
-                                <p class="day">1일</p>
-                                <p class="desc">222</p>
+                            <div class="month">
+                                <!-- 월 표시 -->
+                                <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>
                             </div>
 
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">2월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
+                            <div class="work-content">
+                                <div th:each="cal : ${calendarEntry.value}">
+                                    <div class="work">
+                                        <!-- 일자 -->
+                                        <div>
+                                            <p class="day" th:text="${#calendars.format(cal.start_date, 'dd')}"> ~ </p>
+                                            <p class="day" th:text="${#calendars.format(cal.end_date, 'dd')}"></p>
+                                        </div>
+                                        <!-- 내용 -->
+                                        <p class="desc" th:text="${cal.title}"></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">3월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">4월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">5월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">6월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">7월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">8월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">9월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">10월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">11월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="work-wrap">
-                        <Div class="month">
-                            <span class="month-text">12월</span>
-                        </Div>
-                        <div class="work-content">
-                            <div class="work">
-                                <p class="day">11</p>
-                                <p class="desc">222</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
                 <div class="tip-box">
                     <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
