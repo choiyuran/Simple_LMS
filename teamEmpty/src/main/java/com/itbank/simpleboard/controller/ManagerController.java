@@ -7,6 +7,7 @@ import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/manager")
+@Slf4j
 public class ManagerController {
 
     private final ManagerService managerService;
@@ -47,22 +49,19 @@ public class ManagerController {
     }
 
     @PostMapping("/addmanager")   // 교직원 등록
-    public ModelAndView addManager(@RequestParam("studentId") String studentId) {
-        ModelAndView mav = new ModelAndView("manager/register");
-        mav.addObject("msg", "교직원등록");
-        return mav;
+    public String addManager() {
+        log.info("교직원등록");
+        return "common/register";
     }
     @PostMapping("/addstudent")   // 학생 등록
-    public ModelAndView addStudent(@RequestParam("studentId") String studentId) {
-        ModelAndView mav = new ModelAndView("manager/register");
-        mav.addObject("msg", "학생등록");
-        return mav;
+    public String addStudent() {
+        log.info("학생등록");
+        return "common/register";
     }
     @PostMapping("/addprofessor")   // 교수 등록
-    public ModelAndView addProfessor(@RequestParam("professorId") String professorId) {
-        ModelAndView mav = new ModelAndView("manager/register");
-        mav.addObject("msg", "교수등록");
-        return mav;
+    public String addProfessor() {
+        log.info("교수등록");
+        return "common/register";
     }
 
 
