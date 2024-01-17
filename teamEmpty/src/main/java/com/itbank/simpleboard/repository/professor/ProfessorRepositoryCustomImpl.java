@@ -4,6 +4,7 @@ import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.itbank.simpleboard.entity.QLectureRoom;
 import com.itbank.simpleboard.entity.QMajor;
@@ -43,44 +44,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         lecture.semester,
                         lecture.grade,
                         QUser.user.user_name,
-                        QMajor.major.name,
-                        QCollege.college.location,
-                        QLectureRoom.lectureRoom.room
-                ))
-                .from(lecture)
-                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
-                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .innerJoin(lecture.major, QMajor.major)
-                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
-                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
-                .where(
-                        nameContain(condition.getName()),
-                        typeEq(condition.getType()),
-                        yearEq(condition.getYear()),
-                        semesterEq(condition.getSemester()),
-                        gradeEq(condition.getGrade()),
-                        professorContain(condition.getProfessor()),
-                        majorEq(condition.getMajor())
-                )
-                .fetch();
-    }
-
-    @Override
-    public List<ProfessorLectureDto> getMyLectureDtoList(LectureSearchConditionDto condition, Long professorIdx) {
-        return queryFactory
-                .select(new QProfessorLectureDto(
-                        lecture.name,
-                        lecture.intro,
-                        lecture.credit,
-                        lecture.day,
-                        lecture.start,
-                        lecture.end,
-                        lecture.type.stringValue(),
-                        lecture.maxCount,
-                        lecture.currentCount,
-                        lecture.semester,
-                        lecture.grade,
-                        QUser.user.user_name,
                         lecture.plan,
                         QMajor.major.name,
                         QCollege.college.location,
@@ -100,7 +63,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         gradeEq(condition.getGrade()),
                         professorContain(condition.getProfessor()),
                         majorEq(condition.getMajor()),
-                        lecture.professor.professor_idx.eq(professorIdx)
+                        professor_idxEq(condition.getProfessor_idx())
                 )
                 .fetch();
     }
@@ -132,5 +95,9 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     private BooleanExpression majorEq(String major) {
         return StringUtils.hasText(major) ? QMajor.major.name.eq(major) : null;
+    }
+
+    private BooleanExpression professor_idxEq(Long professorIdx) {
+        return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
     }
 }

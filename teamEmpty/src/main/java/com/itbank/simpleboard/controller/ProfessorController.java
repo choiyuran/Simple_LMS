@@ -76,7 +76,8 @@ public class ProfessorController {
             return "redirect:/home";
         }
         ProfessorDto professor = (ProfessorDto) session.getAttribute("professor");
-        List<ProfessorLectureDto> myLectureDtoList = professorService.getMyLectureDtoList(condition, professor.getProfessor_idx());
+        condition.setProfessor_idx(professor.getProfessor_idx());
+        List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
         model.addAttribute("MyList", myLectureDtoList);
 
         return "professor/myLecture";

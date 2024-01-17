@@ -11,6 +11,7 @@ public class LectureSearchConditionDto {
     private Integer year;
     private Integer semester;
     private Integer grade;
-    private String professor; // "내 강의 보기"를 누르면 현재 로그인 된 교수 계정의 idx가 넘어가게
+    private Long professor_idx;
+    private String professor;
     private String major;
 }
