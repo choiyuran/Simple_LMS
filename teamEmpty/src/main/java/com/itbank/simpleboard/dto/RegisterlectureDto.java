@@ -16,7 +16,7 @@ public class RegisterlectureDto {
     private String name;
     private String intro;
     private Integer credit;
-    private String day;
+    private String[] day;
     private String[] start;
     private String[] end;
     private Lecture_Type type;
@@ -29,8 +29,8 @@ public class RegisterlectureDto {
     private Long lectureRoom_idx;
     private YesOrNo visible;
     private String plan;
-    
-    public RegisterlectureDto(String name, String intro, Integer credit, String day, String[] start, String[] end, Lecture_Type type, Integer max_count, Integer current_count, String semester, Integer grade, Long professor_idx, Long major_idx, Long lectureRoom_idx, YesOrNo visible, String plan) {
+
+    public RegisterlectureDto(String name, String intro, Integer credit, String[] day, String[] start, String[] end, Lecture_Type type, Integer max_count, Integer current_count, String semester, Integer grade, Long professor_idx, Long major_idx, Long lectureRoom_idx, YesOrNo visible, String plan) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;

@@ -9,6 +9,24 @@
 
 <form method="post">
   <div class="w-50 m-auto">
+      <div class="input-group input-group-sm mb-3 w-100">
+          <span class="input-group-text" style="width: 20%;">학과</span>
+          <select class="form-control" id="major_idx" name="major_idx">
+              <option th:each="major : ${majorList}"
+                      th:text="${major.name}"
+                      th:value="${major.idx}"
+                      th:data-college="${major.college.idx}">
+              </option>
+          </select>
+      </div>
+
+      <div class="input-group input-group-sm mb-3 w-100">
+          <span class="input-group-text" style="width: 20%;">강의실</span>
+          <select class="form-control" id="lectureroom_idx" name="lectureroom_idx">
+              <!-- 강의실 목록이 여기에 채워집니다 -->
+          </select>
+      </div>
+
         <div class="input-group input-group-sm mb-3 w-100">
             <span class="input-group-text" style="width: 20%;">강의명</span>
             <input type="text" class="form-control" name="name">
@@ -54,7 +72,7 @@
           </div>
       </div>
 
-      <div id="timeDiv" class="mb-5"></div>
+      <div id="timeDiv" class="mb-4"></div>
 
       <div class="input-group input-group-sm mb-3 w-100">
           <span class="input-group-text" style="width: 20%;">강의 타입</span>
@@ -89,7 +107,7 @@
         </div>
 
         <div class="w-50 m-auto text-center">
-            <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
+            <button class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
             <button type="button" class="btn btn-outline-secondary">취소</button>
         </div>
     </div>
@@ -178,5 +196,39 @@
         updateTimes();
     };
 </script>
+
+<!--단과 대학을 선택함에 따라서 강의실 번호를 띄워줌-->
+<script>
+    $(document).ready(function() {
+        $('#major_idx').change(function() {
+            var collegeIdx = $('option:selected', this).data('college');
+
+            // 강의실 목록을 초기화합니다
+            $('#lectureroom_idx').empty();
+
+            // Ajax 요청을 보냅니다
+            $.ajax({
+                url: '/manager/getLecturerooms', // 강의실 목록을 가져오는 API 주소를 입력하세요
+                type: 'GET',
+                data: {
+                    'college_idx': collegeIdx
+                },
+                success: function(data) {
+                    // API에서 반환한 데이터를 사용하여 강의실 목록을 채웁니다
+                    $.each(data, function(index, lectureroom) {
+                        $('#lectureroom_idx').append($('<option>', {
+                            value: lectureroom.idx,
+                            text: lectureroom.idx,
+                        }));
+                    });
+                },
+                error: function(request, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        });
+    });
+</script>
+
 </body>
 </html>
