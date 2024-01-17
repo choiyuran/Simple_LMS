@@ -18,7 +18,7 @@
                 </select>
             </label>
             <label>강의 타입 :
-                <select name="type">
+                <select name="type" th:default="'강의 형태'">
                     <option th:text="'강의 형태'" value=""></option>
                     <option th:text="'전공 필수'" th:value="전공필수"></option>
                     <option th:text="'전공 선택'" th:value="전공선택"></option>
@@ -29,6 +29,7 @@
             <label>기간 :
                 <select name="year">
                     <option th:text="년도" value=""></option>
+                    <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"></option>
                 </select>
                 <select name="semester">
                     <option th:text="학기" value=""></option>
@@ -45,8 +46,8 @@
             <label>담당 교수 :
                 <input type="text" name="professor">
             </label>
-<!--            <input type="submit" th:value="검색">-->
             <button type="button" onclick="searchLectures()">검색</button>
+            <input type="reset" value="초기화" onclick="resetAndSearch()">
         </form>
     </div>
     <table class="table table-bordered">
@@ -138,7 +139,7 @@
 
             var formData = new FormData(form);
 
-            fetch('/lectureList/data', {
+            fetch('/professor/lectureList/data', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -194,6 +195,11 @@
             div.textContent = text;
             td.appendChild(div);
             parent.appendChild(td);
+        }
+
+        function resetAndSearch() {
+            document.getElementById("LectureSearchForm").reset();
+            searchLectures();
         }
     </script>
 </main>

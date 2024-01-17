@@ -27,12 +27,10 @@ public class StudentService {
             realUser = user.get();
         }
 
-        System.err.println("realUser : " + realUser);
 
         Optional<Student> student = studentRepository.findByUser(realUser);
         Student realStudent = null;
 
-        System.err.println(student.get());
 
         if(student.isPresent()){
             realStudent = student.get();
@@ -45,7 +43,6 @@ public class StudentService {
             dto.setEnteranceDate(realStudent.getEnteranceDate());
         }
 
-        System.out.println(dto);
         return dto;
     }
 

@@ -1,11 +1,15 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.UserRepository;
+import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +25,7 @@ import java.util.List;
 public class HomeController {
 
     private final UserRepository userRepository;
+    private final ProfessorRepository professorRepository;
 
     @GetMapping("/")
     public String root() {
@@ -82,7 +87,7 @@ public class HomeController {
     // 테스트용 학생 로그인
     @GetMapping("/logintest")
     public String loginTest(HttpSession session) {
-        User user = userRepository.findById(7L).get();
+        User user = userRepository.findById(8L).get();
         UserDTO userDTO = new UserDTO();
         userDTO.setUser_id(user.getUser_id());
         userDTO.setIdx(user.getIdx());
@@ -101,4 +106,48 @@ public class HomeController {
     }
 
 
+
+    @GetMapping("/studentModify")
+    public String studentModify() {
+        return "student/studentModify";
+    }
+
+    // 테스트용 교수 로그인
+    @GetMapping("/ProfessorLogin")
+    public String ProfessorTestLogin(HttpSession session) {
+        long startTime = System.currentTimeMillis();
+        User user = userRepository.findById(1L).get();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUser_id(user.getUser_id());
+        userDTO.setUser_pw(user.getUser_pw());
+        userDTO.setSalt(user.getSalt());
+        userDTO.setIdx(user.getIdx());
+        userDTO.setUser_name(user.getUser_name());
+        userDTO.setPnum(user.getPnum());
+        userDTO.setRole(user.getRole());
+        userDTO.setEmail(user.getEmail());
+
+        ProfessorDto dto = new ProfessorDto();
+        Professor professor = professorRepository.findByUser(user);
+
+        MajorDto majorDto = new MajorDto();
+        majorDto.setIdx(professor.getMajor().getIdx());
+        majorDto.setName(professor.getMajor().getName());
+        majorDto.setTuition(professor.getMajor().getTuition());
+        majorDto.setCollege_idx(professor.getMajor().getCollege().getIdx());
+        majorDto.setAbolition(professor.getMajor().getAbolition());
+
+        dto.setUser(userDTO);
+        dto.setProfessor_idx(professor.getProfessor_idx());
+        dto.setImg(professor.getProfessor_img());
+        dto.setHireDate(professor.getHireDate());
+        dto.setMajor(majorDto);
+
+        session.setAttribute("professor", dto);
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+
+        System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
+        return "redirect:/professor/lectureList";
+    }
 }

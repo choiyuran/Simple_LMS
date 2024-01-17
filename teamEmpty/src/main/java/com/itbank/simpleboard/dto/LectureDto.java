@@ -1,10 +1,13 @@
 package com.itbank.simpleboard.dto;
 
+import ch.qos.logback.core.joran.spi.NoAutoStart;
 import com.itbank.simpleboard.entity.Professor;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class LectureDto {
     private Long idx;
     private String name;
