@@ -9,32 +9,38 @@
     <h2>내 정보 수정</h2>
     <hr>
 
-    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${user.idx})}">
+    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${user?.idx})}">
         <div class="w-50 m-auto">
+
+            <!-- 이름 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">이름</span>
                 <input type="text" class="form-control" th:value="${user.user_name}">
             </div>
-
+            <!-- 학번 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">학번</span>
-                <input type="text" class="form-control" th:value="${user.}">
+                <input type="text" class="form-control" th:value="${user?.student?.student_num}">
             </div>
 
+            <!-- 패스워드 입력란 -->
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <input type="password" class="form-control form-control-user"
                            id="exampleInputPassword" placeholder="패스워드" required>
                 </div>
+
+                <!-- 패스워드 확인 입력란 -->
                 <div class="col-sm-6">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleRepeatPassword" placeholder="패스워드 확인" required>
+                           id="exampleRepeatPassword" name="repeatPassword" placeholder="패스워드 확인" required>
                 </div>
             </div>
 
+            <!-- 주소 입력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">주소</span>
-                <input type="text" class="form-control" th:value="${user.}">
+                <input type="text" class="form-control" th:value="${user.user_address}">
             </div>
 
             <div class="form-group">
@@ -42,10 +48,11 @@
                        placeholder="전화번호" th:value="${user.pnum}" required>
             </div>
 
+            <!-- 전화번호 입력란 -->
             <div class="form-group row">
                 <div class="col-sm-8 mb-3 mb-sm-0">
                     <input type="email" class="form-control form-control-user"
-                           id="exampleInputEmail" placeholder="Email" required>
+                           id="exampleInputEmail" placeholder="Email" required >
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-primary btn-user btn-block"
@@ -53,6 +60,7 @@
                 </div>
             </div>
 
+            <!-- 이메일 입력란 -->
             <div class="form-group row" id="verificationField" style="display: none;">
                 <div class="col-sm-8 mb-3 mb-sm-0">
                     <input type="text" class="form-control form-control-user" id="verificationCode"
@@ -116,6 +124,18 @@
             } else {
                 validationButton.disabled = true;
             }
+        });
+
+        // 수정 버튼 클릭 시 이벤트 처리
+        document.querySelector('.btn-outline-secondary').addEventListener('click', function () {
+            // 수정 로직 추가
+            alert('수정 버튼이 클릭되었습니다.');
+        });
+
+        // 취소 버튼 클릭 시 이벤트 처리
+        document.querySelector('.btn-outline-secondary:last-child').addEventListener('click', function () {
+            // 취소 로직 추가
+            alert('취소 버튼이 클릭되었습니다.');
         });
 
     }
