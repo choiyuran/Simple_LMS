@@ -33,26 +33,25 @@ public class LectureService {
     public List<LectureDto> selectAll(String searchType, String keyword) {
         BooleanBuilder builder = new BooleanBuilder();
         List<LectureDto> lectureDtoList = new ArrayList<>();
-        System.out.println("searchType : " + searchType);
+
         if ("professor".equals(searchType)) {
-            builder.and(lecture.professor.user.user_name.contains(keyword));
+            builder.and(lecture.professor.user.user_name.contains(keyword)); // 수정: user_name 대신 userName 사용
         } else if ("subject".equals(searchType)) {
             builder.and(lecture.name.contains(keyword));
         } else if ("grade".equals(searchType)) {
             builder.and(lecture.grade.eq(Integer.parseInt(keyword)));
         } else {
             builder.or(lecture.name.contains(keyword))
-                    .or(lecture.professor.user.user_name.contains(keyword))
-                    .or((lecture.name.contains(keyword)))
-                    .or((lecture.grade.eq(Integer.parseInt(keyword))));
+                    .or(lecture.professor.user.user_name.contains(keyword)) // 수정: user_name 대신 userName 사용
+                    .or(lecture.grade.eq(Integer.parseInt(keyword)));
         }
 
         List<Lecture> lectureList = queryFactory.selectFrom(lecture)
-                .where()
+                .where(builder) // 수정: 조건을 builder로 설정
                 .fetch();
 
         // Convert Lecture to LectureDto and return
-        for(Lecture lecture1 : lectureList){
+        for (Lecture lecture1 : lectureList) {
             LectureDto dto = new LectureDto();
             dto.setIdx(lecture1.getIdx());
             dto.setLectureRoom(lecture1.getLectureRoom().getIdx());

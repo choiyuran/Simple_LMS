@@ -11,10 +11,7 @@ import com.itbank.simpleboard.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -39,10 +36,15 @@ public class StudentController {
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
+        System.err.println("searchType : " + searchType + " keyword : " + keyword);
         ModelAndView mav = new ModelAndView("home");
         UserDTO dto = (UserDTO)session.getAttribute("user");
+        if(dto == null){
+            mav.addObject("msg","로그인하세요!");
+            return mav;
+        }
         List<LectureDto> dtos = null;
-        if(searchType == null && keyword == null){
+        if(searchType == null || keyword == null){
             dtos = lectureService.selectAll();
         }else{
             dtos = lectureService.selectAll(searchType, keyword);
@@ -115,11 +117,12 @@ public class StudentController {
 
     // 수강 취소
     @GetMapping("/cancel")
+    @ResponseBody
     public String cancel(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
 //        취소
         enrollmentService.cancel(stuIdx, idx);
-        return "redirect:/enroll";
+        return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
     }
 
 }
