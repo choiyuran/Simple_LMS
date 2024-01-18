@@ -22,6 +22,7 @@ public class AcademicCalendarService {
     }
 
     // 학사 일정 추가
+    @Transactional
     public AcademicCalendar addCalendar(AcademicCalendarDto calendarDto) {
         // AcademicCalendarDto에서 AcademicCalendar로 변환
         AcademicCalendar academicCalendar = new AcademicCalendar();

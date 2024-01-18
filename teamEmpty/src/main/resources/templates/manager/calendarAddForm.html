@@ -9,7 +9,7 @@
     <hr>
 
     <div class="w-50 m-auto">
-        <form th:action="@{/calendarAddForm}" method="post" th:object="${academicCalendarDto}">
+        <form method="post" th:object="${academicCalendarDto}">
             <!-- Thymeleaf의 th:field 속성을 사용하여 백엔드 모델과 폼 필드를 연결 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">시작 일자</span>

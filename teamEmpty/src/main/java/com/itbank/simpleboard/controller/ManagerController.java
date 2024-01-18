@@ -62,7 +62,7 @@ public class ManagerController {
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
     public String calendar(@ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
         AcademicCalendar addCalendar = academicCalendarService.addCalendar(calendar);
-        return "redirect:/common/calendar";
+        return "redirect:/manager/calendar";
     }
 
 
