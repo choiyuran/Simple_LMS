@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d72cb1f4-b575-414d-a646-410851751db6" name="Changes" comment="" />
+    <list default="true" id="d72cb1f4-b575-414d-a646-410851751db6" name="Changes" comment="Changes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,7 +53,8 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "team3",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "team5",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "G:/project/Simple_LMS/teamEmpty",
@@ -72,6 +73,7 @@
       <updated>1705135589770</updated>
       <workItem from="1705135592071" duration="202000" />
       <workItem from="1705135812149" duration="192000" />
+      <workItem from="1705561680239" duration="40000" />
     </task>
     <servers />
   </component>

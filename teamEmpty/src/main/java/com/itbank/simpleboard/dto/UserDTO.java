@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.dto;
 
+import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User_role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class UserDTO {
     private String user_address;
     private String pnum;
     private User_role role;
+    private Student student;
 
 
 }

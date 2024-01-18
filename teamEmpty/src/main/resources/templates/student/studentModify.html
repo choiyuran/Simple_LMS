@@ -9,18 +9,19 @@
     <h2>내 정보 수정</h2>
     <hr>
 
-    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${user?.idx})}">
+    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user?.idx})}">
         <div class="w-50 m-auto">
 
             <!-- 이름 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">이름</span>
-                <input type="text" class="form-control" th:value="${user.user_name}">
+                <input type="text" class="form-control" th:value="${session.user?.user_name}" th:disabled="true">
             </div>
+
             <!-- 학번 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">학번</span>
-                <input type="text" class="form-control" th:value="${user?.student?.student_num}">
+                <input type="text" class="form-control" th:value="${dto?.student_num}" th:disabled="true">
             </div>
 
             <!-- 패스워드 입력란 -->
@@ -40,12 +41,13 @@
             <!-- 주소 입력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">주소</span>
-                <input type="text" class="form-control" th:value="${user.user_address}">
+                <input type="text" class="form-control" th:value="${session.user?.user_address}">
             </div>
 
-            <div class="form-group">
+            <div class="input-group input-group-sm mb-3" style="width: 70%;">
+                <span class="input-group-text" style="width: 20%;">전화번호</span>
                 <input type="text" class="form-control form-control-user" id="phonenumber"
-                       placeholder="전화번호" th:value="${user.pnum}" required>
+                       placeholder="전화번호" th:value="${session.user?.pnum}" required>
             </div>
 
             <!-- 전화번호 입력란 -->
@@ -72,7 +74,7 @@
             </div>
 
             <div class="w-50 m-auto">
-                <button type="button" class="btn btn-outline-secondary" style="margin-right: 10px;">수정</button>
+                <button type="submit" class="btn btn-outline-secondary" style="margin-right: 10px;">수정</button>
                 <button type="button" class="btn btn-outline-secondary">취소</button>
             </div>
         </div>
