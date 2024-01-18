@@ -1,14 +1,17 @@
 package com.itbank.simpleboard.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 import java.time.LocalDate;
 import java.util.Date;
 
+
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AcademicCalendarDto {
     private Long idx;
     private LocalDate start_date;

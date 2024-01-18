@@ -43,12 +43,7 @@ public class ManagerController {
         List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
         // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
-                .collect(Collectors.groupingBy(cal -> cal.getStart_date()
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                        .getMonthValue()));
-
+                .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
         return "common/calendar";
     }
@@ -62,6 +57,24 @@ public class ManagerController {
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
     public String calendar(@ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
         AcademicCalendar addCalendar = academicCalendarService.addCalendar(calendar);
+        return "redirect:/manager/calendar";
+    }
+
+    @GetMapping("/calendarEditForm/{id}") // 학사일정 수정 폼
+    public String calendarEdit(@PathVariable Long id, Model model){
+        // id를 사용하여 수정할 학사일정 데이터를 데이터베이스에서 가져온다.
+        AcademicCalendarDto academicCalendarDto = academicCalendarService.getCalendarById(id);
+
+        // 가져온 데이터를 모델에 담아 수정 폼으로 전달한다.
+        model.addAttribute("academicCalendarDto", academicCalendarDto);
+
+        return "manager/calendarEditForm";
+    }
+
+    @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
+    public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
+        academicCalendarService.editCalendar(id, calendar);
+
         return "redirect:/manager/calendar";
     }
 
