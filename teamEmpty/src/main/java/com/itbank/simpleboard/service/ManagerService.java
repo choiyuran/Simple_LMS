@@ -110,9 +110,13 @@ public class ManagerService {
                 end.append(",");
             }
         }
-        Professor professor = professorRepository.findById(param.getMajor_idx()).get();
-        professor.getProfessor_idx();       // 해당 교수의 idx
-        // 강의실 번호를 뽑으면 이제 넣을 수 있음
+        // 선택한 학과에 해당 하는 교수 목록 조회
+        Major major = majorRepository.findById(param.getMajor_idx()).get();
+//        List<Professor> professor = professorRepository.findAllByMajor(major);
+//        System.err.println("professor : " + professor);
+
+//        professor.getProfessor_idx();       // 해당 교수의 idx
+        param.getLectureRoom_idx();         //
         Lecture lecture = new Lecture(
 
         );

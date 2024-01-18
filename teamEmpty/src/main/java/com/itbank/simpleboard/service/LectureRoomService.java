@@ -21,6 +21,7 @@ import java.util.List;
 public class LectureRoomService {
     private  final LectureRoomRepository lectureRoomRepository;
     private final CollegeRepository collegeRepository;
+
     public List<LectureRoom> getLectureroomsByCollege(Long collegeIdx) {
         College college = collegeRepository.findById(collegeIdx).get();
         List<LectureRoom> lectureRoom = lectureRoomRepository.findByCollege(college);

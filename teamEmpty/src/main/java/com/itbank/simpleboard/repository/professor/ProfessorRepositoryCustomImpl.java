@@ -1,8 +1,6 @@
 package com.itbank.simpleboard.repository.professor;
 
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchCondition;
-import com.itbank.simpleboard.dto.QProfessorLectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.itbank.simpleboard.entity.QLecture;
@@ -67,6 +65,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetch();
     }
 
+
     private BooleanExpression nameContain(String name) {
         return StringUtils.hasText(name) ? lecture.name.contains(name) : null;
     }
@@ -93,5 +92,31 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     private BooleanExpression majorEq(String major) {
         return StringUtils.hasText(major) ? QMajor.major.name.eq(major) : null;
+    }
+
+//    public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
+//        List<Long> userIds = queryFactory
+//                .select(QProfessor.professor.user.idx)
+//                .from(QProfessor.professor)
+//                .where(QProfessor.professor.major.idx.eq(majorIdx))
+//                .fetch();
+//
+//        return queryFactory
+//                .select(QUser.user.user_name)
+//                .from(QUser.user)
+//                .where(QUser.user.idx.in(userIds))
+//                .fetch();
+//    }
+
+    public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
+        return queryFactory
+                .select(new QProfessorUserDto(
+                        QProfessor.professor.professor_idx,
+                        QProfessor.professor.user.idx,
+                        QUser.user.user_name
+                ))
+                .from(QProfessor.professor)
+                .where(QProfessor.professor.major.idx.eq(majorIdx))
+                .fetch();
     }
 }

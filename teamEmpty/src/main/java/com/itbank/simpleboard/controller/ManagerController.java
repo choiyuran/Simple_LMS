@@ -2,11 +2,14 @@ package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.LectureRoomService;
 import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,17 +17,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/manager")
+@Slf4j
 public class ManagerController {
 
     private final ManagerService managerService;
     private final LectureRoomService lectureRoomService;
+    private final ProfessorService professorService;
 
     @GetMapping("/calendar")                    // 학사 일정 조회
     public String calendar(Model model){
@@ -105,7 +113,7 @@ public class ManagerController {
         mav.addObject(majorList);
         return mav;
     }
-    
+
     @PostMapping("/lectureAdd")         // 강의 등록
     public String lectureAdd(RegisterlectureDto param) {
         Lecture lecture = managerService.addLecture(param);
@@ -116,10 +124,18 @@ public class ManagerController {
     }
 
     @ResponseBody
-    @GetMapping("/getLecturerooms")
-    public ResponseEntity<List<LectureRoom>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx) {
+    @GetMapping("/getLecturerooms")             // 학과를 선택하면 해당 학과의 교수와 강의실 조회
+    public ResponseEntity<Map<String, Object>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx, @RequestParam("major_idx") Long major_idx) {
+        log.info("ResponseEntity");
         List<LectureRoom> lecturerooms = lectureRoomService.getLectureroomsByCollege(collegeIdx);
-        return new ResponseEntity<>(lecturerooms, HttpStatus.OK);
+        List<ProfessorUserDto> professors = professorService.getProfessorsByMajor(major_idx);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("lecturerooms", lecturerooms);
+        response.put("professors", professors);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
 
