@@ -1,4 +1,4 @@
-package com.itbank.simpleboard.config;
+package com.itbank.simpleboard.component;
 
 import org.springframework.stereotype.Component;
 

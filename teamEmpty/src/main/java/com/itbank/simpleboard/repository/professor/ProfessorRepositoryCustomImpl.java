@@ -31,6 +31,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
         return queryFactory
                 .select(new QProfessorLectureDto(
+                        lecture.idx,
                         lecture.name,
                         lecture.intro,
                         lecture.credit,
