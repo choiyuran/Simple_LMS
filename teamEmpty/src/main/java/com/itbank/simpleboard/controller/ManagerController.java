@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.AcademicCalendarDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
@@ -14,7 +15,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -26,10 +31,30 @@ public class ManagerController {
     private final ManagerService managerService;
     private final LectureRoomService lectureRoomService;
 
-    @GetMapping("/calendar")                    // 학사 일정 조회
+    @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
         List<AcademicCalendar> calendar = managerService.findAll();
-        model.addAttribute("calendar", calendar);
+        // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
+        Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
+                .collect(Collectors.groupingBy(cal -> cal.getStart_date()
+                        .toInstant()
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate()
+                        .getMonthValue()));
+
+        model.addAttribute("calendarByMonth", calendarByMonth);
+        return "common/calendar";
+    }
+
+    @GetMapping("/calendarAddForm") // 학사일정 추가
+    public String calendar(){
+        return "manager/calendarAddForm";
+    }
+
+    @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
+    public String calendar(AcademicCalendarDto calendar){
+        AcademicCalendar addCalendar = managerService.addCalendar(calendar);
+
         return "common/calendar";
     }
 
@@ -105,7 +130,7 @@ public class ManagerController {
         mav.addObject(majorList);
         return mav;
     }
-    
+
     @PostMapping("/lectureAdd")         // 강의 등록
     public String lectureAdd(RegisterlectureDto param) {
         Lecture lecture = managerService.addLecture(param);

@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.dto.AcademicCalendarDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
@@ -9,15 +10,17 @@ import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
-import com.itbank.simpleboard.repository.manager.ManagerRepositoryCustom;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -94,6 +97,25 @@ public class ManagerService {
         return academicCalendarRepository.findAll();
     }
 
+    // 학사 일정 추가
+    public AcademicCalendar addCalendar(AcademicCalendarDto calendarDto) {
+            // DTO를 엔티티로 변환
+            AcademicCalendar academicCalendar = convertToEntity(calendarDto);
+
+            // 저장
+            return academicCalendarRepository.save(academicCalendar);
+        }
+
+    private AcademicCalendar convertToEntity(AcademicCalendarDto calendarDto) {
+        AcademicCalendar academicCalendar = new AcademicCalendar();
+        academicCalendar.setStart_date(convertToLocalDate(calendarDto.getStart_date()));
+        academicCalendar.setEnd_date(convertToLocalDate(calendarDto.getEnd_date()));
+        academicCalendar.setTitle(calendarDto.getTitle());
+
+        // 필요한 경우 다른 속성들도 설정
+
+        return academicCalendar;
+    }
 
     public Lecture addLecture(RegisterlectureDto param) {
         StringBuilder day = new StringBuilder();
@@ -124,4 +146,8 @@ public class ManagerService {
         log.info(lecture.toString());
         return lecture;
     }
+    private Date convertToLocalDate(LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+    }
 }
+

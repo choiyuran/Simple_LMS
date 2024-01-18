@@ -1,26 +1,67 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 학사 일정 -->
-<head>
+<head th:insert="layout/header :: head">
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<header th:insert="layout/header :: header"></header>
+<!-- 제목 -->
+<main class="ly-main">
+    <div class="ly-container">
+        <div class="calendar-title">
+            <p class="upper">
+                <span class="current-page">학사일정</span>
+            </p>
+        </div>
+    </div>
+    </div>
+    <!-- 학사일정 부분 -->
+    <div class="ly-section calendar">
+        <div class="ly-container">
+            <div class="ly-inner">
+                <div class="select-wrap">
+                    <!-- 연도 선택 -->
+                    <div class="this-year">
+                        <p>2024년도</p>
+                    </div>
+                </div>
+                <!-- 달력 랩 -->
+                <div class="calendar-wrap">
+                    <!-- 각 월에 대한 루프-->
+                    <div th:each="calendarEntry : ${calendarByMonth}">
+                    <div class="work-wrap">
+                            <div class="month">
+                                <!-- 월 표시 -->
+                                <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>
+                            </div>
 
-    <table>
-        <tr>
-            <th>글번호</th>
-            <th>제목</th>
-            <th>시작일</th>
-            <th>종료일</th>
-        </tr>
-        <tr th:each="calendar : ${calendar}">
-            <td th:text="${calendar.idx}"></td>
-            <td th:text="${calendar.title}"></td>
-            <td th:text="${#dates.format(calendar.start_date, 'yyyy-MM-dd')}"></td>
-            <td th:text="${#dates.format(calendar.end_date, 'yyyy-MM-dd')}"></td>
-        </tr>
-    </table>
+                            <div class="work-content">
+                                <div th:each="cal : ${calendarEntry.value}">
+                                    <div class="work">
+                                        <!-- 일자 -->
+                                        <div>
+                                            <p class="day" th:text="${#calendars.format(cal.start_date, 'dd')}"> ~ </p>
+                                            <p class="day" th:text="${#calendars.format(cal.end_date, 'dd')}"></p>
+                                        </div>
+                                        <!-- 내용 -->
+                                        <p class="desc" th:text="${cal.title}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="tip-box">
+                    <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
+                    <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기 바랍니다.</p>
+                </div>
+            </div>
+        </div>
+</main>
+<footer th:insert="layout/header :: footer"></footer>
+
+
 
 </body>
 </html>

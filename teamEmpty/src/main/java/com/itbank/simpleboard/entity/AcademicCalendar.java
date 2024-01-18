@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Entity
 public class AcademicCalendar {
@@ -32,7 +32,6 @@ public class AcademicCalendar {
     // 종료일자
     @Column(name="calendar_end_date")
     private Date end_date;
-
 
     public AcademicCalendar(String title, Date start_date, Date end_date) {
         this.title = title;
