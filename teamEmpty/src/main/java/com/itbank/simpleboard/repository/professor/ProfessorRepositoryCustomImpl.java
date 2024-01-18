@@ -4,7 +4,6 @@ import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.itbank.simpleboard.entity.QLectureRoom;
 import com.itbank.simpleboard.entity.QMajor;
@@ -56,6 +55,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
                 .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
                 .where(
+                        QMajor.major.abolition.eq(YesOrNo.valueOf("N")),
                         nameContain(condition.getName()),
                         typeEq(condition.getType()),
                         yearEq(condition.getYear()),
@@ -67,7 +67,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 )
                 .fetch();
     }
-
 
     private BooleanExpression nameContain(String name) {
         return StringUtils.hasText(name) ? lecture.name.contains(name) : null;
