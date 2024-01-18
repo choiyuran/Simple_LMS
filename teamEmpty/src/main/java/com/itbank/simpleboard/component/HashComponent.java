@@ -1,41 +1,36 @@
 package com.itbank.simpleboard.component;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
+import java.security.SecureRandom;
+import java.util.Base64;
 
 @Component
-@Slf4j
 public class HashComponent {
-    private Random random  =  new Random();
-    private String sample = "ABCDEFGHIJKLMNOPQRSTUVWXYNZ0123456789";
-
     public String getRandomSalt() {
-//		String salt = UUID.randomUUID().toString().substring(0,8);
-        String salt = "";
-        for(int i = 0; i < 12; i++) {
-            salt += sample.charAt(random.nextInt(sample.length()));
-        }
+        String salt = null;
+        SecureRandom ran = new SecureRandom();	// 보안에 활용할 수 있는 수준의 랜덤
+        byte[] arr = new byte[16];
+        ran.nextBytes(arr);
+        salt = new String(Base64.getEncoder().encode(arr));
         return salt;
     }
 
     public String getHash(String source, String salt) {
+        String hash = null;
+        MessageDigest md = null;
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-512");	// 여기작성한 알고리즘 규칙이 없는걸수도 있어서 예외처리
+            md = MessageDigest.getInstance("SHA-512");
             md.update(salt.getBytes());
             md.update(source.getBytes());
-            String hash = String.format("%0128X", new BigInteger(1, md.digest()));// 1은 양수를 의미
-            return hash;
+            hash = String.format("%0128X", new BigInteger(1, md.digest()));
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        return null;
+        return hash;
     }
-
-
-
 }
