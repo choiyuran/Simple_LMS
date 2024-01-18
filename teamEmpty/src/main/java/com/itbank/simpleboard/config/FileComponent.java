@@ -12,23 +12,20 @@ import java.io.IOException;
 @Slf4j
 public class FileComponent {
 
-    @Value("${file.upload-dir1}")
-    private String uploadDir1;
-
-    @Value("${file.upload-dir2}")
-    private String uploadDir2;
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     /**
      * 파일 업로드 메서드
      *
      * @param upload 업로드할 파일
-     * @param directoryName 업로드할 디렉토리 이름 (1 또는 2)
+     * @param directoryName 업로드할 디렉토리 이름
      * @return 업로드된 파일의 이름, 실패 시 null
      */
     public String upload(MultipartFile upload, String directoryName) {
-        String uploadDir = getUploadDir(directoryName);
+        String dirString = getSpecificUploadDir(directoryName);
 
-        File dir = new File(uploadDir);
+        File dir = new File(dirString);
 
         // 저장 디렉토리가 존재하지 않으면 생성
         if (!dir.exists()) {
@@ -40,7 +37,7 @@ public class FileComponent {
 
         // 파일명이 존재할 경우에만 처리
         if (fileName != null) {
-            File dest = new File(uploadDir, fileName);
+            File dest = new File(dirString, fileName);
 
             try {
                 // 파일을 저장
@@ -52,7 +49,6 @@ public class FileComponent {
                 // 파일 저장 실패 시 예외 처리
             }
         }
-
         return null;
     }
 
@@ -60,11 +56,11 @@ public class FileComponent {
      * 파일 삭제 메서드
      *
      * @param fileName 삭제할 파일의 이름
-     * @param directoryName 삭제할 디렉토리 이름 (1 또는 2)
+     * @param directoryName
      */
     public void deleteFile(String fileName, String directoryName) {
-        String uploadDir = getUploadDir(directoryName);
-        File dest = new File(uploadDir, fileName);
+        String specificUploadDir = getSpecificUploadDir(directoryName);
+        File dest = new File(specificUploadDir, fileName);
 
         // 파일이 존재하면 삭제
         if (dest.exists()) {
@@ -78,13 +74,7 @@ public class FileComponent {
     /**
      * 디렉토리 이름에 따라 적절한 uploadDir을 반환하는 메서드
      */
-    private String getUploadDir(String directoryName) {
-        if ("1".equals(directoryName)) {
-            return uploadDir1;
-        } else if ("2".equals(directoryName)) {
-            return uploadDir2;
-        } else {
-            throw new IllegalArgumentException("Invalid directoryName: " + directoryName);
-        }
+    private String getSpecificUploadDir(String directoryName) {
+        return uploadDir + File.separator + directoryName;
     }
 }
