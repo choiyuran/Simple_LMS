@@ -228,17 +228,17 @@
                 },
                 success: function(data) {
                     // API에서 반환한 데이터를 사용하여 강의실 목록을 채움
-                    $.each(data, function(index, lectureroom) {
+                    $.each(data.lecturerooms, function(index, lectureroom) {
                         $('#lectureroom_idx').append($('<option>', {
                             value: lectureroom.idx,
-                            text: lectureroom.room + '호',
+                            text: lectureroom.room,
                         }));
                     });
 
                     // API에서 반환한 데이터를 사용하여 교수 목록을 채움
                     $.each(data.professors, function(index, professor) {
                         $('#professor_idx').append($('<option>', {
-                            value: professor.idx,
+                            value: professor.professor_idx,
                             text: professor.name,
                         }));
                     });
