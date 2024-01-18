@@ -2,11 +2,13 @@ package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.entity.College;
-import com.itbank.simpleboard.entity.Major;
-import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.entity.*;
+import com.itbank.simpleboard.service.LectureRoomService;
 import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ManagerController {
 
     private final ManagerService managerService;
+    private final LectureRoomService lectureRoomService;
 
-    @GetMapping("/calendar")
+    @GetMapping("/calendar")                    // 학사 일정 조회
     public String calendar(Model model){
         List<AcademicCalendar> calendar = managerService.findAll();
         model.addAttribute("calendar", calendar);
@@ -94,4 +97,30 @@ public class ManagerController {
         Major major = managerService.majorDel(idx);
         return "redirect:/manager/majorList";
     }
+
+    @GetMapping("/lectureAdd")          // 강의 등록 페이지 이동
+    public ModelAndView lectureAdd() {
+        ModelAndView mav = new ModelAndView("manager/registerLecture");
+        List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject(majorList);
+        return mav;
+    }
+    
+    @PostMapping("/lectureAdd")         // 강의 등록
+    public String lectureAdd(RegisterlectureDto param) {
+        Lecture lecture = managerService.addLecture(param);
+        if(lecture == null) {
+            return "redirect:/manager/lectureAdd";
+        }
+        return "redirect:/professor/lectureList";
+    }
+
+    @ResponseBody
+    @GetMapping("/getLecturerooms")
+    public ResponseEntity<List<LectureRoom>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx) {
+        List<LectureRoom> lecturerooms = lectureRoomService.getLectureroomsByCollege(collegeIdx);
+        return new ResponseEntity<>(lecturerooms, HttpStatus.OK);
+    }
+
+
 }
