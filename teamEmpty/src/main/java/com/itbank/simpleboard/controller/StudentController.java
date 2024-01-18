@@ -4,6 +4,8 @@ import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.*;
+import com.itbank.simpleboard.repository.UserRepository;
+import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.service.EnrollmentService;
 import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.SituationServive;
@@ -33,6 +35,8 @@ public class StudentController {
     private final LectureService lectureService;
 
     private final StudentService studentService;
+    private final UserRepository userRepository;
+
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
@@ -123,6 +127,25 @@ public class StudentController {
 //        취소
         enrollmentService.cancel(stuIdx, idx);
         return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
+    }
+
+    // 내 정보 수정
+    @GetMapping("/studentModify")
+    public ModelAndView myPage(HttpSession session) {
+        ModelAndView mav = new ModelAndView("student/studentModify");
+        mav.addObject("user", session.getAttribute("user"));
+        return mav;
+    }
+
+
+    @PostMapping("/studentModify/{idx}") // 내 정보 수정
+    public String usersUpdate(@PathVariable("idx")Long idx, UserDTO param) {
+        param.setIdx(idx);
+        UserDTO user = studentService.userUpdate(param);
+        if(user != null) {
+            return "home" + idx;
+        }
+        return "redirect:/student/studentModify";
     }
 
 }

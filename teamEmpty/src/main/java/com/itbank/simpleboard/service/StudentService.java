@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.dto.StudentDto;
+import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.UserRepository;
@@ -43,5 +44,10 @@ public class StudentService {
         }
 
         return dto;
+    }
+
+    public UserDTO userUpdate(UserDTO param) {
+
+        return param;
     }
 }

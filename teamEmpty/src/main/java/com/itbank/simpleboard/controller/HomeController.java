@@ -2,17 +2,24 @@ package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.Professor;
+import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -81,7 +88,7 @@ public class HomeController {
     // 테스트용 학생 로그인
     @GetMapping("/logintest")
     public String loginTest(HttpSession session) {
-        User user = userRepository.findById(4L).get();
+        User user = userRepository.findById(8L).get();
         UserDTO userDTO = new UserDTO();
         userDTO.setUser_id(user.getUser_id());
         userDTO.setIdx(user.getIdx());
