@@ -6,6 +6,7 @@ import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -27,10 +28,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ManagerController {
 
     private final ManagerService managerService;
+    private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
-        List<AcademicCalendar> calendar = managerService.findAll();
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
         // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date()
@@ -44,15 +46,15 @@ public class ManagerController {
     }
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
-    public String calendar(){
+    public String calendarAdd(Model model){
+        model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
         return "manager/calendarAddForm";
     }
 
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
-    public String calendar(AcademicCalendarDto calendar){
-        AcademicCalendar addCalendar = managerService.addCalendar(calendar);
-
-        return "common/calendar";
+    public String calendar(@ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
+        AcademicCalendar addCalendar = academicCalendarService.addCalendar(calendar);
+        return "redirect:/common/calendar";
     }
 
 

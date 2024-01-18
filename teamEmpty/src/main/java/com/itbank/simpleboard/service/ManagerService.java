@@ -91,33 +91,5 @@ public class ManagerService {
         major.setAbolition(YesOrNo.Y);
         return major;
     }
-
-    public List<AcademicCalendar> findAll() {
-        return academicCalendarRepository.findAll();
-    }
-
-    // 학사 일정 추가
-    public AcademicCalendar addCalendar(AcademicCalendarDto calendarDto) {
-            // DTO를 엔티티로 변환
-            AcademicCalendar academicCalendar = convertToEntity(calendarDto);
-
-            // 저장
-            return academicCalendarRepository.save(academicCalendar);
-        }
-
-    private AcademicCalendar convertToEntity(AcademicCalendarDto calendarDto) {
-        AcademicCalendar academicCalendar = new AcademicCalendar();
-        academicCalendar.setStart_date(convertToLocalDate(calendarDto.getStart_date()));
-        academicCalendar.setEnd_date(convertToLocalDate(calendarDto.getEnd_date()));
-        academicCalendar.setTitle(calendarDto.getTitle());
-
-        // 필요한 경우 다른 속성들도 설정
-
-        return academicCalendar;
-    }
-
-    private Date convertToLocalDate(LocalDate localDate) {
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    }
 }
 
