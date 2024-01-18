@@ -10,6 +10,7 @@ import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/manager")
+@Slf4j
 public class ManagerController {
 
     private final ManagerService managerService;
@@ -73,6 +75,23 @@ public class ManagerController {
         mav.addObject("managerList",managerList);
         return mav;
     }
+
+    @PostMapping("/addmanager")   // 교직원 등록
+    public String addManager() {
+        log.info("교직원등록");
+        return "common/register";
+    }
+    @PostMapping("/addstudent")   // 학생 등록
+    public String addStudent() {
+        log.info("학생등록");
+        return "common/register";
+    }
+    @PostMapping("/addprofessor")   // 교수 등록
+    public String addProfessor() {
+        log.info("교수등록");
+        return "common/register";
+    }
+
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
