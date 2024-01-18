@@ -2,22 +2,21 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.dto.AcademicCalendarDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.entity.Manager;
+import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.entity.College;
-import com.itbank.simpleboard.entity.Major;
-import com.itbank.simpleboard.entity.YesOrNo;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
-import com.itbank.simpleboard.entity.AcademicCalendar;
 
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
+import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -27,12 +26,14 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ManagerService {
 
     private final ManagerRepository managerRepository;
     private final CollegeRepository collegeRepository;
     private final MajorRepository majorRepository;
     private final AcademicCalendarRepository academicCalendarRepository;
+    private final ProfessorRepository professorRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -90,6 +91,36 @@ public class ManagerService {
         Major major = majorRepository.findById(idx).get();
         major.setAbolition(YesOrNo.Y);
         return major;
+    }
+
+    public Lecture addLecture(RegisterlectureDto param) {
+        StringBuilder day = new StringBuilder();
+        StringBuilder start = new StringBuilder();
+        StringBuilder end = new StringBuilder();
+
+        for(int i = 0; i < param.getDay().length; i++) {
+            day.append(param.getDay()[i]);
+            start.append(param.getStart()[i]);
+            end.append(param.getEnd()[i]);
+            if(i != param.getDay().length - 1) {
+                day.append(",");
+                start.append(",");
+                end.append(",");
+            }
+        }
+        Professor professor = professorRepository.findById(param.getMajor_idx()).get();
+        professor.getProfessor_idx();       // 해당 교수의 idx
+        // 강의실 번호를 뽑으면 이제 넣을 수 있음
+        Lecture lecture = new Lecture(
+
+        );
+
+        lecture.setDay(day.toString());
+        lecture.setStart(start.toString());
+        lecture.setEnd(end.toString());
+
+        log.info(lecture.toString());
+        return lecture;
     }
 }
 

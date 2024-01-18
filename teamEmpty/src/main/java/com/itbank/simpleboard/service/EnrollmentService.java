@@ -30,6 +30,8 @@ public class EnrollmentService {
     public void cancel(Long studentIdx, Long lectureIdx) {
         Student student = studentRepository.findById(studentIdx).get();
         Lecture lecture = lectureRepository.findById(lectureIdx).get();
+        lecture.setCurrentCount(lecture.getCurrentCount()-1);
+
         Optional<Enrollment> optionalEnrollment = enrollmentRepository.findByStudentAndLecture(student, lecture);
 
         if (optionalEnrollment.isPresent()) {
@@ -43,7 +45,14 @@ public class EnrollmentService {
     public Enrollment save(Long studentIdx, Long lectureIdx) {
         Student student = studentRepository.findById(studentIdx).get();
         Lecture lecture = lectureRepository.findById(lectureIdx).get();
-        Enrollment enrollment = new Enrollment(student, lecture);
+        Enrollment enrollment = null;
+        if(lecture.getCurrentCount() < lecture.getMaxCount()){
+            lecture.setCurrentCount(lecture.getCurrentCount()+1);
+            enrollment = new Enrollment(student, lecture);
+        }else{
+            return null;
+        }
+
         return enrollmentRepository.save(enrollment);
     }
     

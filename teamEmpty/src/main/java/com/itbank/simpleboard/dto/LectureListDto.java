@@ -1,15 +1,10 @@
 package com.itbank.simpleboard.dto;
 
-import ch.qos.logback.core.joran.spi.NoAutoStart;
-import com.itbank.simpleboard.entity.Professor;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-public class LectureDto {
-    private Long idx;
+public class LectureListDto {
     private String name;
     private String intro;
     private Integer credit;
@@ -22,20 +17,19 @@ public class LectureDto {
     private String semester;
     private Integer grade;
 
-    private Professor professor;
+    private Long professor;
     private String plan;
     private Long major;
     private Long lectureRoom;
     private String visible;
 
     @QueryProjection
-    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade) {
-        this(idx,name, intro, credit, day, start, end, type, maxCount, currentCount, semester, grade, null, null, 0L, 0L, null);
+    public LectureListDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade) {
+        this(name, intro, credit, day, start, end, type, maxCount, currentCount, semester, grade, 0L, null, 0L, 0L, null);
     }
 
     @QueryProjection
-    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Professor professor, String plan, Long major, Long lectureRoom, String visible) {
-        this.idx = idx;
+    public LectureListDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor, String plan, Long major, Long lectureRoom, String visible) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;

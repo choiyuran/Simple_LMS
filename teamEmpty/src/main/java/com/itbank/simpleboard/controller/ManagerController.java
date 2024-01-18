@@ -7,8 +7,14 @@ import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.entity.*;
+import com.itbank.simpleboard.service.LectureRoomService;
 import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +31,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/manager")
+@Slf4j
 public class ManagerController {
 
     private final ManagerService managerService;
+    private final LectureRoomService lectureRoomService;
     private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
@@ -72,6 +80,23 @@ public class ManagerController {
         mav.addObject("managerList",managerList);
         return mav;
     }
+
+    @PostMapping("/addmanager")   // 교직원 등록
+    public String addManager() {
+        log.info("교직원등록");
+        return "common/register";
+    }
+    @PostMapping("/addstudent")   // 학생 등록
+    public String addStudent() {
+        log.info("학생등록");
+        return "common/register";
+    }
+    @PostMapping("/addprofessor")   // 교수 등록
+    public String addProfessor() {
+        log.info("교수등록");
+        return "common/register";
+    }
+
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
@@ -121,4 +146,30 @@ public class ManagerController {
         Major major = managerService.majorDel(idx);
         return "redirect:/manager/majorList";
     }
+
+    @GetMapping("/lectureAdd")          // 강의 등록 페이지 이동
+    public ModelAndView lectureAdd() {
+        ModelAndView mav = new ModelAndView("manager/registerLecture");
+        List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject(majorList);
+        return mav;
+    }
+
+    @PostMapping("/lectureAdd")         // 강의 등록
+    public String lectureAdd(RegisterlectureDto param) {
+        Lecture lecture = managerService.addLecture(param);
+        if(lecture == null) {
+            return "redirect:/manager/lectureAdd";
+        }
+        return "redirect:/professor/lectureList";
+    }
+
+    @ResponseBody
+    @GetMapping("/getLecturerooms")
+    public ResponseEntity<List<LectureRoom>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx) {
+        List<LectureRoom> lecturerooms = lectureRoomService.getLectureroomsByCollege(collegeIdx);
+        return new ResponseEntity<>(lecturerooms, HttpStatus.OK);
+    }
+
+
 }

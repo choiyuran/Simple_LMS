@@ -13,7 +13,12 @@ public class UserDTO {
     private Long idx;
     private String user_name;
     private String user_id;
+    private String user_pw;
+    private String salt;
     private String email;
+    private String user_address;
     private String pnum;
     private User_role role;
+
+
 }
