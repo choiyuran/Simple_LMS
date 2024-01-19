@@ -91,7 +91,7 @@
         <tbody id="lectureTableBody">
         <tr th:each="row : ${LectureList}">
             <td>
-                <div th:text="${row.name}"></div>
+                <a th:href="@{/manager/lectureUpdate/{idx}(idx=${row.idx})}"><div th:text="${row.name}"></div></a>
             </td>
             <td>
                 <div th:text="${row.professor_name}"></div>
