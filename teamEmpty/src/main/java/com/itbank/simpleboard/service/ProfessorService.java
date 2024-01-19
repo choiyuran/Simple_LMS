@@ -19,4 +19,8 @@ public class ProfessorService {
     public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
         return professorRepository.getLectureDtoList(condition);
     }
+
+    public ProfessorLectureDto getLectureDto(Long idx) {
+        return professorRepository.getLectureDto(idx);
+    }
 }

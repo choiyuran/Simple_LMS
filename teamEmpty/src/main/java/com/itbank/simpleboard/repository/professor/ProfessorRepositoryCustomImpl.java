@@ -33,7 +33,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
-                        lecture.intro,
                         lecture.credit,
                         lecture.day,
                         lecture.start,
@@ -67,6 +66,40 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         professor_idxEq(condition.getProfessor_idx())
                 )
                 .fetch();
+    }
+
+    @Override
+    public ProfessorLectureDto getLectureDto(Long idx) {
+        return queryFactory
+                .select(new QProfessorLectureDto(
+                        lecture.idx,
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        QUser.user.user_name,
+                        lecture.plan,
+                        QMajor.major.name,
+                        QCollege.college.location,
+                        QLectureRoom.lectureRoom.room
+                ))
+                .from(lecture)
+                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .where(
+                        lecture.idx.eq(idx)
+                )
+                .fetchOne();
     }
 
     private BooleanExpression nameContain(String name) {

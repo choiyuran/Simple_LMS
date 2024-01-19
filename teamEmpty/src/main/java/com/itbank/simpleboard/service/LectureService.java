@@ -42,11 +42,9 @@ public class LectureService {
             if (optionalLecture.isPresent()) {
                 Lecture lecture = optionalLecture.get();
                 lecture.setPlan(syllabus);
-
-                // 변경된 엔티티를 저장
                 lectureRepository.save(lecture);
 
-                row = 1; // 성공적으로 업로드 및 엔티티 업데이트가 이루어짐
+                row = 1;
             }
         }
 

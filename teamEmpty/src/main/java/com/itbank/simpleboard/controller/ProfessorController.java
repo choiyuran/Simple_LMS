@@ -109,4 +109,10 @@ public class ProfessorController {
         row = lectureService.planUpload(plan, lectureIdx);
         return row;
     }
+
+    @GetMapping("/viewLecture/{idx}")
+    public String viewLecture(@PathVariable("idx") Long idx, Model model) {
+        model.addAttribute("lecture", professorService.getLectureDto(idx));
+        return "professor/viewLecture";
+    }
 }

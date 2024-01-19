@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ProfessorRepositoryCustom {
     List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition);
+
+    ProfessorLectureDto getLectureDto(Long idx);
 }
