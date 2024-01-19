@@ -88,7 +88,7 @@ public class HomeController {
     // 테스트용 학생 로그인
     @GetMapping("/logintest")
     public String loginTest(HttpSession session) {
-        User user = userRepository.findById(4L).get();
+        User user = userRepository.findById(7L).get();
         UserDTO userDTO = new UserDTO();
         userDTO.setUser_id(user.getUser_id());
         userDTO.setIdx(user.getIdx());
