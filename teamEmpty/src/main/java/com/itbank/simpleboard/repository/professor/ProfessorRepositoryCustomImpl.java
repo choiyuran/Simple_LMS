@@ -1,8 +1,6 @@
 package com.itbank.simpleboard.repository.professor;
 
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
-import com.itbank.simpleboard.dto.QProfessorLectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.itbank.simpleboard.entity.QLectureRoom;
@@ -33,7 +31,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
-                        lecture.intro,
                         lecture.credit,
                         lecture.day,
                         lecture.start,
@@ -75,7 +72,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
-                        lecture.intro,
                         lecture.credit,
                         lecture.day,
                         lecture.start,
@@ -134,6 +130,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     private BooleanExpression professor_idxEq(Long professorIdx) {
         return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
     }
+
+
 //    public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
 //        List<Long> userIds = queryFactory
 //                .select(QProfessor.professor.user.idx)
