@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 전체 강의 리스트 -->
-<head th:insert="layout/header :: head">
-</head>
+<head th:insert="layout/header :: head"></head>
 <body>
 <header th:insert="layout/header :: header"></header>
 <main>
@@ -54,9 +53,6 @@
                 <div th:text="강의명">제목열1</div>
             </td>
             <td>
-                <div th:text="'강의 소개'">제목열3</div>
-            </td>
-            <td>
                 <div th:text="전공">제목열4</div>
             </td>
             <td>
@@ -88,37 +84,59 @@
         <tbody id="MylectureTableBody">
         <tr th:each="row : ${MyList}">
             <td>
-                <div th:text="${row.name}"></div>
+                <div>
+                    <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
+                        <span th:text="${row.name}"></span>
+                    </a>
+                </div>
             </td>
             <td>
-                <div th:text="${row.intro}"></div>
+                <div>
+                    <span th:text="${row.major}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.major}"></div>
+                <div>
+                    <span th:text="${row.type}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.type}"></div>
+                <div>
+                    <span th:text="${row.credit}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.credit}"></div>
+                <div>
+                    <span th:text="${row.day}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.day}"></div>
+                <div>
+                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.currentCount} + '/' + ${row.maxCount}"></div>
+                <div>
+                    <span th:text="${row.semester}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.semester}"></div>
+                <div>
+                    <span th:text="${row.grade} + '학년'"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.grade} + '학년'"></div>
+                <div>
+                    <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.location} + ' ' + ${row.lectureRoom}"></div>
-            </td>
-            <td>
-                <div th:text="${row.plan != null ? '등록됨' : '미등록'}"></div>
+                <div th:if="${row.plan != null}" class="planExist"><span>등록됨</span></div>
+                <div th:if="${row.plan == null}" class="planExist">
+                    <span class="upload-btn" onclick="openFileUploadDialog(this)">미등록</span>
+                    <input type="hidden" class="lectureIdx" th:value="${row.idx}">
+                    <input type="file" class="file-input" onchange="handleFileUpload(this)">
+                </div>
             </td>
         </tr>
         </tbody>
@@ -196,6 +214,55 @@
         function resetAndSearch() {
             document.getElementById("MyLectureSearchForm").reset();
             searchLectures();
+        }
+
+        // 파일 업로드 창 열기
+        function openFileUploadDialog(btnElement) {
+            var fileInput = btnElement.nextElementSibling.nextElementSibling;
+            fileInput.click();
+        }
+
+        async function handleFileUpload(inputElement) {
+            var fileInput = inputElement;
+            var planStatusElement = fileInput.previousElementSibling.previousElementSibling;
+            var lectureIdxElement = fileInput.previousElementSibling;
+
+            var lectureIdx = lectureIdxElement.value;
+
+            // 선택된 파일이 있을 경우에만 처리
+            if (fileInput.files.length > 0) {
+                var selectedFile = fileInput.files[0];
+
+                var formData = new FormData();
+                formData.append('plan', selectedFile);
+                formData.append('lectureIdx', lectureIdx);
+
+                try {
+                    const response = await fetch('/professor/planUpload', {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    const data = await response.text();
+
+                    if (data !== undefined) {
+                        if (parseInt(data) === 0) {
+                            console.error('업로드 실패');
+                        } else {
+                            console.log('업로드 성공');
+                            // 업로드 성공 시 UI를 갱신 (미등록 → 등록됨)
+                            planStatusElement.innerHTML = '<span>등록됨</span>';
+                            planStatusElement.classList.remove('upload-btn'); // span 태그를 비활성화하기 위해 클래스 제거
+                            planStatusElement.removeAttribute('onclick'); // 클릭 이벤트 제거
+                            fileInput.disabled = true; // 파일 업로드 input을 비활성화
+                        }
+                    } else {
+                        console.error('잘못된 응답 형식');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
         }
     </script>
 </main>

@@ -60,9 +60,6 @@
                 <div th:text="'교수'">제목열2</div>
             </td>
             <td>
-                <div th:text="'강의 소개'">제목열3</div>
-            </td>
-            <td>
                 <div th:text="전공">제목열4</div>
             </td>
             <td>
@@ -91,37 +88,56 @@
         <tbody id="lectureTableBody">
         <tr th:each="row : ${LectureList}">
             <td>
-                <div th:text="${row.name}"></div>
+                <div>
+                    <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
+                        <span th:text="${row.name}"></span>
+                    </a>
+                </div>
             </td>
             <td>
-                <div th:text="${row.professor_name}"></div>
+                <div>
+                    <span th:text="${row.professor_name}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.intro}"></div>
+                <div>
+                    <span th:text="${row.major}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.major}"></div>
+                <div>
+                    <span th:text="${row.type}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.type}"></div>
+                <div>
+                    <span th:text="${row.credit}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.credit}"></div>
+                <div>
+                    <span th:text="${row.day}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.day}"></div>
+                <div>
+                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.currentCount} + '/' + ${row.maxCount}"></div>
+                <div>
+                    <span th:text="${row.semester}"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.semester}"></div>
+                <div>
+                    <span th:text="${row.grade} + '학년'"></span>
+                </div>
             </td>
             <td>
-                <div th:text="${row.grade} + '학년'"></div>
-            </td>
-            <td>
-                <div th:text="${row.location} + ' ' + ${row.lectureRoom}"></div>
+                <div>
+                    <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                </div>
             </td>
         </tr>
         </tbody>

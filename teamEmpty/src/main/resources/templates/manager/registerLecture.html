@@ -12,18 +12,27 @@
       <div class="input-group input-group-sm mb-3 w-100">
           <span class="input-group-text" style="width: 20%;">학과</span>
           <select class="form-control" id="major_idx" name="major_idx">
+              <option value="">학과를 선택하세요.</option>
               <option th:each="major : ${majorList}"
                       th:text="${major.name}"
                       th:value="${major.idx}"
-                      th:data-college="${major.college.idx}">
+                      th:data-college="${major.college.idx}"
+                      th:data-idx="${major.idx}">
               </option>
           </select>
       </div>
 
       <div class="input-group input-group-sm mb-3 w-100">
+          <span class="input-group-text" style="width: 20%;">교수</span>
+          <select class="form-control" id="professor_idx" name="professor_idx">
+              <!-- 교수 목록이 여기에 채워짐 -->
+          </select>
+      </div>
+
+      <div class="input-group input-group-sm mb-3 w-100">
           <span class="input-group-text" style="width: 20%;">강의실</span>
-          <select class="form-control" id="lectureroom_idx" name="lectureroom_idx">
-              <!-- 강의실 목록이 여기에 채워집니다 -->
+          <select class="form-control" id="lectureRoom_idx" name="lectureRoom_idx">
+              <!-- 강의실 목록이 여기에 채워짐 -->
           </select>
       </div>
 
@@ -46,27 +55,27 @@
           <div class="row w-100">
               <div class="col">
                   <div class="input-group-text w-100 d-flex justify-content-center">
-                      <input class="text-end" type="checkbox" aria-label="Checkbox for Monday" value="Monday" name="day"> 월
+                      <input class="text-end" type="checkbox" aria-label="Checkbox for Monday" value="월" name="day"> 월
                   </div>
               </div>
               <div class="col">
                   <div class="input-group-text w-100 d-flex justify-content-center">
-                      <input class="text-end" type="checkbox" aria-label="Checkbox for Tuesday" value="Tuesday" name="day"> 화
+                      <input class="text-end" type="checkbox" aria-label="Checkbox for Tuesday" value="화" name="day"> 화
                   </div>
               </div>
               <div class="col">
                   <div class="input-group-text w-100 d-flex justify-content-center">
-                      <input type="checkbox" aria-label="Checkbox for Wednesday" value="Wednesday" name="day"> 수
+                      <input type="checkbox" aria-label="Checkbox for Wednesday" value="수" name="day"> 수
                   </div>
               </div>
               <div class="col">
                   <div class="input-group-text w-100 d-flex justify-content-center">
-                      <input type="checkbox" aria-label="Checkbox for Thursday" value="Thursday" name="day"> 목
+                      <input type="checkbox" aria-label="Checkbox for Thursday" value="목" name="day"> 목
                   </div>
               </div>
               <div class="col">
                   <div class="input-group-text w-100 d-flex justify-content-center">
-                      <input type="checkbox" aria-label="Checkbox for Friday" value="Friday" name="day"> 금
+                      <input type="checkbox" aria-label="Checkbox for Friday" value="금" name="day"> 금
                   </div>
               </div>
           </div>
@@ -197,28 +206,40 @@
     };
 </script>
 
-<!--단과 대학을 선택함에 따라서 강의실 번호를 띄워줌-->
+<!--학과를 선택함에 따라서 강의실 번호와 교수 번호를 띄워줌-->
 <script>
     $(document).ready(function() {
         $('#major_idx').change(function() {
+            // var majorIdx = $(this).val();
             var collegeIdx = $('option:selected', this).data('college');
+            var majorIdx = $('option:selected', this).data('idx');
 
             // 강의실 목록을 초기화합니다
-            $('#lectureroom_idx').empty();
+            $('#lectureRoom_idx').empty();
+            $('#professor_idx').empty();
 
             // Ajax 요청을 보냅니다
             $.ajax({
-                url: '/manager/getLecturerooms', // 강의실 목록을 가져오는 API 주소를 입력하세요
+                url: '/manager/getLecturerooms', // 강의실 목록을 가져오는 API 주소를 입력
                 type: 'GET',
                 data: {
+                    'major_idx': majorIdx,
                     'college_idx': collegeIdx
                 },
                 success: function(data) {
-                    // API에서 반환한 데이터를 사용하여 강의실 목록을 채웁니다
-                    $.each(data, function(index, lectureroom) {
-                        $('#lectureroom_idx').append($('<option>', {
+                    // API에서 반환한 데이터를 사용하여 강의실 목록을 채움
+                    $.each(data.lecturerooms, function(index, lectureroom) {
+                        $('#lectureRoom_idx').append($('<option>', {
                             value: lectureroom.idx,
-                            text: lectureroom.idx,
+                            text: lectureroom.room + '호',
+                        }));
+                    });
+
+                    // API에서 반환한 데이터를 사용하여 교수 목록을 채움
+                    $.each(data.professors, function(index, professor) {
+                        $('#professor_idx').append($('<option>', {
+                            value: professor.professor_idx,
+                            text: professor.name,
                         }));
                     });
                 },
