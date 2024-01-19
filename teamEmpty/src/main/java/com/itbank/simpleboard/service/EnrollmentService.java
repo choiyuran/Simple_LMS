@@ -12,10 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -45,13 +44,13 @@ public class EnrollmentService {
 
     @Transactional
     public Enrollment save(Long studentIdx, Long lectureIdx) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
         Student student = studentRepository.findById(studentIdx).get();
         Lecture lecture = lectureRepository.findById(lectureIdx).get();
         List<Enrollment> enrollmentList = enrollmentRepository.findAllByStudent(student);
 
-        Map<String, String> map = new HashMap<>();
-        // enrollmentList는 이 사람의 수강신청리스트이다.
-        for(Enrollment e : enrollmentList) {
+        Map<String, List<LocalTime[]>> map = new HashMap<>();
+        for (Enrollment e : enrollmentList) {
             String day = e.getLecture().getDay();
             String[] days = day.split(",");
             String start = e.getLecture().getStart();
@@ -59,39 +58,38 @@ public class EnrollmentService {
             String end = e.getLecture().getEnd();
             String[] ends = end.split(",");
 
-            // 시간비교, 분 비교
-            for(int i=0;i<days.length;i++) {
+            for (int i = 0; i < days.length; i++) {
+                LocalTime startTime = LocalTime.parse(starts[i], timeFormatter);
+                LocalTime endTime = LocalTime.parse(ends[i], timeFormatter);
+                LocalTime[] timeRange = {startTime, endTime};
+
                 if (map.containsKey(days[i])) {
-                    map.put(days[i], map.get(days[i]) + "," + starts[i] + "~" + ends[i]);
+                    map.get(days[i]).add(timeRange);
                 } else {
-                    map.put(days[i], starts[i] + "~" + ends[i]);
+                    List<LocalTime[]> times = new ArrayList<>();
+                    times.add(timeRange);
+                    map.put(days[i], times);
                 }
             }
         }
-        System.err.println("map : " + map);
-        Map<String, String> addLectureMap = new HashMap<>();
+
         String[] addDays = lecture.getDay().split(",");
         String[] addStarts = lecture.getStart().split(",");
         String[] addEnds = lecture.getEnd().split(",");
 
-
-        // 새로운 강의의 각 요일별 수업시간을 검사합니다.
         for (int i = 0; i < addDays.length; i++) {
-            String addDay = addDays[i];
-            String addStart = addStarts[i];
-            String addEnd = addEnds[i];
+            LocalTime addStartTime = LocalTime.parse(addStarts[i], timeFormatter);
+            LocalTime addEndTime = LocalTime.parse(addEnds[i], timeFormatter);
 
-            // 해당 요일에 이미 수강신청한 강의가 있는지 확인합니다.
-            if (map.containsKey(addDay)) {
-                String[] times = map.get(addDay).split(",");
-                for (String time : times) {
-                    String[] timeRange = time.split("~");
-                    String start = timeRange[0];
-                    String end = timeRange[1];
+            if (map.containsKey(addDays[i])) {
+                // 반복돌리면서 "ex) "
+                for (LocalTime[] timeRange : map.get(addDays[i])) {
+                    LocalTime startTime = timeRange[0];
+                    LocalTime endTime = timeRange[1];
 
-                    // 새로운 강의의 시간이 기존의 수업시간과 겹치는지 확인합니다.
-                    if ((addStart.compareTo(start) >= 0 && addStart.compareTo(end) <= 0) || (addEnd.compareTo(start) >= 0 && addEnd.compareTo(end) <= 0)) {
-                        // 수업시간이 겹치므로 수강신청이 불가능합니다.
+                    if ((addStartTime.isAfter(startTime) && addStartTime.isBefore(endTime)) ||
+                            (addEndTime.isAfter(startTime) && addEndTime.isBefore(endTime)) ||
+                            (addStartTime.equals(startTime) && addEndTime.equals(endTime))) {
                         return null;
                     }
                 }
@@ -99,10 +97,10 @@ public class EnrollmentService {
         }
 
         Enrollment enrollment = null;
-        if(lecture.getCurrentCount() < lecture.getMaxCount()){
-            lecture.setCurrentCount(lecture.getCurrentCount()+1);
+        if (lecture.getCurrentCount() < lecture.getMaxCount()) {
+            lecture.setCurrentCount(lecture.getCurrentCount() + 1);
             enrollment = new Enrollment(student, lecture);
-        }else{
+        } else {
             return null;
         }
 
