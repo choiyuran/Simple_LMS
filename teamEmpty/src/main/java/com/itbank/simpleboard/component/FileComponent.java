@@ -23,6 +23,7 @@ public class FileComponent {
      * @return 업로드된 파일의 이름, 실패 시 null
      */
     public String upload(MultipartFile upload, String directoryName) {
+        log.info("fileUpload");
         String dirString = getSpecificUploadDir(directoryName);
 
         File dir = new File(dirString);
@@ -59,6 +60,7 @@ public class FileComponent {
      * @param directoryName
      */
     public void deleteFile(String fileName, String directoryName) {
+        log.info("deleteFile");
         String specificUploadDir = getSpecificUploadDir(directoryName);
         File dest = new File(specificUploadDir, fileName);
 

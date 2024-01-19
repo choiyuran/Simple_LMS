@@ -3,6 +3,7 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
+import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ProfessorController {
     private final ProfessorService professorService;
+    private final LectureService lectureService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -97,5 +100,19 @@ public class ProfessorController {
         return ResponseEntity.ok()
                 .header("Content-Type", "application/json")
                 .body(lectureDtoList);
+    }
+
+    @ResponseBody
+    @PutMapping("/planUpload")
+    public int planUpload(@RequestParam("plan") MultipartFile plan, @RequestParam("lectureIdx") Long lectureIdx) {
+        int row = 0;
+        row = lectureService.planUpload(plan, lectureIdx);
+        return row;
+    }
+
+    @GetMapping("/viewLecture/{idx}")
+    public String viewLecture(@PathVariable("idx") Long idx, Model model) {
+        model.addAttribute("lecture", professorService.getLectureDto(idx));
+        return "professor/viewLecture";
     }
 }
