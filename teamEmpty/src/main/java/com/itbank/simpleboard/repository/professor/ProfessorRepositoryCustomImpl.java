@@ -29,8 +29,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
         return queryFactory
                 .select(new QProfessorLectureDto(
+                        lecture.idx,
                         lecture.name,
-                        lecture.intro,
                         lecture.credit,
                         lecture.day,
                         lecture.start,
@@ -66,6 +66,39 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetch();
     }
 
+    @Override
+    public ProfessorLectureDto getLectureDto(Long idx) {
+        return queryFactory
+                .select(new QProfessorLectureDto(
+                        lecture.idx,
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        QUser.user.user_name,
+                        lecture.plan,
+                        QMajor.major.name,
+                        QCollege.college.location,
+                        QLectureRoom.lectureRoom.room
+                ))
+                .from(lecture)
+                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .where(
+                        lecture.idx.eq(idx)
+                )
+                .fetchOne();
+    }
 
     private BooleanExpression nameContain(String name) {
         return StringUtils.hasText(name) ? lecture.name.contains(name) : null;
@@ -95,6 +128,10 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return StringUtils.hasText(major) ? QMajor.major.name.eq(major) : null;
     }
 
+    private BooleanExpression professor_idxEq(Long professorIdx) {
+        return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
+    }
+
 //    public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
 //        List<Long> userIds = queryFactory
 //                .select(QProfessor.professor.user.idx)
@@ -107,6 +144,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 //                .from(QUser.user)
 //                .where(QUser.user.idx.in(userIds))
 //                .fetch();
+
 //    }
 
     public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
@@ -119,9 +157,5 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .from(QProfessor.professor)
                 .where(QProfessor.professor.major.idx.eq(majorIdx))
                 .fetch();
-    }
-
-    private BooleanExpression professor_idxEq(Long professorIdx) {
-        return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
     }
 }

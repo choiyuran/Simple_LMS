@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class ProfessorLectureDto {
+    private Long idx;
     private String name;
     private String intro;
     private Integer credit;
@@ -24,9 +25,10 @@ public class ProfessorLectureDto {
     private Integer lectureRoom;
 
     @QueryProjection
-    public ProfessorLectureDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String major, String location, Integer lectureRoom) {
+    public ProfessorLectureDto(Long idx, String name, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
+        this.idx = idx;
         this.name = name;
-        this.intro = intro;
+        this.intro = null;
         this.credit = credit;
         this.day = day;
         this.start = start;
@@ -37,14 +39,15 @@ public class ProfessorLectureDto {
         this.semester = semester;
         this.grade = grade;
         this.professor_name = professor_name;
-        this.plan = null;
+        this.plan = plan;
         this.major = major;
         this.location = location;
         this.lectureRoom = lectureRoom;
     }
 
     @QueryProjection
-    public ProfessorLectureDto(String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
+    public ProfessorLectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
+        this.idx = idx;
         this.name = name;
         this.intro = intro;
         this.credit = credit;
