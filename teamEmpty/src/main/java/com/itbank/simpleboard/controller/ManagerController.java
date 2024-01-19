@@ -133,9 +133,11 @@ public class ManagerController {
         Map<String, Object> response = new HashMap<>();
         response.put("lecturerooms", lecturerooms);
         response.put("professors", professors);
-        return new ResponseEntity<>(response, HttpStatus.OK);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
 
 }

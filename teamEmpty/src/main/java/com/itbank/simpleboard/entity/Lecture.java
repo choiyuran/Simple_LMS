@@ -108,4 +108,20 @@ public class Lecture {
         this.lectureRoom = lectureRoom;
         this.visible = YesOrNo.N;
     }
+
+    public Lecture(String name, String intro, Integer credit, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, Major major, LectureRoom lectureRoom) {
+        this.name = name;
+        this.intro = intro;
+        this.credit = credit;
+        this.type = type;
+        this.professor = professor;
+        this.maxCount = maxCount;
+        this.currentCount = currentCount;
+        this.semester = semester;
+        this.grade = grade;
+        this.plan = null;
+        this.major = major;
+        this.lectureRoom = lectureRoom;
+        this.visible = YesOrNo.N;
+    }
 }

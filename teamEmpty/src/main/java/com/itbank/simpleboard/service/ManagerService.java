@@ -5,12 +5,14 @@ import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
+import com.itbank.simpleboard.repository.LectureRoomRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepositoryCustom;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
+import com.itbank.simpleboard.repository.student.LectureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class ManagerService {
     private final MajorRepository majorRepository;
     private final AcademicCalendarRepository academicCalendarRepository;
     private final ProfessorRepository professorRepository;
+    private final LectureRoomRepository lectureRoomRepository;
+    private final LectureRepository lectureRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -94,11 +98,13 @@ public class ManagerService {
         return academicCalendarRepository.findAll();
     }
 
-
+    @Transactional
     public Lecture addLecture(RegisterlectureDto param) {
         StringBuilder day = new StringBuilder();
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
+
+        System.err.println("param : "+ param.toString());
 
         for(int i = 0; i < param.getDay().length; i++) {
             day.append(param.getDay()[i]);
@@ -110,22 +116,28 @@ public class ManagerService {
                 end.append(",");
             }
         }
-        // 선택한 학과에 해당 하는 교수 목록 조회
+        Professor professor = professorRepository.findById(param.getProfessor_idx()).get();
         Major major = majorRepository.findById(param.getMajor_idx()).get();
-//        List<Professor> professor = professorRepository.findAllByMajor(major);
-//        System.err.println("professor : " + professor);
+        LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx()).get();
 
-//        professor.getProfessor_idx();       // 해당 교수의 idx
-        param.getLectureRoom_idx();         //
-        Lecture lecture = new Lecture(
-
-        );
-
+       Lecture lecture = new Lecture(
+               param.getName(),
+               param.getIntro(),
+               param.getCredit(),
+               param.getType(),
+               professor,
+               param.getMax_count(),
+               param.getCurrent_count(),
+               param.getSemester(),
+               param.getGrade(),
+               major,
+               lectureRoom
+       );
         lecture.setDay(day.toString());
         lecture.setStart(start.toString());
         lecture.setEnd(end.toString());
 
-        log.info(lecture.toString());
-        return lecture;
+        log.info("lecture: " + lecture.toString());
+        return lectureRepository.save(lecture);
     }
 }

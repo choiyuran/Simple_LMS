@@ -1,9 +1,6 @@
 package com.itbank.simpleboard.entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.stream.Collectors;
@@ -12,6 +9,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
+@Getter
 public class Major {
     // 기본키
     @Id
