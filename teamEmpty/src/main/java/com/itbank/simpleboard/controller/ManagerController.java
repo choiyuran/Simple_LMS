@@ -1,8 +1,6 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.AcademicCalendarDto;
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.AcademicCalendar;
@@ -12,6 +10,7 @@ import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.LectureRoomService;
 import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.UserService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +28,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpSession;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -39,6 +40,8 @@ public class ManagerController {
     private final ManagerService managerService;
     private final LectureRoomService lectureRoomService;
     private final AcademicCalendarService academicCalendarService;
+    private final UserService userService;
+    private final HttpSession session;
     private final ProfessorService professorService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
@@ -48,13 +51,26 @@ public class ManagerController {
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
+
+        // 세션에서 사용자 정보 가져오기
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        model.addAttribute("user", user);
+
         return "common/calendar";
     }
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model){
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
-        return "manager/calendarAddForm";
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        System.out.println(user.getRole());
+        if(user.getRole().equals(User_role.교직원)) {
+            return "manager/calendarAddForm";
+        }
+        else{
+            return "home";
+        }
     }
 
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
@@ -71,7 +87,14 @@ public class ManagerController {
         // 가져온 데이터를 모델에 담아 수정 폼으로 전달한다.
         model.addAttribute("academicCalendarDto", academicCalendarDto);
 
-        return "manager/calendarEditForm";
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if(user.getRole().equals(User_role.교직원)) {
+            return "manager/calendarEditForm";
+        }
+        else{
+            return "home";
+        }
     }
 
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
