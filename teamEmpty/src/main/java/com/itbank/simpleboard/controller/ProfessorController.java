@@ -110,7 +110,7 @@ public class ProfessorController {
         return row;
     }
 
-    @GetMapping("/viewLecture/{idx}")
+    @GetMapping("/viewLecture/{idx}")           // 강의 상세보기
     public String viewLecture(@PathVariable("idx") Long idx, Model model) {
         model.addAttribute("lecture", professorService.getLectureDto(idx));
         return "professor/viewLecture";

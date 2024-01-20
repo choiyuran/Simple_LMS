@@ -143,7 +143,7 @@
         </tbody>
     </table>
 
-    <button th:if="${session.user != 'null'}"><a href="/manager/lectureAdd">등록</a></button>
+    <button class="btn btn-outline-secondary" th:if="${session.user != 'null'}"><a href="/manager/lectureAdd">등록</a></button>
 <!--    <button th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>-->
 
     <script>

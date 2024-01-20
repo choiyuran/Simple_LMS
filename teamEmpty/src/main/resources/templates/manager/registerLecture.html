@@ -239,7 +239,7 @@
                     $.each(data.professors, function(index, professor) {
                         $('#professor_idx').append($('<option>', {
                             value: professor.professor_idx,
-                            text: professor.name,
+                            text: professor.name + " (" + professor.hireDate + ")",
                         }));
                     });
                 },

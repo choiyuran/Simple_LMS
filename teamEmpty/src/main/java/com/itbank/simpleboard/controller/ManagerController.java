@@ -217,7 +217,4 @@ public class ManagerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-
-
 }

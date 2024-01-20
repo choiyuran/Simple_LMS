@@ -31,7 +31,6 @@ public class ProfessorService {
 
     public List<ProfessorUserDto> getProfessorsByMajor(Long majorIdx) {
         List<ProfessorUserDto> professors = professorRepository.getProfessorNamesByMajor(majorIdx);
-
         return professors;
     }
 

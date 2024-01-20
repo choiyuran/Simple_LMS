@@ -152,6 +152,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .select(new QProfessorUserDto(
                         QProfessor.professor.professor_idx,
                         QProfessor.professor.user.idx,
+                        QProfessor.professor.hireDate,
                         QUser.user.user_name
                 ))
                 .from(QProfessor.professor)
