@@ -72,6 +72,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
+                        lecture.intro,
                         lecture.credit,
                         lecture.day,
                         lecture.start,
