@@ -8,10 +8,10 @@
 //import javax.annotation.PostConstruct;
 //import javax.persistence.EntityManager;
 //import java.text.SimpleDateFormat;
+//import java.time.LocalDate;
+//import java.time.format.DateTimeFormatter;
 //import java.util.Date;
 //import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.Date;
 //
 //@Component
 //@RequiredArgsConstructor
@@ -105,22 +105,22 @@
 //        }
 //
 //        public void insertCalendar() throws Exception {
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 //
-//            Date startDate1 = sdf.parse("2024/01/01");
-//            Date endDate1 = sdf.parse("2024/01/31");
+//            LocalDate startDate1 = LocalDate.parse("2024/01/01", formatter);
+//            LocalDate endDate1 = LocalDate.parse("2024/01/31", formatter);
 //
 //            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
 //            em.persist(calendar1);
 //
-//            Date startDate2 = sdf.parse("2024/06/01");
-//            Date endDate2 = sdf.parse("2024/06/30");
+//            LocalDate startDate2 = LocalDate.parse("2024/06/01", formatter);
+//            LocalDate endDate2 = LocalDate.parse("2024/06/30", formatter);
 //
 //            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
 //            em.persist(calendar2);
 //
-//            Date startDate3 = sdf.parse("2024/12/01");
-//            Date endDate3 = sdf.parse("2024/12/31");
+//            LocalDate startDate3 = LocalDate.parse("2024/12/01", formatter);
+//            LocalDate endDate3 = LocalDate.parse("2024/12/31", formatter);
 //
 //            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
 //            em.persist(calendar3);
