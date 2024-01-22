@@ -8,6 +8,8 @@
 //import javax.annotation.PostConstruct;
 //import javax.persistence.EntityManager;
 //import java.text.SimpleDateFormat;
+//import java.time.LocalDate;
+//import java.time.ZoneId;
 //import java.util.Date;
 //import java.text.ParseException;
 //import java.text.SimpleDateFormat;
@@ -110,19 +112,27 @@
 //            Date startDate1 = sdf.parse("2024/01/01");
 //            Date endDate1 = sdf.parse("2024/01/31");
 //
-//            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
+//            LocalDate localStartDate1 = startDate1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate localEndDate1 = endDate1.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//
+//            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", localStartDate1, localEndDate1);
 //            em.persist(calendar1);
 //
 //            Date startDate2 = sdf.parse("2024/06/01");
 //            Date endDate2 = sdf.parse("2024/06/30");
+//            LocalDate localStartDate2 = startDate2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate localEndDate2 = endDate2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 //
-//            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
+//            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", localStartDate2, localEndDate2);
 //            em.persist(calendar2);
 //
 //            Date startDate3 = sdf.parse("2024/12/01");
 //            Date endDate3 = sdf.parse("2024/12/31");
 //
-//            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
+//            LocalDate localStartDate3 = startDate2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//            LocalDate localEndDate3 = endDate2.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+//
+//            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", localStartDate3, localEndDate3);
 //            em.persist(calendar3);
 //        }
 //

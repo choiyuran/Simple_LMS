@@ -15,7 +15,7 @@ public class MvcConfig implements WebMvcConfigurer { // 로그인 안돼있으�
 //    public void addInterceptors(InterceptorRegistry registry) {
 //        registry.addInterceptor(new AuthInteceptor())
 //                .addPathPatterns("/**")
-//                .excludePathPatterns("/","/login","/signup");
+//                .excludePathPatterns("/","/logintest","/ProfessorLogin");
 //    }
 
     @Override
