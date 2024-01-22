@@ -4,6 +4,7 @@ import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +35,7 @@ public class ProfessorService {
         return professors;
     }
 
+    public Professor getProfessorByIdx(Long professorIdx) {
+        return professorRepository.findById(professorIdx).get();
+    }
 }

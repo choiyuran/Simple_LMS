@@ -217,4 +217,23 @@ public class ManagerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/lectureUpdate/{idx}")             // 강의 수정 페이지 이동
+    public ModelAndView lectureUpdate(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("manager/updateLecture");
+        Lecture lecture = managerService.selectOneLecture(idx);
+        List<Major> majorList = managerService.selectAllMajor();
+
+        // idx에 해당하는 교수를 찾음
+        Professor professor = professorService.getProfessorByIdx(lecture.getProfessor().getProfessor_idx());
+        // 찾은 교수의 user_idx로 user의 정보를 찾음
+        UserDTO user = userService.getUserByUserId(professor.getUser().getIdx());
+        String professor_name = user.getUser_name();
+
+        mav.addObject("majorList", majorList);
+        mav.addObject("lecture", lecture);
+        mav.addObject("professor_name", professor_name);
+        return mav;
+    }
+
+
 }

@@ -1,9 +1,7 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
-import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.LectureRoomRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
@@ -138,9 +136,11 @@ public class ManagerService {
         lecture.setDay(day.toString());
         lecture.setStart(start.toString());
         lecture.setEnd(end.toString());
-
-        log.info("lecture: " + lecture.toString());
         return lectureRepository.save(lecture);
+    }
+
+    public Lecture selectOneLecture(Long idx) {
+        return lectureRepository.findById(idx).get();
     }
 }
 

@@ -18,7 +18,6 @@ public class UserService {
     // 아이디로 사용자 찾기
     public UserDTO getUserByUserId(Long idx) {
         User user = userRepository.findByIdx(idx);
-        System.out.println(user);
         // 여기서 User 엔터티를 UserDTO로 변환하여 반환
         return convertToDto(user);
     }
