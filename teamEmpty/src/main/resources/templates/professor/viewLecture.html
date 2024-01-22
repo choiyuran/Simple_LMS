@@ -17,7 +17,8 @@
             <tr>
                 <th>강의 계획서</th>
                 <td th:if="${lecture.plan == null}" class="planExist">
-                    <th:block th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                    <th:block
+                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">미등록</span>
                         <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
                         <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
@@ -29,7 +30,8 @@
                 </td>
                 <td th:if="${lecture.plan != null}" class="planExist">
                     <a th:href="@{|/download/${lecture.plan}|}" download th:text="${lecture.plan}"></a>
-                    <th:block th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                    <th:block
+                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>
                         <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
                         <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
@@ -139,19 +141,13 @@
                     const data = await response.text();
 
                     if (data !== undefined) {
-                        if (parseInt(data) === 0) {
-                            console.error('업로드 실패');
-                        } else {
-                            console.log('업로드 성공');
-                            planExist.innerHTML = '';
-                            var plan = '${lecture.plan}';
-                            planExist.innerHTML = '<a href="/download/plan" download>' + plan + '</a>';
-                            planStatusElement.classList.remove('upload-btn'); // span 태그를 비활성화하기 위해 클래스 제거
-                            planStatusElement.removeAttribute('onclick'); // 클릭 이벤트 제거
-                            fileInput.disabled = true; // 파일 업로드 input을 비활성화
-                        }
-                    } else {
-                        console.error('잘못된 응답 형식');
+                        console.log('업로드 성공');
+                        planExist.innerHTML = '';
+                        planExist.innerHTML = '<a href="/download/' + encodeURIComponent(data) + '" download>' + data + '</a>';
+                        planExist.innerHTML += '<span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>';
+                        planExist.innerHTML += '<input type="hidden" class="lectureIdx" value="' + lectureIdx + '">';
+                        planExist.innerHTML += '<input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">';
+
                     }
                 } catch (error) {
                     console.error('Error:', error);

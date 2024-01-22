@@ -105,9 +105,7 @@ public class ProfessorController {
     @ResponseBody
     @PutMapping("/planUpload")
     public String planUpload(@RequestParam("plan") MultipartFile plan, @RequestParam("lectureIdx") Long lectureIdx) {
-        String stringPlan = null;
-        stringPlan = lectureService.planUpload(plan, lectureIdx);
-        return stringPlan;
+        return lectureService.planUpload(plan, lectureIdx);
     }
 
     @GetMapping("/viewLecture/{idx}")           // 강의 상세보기
