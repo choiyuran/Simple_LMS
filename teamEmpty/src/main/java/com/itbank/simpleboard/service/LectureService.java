@@ -25,11 +25,12 @@ public class LectureService {
 
     private final JPAQueryFactory queryFactory;
     QLecture lecture = QLecture.lecture;
+
     public List<LectureDto> selectAll() {
         List<Lecture> lectureList = lectureRepository.findAll();
         List<LectureDto> dtos = new ArrayList<>();
-        for(Lecture lecture : lectureList){
-            LectureDto dto = new LectureDto(lecture.getIdx(), lecture.getName(), lecture.getIntro(),lecture.getCredit(), lecture.getDay(), lecture.getStart(), lecture.getEnd(), lecture.getType().toString(), lecture.getMaxCount(), lecture.getCurrentCount(), lecture.getSemester(), lecture.getGrade(),lecture.getProfessor(),lecture.getPlan(),lecture.getMajor().getIdx(),lecture.getLectureRoom().getIdx(), lecture.getVisible().toString());
+        for (Lecture lecture : lectureList) {
+            LectureDto dto = new LectureDto(lecture.getIdx(), lecture.getName(), lecture.getIntro(), lecture.getCredit(), lecture.getDay(), lecture.getStart(), lecture.getEnd(), lecture.getType().toString(), lecture.getMaxCount(), lecture.getCurrentCount(), lecture.getSemester(), lecture.getGrade(), lecture.getProfessor(), lecture.getPlan(), lecture.getMajor().getIdx(), lecture.getLectureRoom().getIdx(), lecture.getVisible().toString());
             dtos.add(dto);
         }
         System.out.println("dtos : " + dtos);
@@ -86,22 +87,21 @@ public class LectureService {
 
 
     @Transactional
-    public int planUpload(MultipartFile plan, Long lectureIdx) {
-        int row = 0;
-        String syllabus = fileComponent.upload(plan, "syllabus");
-
-        if (syllabus != null) {
-            Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
-
-            if (optionalLecture.isPresent()) {
-                Lecture lecture = optionalLecture.get();
+    public String planUpload(MultipartFile plan, Long lectureIdx) {
+        String stringPlan = null;
+        Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
+        if (optionalLecture.isPresent()) {
+            Lecture lecture = optionalLecture.get();
+            if (lecture.getPlan() != null) {
+                fileComponent.deleteFile(lecture.getPlan(), "syllabus");
+            }
+            String syllabus = fileComponent.upload(plan, "syllabus");
+            if (syllabus != null) {
                 lecture.setPlan(syllabus);
                 lectureRepository.save(lecture);
-
-                row = 1;
+                stringPlan = syllabus;
             }
         }
-
-        return row;
+        return stringPlan;
     }
 }
