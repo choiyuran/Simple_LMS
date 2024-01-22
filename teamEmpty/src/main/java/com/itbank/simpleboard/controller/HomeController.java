@@ -10,6 +10,7 @@ import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
+import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,7 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final ProfessorRepository professorRepository;
+    private final ManagerService managerService;
 
     @GetMapping("/")
     public String root() {
@@ -81,8 +83,10 @@ public class HomeController {
     }
 
     @GetMapping("/register")
-    public String register() {
-        return "common/register";
+    public ModelAndView register() {
+        ModelAndView mav = new ModelAndView("common/register");
+        mav.addObject("majorList",managerService.selectAllMajor());
+        return mav;
     }
 
     // 테스트용 학생 로그인

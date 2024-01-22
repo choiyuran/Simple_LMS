@@ -121,9 +121,17 @@ public class ManagerController {
     }
 
     @PostMapping("/addmanager")   // 교직원 등록
-    public String addManager() {
+    public ResponseEntity<?> registerUser(@ModelAttribute UserFormDTO userFormDTO) {
         log.info("교직원등록");
-        return "common/register";
+//        yourService.processForm(formDTO);
+        log.info(userFormDTO.getUserType());
+        log.info(userFormDTO.getName());
+
+        // 응답 생성
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "폼 등록이 완료되었습니다.");
+
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/addstudent")   // 학생 등록
     public String addStudent() {
@@ -133,6 +141,7 @@ public class ManagerController {
     @PostMapping("/addprofessor")   // 교수 등록
     public String addProfessor() {
         log.info("교수등록");
+
         return "common/register";
     }
 

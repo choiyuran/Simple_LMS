@@ -20,8 +20,8 @@
                             <form class="userForm" method="post" enctype="multipart/form-data" >
                                 <div class="form-group row">
                                     <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
-                                        <label><input type="radio" name="userType" value="student"
-                                                onclick="changeForm('student')" checked> 학생 등록</label>
+<!--                                        <label><input type="radio" name="userType" value="student"-->
+<!--                                                onclick="changeForm('student')" checked> 학생 등록</label>-->
                                         <label><input type="radio" name="userType" value="professor"
                                                 onclick="changeForm('professor')"> 교수 등록</label>
                                         <label><input type="radio" name="userType" value="manager"
@@ -39,12 +39,14 @@
                                         <div class="form-group">
                                             <input type="file" class="form-control form-control-user" id="imageFile" accept="image/*">
                                         </div>
-                                        <div class="form-group">
-                                            <select class="form-control form-control-user" th:placeholder="학과를 선택하세요" id="major" required>
-<!--                                                <option value="">학과를 선택하세요</option>-->
-                                                <option th:each="major : ${majorList}" th:value="${major}" th:text="${major}"></option>
+
+                                        <div class="form-group" id="majorSection">
+                                            <select class="form-control form-control-user" id="major" required>
+                                                 <option value="">학과를 선택하세요</option>
+                                                <option th:each="major : ${majorList}" th:value="${major.getIdx()}" th:text="${major.getName()}"></option>
                                             </select>
                                         </div>
+
                                     </div>
                                     <div class="col-lg-6 pb-0">
 
@@ -175,31 +177,64 @@
         function changeForm(userType) {
             // const idField = document.getElementById('idField');
             const form = document.querySelector(".userForm");
-            const majorSelect = document.getElementById("major");
-
-            if (userType === 'student') {
-                form.action = "/manager/addstudent";
-            } else if (userType === 'professor') {
-                form.action = "/manager/addprofessor";
-            } else if (userType === 'manager') {
-                form.action = "/manager/addmanager";
-            }
+            const majorSection = document.getElementById("majorSection");
+            const backsecurityInput = document.getElementById('backsecurity');
+            var selectedOption = document.getElementById("major");
 
 
-            // if (userType === 'manager') {
-            //     // "행정실" 옵션을 생성하여 추가
-            //     const option = document.createElement('option');
-            //     option.value = "0";
-            //     option.text = "행정실";
-            //     majorSelect.appendChild(option);
+            // if (userType === 'student') {
+            //     form.action = "/manager/addstudent";
+            // } else if (userType === 'professor') {
+            //     form.action = "/manager/addprofessor";
+            //     majorSection.style.display = "block"; // 학과 선택 부분 보이기
+            // } else if (userType === 'manager') {
+            //     form.action = "/manager/addmanager";
+            //     majorSection.style.display = "none"; // 학과 선택 부분 숨기기
             // }
 
+            if (userType === 'professor') {
+                form.action = "/manager/addprofessor";
+                majorSection.style.display = "block"; // 학과 선택 부분 보이기
+
+            } else if (userType === 'manager') {
+                form.action = "/manager/addmanager";
+                majorSection.style.display = "none"; // 학과 선택 부분 숨기기
+            }
+            // 폼 데이터 생성
+            var formData = new FormData();
+            formData.append("userType", document.querySelector('input[name="userType"]:checked').value);
+            formData.append("imageFile", document.getElementById("imageFile").files[0]);
+            formData.append("name", document.getElementById("exampleFirstName").value +"" +
+                document.getElementById("exampleLastName").value);
+            formData.append("email", document.getElementById("exampleInputEmail").value);
+            formData.append("address", document.getElementById("exampleInputUserid").value);
+            formData.append("security", document.getElementById("frontsecurity").value+"-"+ document.getElementById("backsecurity").value);
+            formData.append("pnum", document.getElementById("phonenumber").value);
+            formData.append("hireDate", document.getElementById("hireDate").value);
+            formData.append("major", selectedOption.options[selectedOption.selectedIndex].value);
+
+            // Ajax 요청을 보낼 코드 작성
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("Content-Type", "multipart/form-data");
+
+            // Ajax 응답 처리
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // 응답 처리 로직 작성
+                    console.log(xhr.responseText);
+                }
+            };
+
+            // Ajax 요청 전송
+            xhr.send(formData);
 
             // 주민등록번호 뒷자리 input 요소에 autocomplete 속성 추가
-            const backsecurityInput = document.getElementById('backsecurity');
+
             backsecurityInput.setAttribute('autocomplete', 'current-password');
 
         }
+
 
 
     </script>
