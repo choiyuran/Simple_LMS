@@ -5,6 +5,7 @@ import com.itbank.simpleboard.entity.User_role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -16,10 +17,12 @@ public class UserFormDTO {
     // 교수 아이디 222_입사년도_본인번호
 
     // 이름
-    private String name;
+    private String firstName;
+    private String lastName;
 
     // 주민번호
-    private String security;
+    private String frontSecurity;
+    private String backSecurity;
 
     // 주소
     private String address;
@@ -38,6 +41,7 @@ public class UserFormDTO {
     private MultipartFile imageFile;
 
     // 입사일
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date hireDate;
 
     // 학과번호

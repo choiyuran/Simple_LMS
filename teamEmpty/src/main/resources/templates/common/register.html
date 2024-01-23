@@ -51,49 +51,49 @@
                                     <div class="col-lg-6 pb-0">
 
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                            <input type="text" class="form-control form-control-user" name="firstName" id="exampleFirstName"
                                                    placeholder="성">
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" id="exampleLastName"
+                                            <input type="text" class="form-control form-control-user" name="lastName" id="exampleLastName"
                                                    placeholder="이름">
                                         </div>
                                         <div class="form-group">
 
                                             <input type="email" class="form-control form-control-user"
-                                                   id="exampleInputEmail" placeholder="Email" required>
+                                                   id="exampleInputEmail" name="email" placeholder="Email" required>
                                         </div>
                                         <div class="form-group pb-0">
 
                                             <input type="date" class="form-control form-control-user"
-                                                   id="hireDate" placeholder="" required>
+                                                   id="hireDate" name="hireDate" required>
                                         </div>
                                     </div>
 
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" id="exampleInputUserid"
+                                    <input type="text" class="form-control form-control-user" name="address" id="exampleInputUserid"
                                         placeholder="주소입력">
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="frontsecurity"
+                                        <input type="text" class="form-control form-control-user" id="frontSecurity" name="frontSecurity"
                                             placeholder="주민등록번호 앞자리" pattern="\d{6}" required>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user" id="backsecurity"
+                                        <input type="password" class="form-control form-control-user" id="backSecurity" name="backSecurity"
                                             placeholder="주민등록번호 뒷자리" pattern="\d{7}" required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" id="phonenumber"
+                                    <input type="text" class="form-control form-control-user" id="phonenumber" name="pnum"
                                         placeholder="전화번호" required>
                                 </div>
 
                                 <!-- ID field will change based on user type -->
 
-                                <button class="btn btn-primary btn-user btn-block" id="btn-register">
+                                <button class="btn btn-primary btn-user btn-block" id="btn-register" onclick="submitForm()">
                                     등록하기
                                 </button>
                             </form>
@@ -136,7 +136,7 @@
 
 
 
-        $("#frontsecurity, #backsecurity").on("input", function () {    // 주민번호입력확인
+        $("#frontSecurity, #backSecurity").on("input", function () {    // 주민번호입력확인
             var inputVal = $(this).val();
             // 숫자가 아닌 문자가 포함되어 있는지 확인
             if (/[^\d]/.test(inputVal)) {
@@ -146,10 +146,10 @@
             }
 
             // 앞자리는 6자리, 뒷자리는 7자리로 제한
-            if (this.id == 'frontsecurity' && $(this).val().length > 6) {
+            if (this.id == 'frontSecurity' && $(this).val().length > 6) {
                 $(this).val($(this).val().slice(0, 6));
             }
-            if (this.id == 'backsecurity' && $(this).val().length > 7) {
+            if (this.id == 'backSecurity' && $(this).val().length > 7) {
                 $(this).val($(this).val().slice(0, 7));
             }
         });
@@ -174,69 +174,83 @@
             }
             $(this).val(formatted);
         });
+
+
+
+
         function changeForm(userType) {
-            // const idField = document.getElementById('idField');
             const form = document.querySelector(".userForm");
             const majorSection = document.getElementById("majorSection");
-            const backsecurityInput = document.getElementById('backsecurity');
-            var selectedOption = document.getElementById("major");
-
-
-            // if (userType === 'student') {
-            //     form.action = "/manager/addstudent";
-            // } else if (userType === 'professor') {
-            //     form.action = "/manager/addprofessor";
-            //     majorSection.style.display = "block"; // 학과 선택 부분 보이기
-            // } else if (userType === 'manager') {
-            //     form.action = "/manager/addmanager";
-            //     majorSection.style.display = "none"; // 학과 선택 부분 숨기기
-            // }
+            const backSecurityInput = document.getElementById('backSecurity');
+            // var selectedOption = document.getElementById("major");
 
             if (userType === 'professor') {
                 form.action = "/manager/addprofessor";
                 majorSection.style.display = "block"; // 학과 선택 부분 보이기
-
             } else if (userType === 'manager') {
                 form.action = "/manager/addmanager";
                 majorSection.style.display = "none"; // 학과 선택 부분 숨기기
             }
-            // 폼 데이터 생성
-            var formData = new FormData();
-            formData.append("userType", document.querySelector('input[name="userType"]:checked').value);
-            formData.append("imageFile", document.getElementById("imageFile").files[0]);
-            formData.append("name", document.getElementById("exampleFirstName").value +"" +
-                document.getElementById("exampleLastName").value);
-            formData.append("email", document.getElementById("exampleInputEmail").value);
-            formData.append("address", document.getElementById("exampleInputUserid").value);
-            formData.append("security", document.getElementById("frontsecurity").value+"-"+ document.getElementById("backsecurity").value);
-            formData.append("pnum", document.getElementById("phonenumber").value);
-            formData.append("hireDate", document.getElementById("hireDate").value);
-            formData.append("major", selectedOption.options[selectedOption.selectedIndex].value);
-
-            // Ajax 요청을 보낼 코드 작성
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", form.action, true);
-            xhr.setRequestHeader("Content-Type", "multipart/form-data");
-
-            // Ajax 응답 처리
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    // 응답 처리 로직 작성
-                    console.log(xhr.responseText);
-                }
-            };
-
-            // Ajax 요청 전송
-            xhr.send(formData);
 
             // 주민등록번호 뒷자리 input 요소에 autocomplete 속성 추가
-
-            backsecurityInput.setAttribute('autocomplete', 'current-password');
+            backSecurityInput.setAttribute('autocomplete', 'current-password');
 
         }
 
 
+        function submitForm() {
+            const form = document.querySelector(".userForm");
+            const formData = new FormData(form);
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            const imageFile = document.getElementById("imageFile").files[0];
+            const major = document.getElementById("major").value;
 
+            // 폼 데이터 생성
+            formData.set("userType", userType);
+            formData.set("imageFile", imageFile);
+            formData.set("firstName", document.getElementById("exampleFirstName").value);
+            formData.set("lastName", document.getElementById("exampleLastName").value);
+            formData.set("email", document.getElementById("exampleInputEmail").value);
+            formData.set("address", document.getElementById("exampleInputUserid").value);
+            formData.set("frontSecurity", document.getElementById("frontSecurity").value);
+            formData.set("backSecurity", document.getElementById("backSecurity").value);
+            formData.set("pnum", document.getElementById("phonenumber").value);
+            formData.set("hireDate", document.getElementById("hireDate").value);
+            formData.set("major", major);
+
+
+            // form 내용 확인을 위한 콘솔 코드 추가
+            console.log("폼 내용 확인:");
+            console.log("name:", name);
+            console.log("userType:", userType);
+            console.log("imageFile:", imageFile);
+            console.log("major:", major);
+
+
+            // fetch API를 사용하여 Ajax 요청을 보냄
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log(response.responseText);
+                        console.log("폼 등록이 완료되었습니다.");
+                        alert('폼 등록이 완료되었습니다.');
+                        // 기존 폼 내용 초기화
+                        form.reset();
+                        // common/register.html로 돌아가도록 변경
+                        window.location.href = '/register';
+                    } else {
+                        console.log("폼 등록이 실패");
+                        alert('폼 등록이 실패.');
+                        window.location.href = '/register';
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
     </script>
 
 </body>

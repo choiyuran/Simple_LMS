@@ -121,16 +121,19 @@ public class ManagerController {
     }
 
     @PostMapping("/addmanager")   // 교직원 등록
-    public ResponseEntity<?> registerUser(@ModelAttribute UserFormDTO userFormDTO) {
+    public ResponseEntity<?> registerManager(@ModelAttribute UserFormDTO userFormDTO) {
+        long startTime = System.currentTimeMillis();
         log.info("교직원등록");
 //        yourService.processForm(formDTO);
         log.info(userFormDTO.getUserType());
-        log.info(userFormDTO.getName());
+        log.info(userFormDTO.getFirstName());
 
         // 응답 생성
         Map<String, String> response = new HashMap<>();
         response.put("message", "폼 등록이 완료되었습니다.");
 
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/addstudent")   // 학생 등록
@@ -138,13 +141,33 @@ public class ManagerController {
         log.info("학생등록");
         return "common/register";
     }
+    @ResponseBody
     @PostMapping("/addprofessor")   // 교수 등록
-    public String addProfessor() {
-        log.info("교수등록");
+    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
+        try {
+            log.info("교수등록");
+            long startTime = System.currentTimeMillis();
+            // yourService.processForm(formDTO);
+            log.info(userFormDTO.getUserType());
+            log.info(userFormDTO.getPnum());
+            log.info(userFormDTO.getBackSecurity());
+            log.info(userFormDTO.getEmail());
 
-        return "common/register";
+            // 응답 생성
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "폼 등록이 완료되었습니다.");
+            response.put("name", userFormDTO.getLastName());
+            response.put("email", "폼 등록이 완료되었습니다.");
+
+            long endTime = System.currentTimeMillis();
+            log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("교수 등록 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
