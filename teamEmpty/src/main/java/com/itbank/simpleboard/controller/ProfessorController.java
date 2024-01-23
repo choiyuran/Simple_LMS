@@ -60,7 +60,7 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/lectureList/data")
+    @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
     public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
@@ -71,7 +71,7 @@ public class ProfessorController {
                 .body(lectureDtoList);
     }
 
-    @GetMapping("/myLecture")
+    @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
     public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition) {
         if (session.getAttribute("professor") == null) {
             return "redirect:/home";
@@ -82,13 +82,25 @@ public class ProfessorController {
         List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
         model.addAttribute("MyList", myLectureDtoList);
 
+        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
+        model.addAttribute("MajorList", myLectureDtoList.stream()
+                .map(ProfessorLectureDto::getMajor)
+                .distinct()
+                .collect(Collectors.toList()));
+
+        model.addAttribute("GradeList", myLectureDtoList.stream()
+                .map(ProfessorLectureDto::getGrade)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList()));
+
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/myLecture";
     }
 
     @ResponseBody
-    @PutMapping("/myLecture/data")
+    @PutMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
     public ResponseEntity<List<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
 
@@ -103,12 +115,12 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/planUpload")
+    @PutMapping("/planUpload")  // 강의 계획서 업로드용 Ajax 메서드(viewLecture.html)
     public String planUpload(@RequestParam("plan") MultipartFile plan, @RequestParam("lectureIdx") Long lectureIdx) {
         return lectureService.planUpload(plan, lectureIdx);
     }
 
-    @GetMapping("/viewLecture/{idx}")           // 강의 상세보기
+    @GetMapping("/viewLecture/{idx}")   // 강의 상세보기
     public String viewLecture(@PathVariable("idx") Long idx, Model model) {
         model.addAttribute("lecture", professorService.getLectureDto(idx));
         return "professor/viewLecture";

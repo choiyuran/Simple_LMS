@@ -85,7 +85,7 @@
             </td>
         </tr>
         </thead>
-        <tbody id="lectureTableBody">
+        <tbody id="LectureTableBody">
         <tr th:each="row : ${LectureList}">
             <td>
                 <div>
@@ -181,7 +181,7 @@
         }
 
         function updateTableBody(data) {
-            var tbody = document.getElementById("lectureTableBody");
+            var tbody = document.getElementById("LectureTableBody");
 
             // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
             tbody.innerHTML = "";
@@ -191,9 +191,7 @@
                 var tr = document.createElement("tr");
 
                 // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name);
-                appendTd(tr, item.professor_name);
-                appendTd(tr, item.intro);
+                appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
                 appendTd(tr, item.major);
                 appendTd(tr, item.type);
                 appendTd(tr, item.credit);
@@ -208,10 +206,21 @@
         }
 
         // 특정 데이터를 <td>에 추가하는 함수
-        function appendTd(parent, text) {
+        function appendTd(parent, text, isLink = false, linkHref = "") {
             var td = document.createElement("td");
             var div = document.createElement("div");
-            div.textContent = text;
+            var span = document.createElement("span");
+
+            if (isLink) {
+                var a = document.createElement("a");
+                a.href = linkHref;
+                a.appendChild(span);
+                div.appendChild(a);
+            } else {
+                div.appendChild(span);
+            }
+
+            span.textContent = text;
             td.appendChild(div);
             parent.appendChild(td);
         }
