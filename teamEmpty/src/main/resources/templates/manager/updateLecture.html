@@ -140,95 +140,109 @@
 
 <footer th:insert="layout/header :: footer"></footer>
 
+
 <script>
+    // 요일과 시작 시간, 끝 시간을 받아서 div를 생성하는 함수
+    function createDayDiv(day, start, end, index) {
+        let dayDiv = document.createElement('div');
+        dayDiv.textContent = day;
+        dayDiv.id = day;
+
+        let timeInputDiv = document.createElement('div');
+
+        let startTimeDiv = document.createElement('div');
+        startTimeDiv.className = 'input-group input-group-sm mb-3 w-100';
+
+        let startTimeSpan = document.createElement('span');
+        startTimeSpan.className = 'input-group-text';
+        startTimeSpan.style.width = '20%';
+        startTimeSpan.textContent = '시작 시간';
+
+        let startTimeInput = document.createElement('input');
+        startTimeInput.type = 'time';
+        startTimeInput.className = 'form-control';
+        startTimeInput.name = 'start[' + (index + 1) + ']'; // 수정된 부분
+
+        startTimeInput.value = start || '';
+
+        startTimeDiv.appendChild(startTimeSpan);
+        startTimeDiv.appendChild(startTimeInput);
+
+        let endTimeDiv = document.createElement('div');
+        endTimeDiv.className = 'input-group input-group-sm mb-3 w-100';
+
+        let endTimeSpan = document.createElement('span');
+        endTimeSpan.className = 'input-group-text';
+        endTimeSpan.style.width = '20%';
+        endTimeSpan.textContent = '끝 시간';
+
+        let endTimeInput = document.createElement('input');
+        endTimeInput.type = 'time';
+        endTimeInput.className = 'form-control';
+        endTimeInput.name = 'end[' + (index + 1) + ']'; // 수정된 부분
+
+        endTimeInput.value = end || '';
+
+        endTimeDiv.appendChild(endTimeSpan);
+        endTimeDiv.appendChild(endTimeInput);
+
+        timeInputDiv.appendChild(startTimeDiv);
+        timeInputDiv.appendChild(endTimeDiv);
+
+        dayDiv.appendChild(timeInputDiv);
+        return dayDiv;
+    }
+
     // 체크박스가 변경될 때마다 실행되는 함수
-    function updateTimes() {
+    function updateTimes(loading = false) {
         // 모든 체크박스를 가져옴
         let checkboxes = document.querySelectorAll('input[type="checkbox"]');
         // 시작 시간과 끝 시간 입력 필드를 담을 div
         let timeDiv = document.getElementById('timeDiv');
 
-        // 기존에 있던 모든 입력 필드를 초기화
-        timeDiv.innerHTML = '';
-
-        // 체크된 체크박스의 수를 카운트하는 변수
-        let count = 0;
-
         let startTimes = document.getElementById('startTimes').value.split(',');
         let endTimes = document.getElementById('endTimes').value.split(',');
 
-        checkboxes.forEach((checkbox) => {
+        let count = 0;
+
+        checkboxes.forEach((checkbox, index) => {
+            let dayDiv = document.getElementById(checkbox.value);
             if (checkbox.checked) {
-                let dayDiv = document.createElement('div');
-                dayDiv.textContent = checkbox.value;
-
-                let timeInputDiv = document.createElement('div');
-
-                let startTimeDiv = document.createElement('div');
-                startTimeDiv.className = 'input-group input-group-sm mb-3 w-100';
-
-                let startTimeSpan = document.createElement('span');
-                startTimeSpan.className = 'input-group-text';
-                startTimeSpan.style.width = '20%';
-                startTimeSpan.textContent = '시작 시간';
-
-                let startTimeInput = document.createElement('input');
-                startTimeInput.type = 'time';
-                startTimeInput.className = 'form-control';
-                startTimeInput.name = 'start[' + count + ']';  // 이름에 인덱스 번호 부여
-
-                // 시작 시간 설정
-                startTimeInput.value = startTimes[count] || '';
-
-                startTimeDiv.appendChild(startTimeSpan);
-                startTimeDiv.appendChild(startTimeInput);
-
-                let endTimeDiv = document.createElement('div');
-                endTimeDiv.className = 'input-group input-group-sm mb-3 w-100';
-
-                let endTimeSpan = document.createElement('span');
-                endTimeSpan.className = 'input-group-text';
-                endTimeSpan.style.width = '20%';
-                endTimeSpan.textContent = '끝 시간';
-
-                let endTimeInput = document.createElement('input');
-                endTimeInput.type = 'time';
-                endTimeInput.className = 'form-control';
-                endTimeInput.name = 'end[' + count + ']';  // 이름에 인덱스 번호 부여
-
-                // 끝 시간 설정
-                endTimeInput.value = endTimes[count] || '';
-
-                endTimeDiv.appendChild(endTimeSpan);
-                endTimeDiv.appendChild(endTimeInput);
-
-                timeInputDiv.appendChild(startTimeDiv);
-                timeInputDiv.appendChild(endTimeDiv);
-
-                timeDiv.appendChild(dayDiv);
-                timeDiv.appendChild(timeInputDiv);
-
-                // 체크된 체크박스의 수를 하나 증가
-                count++;
+                if (!dayDiv) {
+                    // 페이지 로딩 시에는 'count'를 사용하고, 체크박스 변경 시에는 비어있는 값을 사용
+                    dayDiv = createDayDiv(checkbox.value, loading ? startTimes[count] : '', loading ? endTimes[count] : '', index);
+                    let currentDivs = Array.from(timeDiv.children);
+                    let i = currentDivs.findIndex(div => days.indexOf(div.id) > index);
+                    if (i !== -1) {
+                        timeDiv.insertBefore(dayDiv, currentDivs[i]);
+                    } else {
+                        timeDiv.appendChild(dayDiv);
+                    }
+                }
+                if (loading) count++;
+            } else if (dayDiv) {
+                timeDiv.removeChild(dayDiv);
             }
         });
     }
 
     // 페이지가 로드되었을 때
     window.onload = function() {
-        // 모든 체크박스를 가져옴
         let checkboxes = document.querySelectorAll('input[type="checkbox"]');
 
         // 각 체크박스에 대해
         checkboxes.forEach(checkbox => {
             // 체크박스가 변경되면 updateTimes 함수를 실행
-            checkbox.onchange = updateTimes;
+            checkbox.onchange = () => updateTimes();
         });
 
         // 페이지가 로드되었을 때 한 번 실행
-        updateTimes();
+        updateTimes(true);
     };
+
+    let days = ['월', '화', '수', '목', '금'];
 </script>
+
 
 <!--학과를 선택함에 따라서 강의실 번호와 교수 번호를 띄워줌-->
 <script>
