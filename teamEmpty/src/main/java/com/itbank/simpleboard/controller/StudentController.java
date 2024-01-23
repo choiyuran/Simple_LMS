@@ -107,6 +107,8 @@ public class StudentController {
 
             if(enrollment != null) {
                 ra.addFlashAttribute("msg","수강신청되었습니다.");
+            }else{
+                ra.addFlashAttribute("msg", "수강신청에 실패했습니다.");
             }
             mav.setViewName("redirect:/student/enroll");
         }else{

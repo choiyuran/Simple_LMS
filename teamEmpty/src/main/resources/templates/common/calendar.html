@@ -31,7 +31,7 @@
                 <div class="calendar-wrap">
                     <!-- 각 월에 대한 루프-->
                     <div th:each="calendarEntry : ${calendarByMonth}">
-                    <div class="work-wrap">
+                        <div class="work-wrap">
                             <div class="month">
                                 <!-- 월 표시 -->
                                 <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>
@@ -42,15 +42,23 @@
                                     <div class="work">
                                         <!-- 일자 -->
                                         <div>
-                                            <p class="day" th:text="${#calendars.format(cal.start_date, 'dd')}"> ~ </p>
-                                            <p class="day" th:text="${#calendars.format(cal.end_date, 'dd')}"></p>
+                                            <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')}"></p>
+                                            <p class="day" th:text="${#temporals.format(cal.end_date, 'dd')}"></p>
                                         </div>
                                         <!-- 내용 -->
                                         <p class="desc" th:text="${cal.title}"></p>
+
+<!--                                        &lt;!&ndash; 수정 및 삭제 버튼 (교직원일 때만 표시) &ndash;&gt;-->
+<!--                                        <div class="btn" th:if="${user != null and user.role eq '교직원'}">-->
+<!--                                            <button class="editButton">수정</button>-->
+<!--                                            <button class="deleteButton">삭제</button>-->
+<!--                                        </div>-->
+
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
                 <div class="tip-box">
                     <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
@@ -58,10 +66,8 @@
                 </div>
             </div>
         </div>
+    </div>
 </main>
 <footer th:insert="layout/header :: footer"></footer>
-
-
-
 </body>
 </html>

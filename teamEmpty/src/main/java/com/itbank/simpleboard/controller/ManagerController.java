@@ -1,27 +1,34 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.AcademicCalendarDto;
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.entity.College;
+import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.LectureRoomService;
 import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.UserService;
+import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
+
+import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -32,32 +39,69 @@ public class ManagerController {
 
     private final ManagerService managerService;
     private final LectureRoomService lectureRoomService;
+    private final AcademicCalendarService academicCalendarService;
+    private final UserService userService;
+    private final HttpSession session;
+    private final ProfessorService professorService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
-        List<AcademicCalendar> calendar = managerService.findAll();
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
         // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
-                .collect(Collectors.groupingBy(cal -> cal.getStart_date()
-                        .toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
-                        .getMonthValue()));
-
+                .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
+
+        // 세션에서 사용자 정보 가져오기
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        model.addAttribute("user", user);
+
         return "common/calendar";
     }
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
-    public String calendar(){
-        return "manager/calendarAddForm";
+    public String calendarAdd(Model model){
+        model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        System.out.println(user.getRole());
+        if(user.getRole().equals(User_role.교직원)) {
+            return "manager/calendarAddForm";
+        }
+        else{
+            return "home";
+        }
     }
 
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
-    public String calendar(AcademicCalendarDto calendar){
-        AcademicCalendar addCalendar = managerService.addCalendar(calendar);
+    public String calendar(@ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
+        AcademicCalendar addCalendar = academicCalendarService.addCalendar(calendar);
+        return "redirect:/manager/calendar";
+    }
 
-        return "common/calendar";
+    @GetMapping("/calendarEditForm/{id}") // 학사일정 수정 폼
+    public String calendarEdit(@PathVariable Long id, Model model){
+        // id를 사용하여 수정할 학사일정 데이터를 데이터베이스에서 가져온다.
+        AcademicCalendarDto academicCalendarDto = academicCalendarService.getCalendarById(id);
+
+        // 가져온 데이터를 모델에 담아 수정 폼으로 전달한다.
+        model.addAttribute("academicCalendarDto", academicCalendarDto);
+
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if(user.getRole().equals(User_role.교직원)) {
+            return "manager/calendarEditForm";
+        }
+        else{
+            return "home";
+        }
+    }
+
+    @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
+    public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
+        academicCalendarService.editCalendar(id, calendar);
+
+        return "redirect:/manager/calendar";
     }
 
 
@@ -160,11 +204,17 @@ public class ManagerController {
     }
 
     @ResponseBody
-    @GetMapping("/getLecturerooms")
-    public ResponseEntity<List<LectureRoom>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx) {
+    @GetMapping("/getLecturerooms")             // 학과를 선택하면 해당 학과의 교수와 강의실 조회
+    public ResponseEntity<Map<String, Object>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx, @RequestParam("major_idx") Long major_idx) {
+        log.info("ResponseEntity");
         List<LectureRoom> lecturerooms = lectureRoomService.getLectureroomsByCollege(collegeIdx);
-        return new ResponseEntity<>(lecturerooms, HttpStatus.OK);
-    }
+        List<ProfessorUserDto> professors = professorService.getProfessorsByMajor(major_idx);
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("lecturerooms", lecturerooms);
+        response.put("professors", professors);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }

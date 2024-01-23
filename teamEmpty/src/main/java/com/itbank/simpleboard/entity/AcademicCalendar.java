@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -26,14 +27,14 @@ public class AcademicCalendar {
 
     // 시작일자
     @Column(name="calendar_start_date")
-    private Date start_date;
+    private LocalDate start_date;
 
 
     // 종료일자
     @Column(name="calendar_end_date")
-    private Date end_date;
+    private LocalDate end_date;
 
-    public AcademicCalendar(String title, Date start_date, Date end_date) {
+    public AcademicCalendar(String title, LocalDate start_date, LocalDate end_date) {
         this.title = title;
         this.start_date = start_date;
         this.end_date = end_date;
