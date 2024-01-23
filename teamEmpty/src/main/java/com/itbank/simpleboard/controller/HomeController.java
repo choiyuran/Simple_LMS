@@ -1,15 +1,15 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.User;
+import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
+import com.itbank.simpleboard.service.AcademicCalendarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +27,7 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final ProfessorRepository professorRepository;
+    private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/")
     public String root() {
@@ -34,10 +35,16 @@ public class HomeController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model) {
 //        에러 테스트용 예외발생 코드
 //        int n = 10 / 0;
 //        System.out.println(n);
+
+        // home 에서 calendar 불러오기
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+
+        model.addAttribute("calendar", calendar);
+
         return "home";
     }
 

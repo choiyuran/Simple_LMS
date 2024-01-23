@@ -32,27 +32,27 @@
                                     </tr>
                                     <tr>
                                         <td>1</td>
-                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td></td>
                                         <td>2024-01-07</td>
                                     </tr>
                                     <tr>
                                         <td>2</td>
-                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td></td>
                                         <td>2024-01-07</td>
                                     </tr>
                                     <tr>
                                         <td>3</td>
-                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td></td>
                                         <td>2024-01-07</td>
                                     </tr>
                                     <tr>
                                         <td>4</td>
-                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td></td>
                                         <td>2024-01-07</td>
                                     </tr>
                                     <tr>
                                         <td>5</td>
-                                        <td>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad voluptate alias consequuntur rem placeat illum. Quos, itaque incidunt? Debitis accusantium dolorem, impedit neque ipsum optio molestiae repellendus ut amet illo. </td>
+                                        <td></td>
                                         <td>2024-01-07</td>
                                     </tr>
                                 </table>
@@ -64,13 +64,16 @@
                                 </h3>
                                 <div class="main-split"></div>
                                 <table>
-                                    <!-- DB에서 내용 꺼내와서 채워넣기 -->
                                     <tr>
-                                        <td>1</td>
-                                        <td>2</td>
-                                        <td>3</td>
-                                        <td>4</td>
-                                        <td>5</td>
+                                        <th>글 번호</th>
+                                        <th>내용</th>
+                                        <th>기간</th>
+                                    </tr>
+                                    <!-- DB에서 내용 꺼내와서 채워넣기 -->
+                                    <tr th:each="calendar : ${calendar}">
+                                        <td th:text="${calendar.idx}"></td>
+                                        <td th:text="${calendar.title}"></td>
+                                        <td th:text="${calendar.start_date} + ' ~ ' + ${calendar.end_date}"></td>
                                     </tr>
                                 </table>
                             </div>
