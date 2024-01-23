@@ -138,7 +138,17 @@
                 <div th:if="${row.plan == null}" class="planExist"><span>미등록</span></div>
             </td>
             <td>
-                <div><button>버튼</button></div>
+                <th:block th:if="${row.semester.split(' ')[0].contains('2022')}">
+                    <div>
+                        <span>O</span>
+                        <span th:text="${#dates.format(#dates.createToday(), 'yyyy/MM')}"></span>
+                    </div>
+                </th:block>
+                <th:block th:unless="${row.semester.split(' ')[0].contains('2022')}">
+                    <div>
+                        <span>x</span>
+                    </div>
+                </th:block>
             </td>
         </tr>
         </tbody>
@@ -226,19 +236,6 @@
         function resetAndSearch() {
             document.getElementById("MyLectureSearchForm").reset();
             searchLectures();
-        }
-
-        function test(semester) {
-            // 'xxxx년 x학기' 형식에서 년도와 학기를 추출하여 출력
-            const match = semester.match(/(\d{4})년 (\d)학기/);
-            if (match) {
-                const year = match[1];
-                const term = match[2];
-                console.log('년도:', year);
-                console.log('학기:', term);
-            } else {
-                console.log('유효한 형식이 아닙니다.');
-            }
         }
     </script>
 </main>
