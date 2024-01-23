@@ -23,4 +23,6 @@ public class UserDTO {
     private Student student;
 
 
+    public UserDTO(Long idx, String userName, String userId, String userPw, String salt, String email, String address, String pnum, User_role role) {
+    }
 }
