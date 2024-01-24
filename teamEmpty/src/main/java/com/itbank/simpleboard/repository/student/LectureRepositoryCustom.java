@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface LectureRepositoryCustom {
     List<LectureDto> getLectureListDtos(String searchType, String keyword);
+
+    List<LectureDto> getLectureDtos();
 }

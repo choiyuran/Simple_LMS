@@ -55,6 +55,7 @@ public class StudentController {
         StudentDto student = studentService.findByUserIdx(dto.getIdx());
         List<Enrollment> enrollmentList = enrollmentService.findByStudent(student.getIdx());
         List<LectureDto> lectureList = new ArrayList<>();
+
         for(Enrollment e : enrollmentList){
             LectureDto lecturedto = new LectureDto();
             lecturedto.setCredit(e.getLecture().getCredit());
@@ -64,20 +65,19 @@ public class StudentController {
             lecturedto.setIdx(e.getLecture().getIdx());
             lecturedto.setGrade(e.getLecture().getGrade());
             lecturedto.setIntro(e.getLecture().getIntro());
-            lecturedto.setMajor(e.getLecture().getMajor());
             lecturedto.setPlan(e.getLecture().getPlan());
             lecturedto.setName(e.getLecture().getName());
             lecturedto.setType(e.getLecture().getType().toString());
             lecturedto.setVisible(e.getLecture().getVisible().toString());
-            lecturedto.setProfessor(e.getLecture().getProfessor());
+            lecturedto.setProfessor(e.getLecture().getProfessor().getProfessor_idx());
             lecturedto.setSemester(e.getLecture().getSemester());
             lecturedto.setMaxCount(e.getLecture().getMaxCount());
             lecturedto.setCurrentCount(e.getLecture().getCurrentCount());
-            lecturedto.setLectureRoom(e.getLecture().getLectureRoom());
+            lecturedto.setProfessor_name(e.getLecture().getProfessor().getUser().getUser_name());
             lectureList.add(lecturedto);
         }
 
-        if(dto != null && dto.getRole().toString().equals("학생")){
+        if(dto.getRole().toString().equals("학생")){
             mav.setViewName("student/enrollment");
             mav.addObject("lectureList",lectureList);
             mav.addObject("stuIdx", student.getIdx());
@@ -156,6 +156,7 @@ public class StudentController {
             Long userIdx = userDto.getIdx();
             StudentDto studentDto = studentService.findByUserIdx(userIdx);
             List<Enrollment> enrollmentList = enrollmentService.findByStudent(studentDto.getIdx());
+            List<Evaluation> evaluationList = evaluationService.findByStudent(studentDto.getIdx());
             if(!enrollmentList.isEmpty()){
                 mav.addObject("list", enrollmentList);
                 mav.setViewName("student/evaluationList");

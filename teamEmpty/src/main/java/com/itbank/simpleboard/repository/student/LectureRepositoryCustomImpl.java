@@ -1,7 +1,9 @@
 package com.itbank.simpleboard.repository.student;
 
 import com.itbank.simpleboard.dto.LectureDto;
-import com.itbank.simpleboard.entity.Lecture;
+import com.itbank.simpleboard.dto.QLectureDto;
+import com.itbank.simpleboard.dto.QProfessorLectureDto;
+import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
@@ -32,9 +34,14 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
         } else if ("grade".equals(searchType)) {
             builder.and(lecture.grade.eq(Integer.parseInt(keyword)));
         } else {
-            builder.or(lecture.name.contains(keyword))
-                    .or(lecture.professor.user.user_name.contains(keyword)) // 수정: user_name 대신 userName 사용
-                    .or(lecture.grade.eq(Integer.parseInt(keyword)));
+            if (isNumeric(keyword)) {
+                builder.or(lecture.name.contains(keyword))
+                        .or(lecture.professor.user.user_name.contains(keyword)) // 수정: user_name 대신 userName 사용
+                        .or(lecture.grade.eq(Integer.parseInt(keyword)));
+            } else {
+                builder.or(lecture.name.contains(keyword))
+                        .or(lecture.professor.user.user_name.contains(keyword)); // 수정: user_name 대신 userName 사용
+            }
         }
 
         List<Lecture> lectureList = queryFactory.selectFrom(lecture)
@@ -45,10 +52,6 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
         for (Lecture lecture1 : lectureList) {
             LectureDto dto = new LectureDto();
             dto.setIdx(lecture1.getIdx());
-            dto.setLectureRoom(lecture1.getLectureRoom());
-            dto.setProfessor(lecture1.getProfessor());
-            dto.setMajor(lecture1.getMajor());
-            dto.setVisible(lecture1.getVisible().toString());
             dto.setStart(lecture1.getStart());
             dto.setEnd(lecture1.getEnd());
             dto.setIdx(lecture1.getIdx());
@@ -57,16 +60,56 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
             dto.setName(lecture1.getName());
             dto.setDay(lecture1.getDay());
             dto.setGrade(lecture1.getGrade());
-            dto.setIntro(lecture1.getIntro());
             dto.setCredit(lecture1.getCredit());
             dto.setCurrentCount(lecture1.getCurrentCount());
             dto.setMaxCount(lecture1.getMaxCount());
             dto.setSemester(lecture1.getSemester());
+            dto.setProfessor_name(lecture1.getProfessor().getUser().getUser_name());
+            dto.setProfessor(lecture1.getProfessor().getProfessor_idx());
+            dto.setIntro(lecture1.getIntro());
+            dto.setVisible(lecture1.getVisible().toString());
 
             lectureDtoList.add(dto);
         }
 
         return lectureDtoList;
+    }
+
+    public static boolean isNumeric(String str) {
+        if (str == null || str.length() == 0) {
+            return false;
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public List<LectureDto> getLectureDtos() {
+        return queryFactory
+                .select(new QLectureDto(
+                        lecture.idx,
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        lecture.professor.professor_idx,
+                        QUser.user.user_name
+                ))
+                .from(lecture)
+                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .fetch();
     }
 
 }

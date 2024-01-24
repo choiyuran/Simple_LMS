@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,5 +48,13 @@ public class EvaluationService {
                         evaluateFormDto.getQ4(),
                         evaluateFormDto.getQ5(),
                         enrollmentRepository.findById(evaluateFormDto.getEnrollment_idx()).orElse(null)));
+    }
+
+    public List<Evaluation> findAll() {
+        return evaluationRepository.findAll();
+    }
+
+    public List<Evaluation> findByStudent(Long studnetIdx) {
+        return null;
     }
 }

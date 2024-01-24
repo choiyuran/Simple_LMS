@@ -26,12 +26,7 @@ public class LectureService {
     private final JPAQueryFactory queryFactory;
     QLecture lecture = QLecture.lecture;
     public List<LectureDto> selectAll() {
-        List<Lecture> lectureList = lectureRepository.findAll();
-        List<LectureDto> dtos = new ArrayList<>();
-        for(Lecture lecture : lectureList){
-            LectureDto dto = new LectureDto(lecture.getIdx(), lecture.getName(), lecture.getIntro(),lecture.getCredit(), lecture.getDay(), lecture.getStart(), lecture.getEnd(), lecture.getType().toString(), lecture.getMaxCount(), lecture.getCurrentCount(), lecture.getSemester(), lecture.getGrade(),lecture.getProfessor(),lecture.getPlan(),lecture.getMajor(),lecture.getLectureRoom(), lecture.getVisible().toString());
-            dtos.add(dto);
-        }
+        List<LectureDto> dtos = lectureRepository.getLectureDtos();
         return dtos;
     }
 

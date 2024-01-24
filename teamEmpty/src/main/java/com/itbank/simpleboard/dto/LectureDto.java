@@ -1,10 +1,7 @@
 package com.itbank.simpleboard.dto;
 
 import ch.qos.logback.core.joran.spi.NoAutoStart;
-import com.itbank.simpleboard.entity.Lecture;
-import com.itbank.simpleboard.entity.LectureRoom;
-import com.itbank.simpleboard.entity.Major;
-import com.itbank.simpleboard.entity.Professor;
+import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,19 +22,18 @@ public class LectureDto {
     private String semester;
     private Integer grade;
 
-    private Professor professor;
+    private Long professor;
     private String plan;
-    private Major major;
-    private LectureRoom lectureRoom;
     private String visible;
+    private String professor_name;
 
     @QueryProjection
-    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Professor professor, Major major, LectureRoom lectureRoom, String visible) {
-        this(idx,name, intro, credit, day, start, end, type, maxCount, currentCount, semester, grade, professor, null, major, lectureRoom, null);
+    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor, String professor_name) {
+        this(idx,name, intro, credit, day, start, end, type, maxCount, currentCount, semester, grade, professor, null, professor_name);
     }
 
     @QueryProjection
-    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Professor professor, String plan, Major major, LectureRoom lectureRoom, String visible) {
+    public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor, String plan, String professor_name) {
         this.idx = idx;
         this.name = name;
         this.intro = intro;
@@ -52,8 +48,7 @@ public class LectureDto {
         this.grade = grade;
         this.professor = professor;
         this.plan = plan;
-        this.major = major;
-        this.lectureRoom = lectureRoom;
-        this.visible = visible;
+        this.visible = YesOrNo.N.toString();
+        this.professor_name = professor_name;
     }
 }
