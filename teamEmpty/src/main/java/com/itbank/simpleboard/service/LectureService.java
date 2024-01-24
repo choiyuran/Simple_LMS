@@ -5,14 +5,12 @@ import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.entity.Lecture;
 import com.itbank.simpleboard.entity.QLecture;
 import com.itbank.simpleboard.repository.student.LectureRepository;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +23,7 @@ public class LectureService {
 
     private final JPAQueryFactory queryFactory;
     QLecture lecture = QLecture.lecture;
+
     public List<LectureDto> selectAll() {
         List<LectureDto> dtos = lectureRepository.getLectureDtos();
         return dtos;
@@ -37,22 +36,21 @@ public class LectureService {
 
 
     @Transactional
-    public int planUpload(MultipartFile plan, Long lectureIdx) {
-        int row = 0;
-        String syllabus = fileComponent.upload(plan, "syllabus");
-
-        if (syllabus != null) {
-            Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
-
-            if (optionalLecture.isPresent()) {
-                Lecture lecture = optionalLecture.get();
+    public String planUpload(MultipartFile plan, Long lectureIdx) {
+        String stringPlan = null;
+        Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
+        if (optionalLecture.isPresent()) {
+            Lecture lecture = optionalLecture.get();
+            if (lecture.getPlan() != null) {
+                fileComponent.deleteFile(lecture.getPlan(), "syllabus");
+            }
+            String syllabus = fileComponent.upload(plan, "syllabus");
+            if (syllabus != null) {
                 lecture.setPlan(syllabus);
                 lectureRepository.save(lecture);
-
-                row = 1;
+                stringPlan = syllabus;
             }
         }
-
-        return row;
+        return stringPlan;
     }
 }

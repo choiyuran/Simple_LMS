@@ -38,6 +38,7 @@ public class FileComponent {
 
         // 파일명이 존재할 경우에만 처리
         if (fileName != null) {
+            fileName = fileName.replaceAll(" ", "_");
             File dest = new File(dirString, fileName);
 
             try {

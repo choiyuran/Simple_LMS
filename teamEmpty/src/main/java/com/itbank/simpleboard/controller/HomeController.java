@@ -154,6 +154,6 @@ public class HomeController {
         long elapsedTime = endTime - startTime;
 
         System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
-        return "redirect:/professor/lectureList";
+        return "redirect:/professor/myLecture";
     }
 }

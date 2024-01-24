@@ -18,6 +18,7 @@ public class ProfessorLectureDto {
     private String semester;
     private Integer grade;
 
+    private Long professor_idx;
     private String professor_name;
     private String plan;
     private String major;
@@ -46,7 +47,7 @@ public class ProfessorLectureDto {
     }
 
     @QueryProjection
-    public ProfessorLectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String professor_name, String plan, String major, String location, Integer lectureRoom) {
+    public ProfessorLectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor_idx, String professor_name, String plan, String major, String location, Integer lectureRoom) {
         this.idx = idx;
         this.name = name;
         this.intro = intro;
@@ -59,6 +60,7 @@ public class ProfessorLectureDto {
         this.currentCount = currentCount;
         this.semester = semester;
         this.grade = grade;
+        this.professor_idx = professor_idx;
         this.professor_name = professor_name;
         this.plan = plan;
         this.major = major;

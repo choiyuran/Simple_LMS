@@ -29,7 +29,6 @@ public class AcademicCalendar {
     @Column(name="calendar_start_date")
     private LocalDate start_date;
 
-
     // 종료일자
     @Column(name="calendar_end_date")
     private LocalDate end_date;
