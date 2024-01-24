@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -124,5 +125,14 @@ public class ProfessorController {
     public String viewLecture(@PathVariable("idx") Long idx, Model model) {
         model.addAttribute("lecture", professorService.getLectureDto(idx));
         return "professor/viewLecture";
+    }
+
+    @GetMapping("/viewEvaluation/{professorIdx}/{idx}")    // 내 강의 평가 보기
+    public String viewEvaluation(@PathVariable("professorIdx") Long professorIdx, @PathVariable("idx") Long idx, Model model, HttpSession session) {
+        ProfessorDto professor = (ProfessorDto) session.getAttribute("professor");
+        if (professor == null || !Objects.equals(professor.getProfessor_idx(), professorIdx)) {
+            return "redirect:/home";
+        }
+        return "/professor/myLectureEvaluation";
     }
 }

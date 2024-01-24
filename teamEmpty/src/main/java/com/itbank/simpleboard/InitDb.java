@@ -188,28 +188,28 @@
 //            Lecture lecture= new Lecture("정치학개론", "정치학의 기본적인 이론과 원칙, 그리고 주요한 주제들에 대해서 다룹니다.", 3, "월,수,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 1L), 30, 25, "2022년 1학기", 1, null, em.find(Major.class, 2L), em.find(LectureRoom.class, 1L));
 //            em.persist(lecture);
 //
-//            Lecture lecture2 = new Lecture("지리학개론", "지리학의 기본 개념과 원리를 소개합니다.", 3, "월,수,금", "10:00,14:30,09:00", "12:00,16:30,11:00", Lecture_Type.전공필수,  em.find(Professor.class, 1L), 30, 25, "2022년 1학기", 1, null, em.find(Major.class, 1L), em.find(LectureRoom.class, 1L));
+//            Lecture lecture2 = new Lecture("지리학개론", "지리학의 기본 개념과 원리를 소개합니다.", 3, "월,수,금", "10:00,14:30,09:00", "12:00,16:30,11:00", Lecture_Type.전공필수,  em.find(Professor.class, 1L), 30, 25, "2024년 2학기", 1, null, em.find(Major.class, 1L), em.find(LectureRoom.class, 1L));
 //            em.persist(lecture2);
 //
-//            Lecture lecture3 = new Lecture("군사학개론", "군사학의 기본적인 이론과 원칙을 학습합니다.", 3, "월,금", "13:00,16:00", "15:00,18:00", Lecture_Type.전공선택,  em.find(Professor.class, 1L), 30, 20, "2022년 1학기", 1, null, em.find(Major.class, 3L), em.find(LectureRoom.class, 1L));
+//            Lecture lecture3 = new Lecture("군사학개론", "군사학의 기본적인 이론과 원칙을 학습합니다.", 3, "월,금", "13:00,16:00", "15:00,18:00", Lecture_Type.전공선택,  em.find(Professor.class, 1L), 30, 20, "2023년 1학기", 1, null, em.find(Major.class, 3L), em.find(LectureRoom.class, 1L));
 //            em.persist(lecture3);
 //
 //            Lecture lecture4 = new Lecture("수학교육론", "수학 교육의 이론과 방법에 대해 다룹니다.", 3, "월,목,금", "09:00,15:30,9:00", "12:00,17:30,12:00", Lecture_Type.선택교양,  em.find(Professor.class, 2L), 30, 22, "2022년 1학기", 1, null, em.find(Major.class, 4L), em.find(LectureRoom.class, 2L));
 //            em.persist(lecture4);
 //
-//            Lecture lecture5 = new Lecture("사회학", "사회의 기본 구조와 기능, 그리고 사회 현상을 이해하는 방법을 다룹니다.", 3, "수,금", "15:30,09:00", "17:30,12:00", Lecture_Type.전공선택,  em.find(Professor.class, 2L), 30, 28, "2022년 1학기", 1, null, em.find(Major.class, 5L), em.find(LectureRoom.class, 2L));
+//            Lecture lecture5 = new Lecture("사회학", "사회의 기본 구조와 기능, 그리고 사회 현상을 이해하는 방법을 다룹니다.", 3, "수,금", "15:30,09:00", "17:30,12:00", Lecture_Type.전공선택,  em.find(Professor.class, 2L), 30, 28, "2022년 2학기", 1, null, em.find(Major.class, 5L), em.find(LectureRoom.class, 2L));
 //            em.persist(lecture5);
 //
-//            Lecture lecture6 = new Lecture("국어교육론", " 국어 교육의 이론과 방법에 대해 다룹니다.", 3, "월,목", "09:00,09:00", "12:00,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 2L), 30, 20, "2022년 1학기", 1, null, em.find(Major.class, 6L), em.find(LectureRoom.class, 2L));
+//            Lecture lecture6 = new Lecture("국어교육론", " 국어 교육의 이론과 방법에 대해 다룹니다.", 3, "월,목", "09:00,09:00", "12:00,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 2L), 30, 20, "2023년 2학기", 1, null, em.find(Major.class, 6L), em.find(LectureRoom.class, 2L));
 //            em.persist(lecture6);
 //
-//            Lecture lecture7 = new Lecture("신경과학개론", "신경계의 기본 구조와 기능에 대해 배웁니다.", 3, "월,수,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 25, "2022년 1학기", 1, null, em.find(Major.class, 7L), em.find(LectureRoom.class, 3L));
+//            Lecture lecture7 = new Lecture("신경과학개론", "신경계의 기본 구조와 기능에 대해 배웁니다.", 3, "월,수,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 25, "2024년 1학기", 1, null, em.find(Major.class, 7L), em.find(LectureRoom.class, 3L));
 //            em.persist(lecture7);
 //
-//            Lecture lecture8 = new Lecture("정신과학개론", "정신과학의 기본 원리와 개념에 대해 배웁니다.", 3, "수,금", "15:30,15:00", "17:30,15:00", Lecture_Type.선택교양,  em.find(Professor.class, 3L), 30, 29, "2022년 1학기", 1, null, em.find(Major.class, 8L), em.find(LectureRoom.class, 3L));
+//            Lecture lecture8 = new Lecture("정신과학개론", "정신과학의 기본 원리와 개념에 대해 배웁니다.", 3, "수,금", "15:30,15:00", "17:30,15:00", Lecture_Type.선택교양,  em.find(Professor.class, 3L), 30, 29, "2022년 2학기", 1, null, em.find(Major.class, 8L), em.find(LectureRoom.class, 3L));
 //            em.persist(lecture8);
 //
-//            Lecture lecture9 = new Lecture("마취과학개론", "마취의 기본 원리와 마취 약물에 대해 배웁니다.", 3, "월,화,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 30, "2022년 1학기", 1, null, em.find(Major.class, 9L), em.find(LectureRoom.class, 3L));
+//            Lecture lecture9 = new Lecture("마취과학개론", "마취의 기본 원리와 마취 약물에 대해 배웁니다.", 3, "월,화,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 30, "2024년 1학기", 1, null, em.find(Major.class, 9L), em.find(LectureRoom.class, 3L));
 //            em.persist(lecture9);
 //        }
 //

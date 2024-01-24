@@ -40,6 +40,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         lecture.currentCount,
                         lecture.semester,
                         lecture.grade,
+                        lecture.professor.professor_idx,
                         QUser.user.user_name,
                         lecture.plan,
                         QMajor.major.name,

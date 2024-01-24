@@ -120,7 +120,7 @@
             </td>
             <td>
                 <div>
-                    <span th:text="${row.semester}"></span>
+                    <span th:text="${row.semester}" class="semesterValue"></span>
                 </div>
             </td>
             <td>
@@ -137,18 +137,9 @@
                 <div th:if="${row.plan != null}" class="planExist"><span>등록됨</span></div>
                 <div th:if="${row.plan == null}" class="planExist"><span>미등록</span></div>
             </td>
-            <td>
-                <th:block th:if="${row.semester.split(' ')[0].contains('2022')}">
-                    <div>
-                        <span>O</span>
-                        <span th:text="${#dates.format(#dates.createToday(), 'yyyy/MM')}"></span>
-                    </div>
-                </th:block>
-                <th:block th:unless="${row.semester.split(' ')[0].contains('2022')}">
-                    <div>
-                        <span>x</span>
-                    </div>
-                </th:block>
+            <td class="viewEvaluationBtnTd">
+                <span th:text="${row.idx}" class="lectureIdxSpan" style="display: none;"></span>
+                <span th:text="${row.professor_idx}" class="professorIdxSpan" style="display: none;"></span>
             </td>
         </tr>
         </tbody>
@@ -237,6 +228,63 @@
             document.getElementById("MyLectureSearchForm").reset();
             searchLectures();
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 모든 .viewEvaluationBtnTd 클래스를 가진 요소를 선택
+            var tdElements = document.querySelectorAll('.viewEvaluationBtnTd');
+            var semesterValues = document.querySelectorAll('.semesterValue');
+            var lectureIdxSpan = document.querySelectorAll('.lectureIdxSpan');
+            var professorIdxSpan = document.querySelectorAll('.professorIdxSpan');
+
+            // 현재 년도와 월 가져오기
+            var currentDate = new Date();
+            var currentYear = currentDate.getFullYear();
+            var currentMonth = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줌
+
+            // 각 요소에 대해 반복
+            tdElements.forEach(function (tdElement, index) {
+                tdElement.innerHTML = '';
+                // 'xxxx년 x학기'와 같은 형태의 문자열에서 연도와 학기 추출
+                var matchResult = semesterValues[index].textContent.match(/(\d{4})년 (\d)학기/);
+
+                // matchResult가 유효하면서 현재 년도 이하이고 버튼을 추가하는 부분
+                if (matchResult && matchResult.length === 3) {
+                    var semesterYear = parseInt(matchResult[1]);
+                    var semesterTerm = parseInt(matchResult[2]);
+
+                    if (!isNaN(semesterYear)) {
+                        if (semesterYear === currentYear) {
+                            if (semesterTerm === 1) {
+                                semesterTerm += 5;
+                            } else {
+                                semesterTerm += 10;
+                            }
+
+                            // semesterTerm이 currentMonth보다 작을 때만 버튼을 추가
+                            if (!isNaN(semesterTerm) && semesterTerm <= currentMonth) {
+                                addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                            }
+                        } else if (semesterYear < currentYear) {
+                            addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                        }
+                    }
+                }
+            });
+
+            function addButton(tdElement, lectureIdx, professorIdx) {
+                var buttonElement = document.createElement('button');
+                buttonElement.textContent = '확인';
+
+                // 버튼에 이벤트 리스너를 추가하고자 하는 경우 아래와 같이 추가할 수 있습니다.
+                buttonElement.addEventListener('click', function () {
+                    // 버튼이 클릭되었을 때 수행할 동작
+                    location.href = '/professor/viewEvaluation/' + professorIdx + '/' + lectureIdx;
+                });
+
+                // td 요소에 버튼을 추가
+                tdElement.appendChild(buttonElement);
+            }
+        });
     </script>
 </main>
 <footer th:insert="layout/header :: footer"></footer>
