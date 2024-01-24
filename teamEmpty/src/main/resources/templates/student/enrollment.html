@@ -17,19 +17,18 @@
                 </select>
             </div>
             <div class="form-group col-md-7">
-                <input type="text" id="searchKeyword" name="keyword" class="form-control" placeholder="검색어를 입력하세요" th:value="${param.keyword}">
+                <input type="text" id="searchKeyword" name="keyword" class="form-control" placeholder="검색어를 입력하세요"
+                       th:value="${param.keyword}">
             </div>
             <div class="form-group col-md-2">
                 <button type="submit" class="btn btn-primary">검색</button>
             </div>
         </form>
-
-
         <table class="table table-bordered">
             <tr>
                 <td th:text="'강의명'"></td>
                 <td th:text="'교수명'"></td>
-                <td th:text="'수강 학점'"></td>
+                <td th:text="'학점'"></td>
                 <td th:text="'강의 시작시간'"></td>
                 <td th:text="'강의 끝시간'"></td>
                 <td th:text="'강의 타입'"></td>
@@ -41,7 +40,7 @@
             <tr th:each="item:${list}">
                 <form method="post" th:unless="${#lists.contains(lectureList, item)}">
                     <td th:text="${item.name}"></td>
-                    <td th:text="${item.professor.user.getUser_name()}"></td>
+                    <td th:text="${item.professor_name}"></td>
                     <td th:text="${item.credit}"></td>
                     <td th:utext="${item.day+ '<br/>' + item.start}"></td>
                     <td th:utext="${item.day+ '<br/>' + item.end}"></td>
@@ -49,15 +48,21 @@
                     <td th:text="${item.maxCount+ '명 / ' + item.currentCount + '명'}"></td>
                     <td th:text="${item.semester}"></td>
                     <td th:text="${item.grade}"></td>
-                    <input th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required />
+                    <input th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required/>
                     <input th:type="hidden" th:value="${item.idx}" th:name="idx" required/>
-                    <td><button type="submit" class="btn btn-primary" th:if="${item.currentCount >= item.maxCount}" disabled>수강신청</button>
-                    <button type="submit" class="btn btn-primary" th:if="${item.currentCount < item.maxCount}">수강신청</button></td>
+                    <td>
+                        <button type="submit" class="btn btn-primary" th:if="${item.currentCount >= item.maxCount}"
+                                disabled>수강신청
+                        </button>
+                        <button type="submit" class="btn btn-primary" th:if="${item.currentCount < item.maxCount}">
+                            수강신청
+                        </button>
+                    </td>
                 </form>
 
                 <form method="get" th:if="${#lists.contains(lectureList, item)}" action="/student/cancel">
                     <td th:text="${item.name}"></td>
-                    <td th:text="${item.professor.user.getUser_name()}"></td>
+                    <td th:text="${item.professor_name}"></td>
                     <td th:text="${item.credit}"></td>
                     <td th:utext="${item.day+ '<br/>' + item.start}"></td>
                     <td th:utext="${item.day+ '<br/>' + item.end}"></td>
@@ -65,9 +70,11 @@
                     <td th:text="${item.maxCount+ '명 / ' + item.currentCount + '명'}"></td>
                     <td th:text="${item.semester}"></td>
                     <td th:text="${item.grade}"></td>
-                    <input th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required />
+                    <input th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required/>
                     <input th:type="hidden" th:value="${item.idx}" th:name="idx" required/>
-                    <td><button type="submit" class="btn btn-warning">수강취소</button></td>
+                    <td>
+                        <button type="submit" class="btn btn-warning">수강취소</button>
+                    </td>
                 </form>
             </tr>
         </table>
@@ -78,7 +85,7 @@
 
     const msg = [[${msg}]];
 
-    if(msg != '' && msg != null){
+    if (msg != '' && msg != null) {
         alert(msg);
     }
 

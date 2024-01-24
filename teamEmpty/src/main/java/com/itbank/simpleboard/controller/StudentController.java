@@ -1,15 +1,10 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.LectureDto;
-import com.itbank.simpleboard.dto.StudentDto;
-import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
-import com.itbank.simpleboard.service.EnrollmentService;
-import com.itbank.simpleboard.service.LectureService;
-import com.itbank.simpleboard.service.SituationServive;
-import com.itbank.simpleboard.service.StudentService;
+import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -35,19 +30,22 @@ public class StudentController {
     private final LectureService lectureService;
 
     private final StudentService studentService;
+    private final EvaluationService evaluationService;
     private final UserRepository userRepository;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
-        System.err.println("searchType : " + searchType + " keyword : " + keyword);
+
         ModelAndView mav = new ModelAndView("home");
         UserDTO dto = (UserDTO)session.getAttribute("user");
         if(dto == null){
             mav.addObject("msg","로그인하세요!");
             return mav;
         }
+
         List<LectureDto> dtos = null;
+
         if(searchType == null || keyword == null){
             dtos = lectureService.selectAll();
         }else{
@@ -57,6 +55,7 @@ public class StudentController {
         StudentDto student = studentService.findByUserIdx(dto.getIdx());
         List<Enrollment> enrollmentList = enrollmentService.findByStudent(student.getIdx());
         List<LectureDto> lectureList = new ArrayList<>();
+
         for(Enrollment e : enrollmentList){
             LectureDto lecturedto = new LectureDto();
             lecturedto.setCredit(e.getLecture().getCredit());
@@ -66,20 +65,19 @@ public class StudentController {
             lecturedto.setIdx(e.getLecture().getIdx());
             lecturedto.setGrade(e.getLecture().getGrade());
             lecturedto.setIntro(e.getLecture().getIntro());
-            lecturedto.setMajor(e.getLecture().getMajor().getIdx());
             lecturedto.setPlan(e.getLecture().getPlan());
             lecturedto.setName(e.getLecture().getName());
             lecturedto.setType(e.getLecture().getType().toString());
             lecturedto.setVisible(e.getLecture().getVisible().toString());
-            lecturedto.setProfessor(e.getLecture().getProfessor());
+            lecturedto.setProfessor(e.getLecture().getProfessor().getProfessor_idx());
             lecturedto.setSemester(e.getLecture().getSemester());
             lecturedto.setMaxCount(e.getLecture().getMaxCount());
             lecturedto.setCurrentCount(e.getLecture().getCurrentCount());
-            lecturedto.setLectureRoom(e.getLecture().getLectureRoom().getIdx());
+            lecturedto.setProfessor_name(e.getLecture().getProfessor().getUser().getUser_name());
             lectureList.add(lecturedto);
         }
 
-        if(dto != null && dto.getRole().toString().equals("학생")){
+        if(dto.getRole().toString().equals("학생")){
             mav.setViewName("student/enrollment");
             mav.addObject("lectureList",lectureList);
             mav.addObject("stuIdx", student.getIdx());
@@ -117,7 +115,7 @@ public class StudentController {
             mav.setViewName("redirect:/side");
         }
         long endTime = System.currentTimeMillis();
-        log.info("총 실행시간 : "+(endTime-startTime));
+        log.info("수강신청 실행시간 : "+(endTime-startTime) / 1000 + "초");
         return mav;
     }
 
@@ -150,4 +148,39 @@ public class StudentController {
         return "redirect:/student/studentModify";
     }
 
+    @GetMapping("/evaluationList")
+    public ModelAndView evaluationList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("/home");
+        UserDTO userDto  = (UserDTO) session.getAttribute("user");
+        if(userDto != null){
+            Long userIdx = userDto.getIdx();
+            StudentDto studentDto = studentService.findByUserIdx(userIdx);
+            List<Enrollment> enrollmentList = enrollmentService.findByStudent(studentDto.getIdx());
+            List<Evaluation> evaluationList = evaluationService.findByStudent(studentDto.getIdx());
+            if(!enrollmentList.isEmpty()){
+                mav.addObject("list", enrollmentList);
+                mav.setViewName("student/evaluationList");
+            }
+        }
+        return mav;
+    }
+
+    @GetMapping("/evaluate/{idx}")
+    public ModelAndView evaluateView(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("student/registerLectureEvaluationStu");
+        EvaluationDto dto = evaluationService.findByIdx(idx);
+        mav.addObject("dto", dto);
+        return mav;
+    }
+
+    @PostMapping("/evaluate/{idx}")
+    public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
+        ModelAndView mav = new ModelAndView("/home");
+        Evaluation evaluation = evaluationService.save(evaluateFormDto);
+        if(evaluation != null){
+            mav.addObject("msg","평가 등록 완료");
+            mav.setViewName("redirect:/student/evaluationList");
+        }
+        return mav;
+    }
 }
