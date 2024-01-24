@@ -4,19 +4,16 @@ import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -27,6 +24,7 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final ProfessorRepository professorRepository;
+    private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/")
@@ -88,8 +86,10 @@ public class HomeController {
     }
 
     @GetMapping("/register")
-    public String register() {
-        return "common/register";
+    public ModelAndView register() {
+        ModelAndView mav = new ModelAndView("common/register");
+        mav.addObject("majorList",managerService.selectAllMajor());
+        return mav;
     }
 
     // 테스트용 학생 로그인
