@@ -41,10 +41,7 @@
                                 <div th:each="cal : ${calendarEntry.value}">
                                     <div class="work">
                                         <!-- 일자 -->
-                                        <div>
-                                            <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')}"></p>
-                                            <p class="day" th:text="${#temporals.format(cal.end_date, 'dd')}"></p>
-                                        </div>
+                                        <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'MM.dd')}"></p>
                                         <!-- 내용 -->
                                         <p class="desc" th:text="${cal.title}"></p>
 
