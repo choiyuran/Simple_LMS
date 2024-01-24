@@ -27,7 +27,8 @@
                 <span class="input-group-text" style="width: 20%;">교수</span>
                 <select class="form-control" id="professor_idx" name="professor_idx">
                     <!-- 교수 목록이 여기에 채워짐 -->
-                    <option th:text="${professor_name}"></option>
+                    <option th:text="${professor_name} + '('+${lecture.professor.hireDate}+')'"
+                            th:value="${lecture.professor.professor_idx}"></option>
                 </select>
             </div>
 

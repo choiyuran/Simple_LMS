@@ -13,7 +13,6 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 public class Lecture {
-    
     // 기본키
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 시퀀스

@@ -142,5 +142,11 @@ public class ManagerService {
     public Lecture selectOneLecture(Long idx) {
         return lectureRepository.findById(idx).get();
     }
+
+    public Lecture updateLecture(RegisterlectureDto param) {
+        Lecture lecture = lectureRepository.findById(param.getIdx()).get();
+
+        return lecture;
+    }
 }
 

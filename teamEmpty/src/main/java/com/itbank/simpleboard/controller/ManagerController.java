@@ -265,9 +265,10 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/lectureUpdate/{idx}")
+    @PostMapping("/lectureUpdate/{idx}")                // 강의 수정
     public String lectureUpdate(@PathVariable("idx")Long idx, RegisterlectureDto param) {
         log.info(param.toString());
+        Lecture lecture = managerService.updateLecture(param);
         return "redirect:/";
     }
 

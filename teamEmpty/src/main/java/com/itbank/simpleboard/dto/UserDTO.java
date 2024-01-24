@@ -24,5 +24,14 @@ public class UserDTO {
 
 
     public UserDTO(Long idx, String userName, String userId, String userPw, String salt, String email, String address, String pnum, User_role role) {
+        this.idx=idx;
+        this.user_name= userName;
+        this.user_id =userId;
+        this.user_pw = userPw;
+        this.salt = salt;
+        this.email = email;
+        this.user_address = address;
+        this.pnum= pnum;
+        this.role = role;
     }
 }
