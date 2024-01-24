@@ -113,7 +113,7 @@ public class HomeController {
         return "home";
     }
 
-    @GetMapping("/studentModify")
+    @GetMapping("student/studentModify")
     public String studentModify() {
         return "student/studentModify";
     }

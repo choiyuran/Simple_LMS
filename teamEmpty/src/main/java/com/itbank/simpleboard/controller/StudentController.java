@@ -130,20 +130,22 @@ public class StudentController {
     }
 
     // 내 정보 수정
-    @GetMapping("/studentModify")
+    @GetMapping("student/studentModify")
     public ModelAndView myPage(HttpSession session) {
         ModelAndView mav = new ModelAndView("student/studentModify");
-        mav.addObject("user", session.getAttribute("user"));
+        UserDTO userDto = (UserDTO) session.getAttribute("user"); // 형변환
+        StudentDto dto = studentService.findByUserIdx(userDto.getIdx());
+        mav.addObject("dto",dto);
         return mav;
     }
 
 
-    @PostMapping("/studentModify/{idx}") // 내 정보 수정
+    @PostMapping("student/studentModify/{idx}") // 내 정보 수정
     public String usersUpdate(@PathVariable("idx")Long idx, UserDTO param) {
         param.setIdx(idx);
-        UserDTO user = studentService.userUpdate(param);
+        UserDTO user = studentService.userUpdate(idx,param);
         if(user != null) {
-            return "home" + idx;
+            return "redirect:/home/" + idx;
         }
         return "redirect:/student/studentModify";
     }

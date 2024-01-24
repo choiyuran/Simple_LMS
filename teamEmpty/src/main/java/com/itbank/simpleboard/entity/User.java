@@ -66,4 +66,5 @@ public class User {
         UUID uuid = UUID.randomUUID();
         return uuid.toString().substring(0,8);
     }
+
 }
