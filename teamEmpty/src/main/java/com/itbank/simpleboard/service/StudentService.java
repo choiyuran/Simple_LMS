@@ -7,13 +7,11 @@ import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.UserRepository;
-import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,11 +36,11 @@ public class StudentService {
         if(student.isPresent()){
             realStudent = student.get();
             dto.setIdx(realStudent.getIdx());
-            dto.setUser(realStudent.getUser());
+            dto.setUser(getUserDTO(realStudent.getUser()));
             dto.setStudent_grade(realStudent.getStudent_grade());
             dto.setStudent_num(realStudent.getStudent_num());
-            dto.setMajor(realStudent.getMajor());
-            dto.setProfessor(realStudent.getProfessor());
+            dto.setMajor(getMajorDto(realStudent));
+            dto.setProfessor(getProfessorDto(realStudent,dto.getMajor()));
             dto.setEnteranceDate(realStudent.getEnteranceDate());
 
         }
@@ -63,7 +61,7 @@ public class StudentService {
             user.setEmail(userdto.getEmail());
             user.setAddress(userdto.getUser_address());
             // 여기서 User 엔티티를 UserDTO로 변환하여 반환하도록 구현
-            return convertUserToUserDTO(user);
+            return getUserDTO(user);
         } else {
             // 사용자 정보가 없을 경우 null 또는 예외 처리
             return null;
@@ -71,16 +69,16 @@ public class StudentService {
     }
 
     // User 엔티티를 UserDTO로 변환하는 메소드
-    private StudentDto convertUserToUserDTO(User user) {
-        // .get()은 단일 조회를 하면 옵션으로 감싸져있는데 그 옵션을 벗겨낸다
-        Optional<Student> studentOptional = studentRepository.findByUser(user);
-        if (studentOptional.isPresent()) {
-            Student studentEntity = studentOptional.get();
-
-            return getStudentDto(user, studentEntity);
-        }
-        return null;
-    }
+//    private StudentDto convertUserToUserDTO(User user) {
+//        // .get()은 단일 조회를 하면 옵션으로 감싸져있는데 그 옵션을 벗겨낸다
+//        Optional<Student> studentOptional = studentRepository.findByUser(user);
+//        if (studentOptional.isPresent()) {
+//            Student studentEntity = studentOptional.get();
+//
+//            return getStudentDto(user, studentEntity);
+//        }
+//        return null;
+//    }
 
     private static StudentDto getStudentDto(User user, Student studentEntity) {
         UserDTO studentUser = getUserDTO(user);
