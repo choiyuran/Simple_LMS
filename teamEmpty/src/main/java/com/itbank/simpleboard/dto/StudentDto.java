@@ -16,11 +16,11 @@ public class StudentDto {
 
     private Integer student_grade;
 
-    private User user;
+    private UserDTO user;
 
-    private Professor professor;
+    private ProfessorDto professor;
 
-    private Major major;
+    private MajorDto major;
 
     private Date enteranceDate;
 }
