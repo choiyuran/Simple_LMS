@@ -17,10 +17,12 @@ public class AcademicCalendarDto {
     private LocalDate start_date;
     private LocalDate end_date;
     private String title;
+    private LocalDate created_date;
 
-    public AcademicCalendarDto(LocalDate start_date, LocalDate end_date, String title) {
+    public AcademicCalendarDto(LocalDate start_date, LocalDate end_date, String title, LocalDate created_date) {
         this.start_date = start_date;
         this.end_date = end_date;
         this.title = title;
+        this.created_date = LocalDate.now();
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class AcademicCalendarService {
         academicCalendar.setTitle(calendarDto.getTitle());
         academicCalendar.setStart_date(Date.valueOf(String.valueOf(calendarDto.getStart_date())).toLocalDate());
         academicCalendar.setEnd_date(Date.valueOf(String.valueOf(calendarDto.getEnd_date())).toLocalDate());
+        academicCalendar.setCreated_date(calendarDto.getCreated_date());
 
         // 저장
         return academicCalendarRepository.save(academicCalendar);
@@ -65,6 +67,7 @@ public class AcademicCalendarService {
         existingCalendar.setTitle(calendarDto.getTitle());
         existingCalendar.setStart_date(Date.valueOf(String.valueOf(calendarDto.getStart_date())).toLocalDate());
         existingCalendar.setEnd_date(Date.valueOf(String.valueOf(calendarDto.getEnd_date())).toLocalDate());
+        existingCalendar.setCreated_date(calendarDto.getCreated_date());
 
         // 수정된 학사일정을 저장
         return academicCalendarRepository.save(existingCalendar);
