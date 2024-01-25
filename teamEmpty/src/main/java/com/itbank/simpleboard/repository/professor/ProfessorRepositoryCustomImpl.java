@@ -3,9 +3,6 @@ package com.itbank.simpleboard.repository.professor;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.itbank.simpleboard.entity.QLectureRoom;
-import com.itbank.simpleboard.entity.QMajor;
-import com.itbank.simpleboard.entity.QProfessor;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -14,7 +11,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static com.itbank.simpleboard.entity.QLecture.*;
+import static com.itbank.simpleboard.entity.QLecture.lecture;
 
 @Repository
 public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom {
@@ -162,6 +159,22 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 ))
                 .from(QProfessor.professor)
                 .where(QProfessor.professor.major.idx.eq(majorIdx))
+                .fetch();
+    }
+
+    @Override
+    public List<EvaluateFormDto> getMyEvaluation(Long idx) {
+        return queryFactory
+                .select(new QEvaluateFormDto(
+                        QEvaluation.evaluation.idx,
+                        QEvaluation.evaluation.q1,
+                        QEvaluation.evaluation.q2,
+                        QEvaluation.evaluation.q3,
+                        QEvaluation.evaluation.q4,
+                        QEvaluation.evaluation.q5
+                ))
+                .from(QEvaluation.evaluation)
+                .innerJoin(QEnrollment.enrollment).on(QEnrollment.enrollment.lecture.idx.eq(idx))
                 .fetch();
     }
 }

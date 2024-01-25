@@ -1,8 +1,8 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +133,7 @@ public class ProfessorController {
         if (professor == null || !Objects.equals(professor.getProfessor_idx(), professorIdx)) {
             return "redirect:/home";
         }
+        model.addAttribute("Evaluation", professorService.getEvaluation(idx));
         return "/professor/myLectureEvaluation";
     }
 }
