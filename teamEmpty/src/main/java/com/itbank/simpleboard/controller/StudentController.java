@@ -1,9 +1,9 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
-import com.itbank.simpleboard.entity.*;
-import com.itbank.simpleboard.repository.UserRepository;
-import com.itbank.simpleboard.repository.student.StudentRepository;
+import com.itbank.simpleboard.entity.Enrollment;
+import com.itbank.simpleboard.entity.Evaluation;
+import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

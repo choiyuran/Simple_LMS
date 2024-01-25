@@ -1,5 +1,6 @@
 //package com.itbank.simpleboard;
 //
+//import com.itbank.simpleboard.component.HashComponent;
 //import com.itbank.simpleboard.entity.*;
 //import lombok.RequiredArgsConstructor;
 //import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@
 //@RequiredArgsConstructor
 //public class InitDb {
 //    private final InitService initService;
+//    private final HashComponent hashComponent;
 //
 //    @PostConstruct
 //    public void init() {

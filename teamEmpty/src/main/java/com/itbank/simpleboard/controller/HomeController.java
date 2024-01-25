@@ -1,18 +1,22 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.entity.Professor;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.UserRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
+import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -23,6 +27,7 @@ import java.util.List;
 public class HomeController {
 
     private final UserRepository userRepository;
+    private final UserService userService;
     private final ProfessorRepository professorRepository;
     private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
@@ -155,5 +160,26 @@ public class HomeController {
 
         System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
         return "redirect:/professor/myLecture";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "/common/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session) {
+        UserDTO user = userService.getUser(user_id, user_pw);
+        switch (user.getRole().toString()) {
+            case "교수":
+                ProfessorDto professor = userService.getProfessor(user);
+                session.setAttribute("professor", professor);
+                break;
+            case "학생":
+                break;
+            case "교직원":
+                break;
+        }
+        return "home";
     }
 }

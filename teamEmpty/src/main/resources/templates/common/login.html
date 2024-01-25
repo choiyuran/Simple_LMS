@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+<body>
+<header th:insert="layout/header :: header"></header>
+<main>
+    <div>
+        <form method="post">
+            <div><label style="width: 20px;">ID<input autofocus name="user_id" placeholder="ID를 입력하세요." required type="text"></label></div>
+            <div><label style="width: 20px;">PW<input name="user_pw" placeholder="비밀번호를 입력하세요" required type="password"></label></div>
+            <input type="submit" value="로그인">
+        </form>
+    </div>
+    <footer th:insert="layout/header :: footer"></footer>
+</main>
+</body>
+</html>
