@@ -90,6 +90,11 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
 
+    // 폐강 여부
+    @Column(name = "lecture_abolition")
+    @Enumerated(EnumType.STRING)
+    private YesOrNo abolition;
+
     public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom) {
         this.name = name;
         this.intro = intro;
@@ -107,6 +112,7 @@ public class Lecture {
         this.major = major;
         this.lectureRoom = lectureRoom;
         this.visible = YesOrNo.N;
+        this.abolition = YesOrNo.N;
     }
 
     public Lecture(String name, String intro, Integer credit, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, Major major, LectureRoom lectureRoom) {
@@ -123,5 +129,6 @@ public class Lecture {
         this.major = major;
         this.lectureRoom = lectureRoom;
         this.visible = YesOrNo.N;
+        this.abolition = YesOrNo.N;
     }
 }

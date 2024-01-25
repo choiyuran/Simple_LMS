@@ -11,7 +11,8 @@
             <thead>
             <tr>
                 <th>강의명</th>
-                <td th:text="${lecture.name}"></td>
+                <td th:if="${lecture.abolition.equals('N')}" th:text="${lecture.name}"></td>
+                <td th:unless="${lecture.abolition.equals('N')}" th:text="${lecture.name} + '(폐강)'"></td>
             </tr>
 
             <tr>

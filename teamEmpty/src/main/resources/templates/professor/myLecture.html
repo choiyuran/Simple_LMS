@@ -89,7 +89,8 @@
             <td>
                 <div>
                     <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
-                        <span th:text="${row.name}"></span>
+                        <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
+                        <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
                     </a>
                 </div>
             </td>
