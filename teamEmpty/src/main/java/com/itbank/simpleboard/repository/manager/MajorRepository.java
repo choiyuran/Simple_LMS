@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface MajorRepository extends JpaRepository<Major, Long> {
     List<Major> findByAbolition(YesOrNo yesOrno);
+
+    List<Major> findByCollegeName(String collegeName);
 }

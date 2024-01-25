@@ -26,6 +26,7 @@ public class LectureDto {
     private String plan;
     private String visible;
     private String professor_name;
+    private String abolition;
 
     @QueryProjection
     public LectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, Long professor, String professor_name) {
@@ -49,6 +50,7 @@ public class LectureDto {
         this.professor = professor;
         this.plan = plan;
         this.visible = YesOrNo.N.toString();
+        this.abolition = YesOrNo.N.toString();
         this.professor_name = professor_name;
     }
 }

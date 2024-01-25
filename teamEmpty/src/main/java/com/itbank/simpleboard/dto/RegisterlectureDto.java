@@ -29,6 +29,7 @@ public class RegisterlectureDto {
     private Long lectureRoom_idx;
     private YesOrNo visible;
     private String plan;
+    private YesOrNo abolition;
 
     public RegisterlectureDto(String name, String intro, Integer credit, String[] day, String[] start, String[] end, Lecture_Type type, Integer max_count, Integer current_count, String semester, Integer grade, Long professor_idx, Long major_idx, Long lectureRoom_idx, YesOrNo visible, String plan) {
         this.name = name;
@@ -47,5 +48,6 @@ public class RegisterlectureDto {
         this.lectureRoom_idx = lectureRoom_idx;
         this.visible = YesOrNo.N;
         this.plan = null;
+        this.abolition = YesOrNo.N;
     }
 }
