@@ -47,9 +47,9 @@ public class User {
     private YesOrNo authority;  // 계정 권한
 
 
-    public User(String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
+    public User(String user_pw,String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
         this.user_id = randomId();
-        this.user_pw = security.substring(security.length()-7);
+        this.user_pw = user_pw;
         this.salt = salt;
         this.user_name = user_name;
         this.security = security;
