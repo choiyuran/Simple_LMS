@@ -7,20 +7,11 @@ import lombok.NoArgsConstructor;
 import java.sql.Date;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class StudentDto {
+@AllArgsConstructor
+public class ManagerLoginDto {
     private Long idx;
-
-    private Integer student_num;
-
-    private Integer student_grade;
-
+    private String img;
     private UserDTO user;
-
-    private ProfessorDto professor;
-
-    private MajorDto major;
-
-    private Date enteranceDate;
+    private Date hire_date;
 }

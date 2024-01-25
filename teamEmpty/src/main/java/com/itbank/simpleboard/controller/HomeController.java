@@ -169,17 +169,28 @@ public class HomeController {
 
     @PostMapping("/login")
     public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session) {
+        String url = "home";
         UserDTO user = userService.getUser(user_id, user_pw);
         switch (user.getRole().toString()) {
             case "교수":
-                ProfessorDto professor = userService.getProfessor(user);
-                session.setAttribute("professor", professor);
+                session.setAttribute("professor", userService.getProfessor(user));
+                url = "redirect:/professor/home";
                 break;
             case "학생":
+                session.setAttribute("student", userService.getStudent(user));
+                url = "redirect:/student/home";
                 break;
             case "교직원":
+                session.setAttribute("manager", userService.getManager(user));
+                url = "redirect:/manager/home";
                 break;
         }
-        return "home";
+        return url;
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/home";
     }
 }
