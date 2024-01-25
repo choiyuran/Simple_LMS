@@ -113,11 +113,6 @@ public class HomeController {
         return "home";
     }
 
-    @GetMapping("student/studentModify")
-    public String studentModify() {
-        return "student/studentModify";
-    }
-
     // 테스트용 교수 로그인
     @GetMapping("/ProfessorLogin")
     public String ProfessorTestLogin(HttpSession session) {

@@ -14,11 +14,10 @@
             <th>강의평가하기</th>
         </tr>
         <tr th:each="item:${list}">
-            <td th:text="${item.lecture.name}"></td>
-            <td th:text="${item.lecture.professor.user.user_name}"></td>
+            <td th:text="${item.lecture_name}"></td>
+            <td th:text="${item.professor_name}"></td>
             <td th:text="${#dates.format(#dates.createNow(), 'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td><a th:if="${#lists.contains(evaluListList, item)}" th:href="@{/student/evaluate/{idx}(idx=${item.idx})}"><button class="btn btn-primary">강의 평가 하러 가기</button></a></td>
-            <td><a th:unless="${#lists.contains(evaluListList, item)}" th:href="@{/student/evaluate/{idx}(idx=${item.idx})}"><button class="btn btn-primary">강의 평가 하러 가기</button></a></td>
+            <td><a th:href="@{/student/evaluate/{idx}(idx=${item.idx})}"><button class="btn btn-primary">강의 평가 하러 가기</button></a></td>
         </tr>
     </table>
 </div>
