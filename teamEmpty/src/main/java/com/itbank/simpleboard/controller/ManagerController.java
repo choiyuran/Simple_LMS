@@ -4,14 +4,10 @@ import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.College;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.service.*;
 import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
-import com.itbank.simpleboard.service.LectureRoomService;
-import com.itbank.simpleboard.service.ManagerService;
-import com.itbank.simpleboard.service.UserService;
-import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,6 +39,7 @@ public class ManagerController {
     private final UserService userService;
     private final HttpSession session;
     private final ProfessorService professorService;
+    private final CollegeService collegeService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -104,7 +101,6 @@ public class ManagerController {
         return "redirect:/manager/calendar";
     }
 
-
     @GetMapping("/managerList") // 교직원 명단 조회
     public ModelAndView list(){
         ModelAndView mav = new ModelAndView("manager/managerList");
@@ -112,6 +108,7 @@ public class ManagerController {
         mav.addObject("managerList",managerList);
         return mav;
     }
+
     @PostMapping("/managerList")    // 교직원 명단 검색 조회
     public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue){
         ModelAndView mav = new ModelAndView("manager/managerList");
@@ -136,11 +133,13 @@ public class ManagerController {
         log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
         return ResponseEntity.ok(response);
     }
+
     @PostMapping("/addstudent")   // 학생 등록
     public String addStudent() {
         log.info("학생등록");
         return "common/register";
     }
+
     @ResponseBody
     @PostMapping("/addprofessor")   // 교수 등록
     public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
@@ -186,13 +185,53 @@ public class ManagerController {
         return "manager/registerMajor";
     }
 
-    @GetMapping("/majorList")       // 학과 목록
-    public ModelAndView majorList() {
+    @GetMapping("/majorList")       // 학과 목록 (검색어가 있는 경우와 없는 경우 같이 사용)
+    public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
+                                  @RequestParam(value = "majorName", required = false) String majorName) {
         ModelAndView mav = new ModelAndView("manager/majorList");
-        List<Major> list = managerService.selectAllMajor();
+        log.info("collegeIdx: " + collegeIdx + ", majorName: " + majorName);
+        List<Major> list;
+
+        // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
+        if (collegeIdx != null  && majorName != null && !majorName.isEmpty()) {
+            list = managerService.searchByCollegeAndMajor(collegeIdx, majorName);
+        }
+        // 단과대학 이름만 검색어가 있는 경우
+        else if (collegeIdx != null) {
+            list = managerService.searchByCollege(collegeIdx);
+        }
+        // 학과명만 검색어가 있는 경우
+        else if (majorName != null && !majorName.isEmpty()) {
+            list = managerService.searchByMajor(majorName);
+            log.info("major : " + list);
+        }
+        // 검색어가 없는 경우, 모든 학과 목록을 반환
+        else {
+            list = managerService.selectAllMajor();
+        }
         mav.addObject("list", list);
+        mav.addObject("majorName", majorName);
+        mav.addObject("collegeIdx", collegeIdx);
         return mav;
     }
+
+    @GetMapping("/getColleges")             // 학과 검색 ajax
+    @ResponseBody
+    public List<College> getColleges() {
+        return collegeService.getAllColleges();
+    }
+
+//    @GetMapping("/searchByCollege")
+//    public ModelAndView searchByCollege(@RequestParam("collegeName") String collegeName) {
+//        ModelAndView mav = new ModelAndView("searchByCollege"); // 검색 결과를 보여줄 뷰 이름을 설정해주세요.
+//
+//        // 단과 대학 이름을 이용하여 검색 로직을 구현하고, 결과 데이터를 ModelAndView에 추가하세요.
+//        List<Major> searchResults = majorService.searchByCollege(collegeName);
+//        mav.addObject("majors", searchResults);
+//
+//        return mav;
+//    }
+
 
     @GetMapping("/majorView/{idx}")           // 학과 view
     public ModelAndView majorView(@PathVariable("idx")Long idx) {
@@ -265,10 +304,21 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/lectureUpdate/{idx}")
+    @PostMapping("/lectureUpdate/{idx}")                // 강의 수정
     public String lectureUpdate(@PathVariable("idx")Long idx, RegisterlectureDto param) {
-        log.info(param.toString());
-        return "redirect:/";
+        Lecture lecture = managerService.updateLecture(param);
+        if(lecture == null) {
+            return "redirect:/manager/lectureUpdate" + idx;
+        }
+        return "redirect:/professor/viewLecture/" + idx;
     }
+
+    @GetMapping("/lectureDelete/{idx}")             // 강의 삭제
+    public String lectureDelete(@PathVariable("idx")Long idx) {
+        Lecture lecture = managerService.delLecture(idx);
+        return "redirect:/professor/lectureList";
+    }
+
+
 
 }

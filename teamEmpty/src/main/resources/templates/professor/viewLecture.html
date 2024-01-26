@@ -108,9 +108,11 @@
         <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">수정</a></button>      -->
         <!--    수용이가 사용할 버튼 조건 - 교수일 경우 강의 계획서만 수정 -->
         <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교수'}"><a href="/manager/lectureAdd">강의계획서 수정</a></button>       -->
-        <button class="btn btn-outline-secondary"><a href="/manager/lectureUpdate">수정</a></button>
+        <button class="btn btn-warning"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+        <button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
         <button class="btn btn-outline-secondary"><a href="/professor/lectureList">목록으로</a></button>
     </div>
+
     <script>
         // 파일 업로드 창 열기
         function openFileUploadDialog(btnElement) {
@@ -156,6 +158,18 @@
             }
         }
     </script>
+
+    <script>
+        function confirmDelete(event) {
+            var result = confirm("정말 삭제하시겠습니까?");
+            if (result) {
+
+            } else {
+                event.preventDefault();
+            }
+        }
+    </script>
+
 </main>
 <footer th:insert="layout/header :: footer"></footer>
 </body>

@@ -21,6 +21,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @Transactional(readOnly = true)
@@ -56,7 +57,6 @@ public class ManagerService {
 
     public List<ManagerDTO> searchManager(String searchType, String searchValue) {
         List<ManagerDTO> searchManagerList = managerRepository.findBySearchType(searchType,searchValue);
-
         return searchManagerList;
     }
 
@@ -141,6 +141,82 @@ public class ManagerService {
 
     public Lecture selectOneLecture(Long idx) {
         return lectureRepository.findById(idx).get();
+    }
+
+    @Transactional
+    public Lecture updateLecture(RegisterlectureDto param) {
+        log.info("service : " + param.toString());
+        Lecture lecture = lectureRepository.findById(param.getIdx()).get();
+
+        StringBuilder day = new StringBuilder();
+        StringBuilder start = new StringBuilder();
+        StringBuilder end = new StringBuilder();
+
+        for(int i = 0; i < param.getDay().length; i++) {
+            day.append(param.getDay()[i]);
+            if (i != param.getDay().length - 1) {
+                day.append(",");
+            }
+        }
+
+        for(int i = 0; i < param.getStart().length; i++) {
+            if (param.getStart()[i] != null) {
+                start.append(param.getStart()[i]);
+                if(param.getEnd()[i] != null) {
+                    end.append(param.getEnd()[i]);
+                }
+                if (i != param.getStart().length - 1) {
+                    start.append(",");
+                    end.append(",");
+                }
+            }
+        }
+
+        Professor professor = professorRepository.findById(param.getProfessor_idx())
+                .orElseThrow(() -> new NoSuchElementException("Professor with id " + param.getProfessor_idx() + " not found."));
+        Major major = majorRepository.findById(param.getMajor_idx())
+                .orElseThrow(() -> new NoSuchElementException("Major with id " + param.getMajor_idx() + " not found."));
+        LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx())
+                .orElseThrow(() -> new NoSuchElementException("LectureRoom with id " + param.getLectureRoom_idx() + " not found."));
+
+        lecture.setName(param.getName());
+        lecture.setIntro(param.getIntro());
+        lecture.setCredit(param.getCredit());
+        lecture.setType(param.getType());
+        lecture.setProfessor(professor);
+        lecture.setMaxCount(param.getMax_count());
+        lecture.setCurrentCount(param.getCurrent_count());
+        lecture.setSemester(param.getSemester());
+        lecture.setGrade(param.getGrade());
+        lecture.setMajor(major);
+        lecture.setLectureRoom(lectureRoom);
+        lecture.setDay(day.toString());
+        lecture.setStart(start.toString());
+        lecture.setEnd(end.toString());
+
+        return lecture;
+    }
+
+    @Transactional
+    public Lecture delLecture(Long idx) {
+        Lecture lecture = lectureRepository.findById(idx).get();
+        lecture.setAbolition(YesOrNo.Y);
+        return lecture;
+    }
+
+
+    public List<Major> searchByCollege(Long collegeIdx) {
+        College college = collegeRepository.findById(collegeIdx).get();
+        return majorRepository.findByCollege(college);
+    }
+
+    public List<Major> searchByCollegeAndMajor(Long collegeIdx, String majorName) {
+        College college = collegeRepository.findById(collegeIdx).get();
+        return majorRepository.searchByCollegeAndNameContaining(college, majorName);
+    }
+
+    public List<Major> searchByMajor(String majorName) {
+        return majorRepository.findByNameContaining(majorName);
     }
 }
 
