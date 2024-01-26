@@ -205,10 +205,18 @@ public class ManagerService {
     }
 
 
-    public List<Major> searchByCollege(String collegeName) {
-        return majorRepository.findByCollegeName(collegeName);
+    public List<Major> searchByCollege(Long collegeIdx) {
+        College college = collegeRepository.findById(collegeIdx).get();
+        return majorRepository.findByCollege(college);
     }
 
+    public List<Major> searchByCollegeAndMajor(Long collegeIdx, String majorName) {
+        College college = collegeRepository.findById(collegeIdx).get();
+        return majorRepository.searchByCollegeAndNameContaining(college, majorName);
+    }
 
+    public List<Major> searchByMajor(String majorName) {
+        return majorRepository.findByNameContaining(majorName);
+    }
 }
 

@@ -185,27 +185,33 @@ public class ManagerController {
         return "manager/registerMajor";
     }
 
-//    @GetMapping("/majorList")       // 학과 목록
-//    public ModelAndView majorList() {
-//        ModelAndView mav = new ModelAndView("manager/majorList");
-//        List<Major> list = managerService.selectAllMajor();
-//        mav.addObject("list", list);
-//        return mav;
-//    }
-
-    @GetMapping("/majorList")       // 학과 목록
-    public ModelAndView majorList(@RequestParam(value = "collegeName", required = false) String collegeName) {
+    @GetMapping("/majorList")       // 학과 목록 (검색어가 있는 경우와 없는 경우 같이 사용)
+    public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
+                                  @RequestParam(value = "majorName", required = false) String majorName) {
         ModelAndView mav = new ModelAndView("manager/majorList");
-        log.info(collegeName);
-        if (collegeName != null && !collegeName.isEmpty()) {
-            // 검색어가 존재하는 경우, 해당 단과 대학에 해당하는 학과 목록을 검색하여 결과를 반환
-            List<Major> searchResults = managerService.searchByCollege(collegeName);
-            mav.addObject("list", searchResults);
-        } else {
-            // 검색어가 존재하지 않는 경우, 모든 학과 목록을 반환
-            List<Major> list = managerService.selectAllMajor();
-            mav.addObject("list", list);
+        log.info("collegeIdx: " + collegeIdx + ", majorName: " + majorName);
+        List<Major> list;
+
+        // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
+        if (collegeIdx != null  && majorName != null && !majorName.isEmpty()) {
+            list = managerService.searchByCollegeAndMajor(collegeIdx, majorName);
         }
+        // 단과대학 이름만 검색어가 있는 경우
+        else if (collegeIdx != null) {
+            list = managerService.searchByCollege(collegeIdx);
+        }
+        // 학과명만 검색어가 있는 경우
+        else if (majorName != null && !majorName.isEmpty()) {
+            list = managerService.searchByMajor(majorName);
+            log.info("major : " + list);
+        }
+        // 검색어가 없는 경우, 모든 학과 목록을 반환
+        else {
+            list = managerService.selectAllMajor();
+        }
+        mav.addObject("list", list);
+        mav.addObject("majorName", majorName);
+        mav.addObject("collegeIdx", collegeIdx);
         return mav;
     }
 
