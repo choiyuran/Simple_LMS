@@ -1,13 +1,9 @@
 package com.itbank.simpleboard.repository.user;
 
 import com.itbank.simpleboard.dto.*;
-import com.itbank.simpleboard.entity.QMajor;
 import com.itbank.simpleboard.entity.QManager;
-import com.itbank.simpleboard.entity.QProfessor;
 import com.itbank.simpleboard.entity.QStudent;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

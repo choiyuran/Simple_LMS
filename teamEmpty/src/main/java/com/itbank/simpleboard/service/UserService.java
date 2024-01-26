@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.HashComponent;
 import com.itbank.simpleboard.dto.ManagerLoginDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.StudentDto;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
+    private final HashComponent hashComponent;
 
     // 아이디로 사용자 찾기
     public UserDTO getUserByUserId(Long idx) {

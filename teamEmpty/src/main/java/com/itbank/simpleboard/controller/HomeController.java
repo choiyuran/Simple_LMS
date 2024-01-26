@@ -164,7 +164,7 @@ public class HomeController {
 
     @GetMapping("/login")
     public String login() {
-        return "/common/login";
+        return "redirect:/";
     }
 
     @PostMapping("/login")

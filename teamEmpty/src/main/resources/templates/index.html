@@ -16,7 +16,7 @@
     <img src="/img/index-logo-img.png">
   </div>
   <div class="login-content">
-    <form>
+    <form action="/login" method="post">
       <h2 class="title">환영합니다</h2>
       <div class="input-div one">
         <div class="i">
@@ -25,7 +25,7 @@
         <div class="div">
           <h5>학번</h5>
           <!-- 인풋 Id 창-->
-          <input type="text" class="input">
+          <input type="text" class="input" name="user_id">
         </div>
       </div>
       <div class="input-div pass">
@@ -35,7 +35,7 @@
         <div class="div">
           <h5>비밀번호</h5>
           <!-- 인풋 비번창 -->
-          <input type="password" class="input">
+          <input type="password" class="input" name="user_pw">
         </div>
       </div>
       <div class="i between">
@@ -46,7 +46,7 @@
         <!-- 나중에 여기 찾기 주소 추가 -->
         <a href="#">비밀번호 찾기</a>
       </div>
-      <input type="submit" class="btn" value="Login">
+      <input type="submit" value="Login">
     </form>
   </div>
 </div>
