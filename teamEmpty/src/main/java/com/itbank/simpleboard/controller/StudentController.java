@@ -3,7 +3,6 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.Enrollment;
 import com.itbank.simpleboard.entity.Evaluation;
-import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class StudentController {
-
-
-    private final SituationServive situationServive;
     //  수강신청
     private final EnrollmentService enrollmentService;
-
     private final LectureService lectureService;
-
     private final StudentService studentService;
     private final EvaluationService evaluationService;
-    private final UserRepository userRepository;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
@@ -130,7 +123,7 @@ public class StudentController {
     }
 
     // 내 정보 수정
-    @GetMapping("student/studentModify")
+    @GetMapping("/studentModify")
     public ModelAndView myPage(HttpSession session) {
         ModelAndView mav = new ModelAndView("student/studentModify");
         UserDTO userDto = (UserDTO) session.getAttribute("user"); // 형변환
@@ -140,7 +133,7 @@ public class StudentController {
     }
 
 
-    @PostMapping("student/studentModify/{idx}") // 내 정보 수정
+    @PostMapping("/studentModify/{idx}") // 내 정보 수정
     public String usersUpdate(@PathVariable("idx")Long idx, UserDTO param) {
         param.setIdx(idx);
         UserDTO user = studentService.userUpdate(idx,param);
@@ -152,18 +145,24 @@ public class StudentController {
 
     @GetMapping("/evaluationList")
     public ModelAndView evaluationList(HttpSession session) {
+        long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("/home");
         UserDTO userDto  = (UserDTO) session.getAttribute("user");
         if(userDto != null){
             Long userIdx = userDto.getIdx();
             StudentDto studentDto = studentService.findByUserIdx(userIdx);
-            List<Enrollment> enrollmentList = enrollmentService.findByStudent(studentDto.getIdx());
-            List<Evaluation> evaluationList = evaluationService.findByStudent(studentDto.getIdx());
+            List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
+
             if(!enrollmentList.isEmpty()){
                 mav.addObject("list", enrollmentList);
                 mav.setViewName("student/evaluationList");
+            }else{
+                mav.addObject("msg","평가할 강의가 없습니다.");
             }
         }
+        long endTime = System.currentTimeMillis();
+
+        log.info("총 시간 : " + (endTime-startTime));
         return mav;
     }
 

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Evaluation {
+public class Evaluation { // 수강 평가
 
     // 수강 평가 번호
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

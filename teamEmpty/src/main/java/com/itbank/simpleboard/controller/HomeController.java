@@ -108,6 +108,7 @@ public class HomeController {
         userDTO.setPnum(user.getPnum());
         userDTO.setRole(user.getRole());
         userDTO.setEmail(user.getEmail());
+        userDTO.setUser_address(user.getAddress());
         session.setAttribute("user", userDTO);
         return "home";
     }
@@ -116,11 +117,6 @@ public class HomeController {
     public String logouttest(HttpSession session) {
         session.invalidate();
         return "home";
-    }
-
-    @GetMapping("student/studentModify")
-    public String studentModify() {
-        return "student/studentModify";
     }
 
     // 테스트용 교수 로그인
