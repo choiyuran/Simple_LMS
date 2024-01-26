@@ -10,17 +10,19 @@ import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
+import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.NoSuchElementException;
 
 @Service
@@ -29,6 +31,7 @@ import java.util.NoSuchElementException;
 @Slf4j
 public class ManagerService {
 
+    private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
     private final CollegeRepository collegeRepository;
     private final MajorRepository majorRepository;
@@ -217,6 +220,69 @@ public class ManagerService {
 
     public List<Major> searchByMajor(String majorName) {
         return majorRepository.findByNameContaining(majorName);
+    }
+
+    @Transactional
+    public Manager addManager(UserFormDTO dto) {
+        System.err.println("userFormDTO : "+ dto.toString());
+        String salt = "";
+        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        String userName = dto.getFirstName()+dto.getLastName();
+        String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
+        String manager_img = dto.getImageFile().toString();
+        Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
+        User user = new User(
+                pw,
+                salt,
+                userName,
+                security,
+                dto.getAddress(),
+                dto.getPnum(),
+                dto.getEmail(),
+                User_role.교직원
+        );
+        userRepository.save(user);
+        Manager manager = new Manager(
+                manager_img,
+                user,
+                hireDate
+        );
+        return managerRepository.save(manager);
+    }
+
+    @Transactional
+    public Professor addProfessor(UserFormDTO dto) {
+        log.info("addProfessor service");
+        System.err.println("userFormDTO : "+ dto.toString());
+        String salt = "";
+        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        String userName = dto.getFirstName()+dto.getLastName();
+        String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
+        String professor_img = dto.getImageFile().toString();
+        Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
+        User user = new User(
+                pw,
+                salt,
+                userName,
+                security,
+                dto.getAddress(),
+                dto.getPnum(),
+                dto.getEmail(),
+                User_role.교수
+        );
+        userRepository.save(user);
+        Optional<Major> majorOptional = majorRepository.findById(dto.getMajor());
+        Major major = majorOptional.orElse(null); // 값이 존재하지 않을 경우에는 null을 반환하도록 처리
+
+
+        Professor professor = new Professor(
+                professor_img,
+                user,
+                major,
+                hireDate
+        );
+
+        return professorRepository.save(professor);
     }
 }
 

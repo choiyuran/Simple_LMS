@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Optional;
 
 
 @Entity @Getter
@@ -36,4 +37,6 @@ public class Professor {
         this.major = major;
         this.hireDate = hireDate;
     }
+
+
 }
