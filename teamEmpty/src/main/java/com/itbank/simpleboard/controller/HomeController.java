@@ -103,6 +103,7 @@ public class HomeController {
         userDTO.setPnum(user.getPnum());
         userDTO.setRole(user.getRole());
         userDTO.setEmail(user.getEmail());
+        userDTO.setUser_address(user.getAddress());
         session.setAttribute("user", userDTO);
         return "home";
     }

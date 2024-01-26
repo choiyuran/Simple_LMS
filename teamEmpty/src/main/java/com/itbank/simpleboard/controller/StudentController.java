@@ -144,12 +144,12 @@ public class StudentController {
 
     @GetMapping("/evaluationList")
     public ModelAndView evaluationList(HttpSession session) {
+        long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("/home");
         UserDTO userDto  = (UserDTO) session.getAttribute("user");
         if(userDto != null){
             Long userIdx = userDto.getIdx();
             StudentDto studentDto = studentService.findByUserIdx(userIdx);
-            System.err.println("studentDto : " + studentDto);
             List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
 
             if(!enrollmentList.isEmpty()){
@@ -159,6 +159,9 @@ public class StudentController {
                 mav.addObject("msg","평가할 강의가 없습니다.");
             }
         }
+        long endTime = System.currentTimeMillis();
+
+        log.info("총 시간 : " + (endTime-startTime));
         return mav;
     }
 
