@@ -52,21 +52,18 @@ public class UserService {
     public ProfessorDto getProfessor(UserDTO user) {
         ProfessorDto professor = userRepository.getProfessor(user);
         professor.setUser(user);
-        System.out.println("professor = " + professor);
         return professor;
     }
 
     public StudentDto getStudent(UserDTO user) {
         StudentDto student = userRepository.getStudent(user);
         student.setUser(user);
-        System.out.println("student = " + student);
         return student;
     }
 
     public ManagerLoginDto getManager(UserDTO user) {
         ManagerLoginDto manager = userRepository.getManager(user);
         manager.setUser(user);
-        System.out.println("manager = " + manager);
         return manager;
     }
 }

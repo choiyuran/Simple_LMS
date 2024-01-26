@@ -1,9 +1,13 @@
 package com.itbank.simpleboard.repository.user;
 
 import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.entity.QMajor;
 import com.itbank.simpleboard.entity.QManager;
+import com.itbank.simpleboard.entity.QProfessor;
 import com.itbank.simpleboard.entity.QStudent;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -33,7 +37,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         user.user_pw,
                         user.salt,
                         user.email,
-                        user.address,
+                        user.address.as("user_address"),
                         user.pnum,
                         user.role))
                 .from(user)
@@ -66,10 +70,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         QStudent.student.idx,
                         QStudent.student.student_num,
                         QStudent.student.student_grade,
-                        Projections.bean(ProfessorDto.class,
-                                professor.professor_idx,
-                                professor.professor_img,
-                                professor.hireDate.as("hireDate")).as("professor"),
+                        Projections.fields(ProfessorDto.class,
+                                QStudent.student.professor.professor_idx.as("professor_idx")).as("professor"),
                         Projections.bean(MajorDto.class,
                                 QStudent.student.major.idx,
                                 QStudent.student.major.name,
