@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.dto.SituationStuDto;
 import com.itbank.simpleboard.entity.Situation;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.repository.student.SituationRepository;
@@ -7,6 +8,8 @@ import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,5 +22,18 @@ public class SituationServive {
         Situation situation = situationRepository.findByStudent(student).get();
 
         return situation;
+    }
+
+    public List<Situation> selectAll() {
+        return situationRepository.findAll();
+    }
+
+
+    public List<SituationStuDto> selectSituationStu(String status) {
+        return situationRepository.findAllSituationStu(status);
+    }
+
+    public SituationStuDto selectOneSituation(Long idx) {
+        return situationRepository.findOneSituation(idx);
     }
 }

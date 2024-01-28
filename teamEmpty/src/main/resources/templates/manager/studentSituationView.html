@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>학생 상태 수정</h2>
+    <hr>
+    <form method="post" th:action="@{/manager/studendSituationUpdate/{idx}(idx=${situation.idx})}">
+        <table class="table table-bordered">
+            <tr>
+                <th>학생</th>
+                <td th:text="${situation.name}"></td>
+            </tr>
+            <tr>
+                <th>학과</th>
+                <td th:text="${situation.major}"></td>
+            </tr>
+            <tr>
+                <th>시작일</th>
+                <td th:text="${situation.start_date}"></td>
+            </tr>
+            <tr th:if="${situation.end_date != null}">
+                <th>종료일</th>
+                <td th:text="${situation.end_date}"></td>
+            </tr>
+            <tr>
+                <th>상태</th>
+                <td th:text="${situation.status}"></td>
+            </tr>
+        </table>
+        <button class="btn btn-primary">수정 완료</button>
+    </form>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>
