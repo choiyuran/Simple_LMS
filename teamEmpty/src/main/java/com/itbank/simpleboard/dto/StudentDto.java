@@ -11,6 +11,7 @@ import java.sql.Date;
 @NoArgsConstructor
 public class StudentDto {
     private Long idx;
+    private String img = null;
 
     private Integer student_num;
 
