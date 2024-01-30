@@ -21,6 +21,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.nio.file.Path;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +43,6 @@ public class ManagerController {
     private final LectureRoomService lectureRoomService;
     private final AcademicCalendarService academicCalendarService;
     private final UserService userService;
-    private final HttpSession session;
     private final ProfessorService professorService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
@@ -52,15 +53,30 @@ public class ManagerController {
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
 
-        // 세션에서 사용자 정보 가져오기
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("user", user);
 
         return "common/calendar";
     }
 
+    @GetMapping("/calendarView/{idx}")
+    public String calendarView(@PathVariable("idx") Long idx, Model model, HttpSession session){
+
+        AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
+
+        model.addAttribute("calendar", calendar);
+
+        // session에서 user를 가져옴
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        model.addAttribute("user", user);
+
+
+        return "manager/calendarView";
+    }
+
+
+
     @GetMapping("/calendarAddForm") // 학사일정 추가
-    public String calendarAdd(Model model){
+    public String calendarAdd(Model model, HttpSession session){
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
         UserDTO user = (UserDTO) session.getAttribute("user");
 
@@ -80,7 +96,7 @@ public class ManagerController {
     }
 
     @GetMapping("/calendarEditForm/{id}") // 학사일정 수정 폼
-    public String calendarEdit(@PathVariable Long id, Model model){
+    public String calendarEdit(@PathVariable Long id, Model model, HttpSession session){
         // id를 사용하여 수정할 학사일정 데이터를 데이터베이스에서 가져온다.
         AcademicCalendarDto academicCalendarDto = academicCalendarService.getCalendarById(id);
 

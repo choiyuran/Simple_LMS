@@ -41,16 +41,11 @@
                                 <div th:each="cal : ${calendarEntry.value}">
                                     <div class="work">
                                         <!-- 일자 -->
-                                        <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'MM.dd')}"></p>
+                                        <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
                                         <!-- 내용 -->
-                                        <p class="desc" th:text="${cal.title}"></p>
-
-<!--                                        &lt;!&ndash; 수정 및 삭제 버튼 (교직원일 때만 표시) &ndash;&gt;-->
-<!--                                        <div class="btn" th:if="${user != null and user.role eq '교직원'}">-->
-<!--                                            <button class="editButton">수정</button>-->
-<!--                                            <button class="deleteButton">삭제</button>-->
-<!--                                        </div>-->
-
+                                        <a th:href="@{/manager/calendarView/{idx}(idx=${cal.idx})}">
+                                            <p class="desc" th:text="${cal.title}"></p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

@@ -23,6 +23,6 @@ public class AcademicCalendarDto {
         this.start_date = start_date;
         this.end_date = end_date;
         this.title = title;
-        this.created_date = LocalDate.now();
+        this.created_date = created_date;
     }
 }
