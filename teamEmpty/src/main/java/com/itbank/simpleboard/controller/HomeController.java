@@ -90,12 +90,7 @@ public class HomeController {
         return "home";
     }
 
-    @GetMapping("/register")
-    public ModelAndView register() {
-        ModelAndView mav = new ModelAndView("common/register");
-        mav.addObject("majorList",managerService.selectAllMajor());
-        return mav;
-    }
+
 
     // 테스트용 학생 로그인
     @GetMapping("/logintest")

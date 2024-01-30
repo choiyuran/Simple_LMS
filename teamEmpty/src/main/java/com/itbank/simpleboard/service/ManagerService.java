@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.FileComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
@@ -39,6 +40,7 @@ public class ManagerService {
     private final ProfessorRepository professorRepository;
     private final LectureRoomRepository lectureRoomRepository;
     private final LectureRepository lectureRepository;
+    private final FileComponent fileComponent;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -258,7 +260,9 @@ public class ManagerService {
         String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
-        String professor_img = dto.getImageFile().toString();
+        // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
+        String newFileName = userName + "_" + dto.getFrontSecurity();
+        String professor_img = fileComponent.uploadIdPhoto(dto.getImageFile(), "idPhoto_professor",newFileName);
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,

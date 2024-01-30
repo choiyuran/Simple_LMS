@@ -184,6 +184,9 @@
             const backSecurityInput = document.getElementById('backSecurity');
             // var selectedOption = document.getElementById("major");
 
+            // 이 부분에서 form의 method를 "POST"로 설정합니다.
+            form.method = "POST";
+
             if (userType === 'professor') {
                 form.action = "/manager/addProfessor";
                 majorSection.style.display = "block"; // 학과 선택 부분 보이기
@@ -214,9 +217,9 @@
 
             // 폼 데이터 생성
             formData.set("userType", userType);
-            if (imageFile === undefined) {
-                imageFile = null;
-            }
+            // if (imageFile === undefined) {
+            //     imageFile = null;
+            // }
             formData.append("imageFile", imageFile);
             formData.append("firstName", document.getElementById("exampleFirstName").value);
             formData.append("lastName", document.getElementById("exampleLastName").value);
@@ -247,26 +250,53 @@
                 body: formData
             })
                 .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        // 서버 응답이 JSON 형식인 경우
+                        return response.json();
+                    } else{
+                        // 서버 응답이 JSON 형식이 아닌 경우
+                        throw new Error('서버 응답이 JSON 형식이 아닙니다.');
+                    }
+                    /*if (!response.ok) {
+                        console.log(response.headers)
+                        console.log(response.ok)
+                        console.log(response.url)
+                        console.log(response.statusText)
+                        console.log(response.body)
+                        console.log(response.formData())
+                        console.error('서버 측에서 오류 발생:', response.statusText);
+                        console.error('서버 측에서 오류 발생:', response.status);
+                        throw new Error('Network response was not ok');
+                    }*/
                     console.log("1차 then")
                     return response.json(); // 응답을 JSON 형식으로 파싱하여 반환
                 })
                 .then(data => {
-                    console.log('name : ' + data.name)
-                    alert(data.name + '님이 ' + data.type + '으로 등록 되었습니다');
-                    // form.reset();
-                    const additionalRegistration = confirm('추가로 등록하시겠습니까?');
-                    if (additionalRegistration) {
-                        console.log("추가 등록을 진행합니다.");
-                        window.location.href = '/register'; // 등록 화면으로 이동
+                    if (data.message) {
+                        console.log('등록 메시지:', data.message);
+                        if (data.message === "폼 등록이 완료되었습니다.") {
+                            alert(data.name + '님이 ' + data.type + '으로 등록 되었습니다');
+                            const additionalRegistration = confirm('추가로 등록하시겠습니까?');
+                            if (additionalRegistration) {
+                                console.log("추가 등록을 진행합니다.");
+                                window.location.href = '/manager/register';
+                            } else {
+                                console.log("추가 등록을 취소합니다.");
+                                window.location.href = '/home';
+                            }
+                        } else {
+                            alert("폼 등록이 실패하였습니다. 오류 메시지: " + data.message);
+                            window.location.href = '/manager/register';
+                        }
                     } else {
-                        console.log("추가 등록을 취소합니다.");
-                        window.location.href = '/home'; // 홈 화면으로 이동
+                        console.error('올바른 응답 형식이 아닙니다.');
+                        window.location.href = '/manager/register';
                     }
                 })
                 .catch(error => {
-                    console.error(error);
-                    alert("폼 등록이 실패하였습니다. 오류 메시지: " + error.message);
-                    window.location.href = '/register';
+                    console.error('폼 등록이 실패하였습니다:', error.message);
+                    window.location.href = '/manager/register';
                 });
         }
     </script>

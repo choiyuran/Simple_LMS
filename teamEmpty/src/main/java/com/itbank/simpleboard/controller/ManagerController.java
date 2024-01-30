@@ -10,9 +10,7 @@ import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -119,6 +117,13 @@ public class ManagerController {
         return mav;
     }
 
+    @GetMapping("/register")
+    public ModelAndView register() {
+        ModelAndView mav = new ModelAndView("manager/register");
+        mav.addObject("majorList",managerService.selectAllMajor());
+        return mav;
+    }
+
     @PostMapping("/addManager")   // 교직원 등록
     public ResponseEntity<Map<String, String>> registerManager(@ModelAttribute UserFormDTO userFormDTO) {
         try {
@@ -155,48 +160,7 @@ public class ManagerController {
         return "common/register";
     }
 
-    @PostMapping("/addProfessor")   // 교수 등록
 
-    @ResponseBody// 교수 등록
-    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
-        try {
-            log.info("교수등록");
-            long startTime = System.currentTimeMillis();
-            // yourService.processForm(formDTO);
-            log.info(userFormDTO.getUserType());
-            log.info(userFormDTO.getEmail());
-            log.info(String.valueOf(userFormDTO.getMajor()));
-            Map<String, String> response = new HashMap<>();
-
-            if(userFormDTO.getUserType().equals("professor")){
-                Professor professor = managerService.addProfessor(userFormDTO);
-                if(professor.getProfessor_idx() != null){
-                    // 응답 생성
-                    response.put("message", "폼 등록이 완료되었습니다.");
-                    response.put("name", professor.getUser().getUser_name());
-                    response.put("type", professor.getUser().getRole().toString());
-                    log.info(professor.getUser().getUser_name());
-                }
-                else{
-                    response.put("message", "교수 등록에 실패하였습니다");
-                    log.info("교수등록 실패");
-                }
-            }
-            log.info(response.toString());
-
-            long endTime = System.currentTimeMillis();
-            log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(response);
-        } catch (Exception e) {
-            log.error("교수 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
