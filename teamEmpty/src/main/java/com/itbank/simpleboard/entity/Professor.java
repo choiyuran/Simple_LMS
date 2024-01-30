@@ -1,18 +1,17 @@
 package com.itbank.simpleboard.entity;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Optional;
 
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @DiscriminatorValue("professor")
+@Data
 public class Professor {
     // 교수 번호
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +37,6 @@ public class Professor {
         this.major = major;
         this.hireDate = hireDate;
     }
+
+
 }

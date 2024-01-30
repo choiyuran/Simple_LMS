@@ -1,18 +1,24 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.HashComponent;
+import com.itbank.simpleboard.dto.ManagerLoginDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.UserRepository;
+import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
-
+    private final HashComponent hashComponent;
 
     // 아이디로 사용자 찾기
     public UserDTO getUserByUserId(Long idx) {
@@ -37,5 +43,30 @@ public class UserService {
                 user.getPnum(),
                 user.getRole()
         );
+    }
+
+    public UserDTO getUser(String userId, String userPw) {
+        // 여기서 UserDTO 불러와서 userPw로 비교하고
+        UserDTO user = userRepository.getUser(userId);
+        // 해쉬처리 이래저래 해서
+        return user;
+    }
+
+    public ProfessorDto getProfessor(UserDTO user) {
+        ProfessorDto professor = userRepository.getProfessor(user);
+        professor.setUser(user);
+        return professor;
+    }
+
+    public StudentDto getStudent(UserDTO user) {
+        StudentDto student = userRepository.getStudent(user);
+        student.setUser(user);
+        return student;
+    }
+
+    public ManagerLoginDto getManager(UserDTO user) {
+        ManagerLoginDto manager = userRepository.getManager(user);
+        manager.setUser(user);
+        return manager;
     }
 }
