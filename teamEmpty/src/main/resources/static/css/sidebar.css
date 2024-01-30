@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+section.sideBar {
+    width: 15%;
+}
+section.sideBar > ul.side_ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 1.2em;
+}
+section.sideBar > ul.side_ul > li {
+    width: 100%;
+    padding: 0 20px;
+}
+section.sideBar > ul.side_ul > li.side_title {
+    border-bottom: 2px solid rgb(0, 0, 147);
+    padding: 20px;
+    width: 100%;
+}
+section.sideBar > ul > li > div {
+    box-sizing: border-box;
+}
+section.sideBar > ul > li:not(li.side_title) > div {
+    border-bottom: 1px solid grey;
+    width: 100%;
+    padding: 20px 10px;
+}
+section.sideBar > ul.side_ul > li:last-child > div {
+    border-bottom: none;
+}
+section.sideBar > ul.side_ul > li.side_title > div {
+    font-size: 1.5em;
+    font-weight: bolder;
+    width: fit-content;
+    margin: auto;
+    border-bottom: none;
+}
+section.sideBar li.side_checked {
+    color: rgb(0, 0, 255);
+}
+/* end of sideBar.css */
+
+/* include_sideBar.css */
+article.include_sideBar {
+    position: absolute;
+    height: 100%;
+    width: 300px;
+    top: 0;
+    left: 0;
+    background-color: #4E73DF;
+}
+article.include_sideBar > div.logo {
+    height: 250px;
+    width: 300px;
+    background-image: url('/img/1.png');
+    background-size: 100%;
+    margin-top: -30px;
+}
+article.include_sideBar > div.login {
+    width: 200px;
+    margin: 20px auto;
+}
+article.include_sideBar > div.login input:not([type=submit]) {
+    box-sizing: border-box;
+    width: 200px;
+}
+article.include_sideBar > div.login > form > div:not(div:first-child) {
+    margin-top: 10px;
+}
+article.include_sideBar > nav > ul, article.include_sideBar > nav > ul ol {
+    list-style: none;
+    padding-left: 0;
+}
+article.include_sideBar > nav ol {
+    display: none;
+}
+article.include_sideBar > nav > ul > li:hover > div > ol {
+    display: block;
+}
+article.include_sideBar > nav > ul > li.ul_item {
+    font-size: 1.2em;
+    width: fit-content;
+    margin: 30px auto;
+    color: white;
+}
+article.include_sideBar > nav > ul > li.ul_item > div > span {
+    font-size: 1.5em;
+}
+article.include_sideBar > nav > ul > li.ul_item > div {
+    width: fit-content;
+}
+article.include_sideBar > nav > ul > li.ul_item > div > ol > li {
+    width: fit-content;
+    margin: 10px auto;
+}
+ol > li > a {
+    text-decoration: none;
+    color: white;
+}
+ol > li > a:hover{
+    text-decoration: none;
+}
