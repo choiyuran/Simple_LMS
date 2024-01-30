@@ -188,8 +188,11 @@ public class StudentController {
         return mav;
     }
 
-    @GetMapping("/home")
-    public String home(Model model) {
+    @GetMapping("/home")    // 학생 홈으로 이동
+    public String home(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null || !((StudentDto) session.getAttribute("user")).getUser().getRole().toString().equals("학생")) {
+            return "redirect:/";
+        }
         // home 에서 calendar 불러오기
         List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
         model.addAttribute("calendar", calendar);

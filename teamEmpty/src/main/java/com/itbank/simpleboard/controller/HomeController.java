@@ -1,10 +1,7 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
@@ -110,12 +107,6 @@ public class HomeController {
         userDTO.setEmail(user.getEmail());
         userDTO.setUser_address(user.getAddress());
         session.setAttribute("user", userDTO);
-        return "home";
-    }
-    
-    @GetMapping("/logouttest")
-    public String logouttest(HttpSession session) {
-        session.invalidate();
         return "home";
     }
 
