@@ -3,7 +3,6 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.ManagerService;
@@ -25,7 +24,6 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final ProfessorRepository professorRepository;
     private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
 
