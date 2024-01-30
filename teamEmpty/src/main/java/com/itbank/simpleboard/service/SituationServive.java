@@ -36,4 +36,11 @@ public class SituationServive {
     public SituationStuDto selectOneSituation(Long idx) {
         return situationRepository.findOneSituation(idx);
     }
+
+    @Transactional
+    public Situation situationUpdate(SituationStuDto param) {
+        Situation situation = situationRepository.findById(param.getIdx()).get();
+        situation.setStudent_status(param.getStatus());
+        return situation;
+    }
 }

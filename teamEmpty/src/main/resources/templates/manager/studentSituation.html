@@ -30,7 +30,6 @@
             <td th:text="${row.major}"></td>
             <td th:text="${row.status}"></td>
             <td><button class="btn btn-warning"><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}">수정</a></button></td>
-<!--            <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${item.idx})}">삭제</a></button></td>-->
         </tr>
 
         <!-- 검색 결과가 없는 경우 메시지 표시 -->
@@ -38,8 +37,7 @@
             <td colspan="4" style="text-align: center;">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <button class="btn btn-facebook"><a href="/manager/registerMajor">학과 등록</a></button>
-    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(majorName) or !#strings.isEmpty(collegeIdx)}"><a href="/manager/majorList">목록으로</a></button>
+    <button class="btn btn-primary" th:if="${!#strings.isEmpty(status)}"><a href="/manager/studentSituation">목록으로</a></button>
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 
