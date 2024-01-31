@@ -9,31 +9,31 @@
     <h2>내 정보 수정</h2>
     <hr>
 
-    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user?.idx})}">
+    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user.idx})}">
         <div class="w-50 m-auto">
 
             <!-- 이름 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">이름</span>
-                <input type="text" class="form-control" name="user_name" th:value="${session.user?.user_name}" th:disabled="true">
+                <input type="text" class="form-control" name="user_name" th:value="${session.user.user.user_name}" th:disabled="true">
             </div>
 
             <!-- 학번 출력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">학번</span>
-                <input type="text" class="form-control" name="student_num" th:value="${dto?.student_num}" th:disabled="true">
+                <input type="text" class="form-control" name="student_num" th:value="${session.user.student_num}" th:disabled="true">
             </div>
 
             <!-- 주소 입력란 -->
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">주소</span>
-                <input type="text" class="form-control" name="user_address" th:value="${session.user?.user_address}">
+                <input type="text" class="form-control" name="user_address" th:value="${session.user.user.user_address}">
             </div>
 
             <div class="input-group input-group-sm mb-3" style="width: 70%;">
                 <span class="input-group-text" style="width: 20%;">전화번호</span>
                 <input type="text" class="form-control form-control-user" name="pnum" id="phonenumber"
-                       placeholder="전화번호" th:value="${session.user?.pnum}" required>
+                       placeholder="전화번호" th:value="${session.user.user.pnum}" required>
             </div>
 
             <div class="form-group row">

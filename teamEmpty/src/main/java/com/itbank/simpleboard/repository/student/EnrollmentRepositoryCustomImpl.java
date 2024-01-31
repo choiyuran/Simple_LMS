@@ -2,7 +2,6 @@ package com.itbank.simpleboard.repository.student;
 
 import com.itbank.simpleboard.dto.EnrollmentDto;
 import com.itbank.simpleboard.dto.QEnrollmentDto;
-import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;

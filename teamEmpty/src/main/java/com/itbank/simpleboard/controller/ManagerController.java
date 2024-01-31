@@ -1,13 +1,8 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
-import com.itbank.simpleboard.entity.College;
-import com.itbank.simpleboard.entity.Major;
-import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.service.*;
-import com.itbank.simpleboard.dto.ProfessorUserDto;
-import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.entity.*;
+import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -21,14 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.nio.file.Path;
 import java.util.Calendar;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.web.bind.annotation.GetMapping;
-
-import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -365,6 +357,15 @@ public class ManagerController {
         return "redirect:/professor/lectureList";
     }
 
-
+    @GetMapping("/home")    // 교직원 홈으로 이동
+    public String home(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null || !((ManagerLoginDto) session.getAttribute("user")).getUser().getRole().toString().equals("교직원")) {
+            return "redirect:/";
+        }
+        // home 에서 calendar 불러오기
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+        model.addAttribute("calendar", calendar);
+        return "manager/home";
+    }
 
 }
