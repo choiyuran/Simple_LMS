@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
+
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MajorDto {
@@ -15,13 +15,15 @@ public class MajorDto {
     private String name;
     private Integer tuition;
     private Long college_idx;
+    private String college_name;
     private YesOrNo abolition;
 
-    public MajorDto(Long idx, String name, Integer tuition, Long college_idx) {
+    public MajorDto(Long idx, String name, Integer tuition, Long college_idx, String college) {
         this.idx = idx;
         this.name = name;
         this.tuition = tuition;
         this.college_idx = college_idx;
+        this.college_name = college;
         this.abolition = YesOrNo.N;
     }
 }

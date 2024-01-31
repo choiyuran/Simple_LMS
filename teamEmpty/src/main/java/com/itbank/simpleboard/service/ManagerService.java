@@ -1,12 +1,14 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.ManagerDTO;
+import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.dto.UserFormDTO;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.LectureRoomRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
-
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
@@ -16,14 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
