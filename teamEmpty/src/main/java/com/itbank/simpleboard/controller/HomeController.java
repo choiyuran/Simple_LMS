@@ -1,12 +1,8 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.ManagerService;
@@ -28,7 +24,6 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final ProfessorRepository professorRepository;
     private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
 
@@ -107,51 +102,6 @@ public class HomeController {
         session.setAttribute("user", userDTO);
         return "home";
     }
-    
-    @GetMapping("/logouttest")
-    public String logouttest(HttpSession session) {
-        session.invalidate();
-        return "home";
-    }
-
-    // 테스트용 교수 로그인
-    @GetMapping("/ProfessorLogin")
-    public String ProfessorTestLogin(HttpSession session) {
-        long startTime = System.currentTimeMillis();
-        User user = userRepository.findById(1L).get();
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUser_id(user.getUser_id());
-        userDTO.setUser_pw(user.getUser_pw());
-        userDTO.setSalt(user.getSalt());
-        userDTO.setIdx(user.getIdx());
-        userDTO.setUser_name(user.getUser_name());
-        userDTO.setPnum(user.getPnum());
-        userDTO.setRole(user.getRole());
-        userDTO.setEmail(user.getEmail());
-
-        ProfessorDto dto = new ProfessorDto();
-        Professor professor = professorRepository.findByUser(user);
-
-        MajorDto majorDto = new MajorDto();
-        majorDto.setIdx(professor.getMajor().getIdx());
-        majorDto.setName(professor.getMajor().getName());
-        majorDto.setTuition(professor.getMajor().getTuition());
-        majorDto.setCollege_idx(professor.getMajor().getCollege().getIdx());
-        majorDto.setAbolition(professor.getMajor().getAbolition());
-
-        dto.setUser(userDTO);
-        dto.setProfessor_idx(professor.getProfessor_idx());
-        dto.setImg(professor.getProfessor_img());
-        dto.setHireDate(professor.getHireDate());
-        dto.setMajor(majorDto);
-
-        session.setAttribute("professor", dto);
-        long endTime = System.currentTimeMillis();
-        long elapsedTime = endTime - startTime;
-
-        System.out.println("쿼리 실행 시간: " + elapsedTime + " 밀리초");
-        return "redirect:/professor/myLecture";
-    }
 
     @GetMapping("/login")
     public String login() {
@@ -164,15 +114,15 @@ public class HomeController {
         UserDTO user = userService.getUser(user_id, user_pw);
         switch (user.getRole().toString()) {
             case "교수":
-                session.setAttribute("professor", userService.getProfessor(user));
+                session.setAttribute("user", userService.getProfessor(user));
                 url = "redirect:/professor/home";
                 break;
             case "학생":
-                session.setAttribute("student", userService.getStudent(user));
+                session.setAttribute("user", userService.getStudent(user));
                 url = "redirect:/student/home";
                 break;
             case "교직원":
-                session.setAttribute("manager", userService.getManager(user));
+                session.setAttribute("user", userService.getManager(user));
                 url = "redirect:/manager/home";
                 break;
         }
@@ -182,6 +132,6 @@ public class HomeController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/home";
+        return "redirect:/";
     }
 }

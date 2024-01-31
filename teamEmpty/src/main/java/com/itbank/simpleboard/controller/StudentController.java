@@ -1,12 +1,14 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.Enrollment;
 import com.itbank.simpleboard.entity.Evaluation;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -25,6 +27,7 @@ public class StudentController {
     private final LectureService lectureService;
     private final StudentService studentService;
     private final EvaluationService evaluationService;
+    private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
@@ -183,5 +186,16 @@ public class StudentController {
             mav.setViewName("redirect:/student/evaluationList");
         }
         return mav;
+    }
+
+    @GetMapping("/home")    // 학생 홈으로 이동
+    public String home(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null || !((StudentDto) session.getAttribute("user")).getUser().getRole().toString().equals("학생")) {
+            return "redirect:/";
+        }
+        // home 에서 calendar 불러오기
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+        model.addAttribute("calendar", calendar);
+        return "student/home";
     }
 }

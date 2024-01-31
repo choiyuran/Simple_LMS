@@ -2,11 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head">
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <title>학생관리시스템::SimpleLMS</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom fonts for this template-->
@@ -28,7 +28,7 @@
 <header th:fragment="header">
     <div class="wrapper">
         <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+        <div class="d-flex flex-column" id="content-wrapper">
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
@@ -40,8 +40,8 @@
                                     <i class="fas fa-laugh-wink"></i>
                                 </div>
                             </a>
-                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapsibleNavbar">
+                            <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse"
+                                    type="button">
                                 <span class="navbar-toggler-icon"></span>
                             </button>
                             <div class="collapse navbar-collapse" id="collapsibleNavbar">
@@ -50,8 +50,8 @@
                                         <a class="nav-link" href="#">홈</a>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                           data-bs-toggle="dropdown">My</a>
+                                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                                           role="button">My</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="/student/studentModify">내 정보수정</a></li>
                                             <li><a class="dropdown-item" href="/student/enroll">수강신청</a></li>
@@ -62,8 +62,8 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                           data-bs-toggle="dropdown">학사
+                                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                                           role="button">학사
                                             관리</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="#">학생명단 조회</a></li>
@@ -79,8 +79,8 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                           data-bs-toggle="dropdown">교수</a>
+                                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                                           role="button">교수</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="#">전체 강의 조회</a></li>
                                             <li><a class="dropdown-item" href="#">교수 계획서 등록</a></li>
@@ -90,8 +90,8 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                           data-bs-toggle="dropdown">수업</a>
+                                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                                           role="button">수업</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="#">전체 강의 조회</a></li>
                                             <li><a class="dropdown-item" href="#">내가 듣는 수업</a></li>
@@ -100,8 +100,8 @@
                                         </ul>
                                     </li>
                                     <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" role="button"
-                                           data-bs-toggle="dropdown">학사정보</a>
+                                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+                                           role="button">학사정보</a>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="#">공지사항</a></li>
                                             <li><a class="dropdown-item" href="#">학사일정</a></li>
@@ -110,15 +110,20 @@
                                     </li>
                                     <!-- Nav Item - User Information -->
                                     <li class="nav-item dropdown no-arrow">
-                                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                                           href="#" id="userDropdown" role="button">
                                             <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
+                                            <th:block th:if="${session.user != null && session.user.img != null}">
+                                                <img alt="유저 이미지" class="img-profile rounded-circle" th:src="${session.user.img}" >
+                                            </th:block>
+                                            <th:block th:unless="${session.user != null && session.user.img != null}">
+                                                <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg">
+                                            </th:block>
                                         </a>
                                         <!-- Dropdown - User Information -->
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                             aria-labelledby="userDropdown">
-                                            <a class="dropdown-item" href="#">
+                                        <div aria-labelledby="userDropdown"
+                                             class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
+                                            <a class="dropdown-item" href="/student/studentModify">
                                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 내 정보 보기
                                             </a>
@@ -131,8 +136,8 @@
                                                 나의 메뉴
                                             </a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#" data-toggle="modal"
-                                               data-target="#logoutModal">
+                                            <a class="dropdown-item" data-target="#logoutModal" data-toggle="modal"
+                                               href="/logout">
                                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 로그아웃
                                             </a>
