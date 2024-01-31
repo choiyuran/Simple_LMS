@@ -34,25 +34,23 @@ public class StudentController {
         long startTime = System.currentTimeMillis();
 
         ModelAndView mav = new ModelAndView("home");
-        UserDTO dto = (UserDTO)session.getAttribute("user");
-        if(dto == null){
-            mav.addObject("msg","로그인하세요!");
+        StudentDto student = (StudentDto) session.getAttribute("user");
+        if (student == null) {
+            mav.addObject("msg", "로그인하세요!");
+            mav.setViewName("index");
             return mav;
         }
 
-        List<LectureDto> dtos = null;
-
-        if(searchType == null || keyword == null){
-            dtos = lectureService.selectAll();
-        }else{
-            dtos = lectureService.selectAll(searchType, keyword);
+        if (searchType == null || keyword == null) {
+            mav.addObject("list", lectureService.selectAll());
+        } else {
+            mav.addObject("list", lectureService.selectAll(searchType, keyword));
         }
 
-        StudentDto student = studentService.findByUserIdx(dto.getIdx());
         List<Enrollment> enrollmentList = enrollmentService.findByStudent(student.getIdx());
         List<LectureDto> lectureList = new ArrayList<>();
 
-        for(Enrollment e : enrollmentList){
+        for (Enrollment e : enrollmentList) {
             LectureDto lecturedto = new LectureDto();
             lecturedto.setCredit(e.getLecture().getCredit());
             lecturedto.setDay(e.getLecture().getDay());
@@ -70,17 +68,20 @@ public class StudentController {
             lecturedto.setMaxCount(e.getLecture().getMaxCount());
             lecturedto.setCurrentCount(e.getLecture().getCurrentCount());
             lecturedto.setProfessor_name(e.getLecture().getProfessor().getUser().getUser_name());
+            lecturedto.setAbolition(e.getLecture().getAbolition().toString());
             lectureList.add(lecturedto);
         }
 
-        if(dto.getRole().toString().equals("학생")){
-            mav.setViewName("student/enrollment");
-            mav.addObject("lectureList",lectureList);
+        if(student.getUser().getRole().toString().equals("학생")){
+            mav.setViewName("/student/enrollment");
+            mav.addObject("lectureList", lectureList);
             mav.addObject("stuIdx", student.getIdx());
-            mav.addObject("list",dtos);
         }
+
+        log.info("모델테스트 : "+mav.getModel().toString());
+
         long endTime = System.currentTimeMillis();
-        log.info("총 실행시간 : "+(endTime-startTime));
+        log.info("총 실행시간 : " + (endTime - startTime));
         return mav;
     }
 
@@ -89,38 +90,32 @@ public class StudentController {
     public ModelAndView enrollPro(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("home");
-        UserDTO userDto = (UserDTO)session.getAttribute("user");
-
-        Long userIdx = userDto.getIdx();
-        if(userDto == null){
+        StudentDto studentDto = (StudentDto) session.getAttribute("user");
+        if (studentDto == null) {
             // 로그인 안되어 있으면 로그인 화면으로 이거는 인터셉터에서 처리도 가능하다.
             mav.setViewName("redirect:/");
-        }else if(userDto.getRole().toString().equals("학생")){
-
+        } else if (studentDto.getUser().getRole().toString().equals("학생")) {
             Enrollment enrollment = enrollmentService.save(stuIdx, idx);
-
-            if(enrollment != null) {
-                ra.addFlashAttribute("msg","수강신청되었습니다.");
-            }else{
+            if (enrollment != null) {
+                ra.addFlashAttribute("msg", "수강신청되었습니다.");
+            } else {
                 ra.addFlashAttribute("msg", "수강신청에 실패했습니다.");
             }
             mav.setViewName("redirect:/student/enroll");
-        }else{
+        } else {
             // 로그인이 안되어 있거나 학생이 아니야???
             // 학생이 아닌데 어케 수강신청함???? - 너 돌아가
             mav.setViewName("redirect:/side");
         }
         long endTime = System.currentTimeMillis();
-        log.info("수강신청 실행시간 : "+(endTime-startTime) / 1000 + "초");
+        log.info("수강신청 실행시간 : " + (endTime - startTime) / 1000 + "초");
         return mav;
     }
 
     // 수강 취소
     @GetMapping("/cancel")
     @ResponseBody
-    public String cancel(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
-        UserDTO userDTO = (UserDTO) session.getAttribute("user");
-//        취소
+    public String cancel(Long stuIdx, Long idx) {
         enrollmentService.cancel(stuIdx, idx);
         return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
     }
@@ -129,20 +124,22 @@ public class StudentController {
     @GetMapping("/studentModify")
     public ModelAndView myPage(HttpSession session) {
         ModelAndView mav = new ModelAndView("student/studentModify");
-        UserDTO userDto = (UserDTO) session.getAttribute("user"); // 형변환
-        StudentDto dto = studentService.findByUserIdx(userDto.getIdx());
-        mav.addObject("dto",dto);
+        StudentDto studentDto = (StudentDto) session.getAttribute("user"); // 형변환
+        mav.addObject("dto", studentDto);
         return mav;
     }
 
 
     @PostMapping("/studentModify/{idx}") // 내 정보 수정
-    public String usersUpdate(@PathVariable("idx")Long idx, UserDTO param) {
-        param.setIdx(idx);
-        UserDTO user = studentService.userUpdate(idx,param);
-        if(user != null) {
-            return "redirect:/home/" + idx;
-        }
+    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session) {
+        UserDTO user = studentService.userUpdate(idx, param);
+        StudentDto dto = (StudentDto) session.getAttribute("user");
+        dto.getUser().setPnum(user.getPnum());
+        dto.getUser().setUser_address(user.getUser_address());
+        dto.getUser().setEmail(user.getEmail());
+
+        session.setAttribute("user",dto);
+
         return "redirect:/student/studentModify";
     }
 
@@ -150,22 +147,22 @@ public class StudentController {
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("/home");
-        UserDTO userDto  = (UserDTO) session.getAttribute("user");
-        if(userDto != null){
-            Long userIdx = userDto.getIdx();
-            StudentDto studentDto = studentService.findByUserIdx(userIdx);
+
+        StudentDto studentDto = (StudentDto) session.getAttribute("user");
+        System.err.println("studentDto : " + studentDto);
+        if (studentDto != null) {
             List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
 
-            if(!enrollmentList.isEmpty()){
+            if (!enrollmentList.isEmpty()) {
                 mav.addObject("list", enrollmentList);
                 mav.setViewName("student/evaluationList");
-            }else{
-                mav.addObject("msg","평가할 강의가 없습니다.");
+            } else {
+                mav.addObject("msg", "평가할 강의가 없습니다.");
             }
         }
         long endTime = System.currentTimeMillis();
 
-        log.info("총 시간 : " + (endTime-startTime));
+        log.info("총 시간 : " + (endTime - startTime));
         return mav;
     }
 
@@ -181,8 +178,8 @@ public class StudentController {
     public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
         ModelAndView mav = new ModelAndView("/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
-        if(evaluation != null){
-            mav.addObject("msg","평가 등록 완료");
+        if (evaluation != null) {
+            mav.addObject("msg", "평가 등록 완료");
             mav.setViewName("redirect:/student/evaluationList");
         }
         return mav;
@@ -197,5 +194,11 @@ public class StudentController {
         List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
         model.addAttribute("calendar", calendar);
         return "student/home";
+    }
+
+    @PostMapping("email-verification")
+    @ResponseBody
+    public Integer SendVerificationCode(String email){
+        return studentService.sendAuthNumber(email);
     }
 }
