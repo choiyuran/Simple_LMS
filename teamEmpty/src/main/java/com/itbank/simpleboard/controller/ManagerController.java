@@ -5,14 +5,23 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,12 +155,65 @@ public class ManagerController {
         }
     }
 
-    @PostMapping("/addstudent")   // 학생 등록
+    @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
-        log.info("학생등록");
-        return "common/register";
+        log.info("학생등록페이지");
+        return "manager/registerStudent";
     }
 
+    @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
+    public String uploadStudentList(@RequestParam("studentFile")MultipartFile studentFile, Model model) throws IOException {
+        log.info("학생등록엑셀업로드");
+        if(studentFile.isEmpty()){
+            model.addAttribute("message","파일을 업로드해주세요");
+            return "manager/registerStudent";
+        }
+
+        model.addAttribute("students","학생등록");
+        return "manager/registerStudentList";
+
+    }
+
+    @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
+    public ResponseEntity<byte[]> downloadStudentForm() throws IOException {
+
+        // 엑셀 템플릿 파일을 클래스패스에서 로드
+        ClassPathResource resource = new ClassPathResource("static/excelForm/studentForm.xlsx");
+
+        // 다운로드할 파일명 설정
+        String filename = "학생등록폼(양식변경금지).xlsx";
+
+        // 엑셀 파일 데이터 읽기
+        byte[] data = new byte[(int) resource.contentLength()];
+        try (InputStream inputStream = resource.getInputStream()) {
+            inputStream.read(data);
+        }
+
+        // 다운로드할 파일 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentLength(data.length);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(data);
+    }
+
+
+    @PostMapping("/addStudentList")   // 학생 등록
+    public String saveStudentList(Model model) {
+        log.info("학생등록리스트 저장");
+        model.addAttribute("message","학생 저장 완료");
+        return "manager/registerStudentList";
+    }
+
+
+    @GetMapping("/addStudentList")   // 학생 등록
+    public String registerStudentList() {
+        log.info("학생등록리스트 확인");
+        return "manager/registerStudentList";
+    }
 
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동

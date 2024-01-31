@@ -55,6 +55,10 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+    //엑셀 파일에서 데이터를 읽는 Apache POI 라이브러리
+    implementation 'org.apache.poi:poi:5.2.4' // Apache POI 핵심 모듈
+    implementation 'org.apache.poi:poi-ooxml:5.2.4' // Apache POI OOXML 모듈
+
 }
 
 tasks.named('bootBuildImage') {
