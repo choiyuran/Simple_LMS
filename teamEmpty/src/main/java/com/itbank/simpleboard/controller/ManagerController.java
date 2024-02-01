@@ -168,9 +168,8 @@ public class ManagerController {
     }
 
     @PostMapping("/addProfessor")   // 교수 등록
-
     @ResponseBody// 교수 등록
-    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
+    public ResponseEntity<Map<String, String>> registerProfessor(UserFormDTO userFormDTO) {
         try {
             log.info("교수등록");
             long startTime = System.currentTimeMillis();
@@ -351,13 +350,15 @@ public class ManagerController {
 
     @GetMapping("/home")    // 교직원 홈으로 이동
     public String home(Model model, HttpSession session) {
-        if (session.getAttribute("user") == null || !((ManagerLoginDto) session.getAttribute("user")).getUser().getRole().toString().equals("교직원")) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ManagerLoginDto) {
+            // home 에서 calendar 불러오기
+            List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+            model.addAttribute("calendar", calendar);
+            return "manager/home";
+        } else {
             return "redirect:/";
         }
-        // home 에서 calendar 불러오기
-        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
-        model.addAttribute("calendar", calendar);
-        return "manager/home";
     }
     @GetMapping("/studentSituation")                // 학생 상태 조회
     public ModelAndView studentSituation(@RequestParam(required = false) String status) {
@@ -407,4 +408,13 @@ public class ManagerController {
 
 
 
+    @GetMapping("/managerModify")   // 교직원 개인 정보 수정
+    public String managerModify(HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ManagerLoginDto) {
+            return "manager/managerModify";
+        } else {
+            return "redirect:/";
+        }
+    }
 }

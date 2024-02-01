@@ -142,12 +142,29 @@ public class ProfessorController {
 
     @GetMapping("/home")    // 교수 홈으로 이동
     public String home(Model model, HttpSession session) {
-        if (session.getAttribute("user") == null || !((ProfessorDto) session.getAttribute("user")).getUser().getRole().toString().equals("교수")) {
+        Object user = session.getAttribute("user");
+        if (!(user instanceof ProfessorDto)) {
+            return "redirect:/";
+        } else {
+            // home 에서 calendar 불러오기
+            List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+            model.addAttribute("calendar", calendar);
+            return "professor/home";
+        }
+    }
+
+    @GetMapping("/professorModify") // 교수 개인 정보 수정
+    public String professorModify(HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ProfessorDto) {
+            return "professor/professorModify";
+        } else {
             return "redirect:/";
         }
-        // home 에서 calendar 불러오기
-        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
-        model.addAttribute("calendar", calendar);
-        return "professor/home";
+    }
+
+    @PostMapping("/professorModify/{idx}")
+    public String professorModify(@PathVariable("idx") Long idx, HttpSession session) {
+        return null;
     }
 }
