@@ -17,19 +17,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.nio.file.Path;
-import java.util.Calendar;
+import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -55,27 +51,21 @@ public class ManagerController {
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
 
-
         return "common/calendar";
     }
 
     @GetMapping("/calendarView/{idx}")
     public String calendarView(@PathVariable("idx") Long idx, Model model, HttpSession session){
-
         AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
-
         model.addAttribute("calendar", calendar);
-
         // session에서 user를 가져옴
-        UserDTO user = (UserDTO) session.getAttribute("user");
-
-        model.addAttribute("user", user);
-
-
+        Object user = session.getAttribute("user");
+        if (user instanceof ManagerLoginDto) {
+            ManagerLoginDto manager = (ManagerLoginDto) user;
+            model.addAttribute("manager", manager);
+        }
         return "manager/calendarView";
     }
-
-
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session){
@@ -453,15 +443,18 @@ public class ManagerController {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start_date = sdf.parse(start);
+        java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
+        param.setStart_date(sqldate);
+        
         if(end != null) {
             Date end_date = sdf.parse(end);
-            param.setEnd_date(end_date);
+            java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
+            param.setEnd_date(sqldate2);
         }
-        param.setStart_date(start_date);
+        log.info("param : " + param);
         Situation situation = situationServive.situationUpdate(param);
         return "redirect:/manager/studentSituation";
     }
-
 
 
     @GetMapping("/managerModify")   // 교직원 개인 정보 수정

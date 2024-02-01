@@ -40,6 +40,10 @@ public class SituationServive {
     @Transactional
     public Situation situationUpdate(SituationStuDto param) {
         Situation situation = situationRepository.findById(param.getIdx()).get();
+        situation.setStart_date(param.getStart_date());
+        if(situation.getEnd_date() != null) {
+            situation.setEnd_date(param.getEnd_date());
+        }
         situation.setStudent_status(param.getStatus());
         return situation;
     }

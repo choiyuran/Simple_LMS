@@ -143,7 +143,7 @@ public class StudentController {
         return "redirect:/student/studentModify";
     }
 
-    @GetMapping("/evaluationList")
+    @GetMapping("/evaluationList")              // 강의 평가 목록
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("/home");
@@ -166,7 +166,7 @@ public class StudentController {
         return mav;
     }
 
-    @GetMapping("/evaluate/{idx}")
+    @GetMapping("/evaluate/{idx}")              // 강의 평가지 페이지로 이동
     public ModelAndView evaluateView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("student/registerLectureEvaluationStu");
         EvaluationDto dto = evaluationService.findByIdx(idx);
@@ -174,7 +174,7 @@ public class StudentController {
         return mav;
     }
 
-    @PostMapping("/evaluate/{idx}")
+    @PostMapping("/evaluate/{idx}")                 // 강의 평가 등록
     public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
         ModelAndView mav = new ModelAndView("/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
@@ -198,7 +198,7 @@ public class StudentController {
         }
     }
 
-    @PostMapping("email-verification")
+    @PostMapping("email-verification")          // 이메일 인증
     @ResponseBody
     public Integer SendVerificationCode(String email){
         return studentService.sendAuthNumber(email);
