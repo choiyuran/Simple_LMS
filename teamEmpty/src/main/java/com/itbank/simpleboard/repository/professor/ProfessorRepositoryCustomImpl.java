@@ -133,22 +133,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
     }
 
-
-//    public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
-//        List<Long> userIds = queryFactory
-//                .select(QProfessor.professor.user.idx)
-//                .from(QProfessor.professor)
-//                .where(QProfessor.professor.major.idx.eq(majorIdx))
-//                .fetch();
-//
-//        return queryFactory
-//                .select(QUser.user.user_name)
-//                .from(QUser.user)
-//                .where(QUser.user.idx.in(userIds))
-//                .fetch();
-
-//    }
-
     public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
         return queryFactory
                 .select(new QProfessorUserDto(

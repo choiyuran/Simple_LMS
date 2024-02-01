@@ -51,7 +51,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                                 professor.major.idx,
                                 professor.major.name,
                                 professor.major.tuition,
-                                professor.major.college,
+                                professor.major.college.idx.as("college_idx"),
+                                professor.major.college.name.as("college_name"),
                                 professor.major.abolition).as("major"),
                         professor.hireDate.as("hireDate")))
                 .from(professor)
@@ -72,7 +73,8 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                                 QStudent.student.major.idx,
                                 QStudent.student.major.name,
                                 QStudent.student.major.tuition,
-                                QStudent.student.major.college,
+                                QStudent.student.major.college.idx.as("college_idx"),
+                                QStudent.student.major.college.name.as("college_name"),
                                 QStudent.student.major.abolition).as("major"),
                         QStudent.student.enteranceDate.as("enteranceDate")))
                 .from(QStudent.student)

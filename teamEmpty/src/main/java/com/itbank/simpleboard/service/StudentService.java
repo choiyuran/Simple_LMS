@@ -1,18 +1,24 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.MailComponent;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
+import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Transactional(readOnly = true)
@@ -20,6 +26,7 @@ import java.util.Optional;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
+    private final MailComponent mailComponent;
     public StudentDto findByUserIdx(Long userIdx) {
         StudentDto dto = new StudentDto();
         Optional<User> user = userRepository.findById(userIdx);
@@ -56,7 +63,6 @@ public class StudentService {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setUser_pw(userdto.getUser_pw());
             user.setPnum(userdto.getPnum());
             user.setEmail(userdto.getEmail());
             user.setAddress(userdto.getUser_address());
@@ -133,4 +139,21 @@ public class StudentService {
         studentUser.setRole(user.getRole());
         return studentUser;
     }
+
+    public Integer sendAuthNumber(String email) {
+        Random random = new Random();
+        String authNumber = (random.nextInt(899999) + 100000) + "";
+
+        HashMap<String, String> param = new HashMap<>();
+        param.put("to", email);
+        param.put("subject", "[Centum University]인증번호 입니다");
+        param.put("authCode", authNumber);
+
+        mailComponent.sendVerificationCode(param);
+
+        return Integer.parseInt(authNumber);
+    }
+
+
+
 }

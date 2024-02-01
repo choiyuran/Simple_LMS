@@ -54,6 +54,41 @@ public class FileComponent {
         return null;
     }
 
+    public String uploadIdPhoto(MultipartFile upload, String directoryName, String newFileName) {
+        log.info("fileUpload");
+        String dirString = getSpecificUploadDir(directoryName);
+
+        File dir = new File(dirString);
+
+        // 저장 디렉토리가 존재하지 않으면 생성
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        // 업로드할 파일의 원본 파일명 획득
+        String originalFileName = upload.getOriginalFilename();
+
+        // 새 파일 이름이 지정되었으면 사용, 아니면 원본 파일명 사용
+        String fileName = (newFileName != null && !newFileName.isEmpty()) ? newFileName : originalFileName;
+
+        // 파일명이 존재할 경우에만 처리
+        if (fileName != null) {
+            fileName = fileName.replaceAll(" ", "_");
+            File dest = new File(dirString, fileName);
+
+            try {
+                // 파일을 저장
+                upload.transferTo(dest);
+                log.info("File uploaded to {}: {}", directoryName, fileName);
+                return fileName;
+            } catch (IllegalStateException | IOException e) {
+                e.printStackTrace();
+                // 파일 저장 실패 시 예외 처리
+            }
+        }
+        return null;
+    }
+
     /**
      * 파일 삭제 메서드
      *

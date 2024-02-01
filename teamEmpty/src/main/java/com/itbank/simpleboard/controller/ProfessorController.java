@@ -3,6 +3,8 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.LectureSearchConditionDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
+import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class ProfessorController {
     private final ProfessorService professorService;
     private final LectureService lectureService;
+    private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -135,5 +138,33 @@ public class ProfessorController {
         }
         model.addAttribute("Evaluation", professorService.getEvaluation(idx));
         return "/professor/myLectureEvaluation";
+    }
+
+    @GetMapping("/home")    // 교수 홈으로 이동
+    public String home(Model model, HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (!(user instanceof ProfessorDto)) {
+            return "redirect:/";
+        } else {
+            // home 에서 calendar 불러오기
+            List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+            model.addAttribute("calendar", calendar);
+            return "professor/home";
+        }
+    }
+
+    @GetMapping("/professorModify") // 교수 개인 정보 수정
+    public String professorModify(HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ProfessorDto) {
+            return "professor/professorModify";
+        } else {
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("/professorModify/{idx}")
+    public String professorModify(@PathVariable("idx") Long idx, HttpSession session) {
+        return null;
     }
 }

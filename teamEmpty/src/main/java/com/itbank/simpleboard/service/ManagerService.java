@@ -1,12 +1,16 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.ManagerDTO;
+import com.itbank.simpleboard.dto.RegisterlectureDto;
+import com.itbank.simpleboard.dto.UserFormDTO;
+import com.itbank.simpleboard.component.FileComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.LectureRoomRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
-
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
@@ -16,14 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,6 +40,7 @@ public class ManagerService {
     private final ProfessorRepository professorRepository;
     private final LectureRoomRepository lectureRoomRepository;
     private final LectureRepository lectureRepository;
+    private final FileComponent fileComponent;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -258,7 +260,9 @@ public class ManagerService {
         String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
-        String professor_img = dto.getImageFile().toString();
+        // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
+        String newFileName = userName + "_" + dto.getFrontSecurity();
+        String professor_img = fileComponent.uploadIdPhoto(dto.getImageFile(), "idPhoto_professor",newFileName);
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,
