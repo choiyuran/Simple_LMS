@@ -40,7 +40,7 @@ public class ProfessorService {
         return professorRepository.getMyEvaluation(idx);
     }
 
-    public List<EnrollmentDto> getEnrollmentList(Long professorIdx) {
-        return professorRepository.getEnrollmentList(professorIdx);
+    public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
+        return professorRepository.getEnrollmentList(lectureIdx);
     }
 }
