@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,26 +32,33 @@ public class AcademicCalendarService {
         academicCalendar.setTitle(calendarDto.getTitle());
         academicCalendar.setStart_date(Date.valueOf(String.valueOf(calendarDto.getStart_date())).toLocalDate());
         academicCalendar.setEnd_date(Date.valueOf(String.valueOf(calendarDto.getEnd_date())).toLocalDate());
+        academicCalendar.setCreated_date(calendarDto.getCreated_date());
 
         // 저장
         return academicCalendarRepository.save(academicCalendar);
     }
 
     public AcademicCalendarDto getCalendarById(Long id) {
-        Optional<AcademicCalendar> calendarOptional = academicCalendarRepository.findById(id);
+        try {
+            Optional<AcademicCalendar> calendarOptional = academicCalendarRepository.findById(id);
 
-        if (calendarOptional.isPresent()) {
-            // DB 에 있는 학사일정 을 AcademicCalendarDto 로 변환하여 반환
-            AcademicCalendar academicCalendar = calendarOptional.get();
-            AcademicCalendarDto academicCalendarDto = new AcademicCalendarDto();
+            if (calendarOptional.isPresent()) {
+                AcademicCalendar academicCalendar = calendarOptional.get();
+                AcademicCalendarDto academicCalendarDto = new AcademicCalendarDto();
 
-            academicCalendarDto.setIdx(academicCalendar.getIdx());
-            academicCalendarDto.setStart_date(academicCalendar.getStart_date());
-            academicCalendarDto.setEnd_date(academicCalendar.getEnd_date());
-            academicCalendarDto.setTitle(academicCalendar.getTitle());
+                academicCalendarDto.setIdx(academicCalendar.getIdx());
+                academicCalendarDto.setStart_date(academicCalendar.getStart_date());
+                academicCalendarDto.setEnd_date(academicCalendar.getEnd_date());
+                academicCalendarDto.setTitle(academicCalendar.getTitle());
 
-            return academicCalendarDto;
-        } else {
+                return academicCalendarDto;
+            } else {
+                // 해당 id에 해당하는 학사일정이 없을 경우
+                return null;
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 예외 처리
+            e.printStackTrace();
             return null;
         }
     }
@@ -65,6 +73,7 @@ public class AcademicCalendarService {
         existingCalendar.setTitle(calendarDto.getTitle());
         existingCalendar.setStart_date(Date.valueOf(String.valueOf(calendarDto.getStart_date())).toLocalDate());
         existingCalendar.setEnd_date(Date.valueOf(String.valueOf(calendarDto.getEnd_date())).toLocalDate());
+        existingCalendar.setCreated_date(calendarDto.getCreated_date());
 
         // 수정된 학사일정을 저장
         return academicCalendarRepository.save(existingCalendar);
