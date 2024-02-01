@@ -1,8 +1,6 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.LectureService;
@@ -81,7 +79,8 @@ public class ProfessorController {
         if (user instanceof ProfessorDto) {
             long startTime = System.currentTimeMillis();
 
-            condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
+            ProfessorDto professor = (ProfessorDto) user;
+            condition.setProfessor_idx(professor.getProfessor_idx());
             List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
             model.addAttribute("MyList", myLectureDtoList);
 
@@ -97,11 +96,19 @@ public class ProfessorController {
                     .sorted()
                     .collect(Collectors.toList()));
 
+            int currentYear = LocalDate.now().getYear();
+            List<Integer> yearList = new ArrayList<>();
+            for (int i = 4; i >= 0; i--) {
+                int year = currentYear - i;
+                yearList.add(year);
+            }
+            model.addAttribute("YearList", yearList);
+
             long endTime = System.currentTimeMillis();
             log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
             return "professor/myLecture";
         } else {
-            return "redirect:/home";
+            return "redirect:/";
         }
     }
 
@@ -134,24 +141,25 @@ public class ProfessorController {
 
     @GetMapping("/viewEvaluation/{professorIdx}/{idx}")    // 내 강의 평가 보기
     public String viewEvaluation(@PathVariable("professorIdx") Long professorIdx, @PathVariable("idx") Long idx, Model model, HttpSession session) {
-        ProfessorDto professor = (ProfessorDto) session.getAttribute("professor");
-        if (professor == null || !Objects.equals(professor.getProfessor_idx(), professorIdx)) {
-            return "redirect:/home";
+        Object user = session.getAttribute("user");
+        if (user instanceof ProfessorDto) {
+            model.addAttribute("Evaluation", professorService.getEvaluation(idx));
+            return "/professor/myLectureEvaluation";
         }
-        model.addAttribute("Evaluation", professorService.getEvaluation(idx));
-        return "/professor/myLectureEvaluation";
+        return "redirect:/home";
     }
 
     @GetMapping("/home")    // 교수 홈으로 이동
     public String home(Model model, HttpSession session) {
         Object user = session.getAttribute("user");
-        if (!(user instanceof ProfessorDto)) {
-            return "redirect:/";
-        } else {
+        if (user instanceof ProfessorDto) {
             // home 에서 calendar 불러오기
             List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
             model.addAttribute("calendar", calendar);
             return "professor/home";
+        } else {
+            session.invalidate();
+            return "redirect:/";
         }
     }
 
@@ -161,6 +169,7 @@ public class ProfessorController {
         if (user instanceof ProfessorDto) {
             return "professor/professorModify";
         } else {
+            session.invalidate();
             return "redirect:/";
         }
     }
@@ -168,5 +177,19 @@ public class ProfessorController {
     @PostMapping("/professorModify/{idx}")
     public String professorModify(@PathVariable("idx") Long idx, HttpSession session) {
         return null;
+    }
+
+    @GetMapping("/enterGrade")
+    public String enterGrade(HttpSession session, Model model) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ProfessorDto) {
+            ProfessorDto professor = (ProfessorDto) user;
+            List<EnrollmentDto> enrollment = professorService.getEnrollmentList(professor.getProfessor_idx());
+            model.addAttribute("enrollment", enrollment);
+            return "professor/enterGrade";
+        } else {
+            session.invalidate();
+            return "redirect:/";
+        }
     }
 }

@@ -37,7 +37,7 @@ public class AcademicCalendar {
     @Column(name="calendar_created_date")
     private LocalDate created_date;
 
-    public AcademicCalendar(String title, LocalDate start_date, LocalDate end_date, LocalDate created_date) {
+    public AcademicCalendar(String title, LocalDate start_date, LocalDate end_date) {
         this.title = title;
         this.start_date = start_date;
         this.end_date = end_date;

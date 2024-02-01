@@ -470,6 +470,7 @@ public class ManagerController {
         if (user instanceof ManagerLoginDto) {
             return "manager/managerModify";
         } else {
+            session.invalidate();
             return "redirect:/";
         }
     }

@@ -31,6 +31,7 @@
 //            initService.dbInit6();
 //            initService.dbInit4();
 //            initService.dbInit();
+//            initService.insertCalendar();
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
@@ -109,27 +110,27 @@
 //
 //        }
 //
-////        public void insertCalendar() throws Exception {
-////            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-////
-////            LocalDate startDate1 = LocalDate.parse("2024/01/01", formatter);
-////            LocalDate endDate1 = LocalDate.parse("2024/01/31", formatter);
-////
-////            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
-////            em.persist(calendar1);
-////
-////            LocalDate startDate2 = LocalDate.parse("2024/06/01", formatter);
-////            LocalDate endDate2 = LocalDate.parse("2024/06/30", formatter);
-////
-////            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
-////            em.persist(calendar2);
-////
-////            LocalDate startDate3 = LocalDate.parse("2024/12/01", formatter);
-////            LocalDate endDate3 = LocalDate.parse("2024/12/31", formatter);
-////
-////            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
-////            em.persist(calendar3);
-////        }
+//        public void insertCalendar() throws Exception {
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+//
+//            LocalDate startDate1 = LocalDate.parse("2024/01/01", formatter);
+//            LocalDate endDate1 = LocalDate.parse("2024/01/31", formatter);
+//
+//            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
+//            em.persist(calendar1);
+//
+//            LocalDate startDate2 = LocalDate.parse("2024/06/01", formatter);
+//            LocalDate endDate2 = LocalDate.parse("2024/06/30", formatter);
+//
+//            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
+//            em.persist(calendar2);
+//
+//            LocalDate startDate3 = LocalDate.parse("2024/12/01", formatter);
+//            LocalDate endDate3 = LocalDate.parse("2024/12/31", formatter);
+//
+//            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
+//            em.persist(calendar3);
+//        }
 //
 //        public void dbInit3() {
 //            Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
