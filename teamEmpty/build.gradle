@@ -31,14 +31,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compileOnly 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
-    
-    // 파일 업로드 위한 의존성
     implementation 'commons-fileupload:commons-fileupload:1.5'
-
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 //    JSP 쓸거야?????
 //    implementation 'javax.servlet:jstl:1.2'
 //    implementation 'org.apache.tomcat.embed:tomcat-embed-jasper:9.0.82'
 //    runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+
 
     // mysql
     implementation group: 'com.mysql', name: 'mysql-connector-j'
@@ -56,10 +55,15 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-    // 메일 사용 위한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+    implementation group: 'org.springframework', name: 'spring-context-support', version: '5.3.24'
+
+
+
+    //엑셀 파일에서 데이터를 읽는 Apache POI 라이브러리
+    implementation 'org.apache.poi:poi:5.2.4' // Apache POI 핵심 모듈
+    implementation 'org.apache.poi:poi-ooxml:5.2.4' // Apache POI OOXML 모듈
+
 }
 
 tasks.named('bootBuildImage') {

@@ -25,13 +25,11 @@ public class LectureService {
     QLecture lecture = QLecture.lecture;
 
     public List<LectureDto> selectAll() {
-        List<LectureDto> dtos = lectureRepository.getLectureDtos();
-        return dtos;
+        return lectureRepository.getLectureDtos();
     }
 
     public List<LectureDto> selectAll(String searchType, String keyword) {
-        List<LectureDto> lectureDtoList = lectureRepository.getLectureListDtos(searchType,keyword);
-        return lectureDtoList;
+        return lectureRepository.getLectureListDtos(searchType,keyword);
     }
 
 

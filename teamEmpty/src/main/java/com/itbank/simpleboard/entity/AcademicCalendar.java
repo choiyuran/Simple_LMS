@@ -33,9 +33,19 @@ public class AcademicCalendar {
     @Column(name="calendar_end_date")
     private LocalDate end_date;
 
-    public AcademicCalendar(String title, LocalDate start_date, LocalDate end_date) {
+    // 작성일자
+    @Column(name="calendar_created_date")
+    private LocalDate created_date;
+
+    public AcademicCalendar(String title, LocalDate start_date, LocalDate end_date, LocalDate created_date) {
         this.title = title;
         this.start_date = start_date;
         this.end_date = end_date;
+        this.created_date = LocalDate.now();
+    }
+
+    @PrePersist
+    public void prePersist(){
+        this.created_date = LocalDate.now();
     }
 }

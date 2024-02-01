@@ -2,7 +2,6 @@ package com.itbank.simpleboard.repository.student;
 
 import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.dto.QLectureDto;
-import com.itbank.simpleboard.dto.QProfessorLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -68,6 +67,7 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
             dto.setProfessor(lecture1.getProfessor().getProfessor_idx());
             dto.setIntro(lecture1.getIntro());
             dto.setVisible(lecture1.getVisible().toString());
+            dto.setAbolition(lecture1.getAbolition().toString());
 
             lectureDtoList.add(dto);
         }
@@ -104,6 +104,7 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
                         lecture.semester,
                         lecture.grade,
                         lecture.professor.professor_idx,
+                        lecture.plan,
                         QUser.user.user_name
                 ))
                 .from(lecture)

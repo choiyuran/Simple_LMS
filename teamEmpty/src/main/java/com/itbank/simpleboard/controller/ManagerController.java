@@ -5,6 +5,7 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,9 +13,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.nio.file.Path;
+import java.util.Calendar;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +43,9 @@ public class ManagerController {
     private final LectureRoomService lectureRoomService;
     private final AcademicCalendarService academicCalendarService;
     private final UserService userService;
-    private final HttpSession session;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
+    private final SituationServive situationServive;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -43,15 +55,30 @@ public class ManagerController {
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
 
-        // 세션에서 사용자 정보 가져오기
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        model.addAttribute("user", user);
 
         return "common/calendar";
     }
 
+    @GetMapping("/calendarView/{idx}")
+    public String calendarView(@PathVariable("idx") Long idx, Model model, HttpSession session){
+
+        AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
+
+        model.addAttribute("calendar", calendar);
+
+        // session에서 user를 가져옴
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        model.addAttribute("user", user);
+
+
+        return "manager/calendarView";
+    }
+
+
+
     @GetMapping("/calendarAddForm") // 학사일정 추가
-    public String calendarAdd(Model model){
+    public String calendarAdd(Model model, HttpSession session){
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
         UserDTO user = (UserDTO) session.getAttribute("user");
 
@@ -71,7 +98,7 @@ public class ManagerController {
     }
 
     @GetMapping("/calendarEditForm/{id}") // 학사일정 수정 폼
-    public String calendarEdit(@PathVariable Long id, Model model){
+    public String calendarEdit(@PathVariable Long id, Model model, HttpSession session){
         // id를 사용하여 수정할 학사일정 데이터를 데이터베이스에서 가져온다.
         AcademicCalendarDto academicCalendarDto = academicCalendarService.getCalendarById(id);
 
@@ -111,6 +138,13 @@ public class ManagerController {
         return mav;
     }
 
+    @GetMapping("/register")
+    public ModelAndView register() {
+        ModelAndView mav = new ModelAndView("manager/register");
+        mav.addObject("majorList",managerService.selectAllMajor());
+        return mav;
+    }
+
     @PostMapping("/addManager")   // 교직원 등록
     public ResponseEntity<Map<String, String>> registerManager(@ModelAttribute UserFormDTO userFormDTO) {
         try {
@@ -141,10 +175,10 @@ public class ManagerController {
         }
     }
 
-    @PostMapping("/addstudent")   // 학생 등록
+    @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
-        log.info("학생등록");
-        return "common/register";
+        log.info("학생등록페이지");
+        return "manager/registerStudent";
     }
 
     @PostMapping("/addProfessor")   // 교수 등록
@@ -188,6 +222,48 @@ public class ManagerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
+    public ResponseEntity<byte[]> downloadStudentForm() throws IOException {
+
+        // 엑셀 템플릿 파일을 클래스패스에서 로드
+        ClassPathResource resource = new ClassPathResource("static/excelForm/studentForm.xlsx");
+
+        // 다운로드할 파일명 설정
+        String filename = "학생등록폼(양식변경금지).xlsx";
+
+        // 엑셀 파일 데이터 읽기
+        byte[] data = new byte[(int) resource.contentLength()];
+        try (InputStream inputStream = resource.getInputStream()) {
+            inputStream.read(data);
+        }
+
+        // 다운로드할 파일 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDispositionFormData("attachment", new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentLength(data.length);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(data);
+    }
+
+
+    @PostMapping("/addStudentList")   // 학생 등록
+    public String saveStudentList(Model model) {
+        log.info("학생등록리스트 저장");
+        model.addAttribute("message","학생 저장 완료");
+        return "manager/registerStudentList";
+    }
+
+
+    @GetMapping("/addStudentList")   // 학생 등록
+    public String registerStudentList() {
+        log.info("학생등록리스트 확인");
+        return "manager/registerStudentList";
+    }
+
 
     @GetMapping("/registerMajor")               // 학과 등록 페이지로 이동
     public ModelAndView registerMajor() {
@@ -241,18 +317,6 @@ public class ManagerController {
     public List<College> getColleges() {
         return collegeService.getAllColleges();
     }
-
-//    @GetMapping("/searchByCollege")
-//    public ModelAndView searchByCollege(@RequestParam("collegeName") String collegeName) {
-//        ModelAndView mav = new ModelAndView("searchByCollege"); // 검색 결과를 보여줄 뷰 이름을 설정해주세요.
-//
-//        // 단과 대학 이름을 이용하여 검색 로직을 구현하고, 결과 데이터를 ModelAndView에 추가하세요.
-//        List<Major> searchResults = majorService.searchByCollege(collegeName);
-//        mav.addObject("majors", searchResults);
-//
-//        return mav;
-//    }
-
 
     @GetMapping("/majorView/{idx}")           // 학과 view
     public ModelAndView majorView(@PathVariable("idx")Long idx) {
@@ -352,6 +416,53 @@ public class ManagerController {
             return "redirect:/";
         }
     }
+    @GetMapping("/studentSituation")                // 학생 상태 조회
+    public ModelAndView studentSituation(@RequestParam(required = false) String status) {
+        ModelAndView mav = new ModelAndView("manager/studentSituation");
+
+        // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
+        // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
+        List<SituationStuDto> studentList = situationServive.selectSituationStu(status);
+        mav.addObject("status", status);
+        mav.addObject("studentList", studentList);
+        return mav;
+    }
+
+    @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
+    public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("/manager/studentSituationView");
+        SituationStuDto situation = situationServive.selectOneSituation(idx);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String start = sdf.format(situation.getStart_date());
+        if(situation.getEnd_date() != null) {
+            String end = sdf.format(situation.getEnd_date());
+            mav.addObject("end", end);
+        }
+        mav.addObject("start", start);
+        mav.addObject("situation", situation);
+        return mav;
+    }
+
+    @GetMapping("/studentSituationUpdate/{idx}")           // 학생 상태 변경
+    public String studentSituationUpdate(@PathVariable("idx")Long idx,
+                                         SituationStuDto param,
+                                         String start, String end) throws ParseException {
+        if(param.getStatus() == null) {
+            return "redirect:/manager/studentSituationView/" + idx;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_date = sdf.parse(start);
+        if(end != null) {
+            Date end_date = sdf.parse(end);
+            param.setEnd_date(end_date);
+        }
+        param.setStart_date(start_date);
+        Situation situation = situationServive.situationUpdate(param);
+        return "redirect:/manager/studentSituation";
+    }
+
+
 
     @GetMapping("/managerModify")   // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {
