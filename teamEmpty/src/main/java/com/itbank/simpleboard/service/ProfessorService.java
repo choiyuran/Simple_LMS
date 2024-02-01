@@ -1,9 +1,6 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.dto.EvaluateFormDto;
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
-import com.itbank.simpleboard.dto.ProfessorUserDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,10 +32,15 @@ public class ProfessorService {
     }
 
     public Professor getProfessorByIdx(Long professorIdx) {
-        return professorRepository.findById(professorIdx).get();
+        Optional<Professor> professor = professorRepository.findById(professorIdx);
+        return professor.orElse(null);
     }
 
     public List<EvaluateFormDto> getEvaluation(Long idx) {
         return professorRepository.getMyEvaluation(idx);
+    }
+
+    public List<EnrollmentDto> getEnrollmentList(Long professorIdx) {
+        return professorRepository.getEnrollmentList(professorIdx);
     }
 }

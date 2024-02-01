@@ -193,6 +193,7 @@ public class StudentController {
             model.addAttribute("calendar", calendar);
             return "student/home";
         } else {
+            session.invalidate();
             return "redirect:/";
         }
     }

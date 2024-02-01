@@ -2,6 +2,7 @@ package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,6 +160,23 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 ))
                 .from(QEvaluation.evaluation)
                 .innerJoin(QEnrollment.enrollment).on(QEnrollment.enrollment.lecture.idx.eq(idx))
+                .fetch();
+    }
+
+    @Override
+    public List<EnrollmentDto> getEnrollmentList(Long professorIdx) {
+        return queryFactory
+                .select(Projections.fields(EnrollmentDto.class,
+                        QEnrollment.enrollment.student.idx.as("student_idx"),
+                        QEnrollment.enrollment.student.user.user_name.as("student_name"),
+                        QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
+                        QEnrollment.enrollment.lecture.name.as("lecture_name")))
+                .from(QEnrollment.enrollment)
+                .leftJoin(QGrade.grade).on(QEnrollment.enrollment.student.eq(QGrade.grade.student).and(QEnrollment.enrollment.lecture.eq(QGrade.grade.lecture)))
+                .where(
+                        QEnrollment.enrollment.lecture.professor.professor_idx.eq(professorIdx),
+                        QGrade.grade.student.isNull().and(QGrade.grade.lecture.isNull())
+                )
                 .fetch();
     }
 }
