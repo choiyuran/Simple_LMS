@@ -165,53 +165,72 @@ public class ManagerController {
         }
     }
 
+    //    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE) // 교수 등록
+    @ResponseBody// 교수 등록
+    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
+        try {
+            log.info("교수등록 시작");
+            long startTime = System.currentTimeMillis();
+
+            log.info("사용자 타입: " + userFormDTO.getUserType());
+            log.info("이메일: " + userFormDTO.getEmail());
+            log.info("전공: " + userFormDTO.getMajor());
+
+            Map<String, String> response = new HashMap<>();
+
+            if ("professor".equals(userFormDTO.getUserType())) {
+                Professor professor = managerService.addProfessor(userFormDTO);
+                if (professor != null && professor.getProfessor_idx() != null) {
+                    // 성공적으로 교수 등록이 완료된 경우
+                    response.put("message", "폼 등록이 완료되었습니다.");
+                    response.put("name", professor.getUser().getUser_name());
+                    response.put("type", professor.getUser().getRole().toString());
+                    log.info("교수 등록 성공: " + professor.getUser().getUser_name());
+                    long endTime = System.currentTimeMillis();
+                    log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
+                    System.err.println("교수 등록 성공");
+                    return ResponseEntity.ok(response);
+                } else {
+                    // 교수 등록에 실패한 경우
+                    response.put("message", "교수 등록에 실패하였습니다");
+                    log.error("교수 등록 실패");
+                    System.err.println("교수 등록 실패");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 실패 시 500 에러 응답
+                }
+            } else {
+                // 교수가 아닌 사용자 타입의 요청인 경우
+                response.put("message", "교수 타입의 사용자가 아닙니다");
+                log.error("교수 타입의 사용자가 아닙니다");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 잘못된 요청 400 에러 응답
+            }
+        } catch (Exception e) {
+            log.error("교수 등록 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();// 예외 발생 시 500 에러 응답
+        }
+    }
+
+
+
     @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
         log.info("학생등록페이지");
         return "manager/registerStudent";
     }
 
-    @PostMapping("/addProfessor")   // 교수 등록
-    @ResponseBody// 교수 등록
-    public ResponseEntity<Map<String, String>> registerProfessor(UserFormDTO userFormDTO) {
-        try {
-            log.info("교수등록");
-            long startTime = System.currentTimeMillis();
-            // yourService.processForm(formDTO);
-            log.info(userFormDTO.getUserType());
-            log.info(userFormDTO.getEmail());
-            log.info(String.valueOf(userFormDTO.getMajor()));
-            Map<String, String> response = new HashMap<>();
-
-            if(userFormDTO.getUserType().equals("professor")){
-                Professor professor = managerService.addProfessor(userFormDTO);
-                if(professor.getProfessor_idx() != null){
-                    // 응답 생성
-                    response.put("message", "폼 등록이 완료되었습니다.");
-                    response.put("name", professor.getUser().getUser_name());
-                    response.put("type", professor.getUser().getRole().toString());
-                    log.info(professor.getUser().getUser_name());
-                }
-                else{
-                    response.put("message", "교수 등록에 실패하였습니다");
-                    log.info("교수등록 실패");
-                }
-            }
-            log.info(response.toString());
-
-            long endTime = System.currentTimeMillis();
-            log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(response);
-        } catch (Exception e) {
-            log.error("교수 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
+    public String uploadStudentList(@RequestParam("studentFile")MultipartFile studentFile, Model model) throws IOException {
+        log.info("학생등록엑셀업로드");
+        if(studentFile.isEmpty()){
+            model.addAttribute("message","파일을 업로드해주세요");
+            return "manager/registerStudent";
         }
+
+        model.addAttribute("students","학생등록");
+        return "manager/registerStudentList";
+
     }
+
 
     @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
     public ResponseEntity<byte[]> downloadStudentForm() throws IOException {

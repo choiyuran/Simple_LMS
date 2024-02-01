@@ -207,6 +207,8 @@
         var btnRegister = document.getElementById('btn-register');
         btnRegister.addEventListener('click', submitForm);
 
+
+
         function submitForm() {
             const form = document.querySelector(".userForm");
             const formData = new FormData(form);
@@ -250,14 +252,14 @@
                 body: formData
             })
                 .then(response => {
-                    const contentType = response.headers.get('content-type');
+                    /*const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
                         // 서버 응답이 JSON 형식인 경우
                         return response.json();
                     } else{
                         // 서버 응답이 JSON 형식이 아닌 경우
                         throw new Error('서버 응답이 JSON 형식이 아닙니다.');
-                    }
+                    }*/
                     /*if (!response.ok) {
                         console.log(response.headers)
                         console.log(response.ok)
@@ -298,6 +300,7 @@
                     console.error('폼 등록이 실패하였습니다:', error.message);
                     window.location.href = '/manager/register';
                 });
+
         }
     </script>
 
