@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "layout/header :: head"></head>
+<body>
+<header th:insert = "layout/header :: header"></header>
+<div class="container mt-4">
+  <h2>학과 등록</h2>
+  <hr>
+
+  <div class="w-50 m-auto">
+      <form method="post">
+          <div class="input-group input-group-sm mb-3" style="width: 70%;">
+              <span class="input-group-text" style="width: 20%;">단과 대학</span>
+              <label>
+                  <select name="college_idx">
+                      <option
+                          th:each="college : ${list}"
+                          th:value="${college.idx}"
+                          th:text="${college.name}">
+                      </option>
+                  </select>
+              </label>
+          </div>
+
+          <div class="input-group input-group-sm mb-3" style="width: 70%;">
+              <span class="input-group-text" style="width: 20%;">학과명</span>
+              <input name="name" type="text" class="form-control">
+          </div>
+
+          <div class="input-group input-group-sm mb-3" style="width: 70%;">
+              <span class="input-group-text" style="width: 20%;">등록금</span>
+              <input name="tuition" type="number" class="form-control">
+          </div>
+
+          <div class="w-50 m-auto">
+<!--              <input type="submit" value="등록">-->
+              <button class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
+              <button type="button" class="btn btn-outline-secondary">취소</button>
+          </div>
+      </form>
+
+    </div>
+</div>
+<footer th:insert = "layout/header :: footer"></footer>
+</body>
+</html>

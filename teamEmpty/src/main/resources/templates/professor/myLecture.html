@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!-- 전체 강의 리스트 -->
+<head th:insert="layout/header :: head"></head>
+<body>
+<header th:insert="layout/header :: header"></header>
+<main>
+    <div style="width: 70%">
+        <form id="MyLectureSearchForm">
+            <label>강의명 :
+                <input type="text" name="name">
+            </label>
+            <label>학과 선택 :
+                <select name="major">
+                    <option th:text="'전공 선택'" value="">전공 선택</option>
+                    <option th:each="major : ${MajorList}" th:value="${major}" th:text="${major}"></option>
+                </select>
+            </label>
+            <label>강의 타입 :
+                <select name="type" th:default="'강의 형태'">
+                    <option th:text="'강의 형태'" value=""></option>
+                    <option th:text="'전공 필수'" th:value="전공필수"></option>
+                    <option th:text="'전공 선택'" th:value="전공선택"></option>
+                    <option th:text="'필수 교양'" th:value="필수교양"></option>
+                    <option th:text="'선택 교양'" th:value="선택교양"></option>
+                </select>
+            </label>
+            <label>기간 :
+                <select name="year">
+                    <option th:text="년도" value=""></option>
+                    <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"></option>
+                </select>
+                <select name="semester">
+                    <option th:text="학기" value=""></option>
+                    <option th:text="1학기" th:value="1"></option>
+                    <option th:text="2학기" th:value="2"></option>
+                </select>
+            </label>
+            <label>학년 :
+                <select name="grade">
+                    <option th:text="학년" value=""></option>
+                    <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"></option>
+                </select>
+            </label>
+            <button type="button" onclick="searchLectures()">검색</button>
+            <input type="reset" value="초기화" onclick="resetAndSearch()">
+        </form>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <td>
+                <div th:text="강의명">제목열1</div>
+            </td>
+            <td>
+                <div th:text="전공">제목열4</div>
+            </td>
+            <td>
+                <div th:text="'강의 타입'">제목열5</div>
+            </td>
+            <td>
+                <div th:text="'수강 학점'">제목열6</div>
+            </td>
+            <td>
+                <div th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</div>
+            </td>
+            <td>
+                <div th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</div>
+            </td>
+            <td>
+                <div th:text="'강의 학기'">xxxx년 x학기</div>
+            </td>
+            <td>
+                <div th:text="학년">제목열1</div>
+            </td>
+            <td>
+                <div th:text="강의실">제목열1</div>
+            </td>
+            <td>
+                <div th:text="'강의 계획서'">제목열1</div>
+            </td>
+            <td>
+                <div th:text="'강의 평가 보기'">현재 시간 이전만 평가가 완료된 거니까 현재 년도 분기 이전만 버튼 만들기</div>
+            </td>
+        </tr>
+        </thead>
+        <tbody id="MyLectureTableBody">
+        <tr th:each="row : ${MyList}">
+            <td>
+                <div>
+                    <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
+                        <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
+                        <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
+                    </a>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.major}"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.type}"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.credit}"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.day}"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.semester}" class="semesterValue"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.grade} + '학년'"></span>
+                </div>
+            </td>
+            <td>
+                <div>
+                    <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                </div>
+            </td>
+            <td>
+                <div th:if="${row.plan != null}" class="planExist"><span>등록됨</span></div>
+                <div th:if="${row.plan == null}" class="planExist"><span>미등록</span></div>
+            </td>
+            <td class="viewEvaluationBtnTd">
+                <span th:text="${row.idx}" class="lectureIdxSpan" style="display: none;"></span>
+                <span th:text="${row.professor_idx}" class="professorIdxSpan" style="display: none;"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <script>
+        function searchLectures() {
+            var form = document.getElementById("MyLectureSearchForm");
+
+            // form 엘리먼트가 올바르게 식별되었는지 확인
+            if (!form) {
+                console.error('Form 엘리먼트를 찾을 수 없습니다.');
+                return;
+            }
+
+            var formData = new FormData(form);
+
+            fetch('/professor/myLecture/data', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 정상이 아닙니다');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 서버 응답을 받은 후에 테이블 업데이트
+                    updateTableBody(data);
+                })
+                .catch(error => {
+                    console.error('에러:', error);
+                });
+        }
+
+        function updateTableBody(data) {
+            var tbody = document.getElementById("MyLectureTableBody");
+
+            // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
+            tbody.innerHTML = "";
+
+            // 서버 응답을 이용하여 여러 행 추가
+            data.forEach(item => {
+                var tr = document.createElement("tr");
+
+                // 각 열에 대한 데이터 추가
+                appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                appendTd(tr, item.major);
+                appendTd(tr, item.type);
+                appendTd(tr, item.credit);
+                appendTd(tr, item.day);
+                appendTd(tr, `${item.currentCount}/${item.maxCount}`);
+                appendTd(tr, item.semester);
+                appendTd(tr, `${item.grade}학년`);
+                appendTd(tr, `${item.location} ${item.lectureRoom}`);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 특정 데이터를 <td>에 추가하는 함수
+        function appendTd(parent, text, isLink = false, linkHref = "") {
+            var td = document.createElement("td");
+            var div = document.createElement("div");
+            var span = document.createElement("span");
+
+            if (isLink) {
+                var a = document.createElement("a");
+                a.href = linkHref;
+                a.appendChild(span);
+                div.appendChild(a);
+            } else {
+                div.appendChild(span);
+            }
+
+            span.textContent = text;
+            td.appendChild(div);
+            parent.appendChild(td);
+        }
+
+        function resetAndSearch() {
+            document.getElementById("MyLectureSearchForm").reset();
+            searchLectures();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 모든 .viewEvaluationBtnTd 클래스를 가진 요소를 선택
+            var tdElements = document.querySelectorAll('.viewEvaluationBtnTd');
+            var semesterValues = document.querySelectorAll('.semesterValue');
+            var lectureIdxSpan = document.querySelectorAll('.lectureIdxSpan');
+            var professorIdxSpan = document.querySelectorAll('.professorIdxSpan');
+
+            // 현재 년도와 월 가져오기
+            var currentDate = new Date();
+            var currentYear = currentDate.getFullYear();
+            var currentMonth = currentDate.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줌
+
+            // 각 요소에 대해 반복
+            tdElements.forEach(function (tdElement, index) {
+                tdElement.innerHTML = '';
+                // 'xxxx년 x학기'와 같은 형태의 문자열에서 연도와 학기 추출
+                var matchResult = semesterValues[index].textContent.match(/(\d{4})년 (\d)학기/);
+
+                // matchResult가 유효하면서 현재 년도 이하이고 버튼을 추가하는 부분
+                if (matchResult && matchResult.length === 3) {
+                    var semesterYear = parseInt(matchResult[1]);
+                    var semesterTerm = parseInt(matchResult[2]);
+
+                    if (!isNaN(semesterYear)) {
+                        if (semesterYear === currentYear) {
+                            if (semesterTerm === 1) {
+                                semesterTerm += 5;
+                            } else {
+                                semesterTerm += 10;
+                            }
+
+                            // semesterTerm이 currentMonth보다 작을 때만 버튼을 추가
+                            if (!isNaN(semesterTerm) && semesterTerm <= currentMonth) {
+                                addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                            }
+                        } else if (semesterYear < currentYear) {
+                            addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                        }
+                    }
+                }
+            });
+
+            function addButton(tdElement, lectureIdx, professorIdx) {
+                var buttonElement = document.createElement('button');
+                buttonElement.textContent = '확인';
+
+                // 버튼에 이벤트 리스너를 추가하고자 하는 경우 아래와 같이 추가할 수 있습니다.
+                buttonElement.addEventListener('click', function () {
+                    // 버튼이 클릭되었을 때 수행할 동작
+                    location.href = '/professor/viewEvaluation/' + professorIdx + '/' + lectureIdx;
+                });
+
+                // td 요소에 버튼을 추가
+                tdElement.appendChild(buttonElement);
+            }
+        });
+    </script>
+</main>
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head th:insert="layout/header :: head">
+</head>
+<body>
+<header th:insert="layout/header :: header"></header>
+<main>
+    <div class="container mt-3">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>강의명</th>
+                <td th:if="${lecture.abolition.equals('N')}" th:text="${lecture.name}"></td>
+                <td th:unless="${lecture.abolition.equals('N')}" th:text="${lecture.name} + '(폐강)'"></td>
+            </tr>
+
+            <tr>
+                <th>강의 계획서</th>
+                <td th:if="${lecture.plan == null}" class="planExist">
+                    <th:block
+                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                        <span class="upload-btn" onclick="openFileUploadDialog(this)">미등록</span>
+                        <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
+                        <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
+                    </th:block>
+                    <th:block
+                            th:unless="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                        <span>미등록</span>
+                    </th:block>
+                </td>
+                <td th:if="${lecture.plan != null}" class="planExist">
+                    <a th:href="@{|/download/${lecture.plan}|}" download th:text="${lecture.plan}"></a>
+                    <th:block
+                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                        <span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>
+                        <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
+                        <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
+                    </th:block>
+                </td>
+            </tr>
+
+            <tr>
+                <th>교수</th>
+                <td th:text="${lecture.professor_name}"></td>
+            </tr>
+
+            <tr>
+                <th>강의 소개</th>
+                <td th:text="${lecture.intro}"></td>
+            </tr>
+
+            <tr>
+                <th>전공</th>
+                <td th:text="${lecture.major}"></td>
+            </tr>
+
+            <tr>
+                <th>강의 타입</th>
+                <td th:text="${lecture.type}"></td>
+            </tr>
+
+            <tr>
+                <th>수강 학점</th>
+                <td th:text="${lecture.credit}"></td>
+            </tr>
+
+            <tr>
+                <th>강의 요일</th>
+                <td th:text="${lecture.day}"></td>
+            </tr>
+
+            <tr>
+                <th>시작 시간</th>
+                <td th:text="${lecture.start}"></td>
+            </tr>
+
+            <tr>
+                <th>끝 시간</th>
+                <td th:text="${lecture.end}"></td>
+            </tr>
+
+            <tr>
+                <th>수강 인원</th>
+                <td th:text="${lecture.currentCount} + '/' + ${lecture.maxCount}"></td>
+            </tr>
+
+            <tr>
+                <th>학기</th>
+                <td th:text="${lecture.semester}"></td>
+            </tr>
+
+            <tr>
+                <th>학년</th>
+                <td th:text="${lecture.grade}">
+                </td>
+            </tr>
+
+            <tr>
+                <th>강의실</th>
+                <td th:text="${lecture.lectureRoom} + '호'">
+                </td>
+            </tr>
+
+        </table>
+
+        <!--    내가 사용할 버튼 조건-->
+        <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">수정</a></button>      -->
+        <!--    수용이가 사용할 버튼 조건 - 교수일 경우 강의 계획서만 수정 -->
+        <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교수'}"><a href="/manager/lectureAdd">강의계획서 수정</a></button>       -->
+        <button class="btn btn-warning"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+        <button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
+        <button class="btn btn-outline-secondary"><a href="/professor/lectureList">목록으로</a></button>
+    </div>
+
+    <script>
+        // 파일 업로드 창 열기
+        function openFileUploadDialog(btnElement) {
+            var fileInput = btnElement.nextElementSibling.nextElementSibling;
+            fileInput.click();
+        }
+
+        async function handleFileUpload(inputElement) {
+            var fileInput = inputElement;
+            var planExist = document.querySelector('.planExist');
+            var lectureIdxElement = fileInput.previousElementSibling;
+
+            var lectureIdx = lectureIdxElement.value;
+
+            // 선택된 파일이 있을 경우에만 처리
+            if (fileInput.files.length > 0) {
+                var selectedFile = fileInput.files[0];
+
+                var formData = new FormData();
+                formData.append('plan', selectedFile);
+                formData.append('lectureIdx', lectureIdx);
+
+                try {
+                    const response = await fetch('/professor/planUpload', {
+                        method: 'PUT',
+                        body: formData
+                    });
+
+                    const data = await response.text();
+
+                    if (data !== undefined) {
+                        console.log('업로드 성공');
+                        planExist.innerHTML = '';
+                        planExist.innerHTML = '<a href="/download/' + encodeURIComponent(data) + '" download>' + data + '</a>';
+                        planExist.innerHTML += '<span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>';
+                        planExist.innerHTML += '<input type="hidden" class="lectureIdx" value="' + lectureIdx + '">';
+                        planExist.innerHTML += '<input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">';
+
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+    </script>
+
+    <script>
+        function confirmDelete(event) {
+            var result = confirm("정말 삭제하시겠습니까?");
+            if (result) {
+
+            } else {
+                event.preventDefault();
+            }
+        }
+    </script>
+
+</main>
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>

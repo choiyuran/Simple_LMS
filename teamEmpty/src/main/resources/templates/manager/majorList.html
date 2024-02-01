@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>학과 명단</h2>
+    <hr>
+    <form th:action="@{/manager/majorList}" class="form-inline">
+        <div class="form-group">
+            <label for="collegeIdx">단과대학</label>
+            <select class="form-control" id="collegeIdx" name="collegeIdx">
+                <option value="">단과대학 선택</option>
+                <!-- 여기에 AJAX를 통해 가져온 단과 대학 목록이 동적으로 추가 -->
+            </select>
+        </div>
+
+        <!-- 학과명으로 검색할 수 있는 검색창 추가 -->
+        <div class="form-group ml-4 mr-2">
+            <label for="majorName">학과명</label>
+            <input type="text" class="form-control" id="majorName" name="majorName" placeholder="학과명을 입력하세요">
+        </div>
+
+        <button class="btn btn-primary">검색</button>
+    </form>
+    <br>
+    <table class="table table-bordered">
+        <tr>
+            <th>단과대학</th>
+            <th>학과명</th>
+        </tr>
+
+        <tr th:each="item : ${list}">
+            <td th:text="${item.college.name}"></td>
+            <td th:text="${item.name}"></td>
+            <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">수정</a></button></td>
+            <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${item.idx})}">삭제</a></button></td>
+        </tr>
+    </table>
+    <button class="btn btn-facebook"><a href="/manager/registerMajor">학과 등록</a></button>
+    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(majorName) or !#strings.isEmpty(collegeIdx)}"><a href="/manager/majorList">목록으로</a></button>
+</div>3
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function confirmDelete(event) {
+        var result = confirm("정말 삭제하시겠습니까?");
+        if (result) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // AJAX를 통해 단과 대학 목록을 가져옴
+        $.ajax({
+            url: "/manager/getColleges",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                // 가져온 단과 대학 목록을 select 요소에 추가
+                var select = $("#collegeIdx");
+                $.each(data, function(index, college) {
+                    select.append('<option value="' + college.idx + '">' + college.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
