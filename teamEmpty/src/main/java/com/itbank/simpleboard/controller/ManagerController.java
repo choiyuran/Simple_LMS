@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ public class ManagerController {
     private final HttpSession session;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
+    private final SituationServive situationServive;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -243,18 +247,6 @@ public class ManagerController {
         return collegeService.getAllColleges();
     }
 
-//    @GetMapping("/searchByCollege")
-//    public ModelAndView searchByCollege(@RequestParam("collegeName") String collegeName) {
-//        ModelAndView mav = new ModelAndView("searchByCollege"); // 검색 결과를 보여줄 뷰 이름을 설정해주세요.
-//
-//        // 단과 대학 이름을 이용하여 검색 로직을 구현하고, 결과 데이터를 ModelAndView에 추가하세요.
-//        List<Major> searchResults = majorService.searchByCollege(collegeName);
-//        mav.addObject("majors", searchResults);
-//
-//        return mav;
-//    }
-
-
     @GetMapping("/majorView/{idx}")           // 학과 view
     public ModelAndView majorView(@PathVariable("idx")Long idx) {
         ModelAndView mav = new ModelAndView("manager/majorView");
@@ -351,5 +343,52 @@ public class ManagerController {
         model.addAttribute("calendar", calendar);
         return "manager/home";
     }
+    @GetMapping("/studentSituation")                // 학생 상태 조회
+    public ModelAndView studentSituation(@RequestParam(required = false) String status) {
+        ModelAndView mav = new ModelAndView("manager/studentSituation");
+
+        // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
+        // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
+        List<SituationStuDto> studentList = situationServive.selectSituationStu(status);
+        mav.addObject("status", status);
+        mav.addObject("studentList", studentList);
+        return mav;
+    }
+
+    @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
+    public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("/manager/studentSituationView");
+        SituationStuDto situation = situationServive.selectOneSituation(idx);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String start = sdf.format(situation.getStart_date());
+        if(situation.getEnd_date() != null) {
+            String end = sdf.format(situation.getEnd_date());
+            mav.addObject("end", end);
+        }
+        mav.addObject("start", start);
+        mav.addObject("situation", situation);
+        return mav;
+    }
+
+    @GetMapping("/studentSituationUpdate/{idx}")           // 학생 상태 변경
+    public String studentSituationUpdate(@PathVariable("idx")Long idx,
+                                         SituationStuDto param,
+                                         String start, String end) throws ParseException {
+        if(param.getStatus() == null) {
+            return "redirect:/manager/studentSituationView/" + idx;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start_date = sdf.parse(start);
+        if(end != null) {
+            Date end_date = sdf.parse(end);
+            param.setEnd_date(end_date);
+        }
+        param.setStart_date(start_date);
+        Situation situation = situationServive.situationUpdate(param);
+        return "redirect:/manager/studentSituation";
+    }
+
+
 
 }

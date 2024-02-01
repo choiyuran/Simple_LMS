@@ -38,6 +38,10 @@
             <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">수정</a></button></td>
             <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${item.idx})}">삭제</a></button></td>
         </tr>
+
+        <tr th:unless="${list.size() > 0}">
+            <td colspan="4" style="text-align: center;">검색 결과가 없습니다.</td>
+        </tr>
     </table>
     <button class="btn btn-facebook"><a href="/manager/registerMajor">학과 등록</a></button>
     <button class="btn btn-facebook" th:if="${!#strings.isEmpty(majorName) or !#strings.isEmpty(collegeIdx)}"><a href="/manager/majorList">목록으로</a></button>
