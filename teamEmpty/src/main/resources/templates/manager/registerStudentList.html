@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>학생 등록 명단</h2> <p th:text="${students}"></p>
+    <p th:text="${message}"></p>
+    <hr>
+    <form method="post" action="/manager/addStudentList">
+        <table class="table table-bordered">
+            <tr>
+                <th>이름</th>
+                <th>생년월일</th>
+            </tr>
+            <tr>
+                <td th:text="이이경"></td>
+                <td th:text="040231"></td>
+                <td>
+                    <button class="btn btn-warning"><!--<a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">-->수정<!--</a>--></button>
+                </td>
+            </tr>
+
+         <!--   <tr th:each="item : ${list}">
+                <td th:text="${item.college.name}"></td>
+                <td th:text="${item.name}"></td>
+                <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">수정</a></button></td>
+            </tr>-->
+        </table>
+        <button type="submit">학생 전체 등록</button>
+    </form>
+
+</div>3
+<footer th:insert="layout/header :: footer"></footer>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+</body>
+</html>

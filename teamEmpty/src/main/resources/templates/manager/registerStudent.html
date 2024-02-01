@@ -1,11 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--학생 등록 페이지-->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<head th:insert="layout/header :: head">
 
+
+<body>
+    <header th:insert="layout/header :: header"> </header>
+    <div class="container mt-3">
+        <h2>학생 등록</h2><p th:text="${message}"></p>
+        <hr>
+
+
+        <table class="table table-bordered">
+            <tr>
+                <th>
+                    <div style="text-align: right;">
+                        <button type="button" id="downloadExcelForm">
+                            <a href="/manager/downloadStudentForm">학생 등록 폼 다운로드</a>
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <form id="studentForm" method="post" action="/manager/addStudent" enctype="multipart/form-data"
+                          style="display: flex; align-items: center;" >
+                        <input type="file" name="studentFile" accept=".xlsx, .xls"  style="flex: 1;"/>
+                        <div style="text-align: right;">
+                            <button type="submit">학생 등록 파일 업로드</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+
+
+
+
+    </div>
+    <footer th:insert="layout/header :: footer"></footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    document.getElementById('studentForm').addEventListener('submit',function (event){
+        var fileInput = document.querySelector('input[name="studentFile"]');
+        var file = fileInput.files[0];
+        var allowedExtensions = ['.xlsx', '.xls'];
+        var fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert('엑셀 파일만 업로드할 수 있습니다.');
+            event.preventDefault(); // 기본 동작인 데이터 전송을 막습니다.
+        }
+    });
+</script>
 </body>
 </html>
