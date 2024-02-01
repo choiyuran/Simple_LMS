@@ -77,30 +77,32 @@ public class ProfessorController {
 
     @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
     public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition) {
-        if (session.getAttribute("professor") == null) {
+        Object user = session.getAttribute("user");
+        if (user instanceof ProfessorDto) {
+            long startTime = System.currentTimeMillis();
+
+            condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
+            List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
+            model.addAttribute("MyList", myLectureDtoList);
+
+            // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
+            model.addAttribute("MajorList", myLectureDtoList.stream()
+                    .map(ProfessorLectureDto::getMajor)
+                    .distinct()
+                    .collect(Collectors.toList()));
+
+            model.addAttribute("GradeList", myLectureDtoList.stream()
+                    .map(ProfessorLectureDto::getGrade)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList()));
+
+            long endTime = System.currentTimeMillis();
+            log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
+            return "professor/myLecture";
+        } else {
             return "redirect:/home";
         }
-        long startTime = System.currentTimeMillis();
-
-        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
-        List<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition);
-        model.addAttribute("MyList", myLectureDtoList);
-
-        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-        model.addAttribute("MajorList", myLectureDtoList.stream()
-                .map(ProfessorLectureDto::getMajor)
-                .distinct()
-                .collect(Collectors.toList()));
-
-        model.addAttribute("GradeList", myLectureDtoList.stream()
-                .map(ProfessorLectureDto::getGrade)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList()));
-
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
-        return "professor/myLecture";
     }
 
     @ResponseBody
