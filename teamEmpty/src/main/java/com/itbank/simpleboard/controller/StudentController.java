@@ -26,7 +26,7 @@ public class StudentController {
     private final StudentService studentService;
     private final EvaluationService evaluationService;
     private final AcademicCalendarService academicCalendarService;
-    private final SituationServive situationServive;
+    private final SituationService situationServive;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
@@ -198,7 +198,6 @@ public class StudentController {
         }
     }
 
-    @PostMapping("email-verification")          // 이메일 인증
     @GetMapping("situation")
     public ModelAndView mySituation(HttpSession session) {
         Object o = session.getAttribute("user");

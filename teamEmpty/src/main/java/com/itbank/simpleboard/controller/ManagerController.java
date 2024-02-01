@@ -16,15 +16,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.nio.file.Path;
 import java.util.*;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
@@ -41,7 +38,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
-    private final SituationServive situationServive;
+    private final SituationService situationServive;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){

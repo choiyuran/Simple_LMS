@@ -11,14 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class SituationServive {
+public class SituationService {
     private final SituationRepository situationRepository;
     private final StudentRepository studentRepository;
 
@@ -45,9 +43,9 @@ public class SituationServive {
     @Transactional
     public Situation situationUpdate(SituationStuDto param) {
         Situation situation = situationRepository.findById(param.getIdx()).get();
-        situation.setStart_date(param.getStart_date());
+        situation.setStart_date(new Date(param.getStart_date().getTime()));
         if(situation.getEnd_date() != null) {
-            situation.setEnd_date(param.getEnd_date());
+            situation.setEnd_date(new Date(param.getEnd_date().getTime()));
         }
         situation.setStudent_status(param.getStatus());
         return situation;
