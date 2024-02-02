@@ -139,14 +139,16 @@
                 <span th:text="${row.professor_idx}" class="professorIdxSpan" style="display: none;"></span>
             </td>
             <td>
-                <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#enrollmentStuList">Open Modal</button>
+                <button class="btn btn-info btn-lg" data-target="#enrollmentStuList" data-toggle="modal" onclick="openEnrollmentModal(this)"
+                        th:data-lecture-idx="${row.idx}" type="button">성적 입력
+                </button>
             </td>
         </tr>
         </tbody>
     </table>
 
     <script>
-        function searchLectures() {
+        async function searchLectures() {
             var form = document.getElementById("MyLectureSearchForm");
 
             // form 엘리먼트가 올바르게 식별되었는지 확인
@@ -157,7 +159,7 @@
 
             var formData = new FormData(form);
 
-            fetch('/professor/myLecture/data', {
+            await fetch('/professor/myLecture/data', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -285,6 +287,54 @@
                 tdElement.appendChild(buttonElement);
             }
         });
+
+        function openEnrollmentModal(button) {
+            let modalBody = document.querySelector('#enrollmentStuList .modal-body');
+            modalBody.innerHTML = '<img src="/img/loading.gif" alt="로딩" style="width: 100%;0">'; // 기존 내용을 지우고 새로운 내용으로 업데이트
+
+            // 클릭된 버튼에서 data-row-idx 속성값 가져오기
+            var lectureIdx = button.getAttribute('data-lecture-idx');
+
+            fetch("/professor/enrollmentList?lectureIdx=" + lectureIdx)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 정상이 아닙니다');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 데이터를 가져왔으면 모달을 열어서 내용을 업데이트
+                    updateModalTableBody(modalBody, data);
+                })
+                .catch(error => {
+                    console.error('예외 발생 :', error);
+                });
+        }
+
+        function updateModalTableBody(modalBody, data) {
+            // 수강생 목록 데이터를 테이블 형식으로 가공
+            let tableHTML = '<table style="width: 100%;">';
+            tableHTML += '<thead><tr><th>학번</th><th>이름</th></tr></thead>';
+            tableHTML += '<tbody>';
+
+            data.forEach(enrollment => {
+                let student_idx = enrollment.student_idx;
+                let lecture_idx = enrollment.lecture_idx;
+                tableHTML += `<tr><td><div><span>${enrollment.student_num}</span></div></td>`
+                tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`
+                tableHTML += `<td><button onclick="enterGrade(this)" data-lecture-idx="${lecture_idx}" data-student_idx="${student_idx}">성적 입력</button></td></tr>`;
+            });
+
+            tableHTML += '</tbody></table>';
+
+            // 모달 내용 업데이트
+            modalBody.innerHTML = tableHTML;
+        }
+
+        function enterGrade(button) {
+            let lecture_idx = button.getAttribute("data-lecture-idx");
+            let student_idx = button.getAttribute("data-student_idx");
+        }
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>

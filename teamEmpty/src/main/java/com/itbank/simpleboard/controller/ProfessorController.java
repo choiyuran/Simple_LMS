@@ -1,6 +1,9 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.dto.EnrollmentDto;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.LectureService;
@@ -17,7 +20,6 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -179,17 +181,11 @@ public class ProfessorController {
         return null;
     }
 
-    @GetMapping("/enterGrade")
-    public String enterGrade(HttpSession session, Model model) {
-        Object user = session.getAttribute("user");
-        if (user instanceof ProfessorDto) {
-            ProfessorDto professor = (ProfessorDto) user;
-            List<EnrollmentDto> enrollment = professorService.getEnrollmentList(professor.getProfessor_idx());
-            model.addAttribute("enrollment", enrollment);
-            return "professor/enterGrade";
-        } else {
-            session.invalidate();
-            return "redirect:/";
-        }
+    @GetMapping("/enrollmentList")
+    public ResponseEntity<List<EnrollmentDto>> enterGrade(HttpSession session, Model model, @RequestParam("lectureIdx") Long lectureIdx) {
+        List<EnrollmentDto> enrollment = professorService.getEnrollmentList(lectureIdx);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(enrollment);
     }
 }

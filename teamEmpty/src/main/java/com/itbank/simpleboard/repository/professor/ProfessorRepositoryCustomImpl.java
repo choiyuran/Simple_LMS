@@ -164,18 +164,19 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<EnrollmentDto> getEnrollmentList(Long professorIdx) {
+    public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
         return queryFactory
                 .select(Projections.fields(EnrollmentDto.class,
                         QEnrollment.enrollment.student.idx.as("student_idx"),
+                        QEnrollment.enrollment.student.student_num.as("student_num"),
                         QEnrollment.enrollment.student.user.user_name.as("student_name"),
                         QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
                         QEnrollment.enrollment.lecture.name.as("lecture_name")))
                 .from(QEnrollment.enrollment)
-                .leftJoin(QGrade.grade).on(QEnrollment.enrollment.student.eq(QGrade.grade.student).and(QEnrollment.enrollment.lecture.eq(QGrade.grade.lecture)))
+//                .leftJoin(QGrade.grade).on(QEnrollment.enrollment.student.eq(QGrade.grade.student).and(QEnrollment.enrollment.lecture.eq(QGrade.grade.lecture)))
                 .where(
-                        QEnrollment.enrollment.lecture.professor.professor_idx.eq(professorIdx),
-                        QGrade.grade.student.isNull().and(QGrade.grade.lecture.isNull())
+                        QEnrollment.enrollment.lecture.idx.eq(lectureIdx)
+//                        QGrade.grade.student.isNull().and(QGrade.grade.lecture.isNull())
                 )
                 .fetch();
     }
