@@ -30,7 +30,7 @@
                     </th:block>
                 </td>
                 <td th:if="${lecture.plan != null}" class="planExist">
-                    <a th:href="@{|/download/${lecture.plan}|}" download th:text="${lecture.plan}"></a>
+                    <a download th:href="@{'/download/' + ${lecture.plan} + '?saveDir=syllabus'}" th:text="${lecture.plan}"></a>
                     <th:block
                             th:if="${session.user != null && session.user.user.role.toString().equals('교수') && session.user.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,13 +25,13 @@ public class FileController {
     private final Path fileStorageLocation;
 
     public FileController() {
-        this.fileStorageLocation = Paths.get("C:/simpleLMS/upload/syllabus"); // 파일이 저장된 경로로 수정
+        this.fileStorageLocation = Paths.get("C:/simpleLMS/upload");
     }
 
     @GetMapping("/download/{fileName:.+}")  // :는 separator, .은 어떤 문자 하나, +는 최소 하나 이상의 문자가 나와야 한다는 뜻
     // :.+ = 마침표로 시작하는 어떤 문자열도 포함한다는 의미
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws IOException {
-        Path filePath = fileStorageLocation.resolve(fileName).normalize();
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, @RequestParam("saveDir") String saveDir) throws IOException {
+        Path filePath = fileStorageLocation.resolve(Paths.get(saveDir, fileName)).normalize();
 
         // 파일 존재 여부 확인
         if (!Files.exists(filePath)) {
