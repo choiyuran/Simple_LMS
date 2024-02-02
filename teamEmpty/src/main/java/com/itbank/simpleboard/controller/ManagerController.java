@@ -223,7 +223,21 @@ public class ManagerController {
             return "manager/registerStudent";
         }
 
+
+        String fileName = studentFile.getOriginalFilename();
+
+        if (fileName == null || fileName.isEmpty()) {
+            model.addAttribute("message", "잘못된 양식의 파일입니다");
+            return "manager/registerStudent";
+        }
+        if(!fileName.contains("학생등록폼")){
+            model.addAttribute("message","지정된 양식의 폼이 아닙니다");
+            return "manager/registerStudent";
+
+        }
+
         model.addAttribute("students","학생등록");
+        model.addAttribute("studentList",managerService.saveStudentDTOList(studentFile));
         return "manager/registerStudentList";
 
     }
