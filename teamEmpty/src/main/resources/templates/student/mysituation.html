@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--강의 리스트-->
-<head th:insert="layout/header :: head">
+<head th:insert="layout/studentHeader :: head">
     <style>
         .flex {
             display: flex;
@@ -26,7 +26,7 @@
     </style>
 </head>
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/studentHeader :: header"></header>
 
 <main>
     <div class="container mt-3">
@@ -164,6 +164,6 @@
 
 </main>
 
-<footer th:insert="layout/header :: footer"></footer> <!-- footer 부분 수정 -->
+<footer th:insert="layout/studentHeader :: footer"></footer> <!-- footer 부분 수정 -->
 </body>
 </html>

@@ -21,10 +21,18 @@ public class Payments { // 등록금
     private Long idx;
 
     @Column(name = "payments_flag")
-    private String flag;
+    @Enumerated(EnumType.STRING)
+    private YesOrNo flag;
 
     @Column(name = "payments_date")
     private Date date;
+
+    @PrePersist
+    public void prePersist() {
+        long millis = System.currentTimeMillis();
+        this.date = new Date(millis);
+        this.flag = YesOrNo.Y;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_idx")
@@ -33,4 +41,8 @@ public class Payments { // 등록금
     @Column(name = "payments_semester")
     private String semester;
 
+    public Payments(Student student, String semester) {
+        this.student = student;
+        this.semester = semester;
+    }
 }

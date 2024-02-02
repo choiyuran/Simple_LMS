@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--수강 평가 리스트-->
-<head th:insert="layout/header :: head"></head>
+<head th:insert="layout/studentHeader :: head"></head>
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-3">
     <h2>강의 평가 리스트</h2>
     <table class="table table-bordered">
@@ -21,6 +21,6 @@
         </tr>
     </table>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/studentHeader :: footer"></footer>
 </body>
 </html>

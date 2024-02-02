@@ -38,7 +38,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
-    private final SituationService situationServive;
+    private final SituationService situationService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -428,7 +428,7 @@ public class ManagerController {
 
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
-        List<SituationStuDto> studentList = situationServive.selectSituationStu(status);
+        List<SituationStuDto> studentList = situationService.selectSituationStu(status);
         mav.addObject("status", status);
         mav.addObject("studentList", studentList);
         return mav;
@@ -437,7 +437,7 @@ public class ManagerController {
     @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
     public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("/manager/studentSituationView");
-        SituationStuDto situation = situationServive.selectOneSituation(idx);
+        SituationStuDto situation = situationService.selectOneSituation(idx);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String start = sdf.format(situation.getStart_date());
@@ -461,14 +461,14 @@ public class ManagerController {
         Date start_date = sdf.parse(start);
         java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
         param.setStart_date(sqldate);
-        
+
         if(end != null) {
             Date end_date = sdf.parse(end);
             java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
             param.setEnd_date(sqldate2);
         }
         log.info("param : " + param);
-        Situation situation = situationServive.situationUpdate(param);
+        Situation situation = situationService.situationUpdate(param);
         return "redirect:/manager/studentSituation";
     }
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/studentHeader :: head"></head>
+<body>
+<header th:insert="layout/studentHeader :: header"></header>
+<main>
+    <div class="container mt-3">
+        <h2>등록금 납부하기</h2>
+        <hr/>
+
+        <table class="table table-striped text-center">
+            <tbody class="font-weight-bold">
+            <tr class="table-info">
+                <th>대학교</th>
+                <td><input type="text" value="센텀 대학교" class="form-control" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>이름</th>
+                <td><input name="user_name" type="text" class="form-control" th:value="${session.user.user.user_name}" disabled/></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>학번</th>
+                <td><input name="student_num" type="text" class="form-control" th:value="${session.user.student_num}" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>납부 금액</th>
+                <td><input type="text" value="3,000,000원" class="form-control" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>납부 방법</th>
+                <td><input type="text"  value="계좌이체" class="form-control" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>계좌 번호</th>
+                <td><input type="text"  value="부산은행 123-1234432-12" class="form-control" disabled></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-around">
+            <form method="post">
+                <input type="hidden" th:value="${session.user.idx}" name="student" required/>
+                <input type="hidden" value="2024학년 1학기" name="semester" required/>
+                <button class="btn btn-google">등록금 납부</button>
+                <button type="button" class="btn btn-facebook">돌아가기</button>
+            </form>
+        </div>
+    </div>
+</main>
+<footer th:insert="layout/studentHeader :: footer"></footer> <!-- footer 부분 수정 -->
+</body>
+</html>
