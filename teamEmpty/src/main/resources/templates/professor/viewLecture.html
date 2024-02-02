@@ -19,20 +19,20 @@
                 <th>강의 계획서</th>
                 <td th:if="${lecture.plan == null}" class="planExist">
                     <th:block
-                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                            th:if="${session.user != null && session.user.user.role.toString().equals('교수') && session.user.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">미등록</span>
                         <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
                         <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
                     </th:block>
                     <th:block
-                            th:unless="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                            th:unless="${session.user != null && session.user.user.role.toString().equals('교수') && session.user.professor_idx == lecture.professor_idx}">
                         <span>미등록</span>
                     </th:block>
                 </td>
                 <td th:if="${lecture.plan != null}" class="planExist">
                     <a th:href="@{|/download/${lecture.plan}|}" download th:text="${lecture.plan}"></a>
                     <th:block
-                            th:if="${session != null && session.professor != null && session.professor.professor_idx == lecture.professor_idx}">
+                            th:if="${session.user != null && session.user.user.role.toString().equals('교수') && session.user.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>
                         <input type="hidden" class="lectureIdx" th:value="${lecture.idx}">
                         <input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">
