@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Date;
 
 @Entity
 @Data
@@ -20,7 +20,7 @@ public class Situation {
 
     // 학생번호
     @OneToOne
-    @JoinColumn(name = "student_idx")
+    @JoinColumn(name = "student_idx", unique = true)
     private Student student;
 
     // 상태

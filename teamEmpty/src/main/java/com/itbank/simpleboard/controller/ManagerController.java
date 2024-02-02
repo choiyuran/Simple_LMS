@@ -16,20 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.nio.file.Path;
-import java.util.Calendar;
-import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -45,7 +38,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
-    private final SituationServive situationServive;
+    private final SituationService situationServive;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -55,27 +48,21 @@ public class ManagerController {
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
 
-
         return "common/calendar";
     }
 
     @GetMapping("/calendarView/{idx}")
     public String calendarView(@PathVariable("idx") Long idx, Model model, HttpSession session){
-
         AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
-
         model.addAttribute("calendar", calendar);
-
         // session에서 user를 가져옴
-        UserDTO user = (UserDTO) session.getAttribute("user");
-
-        model.addAttribute("user", user);
-
-
+        Object user = session.getAttribute("user");
+        if (user instanceof ManagerLoginDto) {
+            ManagerLoginDto manager = (ManagerLoginDto) user;
+            model.addAttribute("manager", manager);
+        }
         return "manager/calendarView";
     }
-
-
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session){
@@ -175,53 +162,72 @@ public class ManagerController {
         }
     }
 
+    //    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE) // 교수 등록
+    @ResponseBody// 교수 등록
+    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
+        try {
+            log.info("교수등록 시작");
+            long startTime = System.currentTimeMillis();
+
+            log.info("사용자 타입: " + userFormDTO.getUserType());
+            log.info("이메일: " + userFormDTO.getEmail());
+            log.info("전공: " + userFormDTO.getMajor());
+
+            Map<String, String> response = new HashMap<>();
+
+            if ("professor".equals(userFormDTO.getUserType())) {
+                Professor professor = managerService.addProfessor(userFormDTO);
+                if (professor != null && professor.getProfessor_idx() != null) {
+                    // 성공적으로 교수 등록이 완료된 경우
+                    response.put("message", "폼 등록이 완료되었습니다.");
+                    response.put("name", professor.getUser().getUser_name());
+                    response.put("type", professor.getUser().getRole().toString());
+                    log.info("교수 등록 성공: " + professor.getUser().getUser_name());
+                    long endTime = System.currentTimeMillis();
+                    log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
+                    System.err.println("교수 등록 성공");
+                    return ResponseEntity.ok(response);
+                } else {
+                    // 교수 등록에 실패한 경우
+                    response.put("message", "교수 등록에 실패하였습니다");
+                    log.error("교수 등록 실패");
+                    System.err.println("교수 등록 실패");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 실패 시 500 에러 응답
+                }
+            } else {
+                // 교수가 아닌 사용자 타입의 요청인 경우
+                response.put("message", "교수 타입의 사용자가 아닙니다");
+                log.error("교수 타입의 사용자가 아닙니다");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 잘못된 요청 400 에러 응답
+            }
+        } catch (Exception e) {
+            log.error("교수 등록 중 오류 발생", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();// 예외 발생 시 500 에러 응답
+        }
+    }
+
+
+
     @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
         log.info("학생등록페이지");
         return "manager/registerStudent";
     }
 
-    @PostMapping("/addProfessor")   // 교수 등록
-    @ResponseBody// 교수 등록
-    public ResponseEntity<Map<String, String>> registerProfessor(UserFormDTO userFormDTO) {
-        try {
-            log.info("교수등록");
-            long startTime = System.currentTimeMillis();
-            // yourService.processForm(formDTO);
-            log.info(userFormDTO.getUserType());
-            log.info(userFormDTO.getEmail());
-            log.info(String.valueOf(userFormDTO.getMajor()));
-            Map<String, String> response = new HashMap<>();
-
-            if(userFormDTO.getUserType().equals("professor")){
-                Professor professor = managerService.addProfessor(userFormDTO);
-                if(professor.getProfessor_idx() != null){
-                    // 응답 생성
-                    response.put("message", "폼 등록이 완료되었습니다.");
-                    response.put("name", professor.getUser().getUser_name());
-                    response.put("type", professor.getUser().getRole().toString());
-                    log.info(professor.getUser().getUser_name());
-                }
-                else{
-                    response.put("message", "교수 등록에 실패하였습니다");
-                    log.info("교수등록 실패");
-                }
-            }
-            log.info(response.toString());
-
-            long endTime = System.currentTimeMillis();
-            log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(response);
-        } catch (Exception e) {
-            log.error("교수 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
+    public String uploadStudentList(@RequestParam("studentFile")MultipartFile studentFile, Model model) throws IOException {
+        log.info("학생등록엑셀업로드");
+        if(studentFile.isEmpty()){
+            model.addAttribute("message","파일을 업로드해주세요");
+            return "manager/registerStudent";
         }
+
+        model.addAttribute("students","학생등록");
+        return "manager/registerStudentList";
+
     }
+
 
     @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
     public ResponseEntity<byte[]> downloadStudentForm() throws IOException {
@@ -453,15 +459,18 @@ public class ManagerController {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start_date = sdf.parse(start);
+        java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
+        param.setStart_date(sqldate);
+        
         if(end != null) {
             Date end_date = sdf.parse(end);
-            param.setEnd_date(end_date);
+            java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
+            param.setEnd_date(sqldate2);
         }
-        param.setStart_date(start_date);
+        log.info("param : " + param);
         Situation situation = situationServive.situationUpdate(param);
         return "redirect:/manager/studentSituation";
     }
-
 
 
     @GetMapping("/managerModify")   // 교직원 개인 정보 수정
@@ -470,6 +479,7 @@ public class ManagerController {
         if (user instanceof ManagerLoginDto) {
             return "manager/managerModify";
         } else {
+            session.invalidate();
             return "redirect:/";
         }
     }
