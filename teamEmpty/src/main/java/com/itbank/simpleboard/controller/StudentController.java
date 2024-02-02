@@ -26,7 +26,7 @@ public class StudentController {
     private final StudentService studentService;
     private final EvaluationService evaluationService;
     private final AcademicCalendarService academicCalendarService;
-    private final SituationService situationServive;
+    private final SituationService situationService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
@@ -222,7 +222,7 @@ public class StudentController {
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.일반휴학신청);
             System.err.println("dto : " + dto);
-            Situation chageSituation = situationServive.updateSitu(dto);
+            Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "일반 휴학 신청 완료");
             }else{
@@ -244,7 +244,7 @@ public class StudentController {
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.군휴학신청);
             System.err.println("dto : " + dto);
-            Situation chageSituation = situationServive.updateSitu(dto);
+            Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "군 휴학 신청 완료");
             }else{
@@ -265,7 +265,7 @@ public class StudentController {
             StudentDto studentDto = (StudentDto)o;
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.복학신청);
-            Situation chageSituation = situationServive.updateSitu(dto);
+            Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg","복학 신청 완료");
             }else{

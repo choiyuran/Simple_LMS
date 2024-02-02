@@ -43,15 +43,28 @@
                                         <!-- 일자 -->
                                         <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
                                         <!-- 내용 -->
-                                        <a th:href="@{/manager/calendarView/{idx}(idx=${cal.idx})}">
-                                            <p class="desc" th:text="${cal.title}"></p>
-                                        </a>
+                                        <p class="desc" th:text="${cal.title}"></p>
+                                        <!-- 수정 / 삭제 버튼 -->
+                                        <div th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
+                                            <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}">
+                                                <button id=editBtn class="btn btn-warning">수정</button>
+                                            </a>
+                                            <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}">
+                                                <button id=deleteBtn class="btn btn-danger">삭제</button>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <a th:href="@{/manager/calendarAddForm}">
+                        <button class="btn btn-primary" style="text-align: center"
+                                th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">추가
+                        </button>
+                    </a>
                 </div>
+
                 <div class="tip-box">
                     <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
                     <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기 바랍니다.</p>
@@ -60,6 +73,37 @@
         </div>
     </div>
 </main>
+<script>
+    const editBtn = document.getElementById('editBtn')
+    const deleteBtn = document.getElementById('deleteBtn')
+
+    editBtn.onclick = function (){
+        // 컴펌버튼 출력
+        var useConfirm = confirm('해당 학사일정을 수정 하시겠습니까 ?');
+
+        if (useConfirm) {
+            // 사용자가 확인을 선택한 경우에만 a 태그의 링크를 작동
+            const editLink = document.querySelector("a[id='editBtn']");
+
+            if (editLink) {
+                // a 태그의 href로 이동
+                window.location.href = editLink.getAttribute('href');
+            }
+        }
+    }
+
+    deleteBtn.onclick = function (){
+        var deleteConfirm = confirm('해당 학사 일정을 삭제 하시겠습니까 ?');
+
+        if(deleteConfirm){
+            const deleteLink = document.querySelector("a[id='deleteBtn']");
+
+            if(deleteLink){
+                window.location.href = deleteLink.getAttribute('href')
+            }
+        }
+    }
+</script>
 <footer th:insert="layout/header :: footer"></footer>
 </body>
 </html>
