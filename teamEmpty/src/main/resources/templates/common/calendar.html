@@ -49,6 +49,11 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
+                                <button class="btn btn-warning">수정</button>
+                                <button class="btn btn-danger">삭제</button>
+                            </div>
                         </div>
                     </div>
                 </div>

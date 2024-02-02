@@ -52,30 +52,23 @@ public class ManagerController {
     }
 
     @GetMapping("/calendarView/{idx}")
-    public String calendarView(@PathVariable("idx") Long idx, Model model, HttpSession session){
+    public String calendarView(@PathVariable("idx") Long idx, Model model){
         AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
         model.addAttribute("calendar", calendar);
-        // session에서 user를 가져옴
-        Object user = session.getAttribute("user");
-        if (user instanceof ManagerLoginDto) {
-            ManagerLoginDto manager = (ManagerLoginDto) user;
-            model.addAttribute("manager", manager);
-        }
+
         return "manager/calendarView";
     }
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session){
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
-        UserDTO user = (UserDTO) session.getAttribute("user");
 
-        System.out.println(user.getRole());
-        if(user.getRole().equals(User_role.교직원)) {
+        Object user = session.getAttribute("user");
+        if(user instanceof ManagerLoginDto) {
+            ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarAddForm";
         }
-        else{
-            return "home";
-        }
+        return "home";
     }
 
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
@@ -92,14 +85,13 @@ public class ManagerController {
         // 가져온 데이터를 모델에 담아 수정 폼으로 전달한다.
         model.addAttribute("academicCalendarDto", academicCalendarDto);
 
-        UserDTO user = (UserDTO) session.getAttribute("user");
-
-        if(user.getRole().equals(User_role.교직원)) {
+        Object user = session.getAttribute("user");
+        if(user instanceof ManagerLoginDto) {
+            ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarEditForm";
         }
-        else{
-            return "home";
-        }
+        return "home";
+
     }
 
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
@@ -122,6 +114,7 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("manager/managerList");
         List<ManagerDTO> managerList = managerService.searchManager(searchType,searchValue);
         mav.addObject("managerList",managerList);
+        mav.addObject("searchValue", searchValue);
         return mav;
     }
 
@@ -206,7 +199,6 @@ public class ManagerController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();// 예외 발생 시 500 에러 응답
         }
     }
-
 
 
     @GetMapping("/addStudent")   // 학생 등록

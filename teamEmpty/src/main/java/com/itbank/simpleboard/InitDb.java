@@ -212,7 +212,16 @@
 //
 //            Lecture lecture9 = new Lecture("마취과학개론", "마취의 기본 원리와 마취 약물에 대해 배웁니다.", 3, "월,화,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 30, "2024년 1학기", 1, null, em.find(Major.class, 9L), em.find(LectureRoom.class, 3L));
 //            em.persist(lecture9);
+//
+//            Notice notice1 = new Notice("공지사항", "공지사항 내용이에요.");
+//            em.persist(notice1);
+//
+//            Notice notice2 = new Notice("두번째 공지사항", "두번째 공지사항이에요.");
+//            em.persist(notice2);
+//
 //        }
+//
+//
 //
 //
 //    }

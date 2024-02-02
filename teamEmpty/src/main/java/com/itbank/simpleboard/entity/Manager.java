@@ -26,9 +26,15 @@ public class Manager {
     @Column(name = "hire_date")
     private Date hireDate;
 
+    @Column(name="manager_leave")
+    private YesOrNo leave;
+
+    private Date leaveDate;
+
     public Manager(String manager_img, User user, Date hireDate) {
         this.manager_img = manager_img;
         this.user = user;
         this.hireDate = hireDate;
+        this.leave = YesOrNo.N;
     }
 }
