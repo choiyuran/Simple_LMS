@@ -2,8 +2,10 @@ package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -171,13 +173,18 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         QEnrollment.enrollment.student.student_num.as("student_num"),
                         QEnrollment.enrollment.student.user.user_name.as("student_name"),
                         QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
-                        QEnrollment.enrollment.lecture.name.as("lecture_name")))
+                        QEnrollment.enrollment.lecture.name.as("lecture_name"),
+                        ExpressionUtils
+                                .as(JPAExpressions
+                                        .select(QGrade.grade.idx)
+                                        .from(QGrade.grade)
+                                        .where(
+                                                QGrade.grade.student.eq(QEnrollment.enrollment.student)
+                                                        .and(QGrade.grade.lecture.eq(QEnrollment.enrollment.lecture))
+                                        )
+                                        .exists(), "hasGrade")))
                 .from(QEnrollment.enrollment)
-//                .leftJoin(QGrade.grade).on(QEnrollment.enrollment.student.eq(QGrade.grade.student).and(QEnrollment.enrollment.lecture.eq(QGrade.grade.lecture)))
-                .where(
-                        QEnrollment.enrollment.lecture.idx.eq(lectureIdx)
-//                        QGrade.grade.student.isNull().and(QGrade.grade.lecture.isNull())
-                )
+                .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
                 .fetch();
     }
 }

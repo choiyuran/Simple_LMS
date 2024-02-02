@@ -314,15 +314,20 @@
         function updateModalTableBody(modalBody, data) {
             // 수강생 목록 데이터를 테이블 형식으로 가공
             let tableHTML = '<table style="width: 100%;">';
-            tableHTML += '<thead><tr><th>학번</th><th>이름</th></tr></thead>';
+            tableHTML += '<thead><tr><th>학번</th><th>이름</th><th>성적 입력</th></tr></thead>';
             tableHTML += '<tbody>';
 
             data.forEach(enrollment => {
                 let student_idx = enrollment.student_idx;
                 let lecture_idx = enrollment.lecture_idx;
-                tableHTML += `<tr><td><div><span>${enrollment.student_num}</span></div></td>`
-                tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`
-                tableHTML += `<td><button onclick="enterGrade(this)" data-lecture-idx="${lecture_idx}" data-student_idx="${student_idx}">성적 입력</button></td></tr>`;
+                let hasGrade = enrollment.hasGrade;
+                tableHTML += `<tr id="row_${student_idx}_${lecture_idx}"><td><div><span>${enrollment.student_num}</span></div></td>`;
+                tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
+                if (hasGrade) {
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}')" style="background-color: grey;">수정</button></td></tr>`;
+                } else {
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
+                }
             });
 
             tableHTML += '</tbody></table>';
@@ -331,9 +336,58 @@
             modalBody.innerHTML = tableHTML;
         }
 
-        function enterGrade(button) {
-            let lecture_idx = button.getAttribute("data-lecture-idx");
-            let student_idx = button.getAttribute("data-student_idx");
+        function enterGrade(student_idx, lecture_idx) {
+            let rowId = `row_${student_idx}_${lecture_idx}`;
+            let targetRow = document.getElementById(rowId);
+
+            let gradeTr = document.createElement('tr');
+            gradeTr.innerHTML = `<td colspan="3">
+                               <label for="grade">성적:</label>
+                               <input type="number" id="score" name="score" step="0.01" min="0" max="4.5" placeholder="0.00" required>
+                               <button onclick="saveGrade('${student_idx}', '${lecture_idx}')">저장</button>
+                           </td>`;
+
+            // 기존 행 아래에 새로운 행 추가
+            targetRow.parentNode.insertBefore(gradeTr, targetRow.nextSibling);
+        }
+
+        async function saveGrade(student_idx, lecture_idx) {
+            let score = document.getElementById('score').value;
+            let url = '/professor/saveGrade';
+
+            await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    student_idx: student_idx,
+                    lecture_idx: lecture_idx,
+                    score: score
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 정상이 아닙니다');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.msg);
+                    if (data.result == 1) {
+                        let button = `button_${student_idx}_${lecture_idx}`;
+                        let buttonRow = document.getElementById(button);
+                        buttonRow.style.backgroundColor = 'grey';
+                        buttonRow.innerText = '수정'
+                    }
+                })
+                .catch(error => {
+                    console.error('예외 발생 :', error);
+                });
+
+            let rowId = `row_${student_idx}_${lecture_idx}`;
+            let targetRow = document.getElementById(rowId);
+            targetRow.nextSibling.remove();
         }
     </script>
 </main>
