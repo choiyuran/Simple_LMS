@@ -12,12 +12,31 @@
     <form method="post" action="/manager/addStudentList">
         <table class="table table-bordered">
             <tr>
+                <th>번호</th>
+                <th>학번</th>
                 <th>이름</th>
-                <th>생년월일</th>
+                <th>주민번호</th>
+                <th>연락처</th>
+                <th>주소</th>
+                <th>이메일</th>
+                <th>입학일</th>
+                <th>학년</th>
+                <th>학과번호</th>
+                <th>지도교수번호</th>
+                <th>수정</th>
             </tr>
-            <tr>
-                <td th:text="이이경"></td>
-                <td th:text="040231"></td>
+            <tr th:each="student : ${studentList}">
+                <td th:text="${student.idx}"></td>
+                <td th:text="${student.student_num}"></td>
+                <td th:text="${student.name}"></td>
+                <td th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
+                <td th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
+                <td th:text="${student.address}"></td>
+                <td th:text="${student.email}"></td>
+                <td th:text="${student.entranceDate}"></td>
+                <td th:text="${student.student_grade}"></td>
+                <td th:text="${student.major}"></td>
+                <td th:text="${student.professor}"></td>
                 <td>
                     <button class="btn btn-warning"><!--<a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">-->수정<!--</a>--></button>
                 </td>
@@ -32,7 +51,7 @@
         <button type="submit">학생 전체 등록</button>
     </form>
 
-</div>3
+</div>
 <footer th:insert="layout/header :: footer"></footer>
 
 
