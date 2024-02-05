@@ -295,4 +295,25 @@ public class StudentController {
         ra.addFlashAttribute("msg", "등록금 납부 실패");
         return "redirect:/student/paymentTuition";
     }
+
+    @GetMapping("/tuitionBill")
+    public String tuitionBill(HttpSession session, Model model){
+        // 세션에 담긴 idx 를 이용해 해당 학생의 등록금 고지서를 불러오기
+        StudentDto dto = (StudentDto) session.getAttribute("user");
+
+        // 세션에 user가 없으면 로그인 페이지로 이동
+        if(dto == null){
+            return "redirect:/";
+        }
+        // 학생의 정보 가져오기
+        Long studentIdx = dto.getIdx();
+        List<TuitionDto> tuitionDataList = studentService.getTuitionData(studentIdx);
+
+        // 모델에 추가
+        model.addAttribute("tuitionDataList", tuitionDataList);
+
+        System.out.println("tuitionDataList = " + tuitionDataList);
+
+        return "student/tuitionBill";
+    }
 }

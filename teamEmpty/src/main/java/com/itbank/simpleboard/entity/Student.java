@@ -33,7 +33,7 @@ public class Student {
     @JoinColumn(name = "professor_idx")
     private Professor professor;
 
-//     학과번호
+    //학과번호
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
     private Major major;
