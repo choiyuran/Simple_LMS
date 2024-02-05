@@ -12,6 +12,5 @@ public class LectureSearchConditionDto {
     private Integer semester;
     private Integer grade;
     private Long professor_idx;
-    private String professor;
     private String major;
 }

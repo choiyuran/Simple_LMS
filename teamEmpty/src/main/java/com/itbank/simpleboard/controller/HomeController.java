@@ -10,7 +10,6 @@ import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.FileService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -118,12 +117,6 @@ public class HomeController {
             case "교수":
                 ProfessorDto professor = userService.getProfessor(user);
                 session.setAttribute("user", professor);
-                if (professor.getImg() != null) {
-                    Resource idPhotoProfessor = fileService.loadAsResource(professor.getImg(), "idPhoto_professor");
-                    String string = idPhotoProfessor.toString();
-                    System.out.println("string = " + string);
-
-                }
                 url = "redirect:/professor/home";
                 break;
             case "학생":
