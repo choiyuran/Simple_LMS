@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class PaymentsDto {
     private Long student;
     private String semester;
+    private Integer tuition;
+    private Integer scholarship;
 }

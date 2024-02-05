@@ -16,6 +16,11 @@
             </tr>
 
             <tr class="table-info">
+                <th>학과</th>
+                <td><input name="major" type="text" class="form-control" th:value="${session.user.major.name}" disabled/></td>
+            </tr>
+
+            <tr class="table-info">
                 <th>이름</th>
                 <td><input name="user_name" type="text" class="form-control" th:value="${session.user.user.user_name}" disabled/></td>
             </tr>
@@ -26,8 +31,18 @@
             </tr>
 
             <tr class="table-info">
-                <th>납부 금액</th>
-                <td><input type="text" value="3,000,000원" class="form-control" disabled></td>
+                <th>등록금</th>
+                <td><input type="text" th:value="${tuition + '원'}" name="tuition" class="form-control" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>장학금</th>
+                <td><input type="text" th:value="${totalScholarship + '원'}" name="tuition" class="form-control" disabled></td>
+            </tr>
+
+            <tr class="table-info">
+                <th>총 납부 금액</th>
+                <td><input type="text" th:value="${totalTuition + '원'}" name="tuition" class="form-control" disabled></td>
             </tr>
 
             <tr class="table-info">
@@ -46,7 +61,7 @@
                 <input type="hidden" th:value="${session.user.idx}" name="student" required/>
                 <input type="hidden" value="2024학년 1학기" name="semester" required/>
                 <button class="btn btn-google">등록금 납부</button>
-                <button type="button" class="btn btn-facebook">돌아가기</button>
+                <button type="button" class="btn btn-facebook" onclick="history.go(-1)">돌아가기</button>
             </form>
         </div>
     </div>
