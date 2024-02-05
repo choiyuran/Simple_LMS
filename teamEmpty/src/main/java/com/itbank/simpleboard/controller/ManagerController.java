@@ -38,7 +38,7 @@ public class ManagerController {
     private final UserService userService;
     private final ProfessorService professorService;
     private final CollegeService collegeService;
-    private final SituationService situationServive;
+    private final SituationService situationService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -51,18 +51,9 @@ public class ManagerController {
         return "common/calendar";
     }
 
-    @GetMapping("/calendarView/{idx}")
-    public String calendarView(@PathVariable("idx") Long idx, Model model){
-        AcademicCalendarDto calendar = academicCalendarService.getCalendarById(idx);
-        model.addAttribute("calendar", calendar);
-
-        return "manager/calendarView";
-    }
-
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session){
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
-
         Object user = session.getAttribute("user");
         if(user instanceof ManagerLoginDto) {
             ManagerLoginDto manager = (ManagerLoginDto) user;
@@ -91,12 +82,18 @@ public class ManagerController {
             return "manager/calendarEditForm";
         }
         return "home";
-
     }
 
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
     public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
         academicCalendarService.editCalendar(id, calendar);
+
+        return "redirect:/manager/calendar";
+    }
+
+    @GetMapping("/calendarDelete/{idx}") // 학사일정 삭제
+    public String calendarDelete(@PathVariable Long idx){
+        academicCalendarService.deleteCalendar(idx);
 
         return "redirect:/manager/calendar";
     }
@@ -420,7 +417,7 @@ public class ManagerController {
 
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
-        List<SituationStuDto> studentList = situationServive.selectSituationStu(status);
+        List<SituationStuDto> studentList = situationService.selectSituationStu(status);
         mav.addObject("status", status);
         mav.addObject("studentList", studentList);
         return mav;
@@ -429,7 +426,7 @@ public class ManagerController {
     @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
     public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("/manager/studentSituationView");
-        SituationStuDto situation = situationServive.selectOneSituation(idx);
+        SituationStuDto situation = situationService.selectOneSituation(idx);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String start = sdf.format(situation.getStart_date());
@@ -460,7 +457,7 @@ public class ManagerController {
             param.setEnd_date(sqldate2);
         }
         log.info("param : " + param);
-        Situation situation = situationServive.situationUpdate(param);
+        Situation situation = situationService.situationUpdate(param);
         return "redirect:/manager/studentSituation";
     }
 

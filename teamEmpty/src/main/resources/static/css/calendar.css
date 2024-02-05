@@ -87,3 +87,8 @@
 .work div p {
     padding: 5px;
 }
+
+.workbutton{
+    width: 100px;
+    height: 50px;
+}
