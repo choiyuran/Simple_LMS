@@ -113,12 +113,8 @@
                                         <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
                                            href="#" id="userDropdown" role="button">
                                             <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <th:block th:if="${session.user != null && session.user.img != null}">
-                                                <img alt="유저 이미지" class="img-profile rounded-circle" th:src="${session.user.img}" >
-                                            </th:block>
-                                            <th:block th:unless="${session.user != null && session.user.img != null}">
-                                                <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg">
-                                            </th:block>
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" th:if="${session.user != null && session.user.img != null}" th:src="@{'/images/' + ${session.user.img}}">
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg" th:if="${session.user == null || session.user.img == null}">
                                         </a>
                                         <!-- Dropdown - User Information -->
                                         <div aria-labelledby="userDropdown"

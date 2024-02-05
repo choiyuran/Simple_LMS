@@ -3,6 +3,7 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.ManagerLoginDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.service.FileService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -18,6 +19,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Controller
+@Slf4j
 public class FileController {
 
 
@@ -64,8 +66,9 @@ public class FileController {
         }
     }
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/images/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpSession session) {
+        log.info("serveFile 시작");
         Object user = session.getAttribute("user");
         String saveDir = "";
         if (user instanceof ProfessorDto) {
@@ -74,8 +77,9 @@ public class FileController {
             saveDir = "idPhoto_manager";
         }
         Resource file = fileService.loadAsResource(filename, saveDir);
+        filename = URLEncoder.encode(filename, StandardCharsets.UTF_8);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
                 .body(file);
     }
 }
