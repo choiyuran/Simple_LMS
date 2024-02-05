@@ -6,6 +6,7 @@ import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.service.GradeService;
 import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -30,6 +33,7 @@ public class ProfessorController {
     private final ProfessorService professorService;
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
+    private final GradeService gradeService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -181,11 +185,29 @@ public class ProfessorController {
         return null;
     }
 
-    @GetMapping("/enrollmentList")
-    public ResponseEntity<List<EnrollmentDto>> enterGrade(HttpSession session, Model model, @RequestParam("lectureIdx") Long lectureIdx) {
+    @GetMapping("/enrollmentList")  // myLecture에서 성적 기입을 눌렀을 때, 수강생 목록을 보여주는 메서드
+    public ResponseEntity<List<EnrollmentDto>> enterGrade(@RequestParam("lectureIdx") Long lectureIdx) {
         List<EnrollmentDto> enrollment = professorService.getEnrollmentList(lectureIdx);
         return ResponseEntity.ok()
                 .header("Content-Type", "application/json")
                 .body(enrollment);
+    }
+
+    @PutMapping("/saveGrade")
+    public @ResponseBody Map<String, Object> saveGrade(@RequestBody Map<String, String> request) {
+        log.info("saveGrade 시작");
+        Map<String, Object> responseData = new HashMap<>();
+        long studentIdx = Long.parseLong(request.get("student_idx"));
+        long lectureIdx = Long.parseLong(request.get("lecture_idx"));
+        int save = gradeService.save(studentIdx, lectureIdx, request.get("score"));
+        if (save != 0) {
+            responseData.put("msg", "성적이 입력되었습니다.");
+            responseData.put("result", save);
+        } else {
+            responseData.put("msg", "성적 입력을 실패하였습니다.");
+            responseData.put("result", save);
+        }
+        log.info("saveGrade 끝");
+        return responseData;
     }
 }
