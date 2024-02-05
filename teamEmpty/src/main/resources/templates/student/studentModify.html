@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/studentHeader :: head">
 
 </head>
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-4">
     <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user.user.getIdx()})}">
         <div class="w-50 m-auto">
@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-primary btn-user btn-block"
-                            id="email_validation" disabled>인증하기
+                            id="email_validation">인증하기
                     </button>
                 </div>
             </div>
@@ -79,14 +79,19 @@
             <div class="form-group row d-flex flex-wrap">
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleInputPassword" placeholder="패스워드" required>
+                           id="previous" placeholder="기존 패스워드" required>
+                </div>
+
+                <div class="col-sm-12 mb-3 ">
+                    <input type="password" class="form-control form-control-user"
+                           id="exampleInputPassword" placeholder="변경할 패스워드" required>
                     <span class="my-1" id="passwordHelp"></span>
                 </div>
 
                 <!-- 패스워드 확인 입력란 -->
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleRepeatPassword" name="repeatPassword" placeholder="패스워드 확인" required>
+                           id="exampleRepeatPassword" name="repeatPassword" placeholder="변경할 패스워드 확인" required>
                     <span class="my-1" id="passwordConfirmHelp"></span>
                 </div>
 
@@ -98,7 +103,7 @@
         </form>
     </div>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/studentHeader :: footer"></footer>
 
 <script>
     window.onload = function () {
@@ -226,7 +231,3 @@
 
 </body>
 </html>
-
-
-
-

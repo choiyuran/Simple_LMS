@@ -11,12 +11,13 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer { // 로그인 안돼있으면
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new AuthInteceptor())
-//                .addPathPatterns("/**")
-//                .excludePathPatterns("/","/logintest","/ProfessorLogin");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new AuthInteceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**","/js/**","/excelForm/**","/img/**","/scss/**","/vendor/**")
+                .excludePathPatterns("/","/login","/manager/calendar");
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {

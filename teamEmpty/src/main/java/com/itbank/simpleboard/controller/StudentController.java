@@ -27,12 +27,12 @@ public class StudentController {
     private final EvaluationService evaluationService;
     private final AcademicCalendarService academicCalendarService;
     private final SituationService situationService;
-
+    private final PaymentsService paymentsService;
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
 
-        ModelAndView mav = new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("student/home");
         StudentDto student = (StudentDto) session.getAttribute("user");
         if (student == null) {
             mav.addObject("msg", "로그인하세요!");
@@ -88,7 +88,7 @@ public class StudentController {
     @PostMapping("/enroll")
     public ModelAndView enrollPro(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         long startTime = System.currentTimeMillis();
-        ModelAndView mav = new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("student/home");
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
         if (studentDto == null) {
             // 로그인 안되어 있으면 로그인 화면으로 이거는 인터셉터에서 처리도 가능하다.
@@ -130,7 +130,7 @@ public class StudentController {
 
 
     @PostMapping("/studentModify/{idx}") // 내 정보 수정
-    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session) {
+    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session,RedirectAttributes ra) {
         UserDTO user = studentService.userUpdate(idx, param);
         StudentDto dto = (StudentDto) session.getAttribute("user");
         dto.getUser().setPnum(user.getPnum());
@@ -138,6 +138,7 @@ public class StudentController {
         dto.getUser().setEmail(user.getEmail());
 
         session.setAttribute("user",dto);
+        ra.addFlashAttribute("msg","회원수정 완료");
 
         return "redirect:/student/studentModify";
     }
@@ -145,10 +146,9 @@ public class StudentController {
     @GetMapping("/evaluationList")              // 강의 평가 목록
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();
-        ModelAndView mav = new ModelAndView("/home");
+        ModelAndView mav = new ModelAndView("student/home");
 
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
-        System.err.println("studentDto : " + studentDto);
         if (studentDto != null) {
             List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
 
@@ -175,7 +175,7 @@ public class StudentController {
 
     @PostMapping("/evaluate/{idx}")                 // 강의 평가 등록
     public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
-        ModelAndView mav = new ModelAndView("/home");
+        ModelAndView mav = new ModelAndView("student/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
         if (evaluation != null) {
             mav.addObject("msg", "평가 등록 완료");
@@ -221,8 +221,8 @@ public class StudentController {
             StudentDto studentDto = (StudentDto)o;
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.일반휴학신청);
-            System.err.println("dto : " + dto);
             Situation chageSituation = situationService.updateSitu(dto);
+            System.err.println("dto : " + dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "일반 휴학 신청 완료");
             }else{
@@ -277,5 +277,22 @@ public class StudentController {
             session.invalidate();
             return "redirect:/";
         }
+    }
+
+    @GetMapping("/paymentTuition")
+    public String paymentTuition() {
+        return "student/paymentTuition";
+    }
+
+    @PostMapping("/paymentTuition")
+    public String paymentTuitionPro(PaymentsDto dto, RedirectAttributes ra) {
+        Payments payments = paymentsService.save(dto);
+
+        if(payments != null){
+            ra.addFlashAttribute("msg","등록금 납부 완료");
+            return "redirect:/student/home";
+        }
+        ra.addFlashAttribute("msg", "등록금 납부 실패");
+        return "redirect:/student/paymentTuition";
     }
 }

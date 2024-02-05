@@ -450,7 +450,7 @@ public class ManagerController {
         Date start_date = sdf.parse(start);
         java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
         param.setStart_date(sqldate);
-        
+
         if(end != null) {
             Date end_date = sdf.parse(end);
             java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
