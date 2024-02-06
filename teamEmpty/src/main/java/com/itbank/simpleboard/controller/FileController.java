@@ -68,7 +68,6 @@ public class FileController {
 
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpSession session) {
-        log.info("serveFile 시작");
         Object user = session.getAttribute("user");
         String saveDir = "";
         if (user instanceof ProfessorDto) {

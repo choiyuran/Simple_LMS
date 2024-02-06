@@ -7,10 +7,7 @@
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
     <div>
-        <form id="LectureSearchForm">
-            <label>강의명 :
-                <input type="text" name="name">
-            </label>
+        <form id="LectureSearchForm" method="POST">
             <label>학과 선택 :
                 <select name="major">
                     <option th:text="'전공 선택'" value="">전공 선택</option>
@@ -43,8 +40,8 @@
                     <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"></option>
                 </select>
             </label>
-            <label>담당 교수 :
-                <input type="text" name="professor">
+            <label>검색어 :
+                <input id="searchInput" name="name" type="text">
             </label>
             <button type="button" onclick="searchLectures()">검색</button>
             <input type="reset" value="초기화" onclick="resetAndSearch()">
@@ -147,6 +144,15 @@
     <button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>
 
     <script>
+        function handleKeyDown(event) {
+            // 엔터 키의 keyCode는 13입니다.
+            if (event.keyCode === 13) {
+                event.preventDefault(); // 엔터 키의 기본 동작을 막습니다.
+                searchLectures();
+            }
+        }
+        document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
+
         function searchLectures() {
             var form = document.getElementById("LectureSearchForm");
 
@@ -159,7 +165,7 @@
             var formData = new FormData(form);
 
             fetch('/professor/lectureList/data', {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -185,24 +191,30 @@
 
             // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
             tbody.innerHTML = "";
+            console.log(data.length);
 
-            // 서버 응답을 이용하여 여러 행 추가
-            data.forEach(item => {
-                var tr = document.createElement("tr");
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
+            } else {
+                // 서버 응답을 이용하여 여러 행 추가
+                data.forEach(item => {
+                    var tr = document.createElement("tr");
 
-                // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
-                appendTd(tr, item.major);
-                appendTd(tr, item.type);
-                appendTd(tr, item.credit);
-                appendTd(tr, item.day);
-                appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                appendTd(tr, item.semester);
-                appendTd(tr, `${item.grade}학년`);
-                appendTd(tr, `${item.location} ${item.lectureRoom}`);
+                    // 각 열에 대한 데이터 추가
+                    appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.professor_name);
+                    appendTd(tr, item.major);
+                    appendTd(tr, item.type);
+                    appendTd(tr, item.credit);
+                    appendTd(tr, item.day);
+                    appendTd(tr, `${item.currentCount}/${item.maxCount}`);
+                    appendTd(tr, item.semester);
+                    appendTd(tr, `${item.grade}학년`);
+                    appendTd(tr, `${item.location} ${item.lectureRoom}`);
 
-                tbody.appendChild(tr);
-            });
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
         // 특정 데이터를 <td>에 추가하는 함수

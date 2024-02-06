@@ -68,7 +68,7 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
+    @PostMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
     public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
@@ -119,11 +119,11 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
+    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
     public ResponseEntity<List<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
 
-        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
+        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("user")).getProfessor_idx());
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
 
         long endTime = System.currentTimeMillis();
