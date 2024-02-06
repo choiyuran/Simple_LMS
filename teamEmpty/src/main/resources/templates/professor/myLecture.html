@@ -132,11 +132,10 @@
             <td>
                 <div>
                     <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                    <button th:onclick="'test(\'' + ${row.idx} + '\', \'' + ${row.professor_idx} + '\')'">test</button>
                 </div>
             </td>
-            <td class="viewEvaluationBtnTd">
-                <span th:text="${row.idx}" class="lectureIdxSpan" style="display: none;"></span>
-                <span th:text="${row.professor_idx}" class="professorIdxSpan" style="display: none;"></span>
+            <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}" th:data-professor_idx="${row.professor_idx}">
             </td>
             <td>
                 <button class="btn btn-info btn-lg" data-target="#enrollmentStuList" data-toggle="modal"
@@ -149,6 +148,10 @@
     </table>
 
     <script>
+        function test(lecture_idx, professor_idx) {
+            console.log(lecture_idx, professor_idx);
+        }
+
         function handleKeyDown(event) {
             // 엔터 키의 keyCode는 13입니다.
             if (event.keyCode === 13) {
@@ -205,38 +208,66 @@
                     var tr = document.createElement("tr");
 
                     // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.name, 1, `/professor/viewLecture/${item.idx}`);
                     appendTd(tr, item.major);
                     appendTd(tr, item.type);
                     appendTd(tr, item.credit);
                     appendTd(tr, item.day);
                     appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                    appendTd(tr, item.semester);
+                    appendTd(tr, item.semester, 2, 'semesterValue');
                     appendTd(tr, `${item.grade}학년`);
                     appendTd(tr, `${item.location} ${item.lectureRoom}`);
+                    appendTd(tr, item.idx + '_' + item.professor_idx, 3, 'viewEvaluationBtnTd');
+                    appendTd(tr, item.idx, 4);
 
                     tbody.appendChild(tr);
+                    addEvaluationBtn();
                 });
             }
         }
 
         // 특정 데이터를 <td>에 추가하는 함수
-        function appendTd(parent, text, isLink = false, linkHref = "") {
+        function appendTd(parent, text, checked = 0, checkValue = "") {
             var td = document.createElement("td");
             var div = document.createElement("div");
             var span = document.createElement("span");
 
-            if (isLink) {
-                var a = document.createElement("a");
-                a.href = linkHref;
-                a.appendChild(span);
-                div.appendChild(a);
+            if (checked === 3) {
+                td.classList.add(checkValue);
+                let lecture_idx = text.split('_')[0];
+                let professor_idx = text.split('_')[1];
+                td.setAttribute('data-lecture-idx', lecture_idx);
+                td.setAttribute('data-professor_idx', professor_idx);
+            } else if (checked === 4) {
+                var button = document.createElement("button");
+                button.className = "btn btn-info btn-lg"; // 클래스 추가
+                button.setAttribute('data-target', '#enrollmentStuList');
+                button.setAttribute('data-toggle', 'modal');
+                button.setAttribute('type', 'button');
+                button.setAttribute('data-lecture-idx', text);
+                button.textContent = "성적 입력"; // 버튼 텍스트 추가
+                button.addEventListener('click', function() {
+                    openEnrollmentModal(this);
+                });
+                td.appendChild(button);
             } else {
-                div.appendChild(span);
+                switch (checked) {
+                    case 1:
+                        var a = document.createElement("a");
+                        a.href = checkValue;
+                        a.appendChild(span);
+                        div.appendChild(a);
+                        break;
+                    case 2:
+                        td.classList.add(checkValue);
+                        div.appendChild(span);
+                        break;
+                    default:
+                        div.appendChild(span);
+                }
+                span.textContent = text;
+                td.appendChild(div);
             }
-
-            span.textContent = text;
-            td.appendChild(div);
             parent.appendChild(td);
         }
 
@@ -249,8 +280,6 @@
             // 모든 .viewEvaluationBtnTd 클래스를 가진 요소를 선택
             var tdElements = document.querySelectorAll('.viewEvaluationBtnTd');
             var semesterValues = document.querySelectorAll('.semesterValue');
-            var lectureIdxSpan = document.querySelectorAll('.lectureIdxSpan');
-            var professorIdxSpan = document.querySelectorAll('.professorIdxSpan');
 
             // 현재 년도와 월 가져오기
             var currentDate = new Date();
@@ -259,6 +288,8 @@
 
             // 각 요소에 대해 반복
             tdElements.forEach(function (tdElement, index) {
+                let lectureIdx = tdElement.getAttribute("data-lecture-idx");
+                let professorIdx = tdElement.getAttribute("data-professor_idx");
                 tdElement.innerHTML = '';
                 // 'xxxx년 x학기'와 같은 형태의 문자열에서 연도와 학기 추출
                 var matchResult = semesterValues[index].textContent.match(/(\d{4})년 (\d)학기/);
@@ -278,10 +309,10 @@
 
                             // semesterTerm이 currentMonth보다 작을 때만 버튼을 추가
                             if (!isNaN(semesterTerm) && semesterTerm <= currentMonth) {
-                                addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                                addButton(tdElement, lectureIdx, professorIdx);
                             }
                         } else if (semesterYear < currentYear) {
-                            addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                            addButton(tdElement, lectureIdx, professorIdx);
                         }
                     }
                 }
