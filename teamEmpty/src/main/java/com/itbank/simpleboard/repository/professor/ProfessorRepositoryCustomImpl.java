@@ -167,6 +167,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
         return queryFactory
                 .select(Projections.fields(EnrollmentDto.class,
+                        QEnrollment.enrollment.idx.as("idx"),
                         QEnrollment.enrollment.student.idx.as("student_idx"),
                         QEnrollment.enrollment.student.student_num.as("student_num"),
                         QEnrollment.enrollment.student.user.user_name.as("student_name"),
@@ -177,12 +178,13 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                                         .select(QGrade.grade.idx)
                                         .from(QGrade.grade)
                                         .where(
-                                                QGrade.grade.student.eq(QEnrollment.enrollment.student)
-                                                        .and(QGrade.grade.lecture.eq(QEnrollment.enrollment.lecture))
+                                                QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
+                                                        .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
                                         )
                                         .exists(), "hasGrade")))
                 .from(QEnrollment.enrollment)
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
+                .orderBy(QEnrollment.enrollment.student.idx.asc())
                 .fetch();
     }
 }

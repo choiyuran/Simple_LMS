@@ -1,4 +1,3 @@
-
 package com.itbank.simpleboard.entity;
 
 import lombok.AccessLevel;
@@ -47,17 +46,17 @@ public class Lecture {
     @Column(name = "lecture_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private Lecture_Type type;
-    
+
     // 교수번호
     // 연관관계 만들어라
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_idx", nullable = false)
     private Professor professor;
-    
+
     // 최대 인원수
     @Column(name = "max_count")
     private Integer maxCount;
-    
+
     // 현재 수강자 수 
     @Column(name = "current_count")
     private Integer currentCount;
@@ -73,7 +72,7 @@ public class Lecture {
     // 강의 계획서
     @Column(name = "lecture_plan")
     private String plan;
-    
+
     // 학과번호 연관관계
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "major_idx")
@@ -83,7 +82,7 @@ public class Lecture {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lecture_room")
     private LectureRoom lectureRoom;
-    
+
     // 수강 평가 열람 상태
     @Column(name = "evaluation_visible")
     @Enumerated(EnumType.STRING)
@@ -130,5 +129,4 @@ public class Lecture {
         this.visible = YesOrNo.N;
         this.abolition = YesOrNo.N;
     }
-
 }

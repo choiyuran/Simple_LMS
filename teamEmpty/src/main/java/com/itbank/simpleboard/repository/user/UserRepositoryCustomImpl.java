@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.user;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.QManager;
 import com.itbank.simpleboard.entity.QStudent;
+import com.itbank.simpleboard.entity.YesOrNo;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,10 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                                 professor.major.abolition).as("major"),
                         professor.hireDate.as("hireDate")))
                 .from(professor)
-                .where(professor.user.idx.eq(user.getIdx()))
+                .where(
+                        professor.user.idx.eq(user.getIdx()),
+                        professor.leave.eq(YesOrNo.valueOf("N"))
+                )
                 .fetchOne();
     }
 
@@ -90,7 +94,9 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                         QManager.manager.manager_img.as("img"),
                         QManager.manager.hireDate.as("hire_date")))
                 .from(QManager.manager)
-                .where(QManager.manager.user.idx.eq(user.getIdx()))
+                .where(
+                        QManager.manager.user.idx.eq(user.getIdx()),
+                        QManager.manager.leave.eq(YesOrNo.valueOf("N")))
                 .fetchOne();
     }
 }
