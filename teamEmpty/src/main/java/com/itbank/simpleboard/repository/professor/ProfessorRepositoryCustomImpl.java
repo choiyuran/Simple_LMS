@@ -165,24 +165,52 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     @Override
     public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
+//        return queryFactory
+//                .select(Projections.fields(EnrollmentDto.class,
+//                        QEnrollment.enrollment.student.idx.as("student_idx"),
+//                        QEnrollment.enrollment.student.student_num.as("student_num"),
+//                        QEnrollment.enrollment.student.user.user_name.as("student_name"),
+//                        QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
+//                        QEnrollment.enrollment.lecture.name.as("lecture_name"),
+//                        ExpressionUtils
+//                                .as(JPAExpressions
+//                                        .select(QGrade.grade.idx)
+//                                        .from(QGrade.grade)
+//                                        .where(
+//                                                QGrade.grade.student.eq(QEnrollment.enrollment.student)
+//                                                        .and(QGrade.grade.lecture.eq(QEnrollment.enrollment.lecture))
+//                                        )
+//                                        .exists(), "hasGrade")))
+//                .from(QEnrollment.enrollment)
+//                .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
+//                .fetch();
+        return null;
+    }
+
+    @Override
+    public List<ProfessorListDto> selectAll() {
         return queryFactory
-                .select(Projections.fields(EnrollmentDto.class,
-                        QEnrollment.enrollment.student.idx.as("student_idx"),
-                        QEnrollment.enrollment.student.student_num.as("student_num"),
-                        QEnrollment.enrollment.student.user.user_name.as("student_name"),
-                        QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
-                        QEnrollment.enrollment.lecture.name.as("lecture_name"),
-                        ExpressionUtils
-                                .as(JPAExpressions
-                                        .select(QGrade.grade.idx)
-                                        .from(QGrade.grade)
-                                        .where(
-                                                QGrade.grade.student.eq(QEnrollment.enrollment.student)
-                                                        .and(QGrade.grade.lecture.eq(QEnrollment.enrollment.lecture))
-                                        )
-                                        .exists(), "hasGrade")))
-                .from(QEnrollment.enrollment)
-                .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
+                .select(new QProfessorListDto(
+//                        Projections.bean(ProfessorListDto.class,
+                        QProfessor.professor.professor_idx,
+                        QProfessor.professor.professor_img,
+                        QProfessor.professor.hireDate,
+                        QUser.user.user_name,
+                        QUser.user.user_id,
+                        QUser.user.address,
+                        QUser.user.pnum,
+                        QUser.user.email,
+                        QMajor.major.idx,
+                        QMajor.major.name
+                )).from(QProfessor.professor)
+                .join(QProfessor.professor.user, QUser.user)
+                .join(QProfessor.professor.major, QMajor.major)
                 .fetch();
+
+    }
+
+    @Override
+    public List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name) {
+        return null;
     }
 }

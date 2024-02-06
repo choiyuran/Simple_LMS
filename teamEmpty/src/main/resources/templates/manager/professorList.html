@@ -1,11 +1,69 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<!-- 교수 리스트 -->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:insert="layout/header :: head">
 </head>
+
 <body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>교수 명단</h2>
+    <hr>
+    <form th:action="@{/manager/professorList}" class="form-inline">
+        <div class="form-group">
+            <label>학과명</label>
+            <select class="form-control" id="major_idx" name="major_idx">
+                <option value="">학과를 선택하세요.</option>
+                <option th:each="row : ${majorList}"
+                        th:text="${row.name}"
+                        th:value="${row.idx}">
+                </option>
+            </select>
+        </div>
+
+        <!-- 이름으로 검색할 수 있는 검색창 추가 -->
+        <div class="form-group ml-4 mr-2">
+            <label>이름</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="교수명을 입력하세요">
+        </div>
+
+        <button class="btn btn-primary">검색</button>
+    </form>
+    <br>
+    <table class="table table-bordered">
+        <tr>
+            <th>이름</th>
+            <th>학과</th>
+            <th>연락처</th>
+            <th>입사일</th>
+        </tr>
+
+        <tr th:each="row : ${professorList}">
+            <td th:text="${row.name}"></td>
+            <td th:text="${row.major_name}"></td>
+            <td th:text="${row.pnum}"></td>
+            <td th:text="${row.hireDate}"></td>
+            <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${row.idx})}">수정</a></button></td>
+            <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${row.idx})}">삭제</a></button></td>
+        </tr>
+
+    </table>
+    <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
+<!--    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(majorName) or !#strings.isEmpty(collegeIdx)}"><a href="/manager/majorList">목록으로</a></button>-->
+</div>3
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function confirmDelete(event) {
+        var result = confirm("정말 삭제하시겠습니까?");
+        if (result) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
+
+
 
 </body>
 </html>

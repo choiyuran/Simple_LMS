@@ -302,7 +302,6 @@ public class ManagerController {
     public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
                                   @RequestParam(value = "majorName", required = false) String majorName) {
         ModelAndView mav = new ModelAndView("manager/majorList");
-        log.info("collegeIdx: " + collegeIdx + ", majorName: " + majorName);
         List<Major> list;
 
         // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
@@ -483,6 +482,42 @@ public class ManagerController {
         return "redirect:/manager/studentSituation";
     }
 
+//    @GetMapping("/professorList")           // 교수 목록 조회
+//    public ModelAndView professorList() {
+//        ModelAndView mav = new ModelAndView("manager/professorList");
+//        List<ProfessorListDto> professorList = professorService.selectAll();
+//        List<Major> majorList = managerService.selectAllMajor();
+//        mav.addObject("majorList", majorList);
+//        mav.addObject("professorList", professorList);
+//        return mav;
+//    }
+
+    @GetMapping("/professorList")           // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
+    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
+                                      @RequestParam(value = "name", required = false) String name) {
+        ModelAndView mav = new ModelAndView("manager/professorList");
+        List<ProfessorListDto> list = null;
+        // 학과명과 교수명 둘 다 있는 경우
+        if(major_idx != null && name != null && !name.isEmpty()) {
+            list = managerService.findAllByMajorAndProfessor(major_idx, name);
+        }
+        else if(major_idx != null) {
+//            list = ;
+        }
+        else if(name != null && !name.isEmpty()) {
+//            list =;
+        }
+        else {
+            list = professorService.selectAll();
+        }
+
+        List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject("majorList", majorList);
+        mav.addObject("professorList", list);
+        mav.addObject("major_idx", major_idx);
+        mav.addObject("name", name);
+        return mav;
+    }
 
     @GetMapping("/managerModify")   // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {

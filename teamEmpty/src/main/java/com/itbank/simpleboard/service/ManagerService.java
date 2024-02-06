@@ -136,7 +136,6 @@ public class ManagerService {
                param.getType(),
                professor,
                param.getMax_count(),
-               param.getCurrent_count(),
                param.getSemester(),
                param.getGrade(),
                major,
@@ -194,7 +193,6 @@ public class ManagerService {
         lecture.setType(param.getType());
         lecture.setProfessor(professor);
         lecture.setMaxCount(param.getMax_count());
-        lecture.setCurrentCount(param.getCurrent_count());
         lecture.setSemester(param.getSemester());
         lecture.setGrade(param.getGrade());
         lecture.setMajor(major);
@@ -419,6 +417,10 @@ public class ManagerService {
             // 변환 실패 시에는 예외를 처리하거나 null을 반환합니다.
             return null;
         }
+    }
+
+    public List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name) {
+        return professorRepository.findAllByMajorAndProfessor(majorIdx, name);
     }
 }
 

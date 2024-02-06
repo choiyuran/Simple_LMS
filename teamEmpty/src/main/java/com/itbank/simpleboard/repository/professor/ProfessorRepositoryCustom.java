@@ -14,4 +14,8 @@ public interface ProfessorRepositoryCustom {
     List<EvaluateFormDto> getMyEvaluation(Long idx);
 
     List<EnrollmentDto> getEnrollmentList(Long lectureIdx);
+
+    List<ProfessorListDto> selectAll();
+
+    List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name);
 }

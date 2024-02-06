@@ -28,8 +28,8 @@ public class GradeService {
         if (studentById.isPresent() && lectureById.isPresent()) {
             Student student = studentById.get();
             Lecture lecture = lectureById.get();
-            Grade grade = new Grade(student, lecture, score);
-            gradeRepository.save(grade);
+//            Grade grade = new Grade(student, lecture, score);
+//            gradeRepository.save(grade);
             row = 1;
         }
         return row;

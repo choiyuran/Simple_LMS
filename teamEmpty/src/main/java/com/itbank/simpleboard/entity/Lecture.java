@@ -94,7 +94,12 @@ public class Lecture {
     @Enumerated(EnumType.STRING)
     private YesOrNo abolition;
 
-    public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom) {
+    @PrePersist
+    public void prePersist() {
+        this.currentCount = 0;
+    }
+
+    public Lecture(String name, String intro, Integer credit, String day, String start, String end, Lecture_Type type, Professor professor, Integer maxCount, String semester, Integer grade, String plan, Major major, LectureRoom lectureRoom) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;
@@ -104,7 +109,6 @@ public class Lecture {
         this.type = type;
         this.professor = professor;
         this.maxCount = maxCount;
-        this.currentCount = currentCount;
         this.semester = semester;
         this.grade = grade;
         this.plan = plan;
@@ -114,14 +118,13 @@ public class Lecture {
         this.abolition = YesOrNo.N;
     }
 
-    public Lecture(String name, String intro, Integer credit, Lecture_Type type, Professor professor, Integer maxCount, Integer currentCount, String semester, Integer grade, Major major, LectureRoom lectureRoom) {
+    public Lecture(String name, String intro, Integer credit, Lecture_Type type, Professor professor, Integer maxCount, String semester, Integer grade, Major major, LectureRoom lectureRoom) {
         this.name = name;
         this.intro = intro;
         this.credit = credit;
         this.type = type;
         this.professor = professor;
         this.maxCount = maxCount;
-        this.currentCount = currentCount;
         this.semester = semester;
         this.grade = grade;
         this.plan = null;

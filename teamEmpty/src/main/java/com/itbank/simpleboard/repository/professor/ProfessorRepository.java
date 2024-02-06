@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.repository.professor;
 
+import com.itbank.simpleboard.dto.ProfessorListDto;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.entity.User;
