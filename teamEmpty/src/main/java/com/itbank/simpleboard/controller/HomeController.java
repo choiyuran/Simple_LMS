@@ -1,11 +1,13 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.ManagerLoginDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
-import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.FileService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -24,8 +25,8 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
+    private final FileService fileService;
 
     @GetMapping("/")
     public String root() {
@@ -114,7 +115,8 @@ public class HomeController {
         UserDTO user = userService.getUser(user_id, user_pw);
         switch (user.getRole().toString()) {
             case "교수":
-                session.setAttribute("user", userService.getProfessor(user));
+                ProfessorDto professor = userService.getProfessor(user);
+                session.setAttribute("user", professor);
                 url = "redirect:/professor/home";
                 break;
             case "학생":
@@ -122,7 +124,8 @@ public class HomeController {
                 url = "redirect:/student/home";
                 break;
             case "교직원":
-                session.setAttribute("user", userService.getManager(user));
+                ManagerLoginDto manager = userService.getManager(user);
+                session.setAttribute("user", manager);
                 url = "redirect:/manager/home";
                 break;
         }

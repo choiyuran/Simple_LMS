@@ -46,7 +46,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         return queryFactory
                 .select(Projections.bean(ProfessorDto.class,
                         professor.professor_idx,
-                        professor.professor_img,
+                        professor.professor_img.as("img"),
                         Projections.bean(MajorDto.class,
                                 professor.major.idx,
                                 professor.major.name,
@@ -87,7 +87,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
         return queryFactory
                 .select(Projections.bean(ManagerLoginDto.class,
                         QManager.manager.idx,
-                        QManager.manager.manager_img,
+                        QManager.manager.manager_img.as("img"),
                         QManager.manager.hireDate.as("hire_date")))
                 .from(QManager.manager)
                 .where(QManager.manager.user.idx.eq(user.getIdx()))

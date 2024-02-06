@@ -78,4 +78,13 @@ public class AcademicCalendarService {
         // 수정된 학사일정을 저장
         return academicCalendarRepository.save(existingCalendar);
     }
+
+    @Transactional
+    public void deleteCalendar(Long id) {
+
+        AcademicCalendar deleteCalendar = academicCalendarRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("삭제할 학사일정이 존재 하지 않습니다."));
+
+        academicCalendarRepository.delete(deleteCalendar);
+    }
 }

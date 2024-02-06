@@ -13,7 +13,6 @@
 //import java.time.format.DateTimeFormatter;
 //import java.time.LocalDate;
 //import java.time.ZoneId;
-//import java.util.Date;
 //import java.text.ParseException;
 //import java.text.SimpleDateFormat;
 //import java.util.Date;
@@ -96,13 +95,19 @@
 //                em.persist(student2);
 //                em.persist(student3);
 //
-//                Situation situation1 = new Situation(student1, Status_type.재학, new Date(), null);
-//                Situation situation2 = new Situation(student2, Status_type.재학, new Date(), null);
-//                Situation situation3 = new Situation(student3, Status_type.재학, new Date(), null);
+//                Situation situation1 = new Situation(student1, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                Situation situation2 = new Situation(student2, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                Situation situation3 = new Situation(student3, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //
 //                em.persist(situation1);
 //                em.persist(situation2);
 //                em.persist(situation3);
+//
+//                Payments payments2 = new Payments(student2,"2024학년 1학기");
+//                Payments payments3 = new Payments(student3,"2024학년 1학기");
+//
+//                em.persist(payments2);
+//                em.persist(payments3);
 //
 //            } catch (ParseException e) {
 //                throw new RuntimeException(e);
@@ -213,7 +218,18 @@
 //
 //            Lecture lecture9 = new Lecture("마취과학개론", "마취의 기본 원리와 마취 약물에 대해 배웁니다.", 3, "월,화,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 3L), 30, 30, "2024년 1학기", 1, null, em.find(Major.class, 9L), em.find(LectureRoom.class, 3L));
 //            em.persist(lecture9);
+//
+//
+//
+//            Notice notice1 = new Notice("공지사항", "공지사항 내용이에요.");
+//            em.persist(notice1);
+//
+//            Notice notice2 = new Notice("두번째 공지사항", "두번째 공지사항이에요.");
+//            em.persist(notice2);
+//
 //        }
+//
+//
 //
 //
 //    }

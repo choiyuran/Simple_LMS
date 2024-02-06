@@ -53,10 +53,10 @@
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                            data-bs-toggle="dropdown">My</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="/student/studentModify">내 정보수정</a></li>
+                                            <li><a class="dropdown-item" href="/student/situation">내 정보수정</a></li>
                                             <li><a class="dropdown-item" href="/student/enroll">수강신청</a></li>
                                             <li><a class="dropdown-item" href="/student/evaluationList">내 강의평가</a></li>
-                                            <li><a class="dropdown-item" href="#">등록금 납부</a></li>
+                                            <li><a class="dropdown-item" href="/student/paymentTuition">등록금 납부</a></li>
                                             <li><a class="dropdown-item" href="#">수강 신청 내역 조회</a></li>
                                             <li><a class="dropdown-item" href="#">내 성적 조회</a></li>
                                         </ul>
@@ -113,19 +113,15 @@
                                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <th:block th:if="${session.user != null && session.user.img != null}">
-                                                <img class="img-profile rounded-circle" th:src="${session.user.img}" alt="유저 이미지" >
-                                            </th:block>
-                                            <th:block th:unless="${session.user != null && session.user.img != null}">
-                                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg" alt="유저 이미지">
-                                            </th:block>
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" th:if="${session.user != null && session.user.img != null}" th:src="@{'/images/' + ${session.user.img}}">
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg" th:if="${session.user == null || session.user.img == null}">
                                         </a>
                                         <!-- Dropdown - User Information -->
                                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                              aria-labelledby="userDropdown">
                                             <a class="dropdown-item" href="/student/studentModify">
                                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                                내 정보 보기
+                                                내 정보보기
                                             </a>
                                             <a class="dropdown-item" href="#">
                                                 <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -136,8 +132,7 @@
                                                 나의 메뉴
                                             </a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#" data-toggle="modal"
-                                               data-target="#logoutModal">
+                                            <a class="dropdown-item" href="/logout">
                                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 로그아웃
                                             </a>

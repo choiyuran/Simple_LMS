@@ -1,9 +1,7 @@
 package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
-import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Enrollment;
-import com.itbank.simpleboard.entity.Evaluation;
+import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +26,13 @@ public class StudentController {
     private final StudentService studentService;
     private final EvaluationService evaluationService;
     private final AcademicCalendarService academicCalendarService;
-
+    private final SituationService situationService;
+    private final PaymentsService paymentsService;
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
 
-        ModelAndView mav = new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("student/home");
         StudentDto student = (StudentDto) session.getAttribute("user");
         if (student == null) {
             mav.addObject("msg", "로그인하세요!");
@@ -89,7 +88,7 @@ public class StudentController {
     @PostMapping("/enroll")
     public ModelAndView enrollPro(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         long startTime = System.currentTimeMillis();
-        ModelAndView mav = new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("student/home");
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
         if (studentDto == null) {
             // 로그인 안되어 있으면 로그인 화면으로 이거는 인터셉터에서 처리도 가능하다.
@@ -131,7 +130,7 @@ public class StudentController {
 
 
     @PostMapping("/studentModify/{idx}") // 내 정보 수정
-    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session) {
+    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session,RedirectAttributes ra) {
         UserDTO user = studentService.userUpdate(idx, param);
         StudentDto dto = (StudentDto) session.getAttribute("user");
         dto.getUser().setPnum(user.getPnum());
@@ -139,17 +138,17 @@ public class StudentController {
         dto.getUser().setEmail(user.getEmail());
 
         session.setAttribute("user",dto);
+        ra.addFlashAttribute("msg","회원수정 완료");
 
         return "redirect:/student/studentModify";
     }
 
-    @GetMapping("/evaluationList")
+    @GetMapping("/evaluationList")              // 강의 평가 목록
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();
-        ModelAndView mav = new ModelAndView("/home");
+        ModelAndView mav = new ModelAndView("student/home");
 
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
-        System.err.println("studentDto : " + studentDto);
         if (studentDto != null) {
             List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
 
@@ -166,7 +165,7 @@ public class StudentController {
         return mav;
     }
 
-    @GetMapping("/evaluate/{idx}")
+    @GetMapping("/evaluate/{idx}")              // 강의 평가지 페이지로 이동
     public ModelAndView evaluateView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("student/registerLectureEvaluationStu");
         EvaluationDto dto = evaluationService.findByIdx(idx);
@@ -174,9 +173,9 @@ public class StudentController {
         return mav;
     }
 
-    @PostMapping("/evaluate/{idx}")
+    @PostMapping("/evaluate/{idx}")                 // 강의 평가 등록
     public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
-        ModelAndView mav = new ModelAndView("/home");
+        ModelAndView mav = new ModelAndView("student/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
         if (evaluation != null) {
             mav.addObject("msg", "평가 등록 완료");
@@ -199,9 +198,101 @@ public class StudentController {
         }
     }
 
-    @PostMapping("email-verification")
+    @GetMapping("situation")
+    public ModelAndView mySituation(HttpSession session) {
+        Object o = session.getAttribute("user");
+        ModelAndView mav = new ModelAndView("student/mysituation");
+        if(!(o instanceof StudentDto)){
+            mav.setViewName("redirect:/");
+        }
+        return mav;
+    }
+
+    @PostMapping("email-verification")                      // 이메일 인증
     @ResponseBody
     public Integer SendVerificationCode(String email){
         return studentService.sendAuthNumber(email);
+    }
+
+    @PostMapping("genersitu")                               // 일반 휴학
+    public String generSitu(HttpSession session, SituationChageDto dto, RedirectAttributes ra) {
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            StudentDto studentDto = (StudentDto)o;
+            dto.setStudent(studentDto.getIdx());
+            dto.setStatus(Status_type.일반휴학신청);
+            Situation chageSituation = situationService.updateSitu(dto);
+            System.err.println("dto : " + dto);
+            if(chageSituation != null){
+                ra.addFlashAttribute("msg", "일반 휴학 신청 완료");
+            }else{
+                ra.addFlashAttribute("msg", "일반 휴학 신청 실패");
+            }
+            return "redirect:/student/situation";
+        }else{
+            ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            session.invalidate();
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("armysitu")                             // 군 휴학 신청
+    public String armySitu(HttpSession session, SituationChageDto dto,RedirectAttributes ra) {
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            StudentDto studentDto = (StudentDto)o;
+            dto.setStudent(studentDto.getIdx());
+            dto.setStatus(Status_type.군휴학신청);
+            System.err.println("dto : " + dto);
+            Situation chageSituation = situationService.updateSitu(dto);
+            if(chageSituation != null){
+                ra.addFlashAttribute("msg", "군 휴학 신청 완료");
+            }else{
+                ra.addFlashAttribute("msg", "군 휴학 신청 실패");
+            }
+            return "redirect:/student/situation";
+        }else{
+            ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            session.invalidate();
+            return "redirect:/";
+        }
+    }
+
+    @PostMapping("return") // 복학신청
+    public String returnSitu(HttpSession session,SituationChageDto dto,RedirectAttributes ra) {
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            StudentDto studentDto = (StudentDto)o;
+            dto.setStudent(studentDto.getIdx());
+            dto.setStatus(Status_type.복학신청);
+            Situation chageSituation = situationService.updateSitu(dto);
+            if(chageSituation != null){
+                ra.addFlashAttribute("msg","복학 신청 완료");
+            }else{
+                ra.addFlashAttribute("msg", "복학 신청 실패");
+            }
+            return "redirect:/student/situation";
+        }else{
+            ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            session.invalidate();
+            return "redirect:/";
+        }
+    }
+
+    @GetMapping("/paymentTuition")
+    public String paymentTuition() {
+        return "student/paymentTuition";
+    }
+
+    @PostMapping("/paymentTuition")
+    public String paymentTuitionPro(PaymentsDto dto, RedirectAttributes ra) {
+        Payments payments = paymentsService.save(dto);
+
+        if(payments != null){
+            ra.addFlashAttribute("msg","등록금 납부 완료");
+            return "redirect:/student/home";
+        }
+        ra.addFlashAttribute("msg", "등록금 납부 실패");
+        return "redirect:/student/paymentTuition";
     }
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--강의 리스트-->
-<head th:insert="layout/header :: head">
+<head th:insert="layout/studentHeader :: head">
     <style>
         .flex {
             display: flex;
@@ -12,7 +12,7 @@
             margin-right: 10px;
             padding: 5px;
             border: 1px solid #999;
-            font-family: 'Nanumgothic';
+            font-family: 'Nanumgothic',serif;
             border-radius: 3px;
         }
 
@@ -26,72 +26,144 @@
     </style>
 </head>
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/studentHeader :: header"></header>
 
 <main>
     <div class="container mt-3">
-        <h2>강의정보</h2>
+        <h2>내 상태변경</h2>
         <hr>
-        <div class="selectBox flex">
-            <form action="" method="POST">
-                <select name="as3d" id="asad">
-                    <option value="0"> 단과대학</option>
-                    <option value="인문">인문</option>
-                    <option value="사회">사회</option>
-                </select>
-                <select name="as2d" id="asdd">
-                    <option value="0"> 학년</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                </select>
-                <select name="as1d" id="asfd">
-                    <option value="0"> 학기</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                </select>
-                <input type="submit" value="검색">
-            </form>
+        <div class="d-flex justify-content-between row">
+            <div class="card" style="width:300px">
+                <img class="card-img-top" src="/img/situation1.jpg" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">복학 신청</h4>
+                    <p class="card-text">복학을 신청할 수 있습니다.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1">복학신청</button>
+                </div>
+            </div>
+            <div class="card" style="width:300px">
+                <img class="card-img-top" src="/img/situation2.jpg" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">군 휴학</h4>
+                    <p class="card-text">군 입대 사유로 휴학을 신청합니다.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">군 휴학신청</button>
+                </div>
+            </div>
+            <div class="card" style="width:300px">
+                <img class="card-img-top" src="/img/situation3.jpg" alt="Card image" style="width:100%">
+                <div class="card-body">
+                    <h4 class="card-title">일반 휴학</h4>
+                    <p class="card-text">일반 사유로 휴학을 신청합니다.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal2">일반 휴학신청</button>
+                </div>
+            </div>
         </div>
-
-
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th>강의명</th>
-                <th>강사</th>
-                <th>학년</th>
-                <th>학기</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- <tr th:each="row : ${dataList}">
-                <td th:text="${row.field1}">유아교육개론</td>
-                <td th:text="${row.field2}">박소은</td>
-                <td th:text="${row.field2}">1학기</td>
-             </tr> -->
-            <tr>
-                <td>보건과건강</td>
-                <td>Doe</td>
-                <td>1학년</td>
-                <td>2학기</td>
-            </tr>
-            <tr>
-                <td>유아체육</td>
-                <td>Doe</td>
-                <td>2학년</td>
-                <td>2학기</td>
-            </tr>
-            <tr>
-                <td>아동생태미술</td>
-                <td>Doe</td>
-                <td>1학년</td>
-                <td>2학기</td>
-            </tr>
-            </tbody>
-        </table>
     </div>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">군 휴학신청</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form method="post" action="/student/armysitu">
+                        <div class="form-group">
+                            <label for="start_date">휴학 시작일</label>
+                            <input type="date"  name="start_date" id="start_date" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date">휴학 종료 예정일</label>
+                            <input type="date"  name="end_date" id="end_date" required class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">휴학신청</button>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">복학신청</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form method="post" action="/student/return">
+                        <div class="form-group">
+                            <label for="start_date3">복학일</label>
+                            <input type="date" name="start_date" id="start_date3" required class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">복학신청</button>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">일반 휴학신청</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form method="post" action="/student/genersitu">
+                        <div class="form-group">
+                            <label for="start_date2">휴학 시작일</label>
+                            <input type="date" name="start_date" id="start_date2" required class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="end_date2">휴학 종료 예정일</label>
+                            <input type="date" name="end_date" id="end_date2" required class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-primary">휴학신청</button>
+                    </form>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
 </main>
 
-<footer th:insert="layout/header :: footer"></footer> <!-- footer 부분 수정 -->
+<footer th:insert="layout/studentHeader :: footer"></footer> <!-- footer 부분 수정 -->
 </body>
 </html>

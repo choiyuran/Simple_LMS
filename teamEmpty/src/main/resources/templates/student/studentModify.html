@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/studentHeader :: head">
 
 </head>
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-4">
     <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user.user.getIdx()})}">
         <div class="w-50 m-auto">
@@ -40,11 +40,11 @@
             <div class="form-group row">
                 <div class="col-sm-8 mb-3 mb-sm-0">
                     <input type="email" class="form-control form-control-user"
-                           id="exampleInputEmail" placeholder="Email" name="email" required>
+                           id="exampleInputEmail" placeholder="Email" name="email" th:value="${session.user.user.email}" required>
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-primary btn-user btn-block"
-                            id="email_validation" disabled>인증하기
+                            id="email_validation">인증하기
                     </button>
                 </div>
             </div>
@@ -63,7 +63,7 @@
             </div>
 
             <div class="w-50 m-auto">
-                <button type="submit" id="btn-student-modify" class="btn btn-warning" style="margin-right: 10px;" disabled>수정</button>
+                <button type="submit" id="btn-student-modify" class="btn btn-warning" style="margin-right: 10px;">수정</button>
                 <button type="button" class="btn btn-outline-secondary">취소</button>
             </div>
         </div>
@@ -79,14 +79,19 @@
             <div class="form-group row d-flex flex-wrap">
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleInputPassword" placeholder="패스워드" required>
+                           id="previous" placeholder="기존 패스워드" required>
+                </div>
+
+                <div class="col-sm-12 mb-3 ">
+                    <input type="password" class="form-control form-control-user"
+                           id="exampleInputPassword" placeholder="변경할 패스워드" required>
                     <span class="my-1" id="passwordHelp"></span>
                 </div>
 
                 <!-- 패스워드 확인 입력란 -->
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleRepeatPassword" name="repeatPassword" placeholder="패스워드 확인" required>
+                           id="exampleRepeatPassword" name="repeatPassword" placeholder="변경할 패스워드 확인" required>
                     <span class="my-1" id="passwordConfirmHelp"></span>
                 </div>
 
@@ -98,7 +103,7 @@
         </form>
     </div>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/studentHeader :: footer"></footer>
 
 <script>
     window.onload = function () {
@@ -155,16 +160,10 @@
             }
         });
 
-        // 수정 버튼 클릭 시 이벤트 처리
-        document.getElementById('btn-student-modify').addEventListener('click', function () {
-            // 수정 로직 추가
-            alert('수정 버튼이 클릭되었습니다.');
-        });
 
         // 취소 버튼 클릭 시 이벤트 처리
         document.querySelector('.btn-outline-secondary').addEventListener('click', function () {
-            // 취소 로직 추가
-            alert('취소 버튼이 클릭되었습니다.');
+
             history.go(-1);
         });
 
@@ -232,7 +231,3 @@
 
 </body>
 </html>
-
-
-
-

@@ -2,8 +2,10 @@ package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,7 +42,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         lecture.grade,
                         lecture.abolition.stringValue(),
                         lecture.professor.professor_idx,
-                        QUser.user.user_name,
+                        QUser.user.user_name.as("professor_name"),
                         lecture.plan,
                         QMajor.major.name,
                         QCollege.college.location,
@@ -53,13 +55,11 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
                 .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
                 .where(
-                        QMajor.major.abolition.eq(YesOrNo.valueOf("N")),
-                        nameContain(condition.getName()),
+                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
                         typeEq(condition.getType()),
                         yearEq(condition.getYear()),
                         semesterEq(condition.getSemester()),
                         gradeEq(condition.getGrade()),
-                        professorContain(condition.getProfessor()),
                         majorEq(condition.getMajor()),
                         professor_idxEq(condition.getProfessor_idx())
                 )
@@ -102,8 +102,12 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetchOne();
     }
 
-    private BooleanExpression nameContain(String name) {
-        return StringUtils.hasText(name) ? lecture.name.contains(name) : null;
+    private BooleanExpression nameOrProfessorContain(String name) {
+        if (StringUtils.hasText(name)) {
+            return lecture.name.contains(name)
+                    .or(QUser.user.user_name.contains(name));
+        }
+        return null;
     }
 
     private BooleanExpression typeEq(String type) {
@@ -120,10 +124,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     private BooleanExpression gradeEq(Integer grade) {
         return grade != null ? lecture.grade.eq(grade) : null;
-    }
-
-    private BooleanExpression professorContain(String professor) {
-        return StringUtils.hasText(professor) ? QUser.user.user_name.contains(professor) : null;
     }
 
     private BooleanExpression majorEq(String major) {
@@ -164,19 +164,25 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<EnrollmentDto> getEnrollmentList(Long professorIdx) {
+    public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
         return queryFactory
                 .select(Projections.fields(EnrollmentDto.class,
                         QEnrollment.enrollment.student.idx.as("student_idx"),
+                        QEnrollment.enrollment.student.student_num.as("student_num"),
                         QEnrollment.enrollment.student.user.user_name.as("student_name"),
                         QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
-                        QEnrollment.enrollment.lecture.name.as("lecture_name")))
+                        QEnrollment.enrollment.lecture.name.as("lecture_name"),
+                        ExpressionUtils
+                                .as(JPAExpressions
+                                        .select(QGrade.grade.idx)
+                                        .from(QGrade.grade)
+                                        .where(
+                                                QGrade.grade.student.eq(QEnrollment.enrollment.student)
+                                                        .and(QGrade.grade.lecture.eq(QEnrollment.enrollment.lecture))
+                                        )
+                                        .exists(), "hasGrade")))
                 .from(QEnrollment.enrollment)
-                .leftJoin(QGrade.grade).on(QEnrollment.enrollment.student.eq(QGrade.grade.student).and(QEnrollment.enrollment.lecture.eq(QGrade.grade.lecture)))
-                .where(
-                        QEnrollment.enrollment.lecture.professor.professor_idx.eq(professorIdx),
-                        QGrade.grade.student.isNull().and(QGrade.grade.lecture.isNull())
-                )
+                .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
                 .fetch();
     }
 }

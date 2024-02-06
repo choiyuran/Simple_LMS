@@ -1,8 +1,12 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.dto.EnrollmentDto;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.service.GradeService;
 import com.itbank.simpleboard.service.LectureService;
 import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,6 +33,7 @@ public class ProfessorController {
     private final ProfessorService professorService;
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
+    private final GradeService gradeService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -62,7 +68,7 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
+    @PostMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
     public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
@@ -113,11 +119,11 @@ public class ProfessorController {
     }
 
     @ResponseBody
-    @PutMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
+    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
     public ResponseEntity<List<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
         long startTime = System.currentTimeMillis();
 
-        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("professor")).getProfessor_idx());
+        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("user")).getProfessor_idx());
         List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
 
         long endTime = System.currentTimeMillis();
@@ -179,17 +185,29 @@ public class ProfessorController {
         return null;
     }
 
-    @GetMapping("/enterGrade")
-    public String enterGrade(HttpSession session, Model model) {
-        Object user = session.getAttribute("user");
-        if (user instanceof ProfessorDto) {
-            ProfessorDto professor = (ProfessorDto) user;
-            List<EnrollmentDto> enrollment = professorService.getEnrollmentList(professor.getProfessor_idx());
-            model.addAttribute("enrollment", enrollment);
-            return "professor/enterGrade";
+    @GetMapping("/enrollmentList")  // myLecture에서 성적 기입을 눌렀을 때, 수강생 목록을 보여주는 메서드
+    public ResponseEntity<List<EnrollmentDto>> enterGrade(@RequestParam("lectureIdx") Long lectureIdx) {
+        List<EnrollmentDto> enrollment = professorService.getEnrollmentList(lectureIdx);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(enrollment);
+    }
+
+    @PutMapping("/saveGrade")
+    public @ResponseBody Map<String, Object> saveGrade(@RequestBody Map<String, String> request) {
+        log.info("saveGrade 시작");
+        Map<String, Object> responseData = new HashMap<>();
+        long studentIdx = Long.parseLong(request.get("student_idx"));
+        long lectureIdx = Long.parseLong(request.get("lecture_idx"));
+        int save = gradeService.save(studentIdx, lectureIdx, request.get("score"));
+        if (save != 0) {
+            responseData.put("msg", "성적이 입력되었습니다.");
+            responseData.put("result", save);
         } else {
-            session.invalidate();
-            return "redirect:/";
+            responseData.put("msg", "성적 입력을 실패하였습니다.");
+            responseData.put("result", save);
         }
+        log.info("saveGrade 끝");
+        return responseData;
     }
 }

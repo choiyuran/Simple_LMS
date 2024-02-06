@@ -82,9 +82,9 @@
                                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
                                            role="button">교수</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">전체 강의 조회</a></li>
+                                            <li><a class="dropdown-item" href="/professor/lectureList">전체 강의 조회</a></li>
                                             <li><a class="dropdown-item" href="#">교수 계획서 등록</a></li>
-                                            <li><a class="dropdown-item" href="#">내 강의 조회</a></li>
+                                            <li><a class="dropdown-item" href="/professor/myLecture">내 강의 조회</a></li>
                                             <li><a class="dropdown-item" href="#">강의 평가</a></li>
                                             <li><a class="dropdown-item" href="#">성적 기입</a></li>
                                         </ul>
@@ -113,12 +113,8 @@
                                         <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
                                            href="#" id="userDropdown" role="button">
                                             <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <th:block th:if="${session.user != null && session.user.img != null}">
-                                                <img alt="유저 이미지" class="img-profile rounded-circle" th:src="${session.user.img}" >
-                                            </th:block>
-                                            <th:block th:unless="${session.user != null && session.user.img != null}">
-                                                <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg">
-                                            </th:block>
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" th:if="${session.user != null && session.user.img != null}" th:src="@{'/images/' + ${session.user.img}}">
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg" th:if="${session.user == null || session.user.img == null}">
                                         </a>
                                         <!-- Dropdown - User Information -->
                                         <div aria-labelledby="userDropdown"
@@ -127,7 +123,7 @@
                                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 내 정보 보기
                                             </a>
-                                            <a class="dropdown-item" href="#">
+                                            <a class="dropdown-item" href="/professor/myLecture">
                                                 <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 나의 강의실
                                             </a>
@@ -136,8 +132,7 @@
                                                 나의 메뉴
                                             </a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" data-target="#logoutModal" data-toggle="modal"
-                                               href="/logout">
+                                            <a class="dropdown-item" href="/logout">
                                                 <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 로그아웃
                                             </a>

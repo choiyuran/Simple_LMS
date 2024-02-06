@@ -64,6 +64,9 @@ dependencies {
     implementation 'org.apache.poi:poi:5.2.4' // Apache POI 핵심 모듈
     implementation 'org.apache.poi:poi-ooxml:5.2.4' // Apache POI OOXML 모듈
 
+
+    // 메일
+    implementation 'com.sun.mail:jakarta.mail:1.6.7' // Jakarta Mail dependency
 }
 
 tasks.named('bootBuildImage') {
