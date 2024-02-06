@@ -15,7 +15,7 @@ public interface ProfessorRepositoryCustom {
 
     List<EnrollmentDto> getEnrollmentList(Long lectureIdx);
 
-    List<ProfessorListDto> selectAll();
+    List<ProfessorListDto> searchByMajorAndProfessor(Long majorIdx, String name);
 
-    List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name);
+    ProfessorListDto selectOneProfessor(Long idx);
 }

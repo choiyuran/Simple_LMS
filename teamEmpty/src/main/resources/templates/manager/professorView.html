@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"></header>
+<div class="container mt-3">
+    <h2>교수 상세 정보</h2>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <table class="table table-bordered">
+                <tr>
+                    <th rowspan="4">
+                        <img th:src="${professor.img}" alt="Professor Image" class="img-fluid">
+                    </th>
+                    <td th:text="${professor.name}" th:colspan="2"></td>
+                </tr>
+                <tr>
+                    <td th:text="${professor.userid}" th:colspan="2"></td>
+                </tr>
+                <tr>
+                    <td th:text="${professor.major_name}" th:colspan="2"></td>
+                </tr>
+                <tr>
+                    <td th:text="${professor.email}" th:colspan="2"></td>
+                </tr>
+                <tr>
+                    <th colspan="1">주소</th>
+                    <td th:text="${professor.address}"></td>
+                </tr>
+                <tr>
+                    <th colspan="1">연락처</th>
+                    <td th:text="${professor.pnum}"></td>
+                </tr>
+                <tr>
+                    <th colspan="1">입사일</th>
+                    <td><input th:value="${professor.hireDate}" type="date" name="hireDate"></td>
+
+                </tr>
+            </table>
+            <button class="btn btn-warning"><a th:href="@{'/manager/majorView/' + ${professor.idx}}">수정</a></button>
+            <button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${professor.idx})}">삭제</a></button>
+        </div>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function confirmDelete(event) {
+        var result = confirm("정말 삭제하시겠습니까?");
+        if (result) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
+</body>
+</html>

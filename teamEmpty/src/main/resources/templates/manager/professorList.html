@@ -38,31 +38,21 @@
         </tr>
 
         <tr th:each="row : ${professorList}">
-            <td th:text="${row.name}"></td>
+            <td><a th:href="@{'/manager/professorView/' + ${row.idx}}" th:text="${row.name}"></a></td>
             <td th:text="${row.major_name}"></td>
             <td th:text="${row.pnum}"></td>
             <td th:text="${row.hireDate}"></td>
-            <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${row.idx})}">수정</a></button></td>
-            <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${row.idx})}">삭제</a></button></td>
+
         </tr>
 
+        <tr th:if="${#lists.isEmpty(professorList)}">
+            <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
+        </tr>
     </table>
     <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
-<!--    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(majorName) or !#strings.isEmpty(collegeIdx)}"><a href="/manager/majorList">목록으로</a></button>-->
-</div>3
+    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(major_idx) or !#strings.isEmpty(name)}"><a href="/manager/professorList">목록으로</a></button>
+</div>
 <footer th:insert="layout/header :: footer"></footer>
-
-<script>
-    function confirmDelete(event) {
-        var result = confirm("정말 삭제하시겠습니까?");
-        if (result) {
-
-        } else {
-            event.preventDefault();
-        }
-    }
-</script>
-
 
 
 </body>

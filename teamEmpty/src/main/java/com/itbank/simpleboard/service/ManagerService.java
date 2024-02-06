@@ -418,9 +418,12 @@ public class ManagerService {
             return null;
         }
     }
+    public List<ProfessorListDto> searchByMajorAndProfessor(Long majorIdx, String name) {
+        return professorRepository.searchByMajorAndProfessor(majorIdx, name);
+    }
 
-    public List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name) {
-        return professorRepository.findAllByMajorAndProfessor(majorIdx, name);
+    public ProfessorListDto selectOneProfessor(Long idx) {
+        return professorRepository.selectOneProfessor(idx);
     }
 }
 

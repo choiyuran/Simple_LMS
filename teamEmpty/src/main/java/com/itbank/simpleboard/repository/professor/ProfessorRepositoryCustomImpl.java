@@ -2,6 +2,7 @@ package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -187,11 +188,21 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return null;
     }
 
+
     @Override
-    public List<ProfessorListDto> selectAll() {
+    public List<ProfessorListDto> searchByMajorAndProfessor(Long majorIdx, String name) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (majorIdx != null) {
+            builder.and(QProfessor.professor.major.idx.eq(majorIdx));
+        }
+        if (name != null && !name.isEmpty()) {
+            builder.and(QUser.user.user_name.like("%"+name+"%"));
+        }
+        builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
+
         return queryFactory
                 .select(new QProfessorListDto(
-//                        Projections.bean(ProfessorListDto.class,
                         QProfessor.professor.professor_idx,
                         QProfessor.professor.professor_img,
                         QProfessor.professor.hireDate,
@@ -205,12 +216,28 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 )).from(QProfessor.professor)
                 .join(QProfessor.professor.user, QUser.user)
                 .join(QProfessor.professor.major, QMajor.major)
+                .where(builder)
                 .fetch();
-
     }
 
     @Override
-    public List<ProfessorListDto> findAllByMajorAndProfessor(Long majorIdx, String name) {
-        return null;
+    public ProfessorListDto selectOneProfessor(Long idx) {
+        return queryFactory
+                .select(new QProfessorListDto(
+                        QProfessor.professor.professor_idx,
+                        QProfessor.professor.professor_img,
+                        QProfessor.professor.hireDate,
+                        QUser.user.user_name,
+                        QUser.user.user_id,
+                        QUser.user.address,
+                        QUser.user.pnum,
+                        QUser.user.email,
+                        QMajor.major.idx,
+                        QMajor.major.name
+                )).from(QProfessor.professor)
+                .join(QProfessor.professor.user, QUser.user)
+                .join(QProfessor.professor.major, QMajor.major)
+                .where(QProfessor.professor.professor_idx.eq(idx))
+                .fetchOne();
     }
 }

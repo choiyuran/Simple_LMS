@@ -15,6 +15,5 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long>, Pro
     @Query("SELECT m.name FROM Major m")
     List<String> findAllMajorNames();
 
-    List<Professor> findAllByMajor(Major major);
 
 }

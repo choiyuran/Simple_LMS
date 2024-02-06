@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.dto;
 
 import com.itbank.simpleboard.entity.Major;
+import com.itbank.simpleboard.entity.YesOrNo;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 

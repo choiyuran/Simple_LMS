@@ -44,7 +44,4 @@ public class ProfessorService {
         return professorRepository.getEnrollmentList(lectureIdx);
     }
 
-    public List<ProfessorListDto> selectAll() {
-        return professorRepository.selectAll();
-    }
 }
