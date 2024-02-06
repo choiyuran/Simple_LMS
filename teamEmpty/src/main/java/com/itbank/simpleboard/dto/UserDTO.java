@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.dto;
 
 import com.itbank.simpleboard.entity.User_role;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,6 @@ public class UserDTO {
     private String user_address;
     private String pnum;
     private User_role role;
+
+
 }

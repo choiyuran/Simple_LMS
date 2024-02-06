@@ -1,0 +1,31 @@
+@charset "UTF-8";
+
+body {
+    font-family: 'Arial', sans-serif;
+}
+.tuition_table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+.tuition_th, .tuition_td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+.tuition_th {
+    background-color: #f2f2f2;
+    width: 30%; /* 헤더 너비 조절 */
+}
+.tuition_td {
+    width: 70%; /* 데이터 셀 너비 조절 */
+}
+.title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+.info {
+    margin-bottom: 20px;
+}
