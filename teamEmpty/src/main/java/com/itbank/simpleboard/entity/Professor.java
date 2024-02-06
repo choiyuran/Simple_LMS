@@ -4,11 +4,11 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.Optional;
 
-
+@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@DiscriminatorValue("professor")
 @Data
 public class Professor {
     // 교수 번호
@@ -40,8 +40,5 @@ public class Professor {
         this.major = major;
         this.hireDate = hireDate;
         this.leave = YesOrNo.N;
-
     }
-
-
 }

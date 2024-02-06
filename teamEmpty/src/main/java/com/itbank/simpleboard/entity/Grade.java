@@ -19,23 +19,16 @@ public class Grade {
     @Column(name = "grade_idx")
     private Long idx;
 
-    // 학생번호 (외래키)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_idx")
-    private Student student;
-
-//     강의번호 (외래키)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_idx")
-    private Lecture lecture;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="enrollment_idx")
+    private Enrollment enrollment;
 
     // 학점
     @Column(name = "grade_score")
     private String score;
 
-    public Grade(Student student, Lecture lecture, String score) {
-        this.student = student;
-        this.lecture = lecture;
+    public Grade(Enrollment enrollment, String score) {
+        this.enrollment = enrollment;
         this.score = score;
     }
 }
