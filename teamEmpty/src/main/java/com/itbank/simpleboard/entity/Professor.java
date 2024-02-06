@@ -7,10 +7,8 @@ import java.sql.Date;
 import java.util.Optional;
 
 
-@Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DiscriminatorValue("professor")
 @Data
 public class Professor {
     // 교수 번호
