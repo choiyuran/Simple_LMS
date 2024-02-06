@@ -317,6 +317,7 @@ public class ManagerService {
                 int cellIndex = 0;
                 boolean hasData = false; // 더 이상 읽어들일 데이터가 없는지 확인하기 위한 플래그
 
+                Map<String,Long> majorList = new HashMap<>();
                 while(cellIterator.hasNext()){
                     Cell currentCell = cellIterator.next();  // 현재 셀을 가져오기
 
@@ -376,13 +377,49 @@ public class ManagerService {
                             }
                             break;
                         case 8:
-                            if(currentCell.getCellType() == CellType.NUMERIC){
-                                student.setMajor((long) currentCell.getNumericCellValue());
+                            if(currentCell.getCellType() == CellType.STRING){
+                                List<Major> majors =  majorRepository.findByNameContaining(currentCell.getStringCellValue());
+                                log.info("case 8 majors" + majors.toString());
+
+                                if(!majors.isEmpty()) {
+                                    for (Major m : majors) {
+                                        majorList.put(m.getName(),m.getIdx());
+                                    }
+                                    log.info("majorList" + majorList);
+                                }else{
+                                    majorList.put("학과 정보 없음", 0L);
+                                    log.info("학과 정보 없음 : " + majorList);
+                                }
+                                student.setMajor(majorList);
                             }
                             break;
                         case 9:
-                            if(currentCell.getCellType() == CellType.NUMERIC){
-                                student.setProfessor((long) currentCell.getNumericCellValue());
+                            if(currentCell.getCellType() == CellType.STRING){
+                                String professorName = currentCell.getStringCellValue();
+                                Map<String,Long> professorList = new HashMap<>();
+                                log.info("case 9 majorList :" + majorList);
+
+                                for(Map.Entry<String, Long> map : majorList.entrySet()){
+                                    log.info("case 9 map : " + map.toString());
+
+                                    Optional<List<Professor>> professorsOpt =  professorRepository.findByMajorAndUserUserNameContaining(map.getValue(), professorName);
+                                    if (professorsOpt.isPresent()) {
+                                        List<Professor> professors = professorsOpt.get();
+                                        for (Professor p : professors) {
+                                            String info = "(" + map.getKey() + ") " + p.getUser().getUser_name();
+                                            professorList.put(info, p.getProfessor_idx());
+                                            log.info("else professorList : " + professorList);
+                                        }
+                                    } else {
+                                        professorList.put("교수 정보 없음", 0L);
+                                        log.info("if professorList : " + professorList);
+                                    }
+                                    student.setProfessor(professorList);
+
+
+                                }
+
+
                             }
                             break;
                     }
@@ -392,9 +429,10 @@ public class ManagerService {
                 if(!hasData){
                     break;
                 }
+                majorList.clear();
                 student.setIdx(idx++);
                 studentFormDTOList.add(student);
-                System.err.println("studentFormDTO : "+ student.toString());
+                System.err.println("studentFormDTO : "+ student);
             }
 
         } catch (IOException e) {

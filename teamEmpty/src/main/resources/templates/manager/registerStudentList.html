@@ -25,24 +25,21 @@
                 <th>지도교수번호</th>
                 <th>수정</th>
             </tr>
-            <tr th:each="student, row : ${studentList}">
+            <tr th:each="student : ${studentList}">
                 <td contenteditable="true" data-field="idx" th:text="${student.idx}"></td>
                 <td contenteditable="true" data-field="student_num" th:text="${student.student_num}"></td>
                 <td contenteditable="true" data-field="name" th:text="${student.name}"></td>
-                <td contenteditable="true" data-field="substring" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
-                <td contenteditable="true" data-field="substring" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
+                <td contenteditable="true" data-field="security" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
+                <td contenteditable="true" data-field="pnum" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
                 <td contenteditable="true" data-field="address" th:text="${student.address}"></td>
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
                 <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
-                <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
-                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>
-                <td>
-                    <button class="btn btn-warning" type="button" onclick="saveChanges(${row.index})">수정</button>
-                </td>
+                <!--<td contenteditable="true" data-field="major" th:text="${student.major}"></td>
+                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>-->
             </tr>
         </table>
-        <button id="saveBtn" type="button" onclick="saveAllChanges()">학생 전체 등록</button>
+        <button id="saveBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
     </form>
 
 </div>
@@ -52,62 +49,55 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-   let updatedData = [];
+    function saveStudentList() {
+        const updatedStudents = [];
 
-   function saveChanges(index){
-       console.log('index : ' + index);
-       const formData = new FormData(document.getElementById('studentForm'));
-       const studentData = {};
-       for(const pair of formData.entries()){
-           studentData[pair[0]] = pair[1];
-       }
-       updatedData[index] =studentData;
-       console.log('index : ' + index);
-       console.log('studentData : ' + studentData);
-       // 수정된 데이터를 화면에 업데이트
-       updateScreen();
-   }
+        const tableRows = document.querySelectorAll('table tr');
 
+        tableRows.forEach((row, index) => {
+            if (index > 0) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
+                const student = {
+                    idx: row.querySelector('td[data-field="idx"]').innerText,
+                    student_num: row.querySelector('td[data-field="student_num"]').innerText,
+                    name: row.querySelector('td[data-field="name"]').innerText,
+                    security: row.querySelector('td[data-field="security"]').innerText,
+                    pnum: row.querySelector('td[data-field="pnum"]').innerText,
+                    address: row.querySelector('td[data-field="address"]').innerText,
+                    email: row.querySelector('td[data-field="email"]').innerText,
+                    entranceDate: row.querySelector('td[data-field="entranceDate"]').innerText,
+                    student_grade: row.querySelector('td[data-field="student_grade"]').innerText,
+                    major: row.querySelector('td[data-field="major"]').innerText,
+                    professor: row.querySelector('td[data-field="professor"]').innerText
+                };
+                updatedStudents.push(student);
+            }
+        });
 
-   function saveAllChanges(){
-       sendUpdatedData(updatedData);
-   }
+        console.log('수정된 학생 정보:', updatedStudents);
 
-   function updateScreen(){
-       const tableRows = document.querySelectorAll('table tr');
-       updatedData.forEach(function (studentData, index){
-           const row = tableRows[index +1];// Header row를 제외한 테이블의 첫 번째 row부터 시작
-           for (const field in studentData){
-               const cell = row.querySelector('[data-field="' + field + '"]');
-               console.log('cell : ' + cell)
-               if(cell){
-                   cell.textContent = studentData[field];
-                   console.log('cell.textContent : ' + cell.textContent)
-               }
-           }
-       })
-   }
-
-   function  sendUpdatedData(data){
-       console.log('data : ' +data )
-       fetch('/manager/addStudentList',{
-           method:'POST',
-           headers:{
-               'Content-Type':'application/json'
-           },
-           body:JSON.stringify(data)
-       })
-           .then(response => {
-               if(!response.ok){
-                   throw new Error('데이터 전송에 실패했습니다.');
-               }
-               console.log('수정된 데이터가 성공적으로 서버에 전송되었습니다.');
-           })
-           .catch(error=>{
-               console.error('데이터 전송에 실패했습니다.', error);
-           })
-   }
+        // 사용자에게 수정 내용 확인 다이얼로그 표시
+        if (confirm('수정된 내용을 저장하시겠습니까?')) {
+            fetch('/manager/addStudentList', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedStudents)
+            })
+                .then(data => {
+                    console.log('학생 정보 업데이트 완료:', data);
+                    // 성공적으로 업데이트되었을 때 수행할 작업 추가
+                    alert('학생 정보가 업데이트되었습니다.');
+                })
+                .catch(error => {
+                    console.error('학생 정보 업데이트 실패:', error);
+                    // 실패 시 처리
+                    alert('학생 정보 업데이트에 실패했습니다.');
+                });
+        }
+    }
 
 </script>
+
 </body>
 </html>

@@ -235,7 +235,6 @@
 
 
             // form 내용 확인을 위한 콘솔 코드 추가
-            console.log("폼 내용 확인:");
             console.log("name:",document.getElementById("exampleFirstName").value);
             console.log("userType:", userType);
             console.log("imageFile:", imageFile);
@@ -252,27 +251,11 @@
                 body: formData
             })
                 .then(response => {
-                    /*const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        // 서버 응답이 JSON 형식인 경우
+                    if (response.ok) {
                         return response.json();
-                    } else{
-                        // 서버 응답이 JSON 형식이 아닌 경우
-                        throw new Error('서버 응답이 JSON 형식이 아닙니다.');
-                    }*/
-                    /*if (!response.ok) {
-                        console.log(response.headers)
-                        console.log(response.ok)
-                        console.log(response.url)
-                        console.log(response.statusText)
-                        console.log(response.body)
-                        console.log(response.formData())
-                        console.error('서버 측에서 오류 발생:', response.statusText);
-                        console.error('서버 측에서 오류 발생:', response.status);
-                        throw new Error('Network response was not ok');
-                    }*/
-                    console.log("1차 then")
-                    return response.json(); // 응답을 JSON 형식으로 파싱하여 반환
+                    } else {
+                        throw new Error('서버 응답이 실패했습니다.');
+                    }
                 })
                 .then(data => {
                     if (data.message) {
@@ -300,6 +283,30 @@
                     console.error('폼 등록이 실패하였습니다:', error.message);
                     window.location.href = '/manager/register';
                 });
+                /*.then(response => {
+                    /!*const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        // 서버 응답이 JSON 형식인 경우
+                        return response.json();
+                    } else{
+                        // 서버 응답이 JSON 형식이 아닌 경우
+                        throw new Error('서버 응답이 JSON 형식이 아닙니다.');
+                    }*!/
+                    /!*if (!response.ok) {
+                        console.log(response.headers)
+                        console.log(response.ok)
+                        console.log(response.url)
+                        console.log(response.statusText)
+                        console.log(response.body)
+                        console.log(response.formData())
+                        console.error('서버 측에서 오류 발생:', response.statusText);
+                        console.error('서버 측에서 오류 발생:', response.status);
+                        throw new Error('Network response was not ok');
+                    }*!/
+                    console.log("1차 then")
+                    return response.json(); // 응답을 JSON 형식으로 파싱하여 반환
+                })*/
+
 
         }
     </script>

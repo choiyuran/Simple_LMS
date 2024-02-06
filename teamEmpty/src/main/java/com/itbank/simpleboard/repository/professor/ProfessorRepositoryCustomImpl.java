@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static com.itbank.simpleboard.entity.QLecture.lecture;
 
@@ -185,4 +186,16 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
                 .fetch();
     }
+
+    @Override
+    public List<Professor> findByUserUser_nameContaining(String professorName) {
+        return null;
+    }
+
+    @Override
+    public Optional<List<Professor>> findByMajorAndUserUserNameContaining(Long major, String professorName) {
+        return null;
+    }
+
+
 }
