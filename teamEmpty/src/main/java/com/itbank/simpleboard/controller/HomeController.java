@@ -121,8 +121,12 @@ public class HomeController {
         switch (user.getRole().toString()) {
             case "교수":
                 ProfessorDto professor = userService.getProfessor(user);
-                session.setAttribute("user", professor);
-                url = "redirect:/professor/home";
+                if (professor == null) {
+                    model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                } else {
+                    session.setAttribute("user", professor);
+                    url = "redirect:/professor/home";
+                }
                 break;
             case "학생":
                 StudentDto student = userService.getStudent(user);
@@ -131,8 +135,12 @@ public class HomeController {
                 break;
             case "교직원":
                 ManagerLoginDto manager = userService.getManager(user);
-                session.setAttribute("user", manager);
-                url = "redirect:/manager/home";
+                if (manager == null) {
+                    model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                } else {
+                    session.setAttribute("user", manager);
+                    url = "redirect:/manager/home";
+                }
                 break;
         }
         return url;
