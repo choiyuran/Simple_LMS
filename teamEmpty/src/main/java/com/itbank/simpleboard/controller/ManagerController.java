@@ -286,7 +286,7 @@ public class ManagerController {
     public String registerMajor(MajorDto major) {
         Major addMajor = managerService.addMajor(major);
         if(addMajor != null) {
-            return "/home";
+            return "redirect:/manager/majorList";
         }
         return "manager/registerMajor";
     }
@@ -425,6 +425,7 @@ public class ManagerController {
             return "redirect:/";
         }
     }
+
     @GetMapping("/studentSituation")                // 학생 상태 조회
     public ModelAndView studentSituation(@RequestParam(required = false) String status) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");
