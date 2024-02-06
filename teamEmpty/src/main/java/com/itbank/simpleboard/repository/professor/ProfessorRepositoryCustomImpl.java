@@ -181,7 +181,15 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                                                 QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
                                                         .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
                                         )
-                                        .exists(), "hasGrade")))
+                                        .exists(), "hasGrade"),
+                        ExpressionUtils
+                                .as(JPAExpressions
+                                        .select(QGrade.grade.score)
+                                        .from(QGrade.grade)
+                                        .where(
+                                                QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
+                                                        .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
+                                        ), "score")))
                 .from(QEnrollment.enrollment)
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
                 .orderBy(QEnrollment.enrollment.student.idx.asc())

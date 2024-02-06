@@ -303,7 +303,10 @@
         }
         document.addEventListener('DOMContentLoaded', addEvaluationBtn);
 
+        let currentOpenButton = null;
         function openEnrollmentModal(button) {
+            currentOpenButton = button;
+
             let modalBody = document.querySelector('#enrollmentStuList .modal-body');
             modalBody.innerHTML = '<img src="/img/loading.gif" alt="로딩" style="width: 100%;0">'; // 기존 내용을 지우고 새로운 내용으로 업데이트
 
@@ -340,9 +343,10 @@
                 tableHTML += `<tr id="row_${student_idx}_${lecture_idx}"><td><div><span>${enrollment.student_num}</span></div></td>`;
                 tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
                 if (hasGrade) {
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${enrollment_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: grey;">수정</button></td></tr>`;
+                    let score = enrollment.score;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${enrollment_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" style="background-color: grey;">수정</button></td></tr>`;
                 } else {
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${hasGrade}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
                 }
             });
 
@@ -352,17 +356,41 @@
             modalBody.innerHTML = tableHTML;
         }
 
-        function enterGrade(student_idx, lecture_idx, enrollment_idx) {
+        function enterGrade(student_idx, lecture_idx, enrollment_idx, score) {
             let rowId = `row_${student_idx}_${lecture_idx}`;
             let targetRow = document.getElementById(rowId);
 
             let gradeTr = document.createElement('tr');
-            gradeTr.innerHTML = `<td colspan="3">
-                               <label for="grade">성적:</label>
-                               <input type="number" id="score" name="score" step="0.01" min="0" max="4.5" placeholder="0.00" required>
-                               <button onclick="saveGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')">저장</button>
-                           </td>`;
 
+            const tdElement = document.createElement('td');
+            tdElement.colSpan = 3;
+            tdElement.style.textAlign = "center";
+
+            const labelElement = document.createElement('label');
+            labelElement.textContent = '성적:';
+
+            const inputElement = document.createElement('input');
+            inputElement.type = 'number';
+            inputElement.id = 'score';
+            inputElement.name = 'score';
+            inputElement.step = '0.01';
+            inputElement.min = '0';
+            inputElement.max = '4.5';
+            inputElement.placeholder = '0.00';
+            inputElement.value = score || '';
+            inputElement.required = true;
+            inputElement.style.width = '30%';
+
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = '저장';
+            buttonElement.addEventListener('click', () => saveGrade(student_idx, lecture_idx, enrollment_idx));
+
+            tdElement.appendChild(labelElement);
+            tdElement.appendChild(inputElement);
+            tdElement.appendChild(buttonElement);
+
+            gradeTr.innerHTML = ''; // clear existing content
+            gradeTr.appendChild(tdElement);
             // 기존 행 아래에 새로운 행 추가
             targetRow.parentNode.insertBefore(gradeTr, targetRow.nextSibling);
         }
@@ -390,10 +418,8 @@
                 .then(data => {
                     alert(data.msg);
                     if (data.result == 1) {
-                        let button = `button_${student_idx}_${lecture_idx}`;
-                        let buttonRow = document.getElementById(button);
-                        buttonRow.style.backgroundColor = 'grey';
-                        buttonRow.innerText = '수정'
+                        let button = currentOpenButton; // 현재 열려있는 모달을 열었던 버튼
+                        openEnrollmentModal(button);
                     }
                 })
                 .catch(error => {
