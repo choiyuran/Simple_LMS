@@ -27,6 +27,7 @@ public class Manager {
     private Date hireDate;
 
     @Column(name="manager_leave")
+    @Enumerated(EnumType.STRING)
     private YesOrNo leave;
 
     private Date leaveDate;

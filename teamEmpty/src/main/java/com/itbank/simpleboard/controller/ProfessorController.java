@@ -2,7 +2,6 @@ package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
