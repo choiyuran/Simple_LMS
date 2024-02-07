@@ -99,7 +99,12 @@ public class UserService {
         // 여기서 UserDTO 불러와서 userPw로 비교하고
         UserDTO user = userRepository.getUser(userId);
         // 해쉬처리 이래저래 해서
-        return user;
+        String loginPw = hashComponent.getHash(userPw, user.getSalt());
+        if (user.getUser_pw().equals(loginPw)) {
+            return user;
+        } else {
+            return null;
+        }
     }
 
     public ProfessorDto getProfessor(UserDTO user) {
