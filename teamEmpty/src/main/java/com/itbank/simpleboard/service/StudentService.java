@@ -26,7 +26,7 @@ import java.util.Random;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
-    private final MailComponent mailComponent;
+
     public StudentDto findByUserIdx(Long userIdx) {
         StudentDto dto = new StudentDto();
         Optional<User> user = userRepository.findById(userIdx);
@@ -53,25 +53,6 @@ public class StudentService {
         }
 
         return dto;
-    }
-
-
-
-    @Transactional  // 업데이트 반영 (테이블에 내용이 바꿀때 사용한다)
-    public UserDTO userUpdate(Long userIdx, UserDTO userdto) {   // param에서 idx를 long로 받는다
-        Optional<User> userOptional = userRepository.findById(userIdx);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setPnum(userdto.getPnum());
-            user.setEmail(userdto.getEmail());
-            user.setAddress(userdto.getUser_address());
-            // 여기서 User 엔티티를 UserDTO로 변환하여 반환하도록 구현
-            return getUserDTO(user);
-        } else {
-            // 사용자 정보가 없을 경우 null 또는 예외 처리
-            return null;
-        }
     }
 
     // User 엔티티를 UserDTO로 변환하는 메소드
@@ -127,33 +108,16 @@ public class StudentService {
     }
 
     private static UserDTO getUserDTO(User user) {
-        UserDTO studentUser = new UserDTO();
-        studentUser.setIdx(user.getIdx());
-        studentUser.setUser_name(user.getUser_name());
-        studentUser.setUser_id(user.getUser_id());
-        studentUser.setUser_pw(user.getUser_pw());
-        studentUser.setSalt(user.getSalt());
-        studentUser.setEmail(user.getEmail());
-        studentUser.setUser_address(user.getAddress());
-        studentUser.setPnum(user.getPnum());
-        studentUser.setRole(user.getRole());
-        return studentUser;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setIdx(user.getIdx());
+        userDTO.setUser_name(user.getUser_name());
+        userDTO.setUser_id(user.getUser_id());
+        userDTO.setUser_pw(user.getUser_pw());
+        userDTO.setSalt(user.getSalt());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setUser_address(user.getAddress());
+        userDTO.setPnum(user.getPnum());
+        userDTO.setRole(user.getRole());
+        return userDTO;
     }
-
-    public Integer sendAuthNumber(String email) {
-        Random random = new Random();
-        String authNumber = (random.nextInt(899999) + 100000) + "";
-
-        HashMap<String, String> param = new HashMap<>();
-        param.put("to", email);
-        param.put("subject", "[Centum University]인증번호 입니다");
-        param.put("authCode", authNumber);
-
-        mailComponent.sendVerificationCode(param);
-
-        return Integer.parseInt(authNumber);
-    }
-
-
-
 }

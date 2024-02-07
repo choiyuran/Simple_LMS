@@ -1,14 +1,9 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.EnrollmentDto;
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
-import com.itbank.simpleboard.service.AcademicCalendarService;
-import com.itbank.simpleboard.service.GradeService;
-import com.itbank.simpleboard.service.LectureService;
-import com.itbank.simpleboard.service.ProfessorService;
+import com.itbank.simpleboard.entity.Professor;
+import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -34,6 +30,7 @@ public class ProfessorController {
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
+    private final UserService userService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -180,9 +177,24 @@ public class ProfessorController {
         }
     }
 
-    @PostMapping("/professorModify/{idx}")
-    public String professorModify(@PathVariable("idx") Long idx, HttpSession session) {
-        return null;
+    @ResponseBody
+    @PostMapping("email-verification")                      // 이메일 인증
+    public Integer SendVerificationCode(String email){
+        return userService.sendAuthNumber(email);
+    }
+
+    @PostMapping("/professorModify")
+    public String professorModify(HttpSession session, UserDTO param, RedirectAttributes ra) {
+        ProfessorDto user = (ProfessorDto) session.getAttribute("user");
+        UserDTO userDTO = userService.userUpdate(user.getUser().getIdx(), param);
+        if (userDTO != null) {
+            user.setUser(userDTO);
+            session.setAttribute("user", user);
+            ra.addFlashAttribute("msg","회원수정 완료");
+        } else {
+            ra.addFlashAttribute("msg","회원 정보 수정에 실패하였습니다. 다시 시도해 주세요");
+        }
+        return "redirect:/professor/professorModify";
     }
 
     @GetMapping("/enrollmentList")  // myLecture에서 성적 기입을 눌렀을 때, 수강생 목록을 보여주는 메서드
