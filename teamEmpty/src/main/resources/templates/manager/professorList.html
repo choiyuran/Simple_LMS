@@ -26,6 +26,12 @@
             <input type="text" class="form-control" id="name" name="name" placeholder="교수명을 입력하세요">
         </div>
 
+        <!-- 퇴사 여부 필터 -->
+        <div class="form-check form-check-inline">
+            <input type="hidden" id="hiddenLeave" name="leave" value="false" >
+            <input class="form-check-input" type="checkbox" id="leave" name="leave" th:checked="${map['leave']}" value="true">
+            <label class="form-check-label" for="leave">퇴사자 제외</label>
+        </div>
         <button class="btn btn-primary">검색</button>
     </form>
     <br>
@@ -50,10 +56,14 @@
         </tr>
     </table>
     <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
-    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(major_idx) or !#strings.isEmpty(name)}"><a href="/manager/professorList">목록으로</a></button>
+    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}"><a href="/manager/professorList">목록으로</a></button>
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 
-
+<script>
+    document.getElementById('leave').onchange = function() {
+        document.getElementById('hiddenLeave').name = this.checked ? '' : 'leave';
+    };
+</script>
 </body>
 </html>

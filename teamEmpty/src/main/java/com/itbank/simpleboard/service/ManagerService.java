@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -418,12 +419,36 @@ public class ManagerService {
             return null;
         }
     }
-    public List<ProfessorListDto> searchByMajorAndProfessor(Long majorIdx, String name) {
-        return professorRepository.searchByMajorAndProfessor(majorIdx, name);
+    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
+        return professorRepository.searchByMajorAndProfessorAndLeave(map);
+    }
+
+    public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
+        return professorRepository.searchByMajorAndProfessor(map);
     }
 
     public ProfessorListDto selectOneProfessor(Long idx) {
         return professorRepository.selectOneProfessor(idx);
     }
+
+    @Transactional
+    public Professor updateProfessorByManager(Long idx, java.util.Date hireDate) {
+        Professor professor = professorRepository.findById(idx).get();
+        java.util.Date date = hireDate;
+        Date sqlDate = new Date(date.getTime());
+        professor.setHireDate(sqlDate);
+        return professor;
+    }
+
+    @Transactional
+    public Professor professorDel(Long idx) {
+        Professor professor = professorRepository.findById(idx).get();
+        professor.setLeave(YesOrNo.Y);
+        professor.setLeaveDate(Date.valueOf(LocalDate.now()));
+        return professor;
+    }
+
+
+
 }
 

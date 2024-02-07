@@ -6,6 +6,7 @@ import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -484,17 +485,49 @@ public class ManagerController {
 
     @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
     public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
-                                      @RequestParam(value = "name", required = false) String name) {
-        ModelAndView mav = new ModelAndView("manager/professorList");
-        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessor(major_idx, name);
-        List<Major> majorList = managerService.selectAllMajor();
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @RequestParam(value = "leave", required = false) Boolean leave) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("major_idx", major_idx);
+        map.put("name", name);
+        map.put("leave", leave);
 
+        List<ProfessorListDto> professorList;
+        if(Boolean.TRUE.equals(leave)) {
+//        if("true".equals(leave)) {
+            professorList = managerService.searchByMajorAndProfessorAndLeave(map);
+        }
+        else {
+            professorList = managerService.searchByMajorAndProfessor(map);
+        }
+
+        ModelAndView mav = new ModelAndView("manager/professorList");
+        List<Major> majorList = managerService.selectAllMajor();
         mav.addObject("majorList", majorList);
         mav.addObject("professorList", professorList);
-        mav.addObject("major_idx", major_idx);
-        mav.addObject("name", name);
+        mav.addObject("map", map);
         return mav;
     }
+
+//    @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
+//    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
+//                                      @RequestParam(value = "name", required = false) String name,
+//                                      @RequestParam(value = "leave", required = false) String leave) {
+//
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("major_idx", major_idx);
+//        map.put("name", name);
+//        map.put("leave", leave);
+//
+//        ModelAndView mav = new ModelAndView("manager/professorList");
+//        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessor(map);
+//        List<Major> majorList = managerService.selectAllMajor();
+//
+//        mav.addObject("majorList", majorList);
+//        mav.addObject("professorList", professorList);
+//        mav.addObject("map", map);
+//        return mav;
+//    }
 
     @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
     public ModelAndView professorView(@PathVariable("idx")Long idx) {
@@ -502,6 +535,22 @@ public class ManagerController {
         ProfessorListDto professor = managerService.selectOneProfessor(idx);
         mav.addObject("professor", professor);
         return mav;
+    }
+
+    @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정 - 입사일
+    public String professorUpdateByManager(@PathVariable("idx") Long idx,
+                                           @RequestParam("hireDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date hireDate) {
+        Professor professor = managerService.updateProfessorByManager(idx, hireDate);
+        if(professor != null) {
+            return "redirect:/manager/professorList";
+        }
+        return "redirect:/manager/professorView/" + idx;
+    }
+
+    @GetMapping("/professorDel/{idx}")              // 교수 삭제
+    public String professorDel(@PathVariable("idx") Long idx) {
+        Professor professor = managerService.professorDel(idx);
+        return "redirect:/manager/professorList";
     }
 
     @GetMapping("/managerModify")   // 교직원 개인 정보 수정

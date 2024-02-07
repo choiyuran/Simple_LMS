@@ -32,6 +32,7 @@ public class Professor {
     private Date hireDate;
 
     @Column(name="professor_leave")
+    @Enumerated(EnumType.STRING)
     private YesOrNo leave;
 
     private Date leaveDate;
@@ -42,7 +43,6 @@ public class Professor {
         this.major = major;
         this.hireDate = hireDate;
         this.leave = YesOrNo.N;
-
     }
 
 

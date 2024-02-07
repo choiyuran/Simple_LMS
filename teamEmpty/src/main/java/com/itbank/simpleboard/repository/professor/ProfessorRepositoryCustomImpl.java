@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.itbank.simpleboard.entity.QLecture.lecture;
@@ -188,9 +189,10 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return null;
     }
 
-
     @Override
-    public List<ProfessorListDto> searchByMajorAndProfessor(Long majorIdx, String name) {
+    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
+        Long majorIdx = (Long)map.get("major_idx");
+        String name = (String)map.get("name");
         BooleanBuilder builder = new BooleanBuilder();
 
         if (majorIdx != null) {
@@ -200,6 +202,40 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
             builder.and(QUser.user.user_name.like("%"+name+"%"));
         }
         builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
+
+        return queryFactory
+                .select(new QProfessorListDto(
+                        QProfessor.professor.professor_idx,
+                        QProfessor.professor.professor_img,
+                        QProfessor.professor.hireDate,
+                        QUser.user.user_name,
+                        QUser.user.user_id,
+                        QUser.user.address,
+                        QUser.user.pnum,
+                        QUser.user.email,
+                        QMajor.major.idx,
+                        QMajor.major.name
+                )).from(QProfessor.professor)
+                .join(QProfessor.professor.user, QUser.user)
+                .join(QProfessor.professor.major, QMajor.major)
+                .where(builder)
+                .fetch();
+    }
+
+
+    @Override
+    public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
+        Long majorIdx = (Long)map.get("major_idx");
+        String name = (String)map.get("name");
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (majorIdx != null) {
+            builder.and(QProfessor.professor.major.idx.eq(majorIdx));
+        }
+        if (name != null && !name.isEmpty()) {
+            builder.and(QUser.user.user_name.like("%"+name+"%"));
+        }
 
         return queryFactory
                 .select(new QProfessorListDto(
