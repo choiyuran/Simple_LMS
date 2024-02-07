@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="layout/header :: head">
+    <style>
+        .not-found {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
+
 
 <body>
 <header th:insert="layout/header :: header"> </header>
@@ -35,8 +42,8 @@
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
                 <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
-                <!--<td contenteditable="true" data-field="major" th:text="${student.major}"></td>
-                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>-->
+                <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
+                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>
             </tr>
         </table>
         <button id="saveBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
@@ -49,6 +56,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
+    document.querySelectorAll('td[data-field="major"], td[data-field="professor"]').forEach(td => {
+        if (td.innerText.includes('정보없음')) {
+            td.classList.add('not-found');
+        }
+    });
+
+
     function saveStudentList() {
         const updatedStudents = [];
 

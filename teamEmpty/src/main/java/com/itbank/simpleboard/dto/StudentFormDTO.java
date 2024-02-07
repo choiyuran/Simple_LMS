@@ -37,10 +37,10 @@ public class StudentFormDTO {
     private Integer student_grade;
 
     // 학과
-    private Map<String,Long> major;
+    private String major;
 
     // 지도교수
-    private Map<String,Long> professor;
+    private String professor;
 
 
 

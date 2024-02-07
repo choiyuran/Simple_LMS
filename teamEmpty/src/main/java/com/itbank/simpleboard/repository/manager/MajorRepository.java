@@ -16,4 +16,5 @@ public interface MajorRepository extends JpaRepository<Major, Long> {
 
     List<Major> findByCollege(College college);
 
+    Major findByName(String majorName);
 }
