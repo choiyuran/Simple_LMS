@@ -12,8 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/student")
@@ -30,7 +32,7 @@ public class StudentController {
     private final PaymentsService paymentsService;
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
-    private final ScholarShipService scholarShipService;
+    private final ProfessorService professorService;
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
@@ -297,6 +299,31 @@ public class StudentController {
             }
             mav.addObject("tuition", tuition);
             mav.addObject("totalScholarship", totalScholarship);
+            mav.addObject("semester", "2024학년 1학기");
+        }else{
+            session.invalidate();
+            mav.addObject("msg", "다시 학생로그인 하세요");
+            mav.setViewName("/home");
+        }
+        return mav;
+    }
+
+    @GetMapping("/paymentTuition/{idx}")
+    public ModelAndView paymentTuitionByIdx(@PathVariable("idx") Long idx, HttpSession session) {
+        ModelAndView mav = new ModelAndView("student/paymentTuition");
+        Payments payments = paymentsService.findById(idx);
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto && payments != null) {
+            Integer tuition = majorService.getTuition(((StudentDto) o).getIdx());
+            Integer totalScholarship = scholarShipAwardService.getTotalByPayments(payments.getIdx(), ((StudentDto) o).getIdx());
+            if(tuition < totalScholarship) {
+                mav.addObject("totalTuition", 0);
+            }else{
+                mav.addObject("totalTuition", tuition-totalScholarship);
+            }
+            mav.addObject("semester", payments.getSemester());
+            mav.addObject("tuition", tuition);
+            mav.addObject("totalScholarship", totalScholarship);
         }else{
             session.invalidate();
             mav.addObject("msg", "다시 학생로그인 하세요");
@@ -317,4 +344,51 @@ public class StudentController {
         ra.addFlashAttribute("msg", "등록금 납부 실패");
         return "redirect:/student/paymentTuition";
     }
+
+    // 등록금 납부 내역 리스트
+    @GetMapping("/paymentsList")
+    public ModelAndView paymentsList(HttpSession session, RedirectAttributes ra) {
+        ModelAndView mav = new ModelAndView("/student/paymentsList");
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            StudentDto dto = (StudentDto) o;
+            List<PaymentsListDto> dtos = paymentsService.getList(dto.getIdx());
+            System.err.println("Controller:" + dto);
+            mav.addObject("list", dtos);
+        }else{
+            ra.addFlashAttribute("msg", "학생 전용 페이지 입니다.");
+            mav.setViewName("redirect:/");
+        }
+        return mav;
+    }
+
+    @GetMapping("/gradeList")
+    public ModelAndView GradeList(LectureSearchConditionDto condition) {
+        ModelAndView mav = new ModelAndView("/student/gradeList");
+        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
+        // LectureDtoList를 Model에 추가
+        mav.addObject("LectureList", lectureDtoList);
+
+        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
+        mav.addObject("MajorList", lectureDtoList.stream()
+                .map(ProfessorLectureDto::getMajor)
+                .distinct()
+                .collect(Collectors.toList()));
+
+        mav.addObject("GradeList", lectureDtoList.stream()
+                .map(ProfessorLectureDto::getGrade)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList()));
+
+        int currentYear = LocalDate.now().getYear();
+        List<Integer> yearList = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            int year = currentYear - i;
+            yearList.add(year);
+        }
+        mav.addObject("YearList", yearList);
+        return mav;
+    }
+
 }

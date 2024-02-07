@@ -103,18 +103,51 @@
 //                em.persist(situation2);
 //                em.persist(situation3);
 //
-//                Payments payments2 = new Payments(student2,"2024학년 1학기");
-//                Payments payments3 = new Payments(student3,"2024학년 1학기");
 //
+//                Payments payments = new Payments(student1, "2023학년 1학기");
+//                Payments payments2 = new Payments(student2,"2023학년 1학기");
+//                Payments payments3 = new Payments(student3,"2023학년 1학기");
+//
+//                Payments payments4 = new Payments(student1, "2023학년 2학기");
+//                Payments payments5 = new Payments(student2,"2023학년 2학기");
+//                Payments payments6 = new Payments(student3,"2023학년 2학기");
+//
+//                Payments payments7 = new Payments(student1, "2024학년 1학기");
+//                Payments payments8 = new Payments(student2,"2024학년 1학기");
+//                Payments payments9 = new Payments(student3,"2024학년 1학기");
+//
+//                Payments payments10 = new Payments(student1, "2024학년 2학기");
+//                Payments payments11 = new Payments(student2,"2024학년 2학기");
+//                Payments payments12 = new Payments(student3,"2024학년 2학기");
+//
+//
+//                em.persist(payments);
 //                em.persist(payments2);
 //                em.persist(payments3);
+//                em.persist(payments4);
+//                em.persist(payments5);
+//                em.persist(payments6);
+//                em.persist(payments7);
+//                em.persist(payments8);
+//                em.persist(payments9);
+//                em.persist(payments10);
+//                em.persist(payments11);
+//                em.persist(payments12);
 //
-//                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
+//
+//                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
 //                em.persist(scholarship1);
-//                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
+//                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
 //                em.persist(scholarship2);
-//                Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
+//                Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2023, 3);
 //                em.persist(scholarship3);
+//                Scholarship scholarship4 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
+//                em.persist(scholarship4);
+//                Scholarship scholarship5 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
+//                em.persist(scholarship5);
+//                Scholarship scholarship6 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
+//                em.persist(scholarship6);
+//
 //
 //                Scholarship_Award scholarshipAward1 = new Scholarship_Award(student1,scholarship1);
 //                Scholarship_Award scholarshipAward2 = new Scholarship_Award(student1,scholarship2);
@@ -122,6 +155,12 @@
 //                Scholarship_Award scholarshipAward4 = new Scholarship_Award(student2,scholarship1);
 //                Scholarship_Award scholarshipAward5 = new Scholarship_Award(student2,scholarship2);
 //                Scholarship_Award scholarshipAward6 = new Scholarship_Award(student3,scholarship1);
+//                Scholarship_Award scholarshipAward7 = new Scholarship_Award(student1,scholarship4);
+//                Scholarship_Award scholarshipAward8 = new Scholarship_Award(student1,scholarship5);
+//                Scholarship_Award scholarshipAward9 = new Scholarship_Award(student1,scholarship6);
+//                Scholarship_Award scholarshipAward10 = new Scholarship_Award(student2,scholarship4);
+//                Scholarship_Award scholarshipAward11 = new Scholarship_Award(student2,scholarship5);
+//                Scholarship_Award scholarshipAward12 = new Scholarship_Award(student3,scholarship6);
 //
 //                em.persist(scholarshipAward1);
 //                em.persist(scholarshipAward2);
@@ -129,7 +168,12 @@
 //                em.persist(scholarshipAward4);
 //                em.persist(scholarshipAward5);
 //                em.persist(scholarshipAward6);
-//
+//                em.persist(scholarshipAward7);
+//                em.persist(scholarshipAward8);
+//                em.persist(scholarshipAward9);
+//                em.persist(scholarshipAward10);
+//                em.persist(scholarshipAward11);
+//                em.persist(scholarshipAward12);
 //
 //
 //            } catch (ParseException e) {
@@ -246,9 +290,6 @@
 //            em.persist(notice2);
 //
 //        }
-//
-//
-//
 //
 //    }
 //}
