@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"></header>
+<div class="container mt-3">
+    <h2>교수 상세 정보</h2>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" th:action="@{'/manager/studentUpdateByManager/' + ${student.idx}}">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>이름</th>
+                        <td th:text="${student.name}"></td>
+                    </tr>
+                    <tr>
+                        <th>학번</th>
+                        <td th:text="${student.student_num}"></td>
+                    </tr>
+                    <tr>
+                        <th>아이디</th>
+                        <td th:text="${student.userid}"></td>
+                    </tr>
+                    <tr>
+                        <th>학과</th>
+                        <td th:text="${student.major_name}"></td>
+                    </tr>
+                    <tr>
+                        <th>입학일</th>
+                        <td><input th:value="${student.entranceDate}" type="date" name="entranceDate"></td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td th:text="${student.address}"></td>
+                    </tr>
+                    <tr>
+                        <th>연락처</th>
+                        <td th:text="${student.pnum}"></td>
+                    </tr>
+                    <tr>
+                        <th>이메일</th>
+                        <td th:text="${student.email}"></td>
+                    </tr>
+                </table>
+                <button class="btn btn-warning">수정</button>
+            </form>
+        </div>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+</body>
+</html>

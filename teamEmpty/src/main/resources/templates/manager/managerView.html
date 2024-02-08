@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"></header>
+<div class="container mt-3">
+    <h2>교수 상세 정보</h2>
+    <hr>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" th:action="@{'/manager/managerUpdateByManager/' + ${manager.idx}}">
+                <table class="table table-bordered">
+                    <tr>
+                        <th rowspan="4">
+                            <img th:src="${manager.managerImg}" alt="Professor Image" class="img-fluid">
+                        </th>
+                        <td th:text="${manager.managerName}" th:colspan="2">
+                            <span th:if="${manager.leaveDate != null}">(퇴사)</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td th:text="${manager.managerId}" th:colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td th:text="${manager.managerEmail}" th:colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <td th:text="${manager.managerPnum}" th:colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th>주소</th>
+                        <td th:text="${manager.address}" th:colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th>입사일</th>
+                        <td><input th:value="${manager.managerHireDate}" type="date" name="hireDate" th:colspan="2"></td>
+                    </tr>
+                    <tr th:if="${manager.leaveDate != null}">
+                        <th>퇴사일</th>
+                        <td><input th:value="${manager.leaveDate}" type="date" name="leaveDate" th:colspan="2"></td>
+                    </tr>
+                </table>
+                <button class="btn btn-warning">수정</button>
+                <button class="btn btn-danger"><a th:href="@{/manager/managerList}">취소</a></button>
+                <button type="button" class="btn btn-danger" onclick="handleLeave(this)"  data-manager-idx="${manager.idx}">
+                    <a th:if="${manager.leaveDate == null}">퇴사 처리</a></button>
+            </form>
+        </div>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function handleLeave(button) {
+        var managerIdx = button.dataset.managerIdx;
+
+        // 퇴사일 입력 필드 생성
+        var leaveDateInput = document.createElement("input");
+        leaveDateInput.setAttribute("type", "date");
+        leaveDateInput.setAttribute("name", "leaveDate");
+
+        // 완료 버튼 생성
+        var completeButton = document.createElement("button");
+        completeButton.innerHTML = "완료";
+        completeButton.classList.add("btn", "btn-success");
+
+        completeButton.addEventListener("click", function() {
+            var result = confirm("퇴사 처리하시겠습니까?");
+            if (result) {
+                window.location.href = "/manager/managerDel/" + managerIdx;
+            }
+        });
+
+        // 새로운 행 생성
+        var newRow = document.createElement("tr");
+
+        // 제목 셀 생성
+        var newCell = document.createElement("th");
+        newCell.innerHTML = "퇴사일";
+        newRow.appendChild(newCell);
+
+        // 테이블 셀 생성
+        newCell = document.createElement("td");
+        newCell.appendChild(leaveDateInput);
+        newCell.appendChild(completeButton);
+        newRow.appendChild(newCell);
+
+        // 생성한 행을 테이블에 추가
+        var table = document.querySelector("table");
+        table.appendChild(newRow);
+    }
+</script>
+</body>
+</html>

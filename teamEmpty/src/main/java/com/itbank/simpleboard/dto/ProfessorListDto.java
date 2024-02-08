@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Data
 public class ProfessorListDto {
-    private Long idx;
+    private Long idx;           // 교수 idx
     private String img;
     private Date hireDate;
     private String name;

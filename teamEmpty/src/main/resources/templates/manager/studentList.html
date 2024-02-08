@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>학생 명단</h2>
+    <hr>
+    <form th:action="@{/manager/studentList}" class="form-inline">
+        <div class="form-group">
+            <label>학과명</label>
+            <select class="form-control" id="major_idx" name="major_idx">
+                <option value="">학과를 선택하세요.</option>
+                <option th:each="row : ${majorList}"
+                        th:text="${row.name}"
+                        th:value="${row.idx}">
+                </option>
+            </select>
+        </div>
+
+        <!-- 이름으로 검색할 수 있는 검색창 추가 -->
+        <div class="form-group ml-4 mr-2">
+            <label>이름</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="학생 이름을 입력하세요">
+        </div>
+        <button class="btn btn-primary">검색</button>
+    </form>
+    <br>
+    <table class="table table-bordered">
+        <tr>
+            <th>학번</th>
+            <th>이름</th>
+            <th>학과</th>
+            <th>연락처</th>
+        </tr>
+
+        <tr th:each="row : ${studentList}">
+            <td><a th:href="@{'/manager/studentView/' + ${row.idx}}" th:text="${row.student_num}"></a></td>
+            <td th:text="${row.name}"></td>
+            <td th:text="${row.major_name}"></td>
+            <td th:text="${row.pnum}"></td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(studentList)}">
+            <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
+        </tr>
+    </table>
+    <button class="btn btn-facebook"><a href="/manager/addStudent">학생 등록</a></button>
+    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name'])}"><a href="/manager/studentList">목록으로</a></button>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+</body>
+</html>

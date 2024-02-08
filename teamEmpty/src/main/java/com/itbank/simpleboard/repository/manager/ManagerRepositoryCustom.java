@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ManagerRepositoryCustom {
     List<ManagerDTO> findBySearchType(String searchType, String searchValue);
+
+    ManagerDTO selectOneManager(Long idx);
 }
