@@ -44,6 +44,9 @@
             </label>
             <button type="button" onclick="searchLectures()">검색</button>
             <input type="reset" value="초기화" onclick="resetAndSearch()">
+            <label>폐강된 강의 포함
+                <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition">
+            </label>
         </form>
     </div>
     <table class="table table-bordered">
@@ -135,7 +138,8 @@
                     <button th:onclick="'test(\'' + ${row.idx} + '\', \'' + ${row.professor_idx} + '\')'">test</button>
                 </div>
             </td>
-            <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}" th:data-professor_idx="${row.professor_idx}">
+            <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}"
+                th:data-professor_idx="${row.professor_idx}">
             </td>
             <td>
                 <button class="btn btn-info btn-lg" data-target="#enrollmentStuList" data-toggle="modal"
@@ -148,10 +152,6 @@
     </table>
 
     <script>
-        function test(lecture_idx, professor_idx) {
-            console.log(lecture_idx, professor_idx);
-        }
-
         function handleKeyDown(event) {
             // 엔터 키의 keyCode는 13입니다.
             if (event.keyCode === 13) {
@@ -159,6 +159,7 @@
                 searchLectures();
             }
         }
+
         document.getElementById("MySearchInput").addEventListener("keydown", handleKeyDown);
 
         async function searchLectures() {
@@ -208,7 +209,7 @@
                     var tr = document.createElement("tr");
 
                     // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name, 1, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.name + '_' + item.abolition, 1, `/professor/viewLecture/${item.idx}`);
                     appendTd(tr, item.major);
                     appendTd(tr, item.type);
                     appendTd(tr, item.credit);
@@ -232,41 +233,51 @@
             var div = document.createElement("div");
             var span = document.createElement("span");
 
-            if (checked === 3) {
-                td.classList.add(checkValue);
-                let lecture_idx = text.split('_')[0];
-                let professor_idx = text.split('_')[1];
-                td.setAttribute('data-lecture-idx', lecture_idx);
-                td.setAttribute('data-professor_idx', professor_idx);
-            } else if (checked === 4) {
-                var button = document.createElement("button");
-                button.className = "btn btn-info btn-lg"; // 클래스 추가
-                button.setAttribute('data-target', '#enrollmentStuList');
-                button.setAttribute('data-toggle', 'modal');
-                button.setAttribute('type', 'button');
-                button.setAttribute('data-lecture-idx', text);
-                button.textContent = "성적 입력"; // 버튼 텍스트 추가
-                button.addEventListener('click', function() {
-                    openEnrollmentModal(this);
-                });
-                td.appendChild(button);
-            } else {
-                switch (checked) {
-                    case 1:
-                        var a = document.createElement("a");
-                        a.href = checkValue;
-                        a.appendChild(span);
-                        div.appendChild(a);
-                        break;
-                    case 2:
-                        td.classList.add(checkValue);
-                        div.appendChild(span);
-                        break;
-                    default:
-                        div.appendChild(span);
-                }
-                span.textContent = text;
-                td.appendChild(div);
+            switch (checked) {
+                case 1:
+                    var a = document.createElement("a");
+                    a.href = checkValue;
+                    a.appendChild(span);
+                    div.appendChild(a);
+
+                    let split = text.split('_');
+                    if (split[1] == 'N') {
+                        span.textContent = split[0];
+                    } else {
+                        span.textContent = split[0] + '(폐강)';
+                    }
+                    td.appendChild(div);
+                    break;
+                case 2:
+                    td.classList.add(checkValue);
+                    div.appendChild(span);
+                    span.textContent = text;
+                    td.appendChild(div);
+                    break;
+                case 3:
+                    td.classList.add(checkValue);
+                    let lecture_idx = text.split('_')[0];
+                    let professor_idx = text.split('_')[1];
+                    td.setAttribute('data-lecture-idx', lecture_idx);
+                    td.setAttribute('data-professor_idx', professor_idx);
+                    break;
+                case 4:
+                    var button = document.createElement("button");
+                    button.className = "btn btn-info btn-lg"; // 클래스 추가
+                    button.setAttribute('data-target', '#enrollmentStuList');
+                    button.setAttribute('data-toggle', 'modal');
+                    button.setAttribute('type', 'button');
+                    button.setAttribute('data-lecture-idx', text);
+                    button.textContent = "성적 입력"; // 버튼 텍스트 추가
+                    button.addEventListener('click', function () {
+                        openEnrollmentModal(this);
+                    });
+                    td.appendChild(button);
+                    break;
+                default:
+                    div.appendChild(span);
+                    span.textContent = text;
+                    td.appendChild(div);
             }
             parent.appendChild(td);
         }
@@ -332,9 +343,11 @@
             // td 요소에 버튼을 추가
             tdElement.appendChild(buttonElement);
         }
+
         document.addEventListener('DOMContentLoaded', addEvaluationBtn);
 
         let currentOpenButton = null;
+
         function openEnrollmentModal(button) {
             currentOpenButton = button;
 
@@ -461,6 +474,8 @@
             let targetRow = document.getElementById(rowId);
             targetRow.nextSibling.remove();
         }
+
+        document.getElementById('viewAbolition').addEventListener('change', searchLectures);
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>
