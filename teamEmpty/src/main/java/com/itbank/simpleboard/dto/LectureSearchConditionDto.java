@@ -13,4 +13,5 @@ public class LectureSearchConditionDto {
     private Integer grade;
     private Long professor_idx;
     private String major;
+    private String isAbolition;
 }

@@ -61,9 +61,14 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         semesterEq(condition.getSemester()),
                         gradeEq(condition.getGrade()),
                         majorEq(condition.getMajor()),
-                        professor_idxEq(condition.getProfessor_idx())
+                        professor_idxEq(condition.getProfessor_idx()),
+                        isAbolition(condition.getIsAbolition())
                 )
                 .fetch();
+    }
+
+    private BooleanExpression isAbolition(String isAbolition) {
+        return StringUtils.hasText(isAbolition) ? null : lecture.abolition.eq(YesOrNo.valueOf("N"));
     }
 
     @Override
