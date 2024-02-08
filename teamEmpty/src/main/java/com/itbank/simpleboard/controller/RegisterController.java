@@ -1,17 +1,18 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.MajorDto;
+import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.dto.StudentFormDTO;
 import com.itbank.simpleboard.dto.UserFormDTO;
 import com.itbank.simpleboard.entity.Manager;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.service.ManagerService;
-import com.itbank.simpleboard.service.UserService;
+import com.itbank.simpleboard.service.ProfessorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ import java.util.Map;
 @Slf4j
 public class RegisterController {
     private final ManagerService managerService;
-    private final UserService userService;
+    private final ProfessorService professorService;
 
     @PostMapping("/addManager")   // 교직원 등록
     public ResponseEntity<Map<String, String>> registerManager(@ModelAttribute UserFormDTO userFormDTO) {
@@ -118,6 +119,20 @@ public class RegisterController {
         return "학생 정보가 성공적으로 업데이트되었습니다.";
     }
 
+
+    @GetMapping("/getMajorsByCollege")
+    public List<MajorDto> getMajorList(@RequestParam String collegeName) {
+        log.info("학과목록 불러오기: AJAX");
+        List<MajorDto> majorList = managerService.getMajorList(collegeName);
+        log.info("getMajorList / majorList" + majorList.get(0).toString());
+        return majorList;
+    }
+
+    @GetMapping("/getProfessors")
+    public List<ProfessorUserDto> getProfessorsByDepartment(@RequestParam Long majorIdx) {
+        log.info("교수목록 불러오기: AJAX");
+        return professorService.getProfessorsByMajor(majorIdx);
+    }
 
 
 

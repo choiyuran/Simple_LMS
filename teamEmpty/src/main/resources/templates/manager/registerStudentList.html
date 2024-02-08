@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="layout/header :: head">
-    <style>
-        .not-found {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
 </head>
 
 
@@ -15,6 +9,33 @@
 <div class="container mt-3">
     <h2>학생 등록 명단</h2> <p th:text="${students}"></p>
     <p th:text="${message}"></p>
+    <button id="showDepartmentsBtn" type="button">학과명 확인</button>
+    <h2>학과 및 교수 목록</h2>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h3>대학 목록</h3>
+            <ul id="collegeList">
+                <li th:each="college : ${collegeList}" th:text="${college.name}" th:data-college-name="${college.name}" onclick="showMajors(event)"></li>
+            </ul>
+        </div>
+        <!-- 2열: 학과 목록 -->
+        <div class="col">
+            <h3>학과 목록</h3>
+            <ul id="majorList">
+                <!-- 선택된 대학에 해당하는 학과 목록을 여기에 동적으로 추가 -->
+            </ul>
+        </div>
+        <!-- 3열: 교수 목록 -->
+        <div class="col">
+            <h3>학과 목록</h3>
+            <ul id="professorList">
+                <!-- 선택된 학과에 해당하는 교수 목록을 여기에 동적으로 추가 -->
+            </ul>
+        </div>
+    </div>
+
+
     <hr>
     <form method="post" action="/manager/addStudentList">
         <table class="table table-bordered">
@@ -42,8 +63,8 @@
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
                 <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
-                <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
-                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>
+                <td contenteditable="true" data-field="major" th:text="${student.major}" class="not-found"></td>
+                <td contenteditable="true" data-field="professor" th:text="${student.professor}" class="not-found"></td>
             </tr>
         </table>
         <button id="saveBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
@@ -56,11 +77,45 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-    document.querySelectorAll('td[data-field="major"], td[data-field="professor"]').forEach(td => {
-        if (td.innerText.includes('정보없음')) {
-            td.classList.add('not-found');
-        }
+    // 대학을 클릭할 때마다 해당 대학에 속한 학과를 가져와서 majorList를 업데이트하는 함수
+    function showMajors(event) {
+        event.preventDefault();
+        // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
+        const collegeName = event.target.getAttribute('data-college-name');
+
+        // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
+        console.log('collegeName' + collegeName);
+        fetch(`/manager/getMajorsByCollege?collegeName=${collegeName}`)
+            .then(response => response.json()) // JSON 형식으로 변환
+            .then(data => {
+                console.log('data:', data); // 객체 그대로 출력
+                console.log('data.stringify:', JSON.stringify(data)); // 객체를 문자열로 출력
+                console.log('data.propertyName:', data.propertyName); // 해당 속성 출력
+
+                // majorList 업데이트
+                const majorList = document.getElementById("majorList");
+                majorList.innerHTML = ""; // 기존 목록 초기화
+                data.forEach(major => {
+                    const li = document.createElement("li");
+                    li.textContent = major.name;
+                    majorList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error)); // 오류 처리
+    }
+
+    // 페이지 로드 시 초기화: 첫 번째 대학에 속한 학과 목록 표시
+    document.addEventListener("DOMContentLoaded", function() {
+        const firstCollegeName = document.querySelector("#collegeList li:first-child").textContent;
+        showMajors(firstCollegeName);
+        document.querySelectorAll('td[data-field="major"], td[data-field="professor"]').forEach(td => {
+            if (!td.innerText.includes('정보없음')) {
+                td.classList.remove('not-found');
+            }
+        });
     });
+
+
 
 
     function saveStudentList() {

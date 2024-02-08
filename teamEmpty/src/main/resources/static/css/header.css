@@ -21,3 +21,8 @@ select::-ms-expand {
 .selectBox {
     margin: 30px 0;
 }
+
+ .not-found {
+     color: #be2617 ;
+     font-weight: bold;
+ }

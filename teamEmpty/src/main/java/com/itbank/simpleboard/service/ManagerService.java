@@ -411,11 +411,13 @@ public class ManagerService {
 
                                 String professorInfo;
                                 if(!professorNameList.isEmpty()){
-                                    String userNum = professorNameList.get(0).toString().substring(0,1);
-                                    String userName = professorNameList.get(0).toString().substring(1);
-                                    professorInfo = userName + "("+userNum+")";
-                                    log.info("userNum" + userNum);
-                                    log.info("userName" + userName);
+                                    Tuple tuple = professorNameList.get(0);
+                                    Long userNum = tuple.get(0, Long.class);
+                                    String userName = tuple.get(1, String.class);
+                                    // 여기서 할 작업 수행
+                                    professorInfo = userName + "(" + userNum + ")";
+                                    log.info("userNum: " + userNum);
+                                    log.info("userName: " + userName);
                                 }else{
                                     professorInfo = "교수정보없음";
                                 }
@@ -458,6 +460,29 @@ public class ManagerService {
             // 변환 실패 시에는 예외를 처리하거나 null을 반환합니다.
             return null;
         }
+    }
+
+    public List<MajorDto> getMajorList(String collegeName) {
+        List<Major> List = majorRepository.findByCollegeName(collegeName);
+        List<MajorDto> majorList = new ArrayList<>();
+        long idx = 1;
+
+        if(!List.isEmpty()){
+            for (Major m : List){
+                MajorDto dto = new MajorDto(
+                        m.getName(),
+                        m.getCollege().getIdx(),
+                        m.getCollege().getName()
+                );
+                dto.setIdx(idx++);
+                majorList.add(dto);
+                log.info("dto.getName() : " + dto.getName());
+                log.info("dto : " + dto);
+            }
+        }
+        log.info("majorList.get(0).getName() : " + majorList.get(0).getName());
+        log.info("majorList. : " + majorList);
+        return majorList;
     }
 }
 

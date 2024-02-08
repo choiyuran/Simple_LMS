@@ -153,6 +153,7 @@ public class ManagerController {
 
         model.addAttribute("students","학생등록");
         model.addAttribute("studentList",managerService.saveStudentDTOList(studentFile));
+        model.addAttribute("collegeList",managerService.selectAllCollege());
         return "manager/registerStudentList";
 
     }
