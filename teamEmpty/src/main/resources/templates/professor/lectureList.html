@@ -91,8 +91,8 @@
                 <div>
                     <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
                         <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
-                        <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
                     </a>
+                    <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
                 </div>
             </td>
             <td>
@@ -144,8 +144,7 @@
         </tbody>
     </table>
 
-    <button class="btn btn-outline-secondary" th:if="${session.user != 'null'}"><a href="/manager/lectureAdd">등록</a></button>
-<!--    <button th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>-->
+    <button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>
 
     <script>
         function handleKeyDown(event) {

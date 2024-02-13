@@ -1,14 +1,12 @@
 package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.component.MailComponent;
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.StudentDto;
-import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
+import com.itbank.simpleboard.repository.student.StudentRepositoryCustomImpl;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,7 @@ public class StudentService {
         StudentDto dto = new StudentDto();
         Optional<User> user = userRepository.findById(userIdx);
         User realUser = null;
-        if(user.isPresent()){
+        if (user.isPresent()) {
             realUser = user.get();
         }
 
@@ -40,14 +38,14 @@ public class StudentService {
         Student realStudent = null;
 
 
-        if(student.isPresent()){
+        if (student.isPresent()) {
             realStudent = student.get();
             dto.setIdx(realStudent.getIdx());
             dto.setUser(getUserDTO(realStudent.getUser()));
             dto.setStudent_grade(realStudent.getStudent_grade());
             dto.setStudent_num(realStudent.getStudent_num());
             dto.setMajor(getMajorDto(realStudent));
-            dto.setProfessor(getProfessorDto(realStudent,dto.getMajor()));
+            dto.setProfessor(getProfessorDto(realStudent, dto.getMajor()));
             dto.setEnteranceDate(realStudent.getEnteranceDate());
 
         }
@@ -119,5 +117,11 @@ public class StudentService {
         userDTO.setPnum(user.getPnum());
         userDTO.setRole(user.getRole());
         return userDTO;
+    }
+
+    public List<TuitionDto> getTuitionData(Long studentIdx) {
+        List<TuitionDto> tuitionDataList = studentRepository.getTuitionData(studentIdx);
+        // 여기서 필요에 따라 TuitionDto를 StudentDto로 변환하는 로직을 추가할 수 있습니다.
+        return tuitionDataList;
     }
 }

@@ -260,10 +260,17 @@ public class ManagerController {
 
 
     @PostMapping("/addStudentList")   // 학생 등록
-    public String saveStudentList(Model model) {
-        log.info("학생등록리스트 저장");
+    @ResponseBody
+    public String saveStudentList(@RequestBody List<Map<String, String>> updatedData, Model model) {
+        log.info("학생등록 리스트 저장: AJAX");
+        // 클라이언트에서 전송한 수정된 데이터를 받아 처리
+        for (Map<String, String> studentData : updatedData) {
+            // 각 학생 데이터를 가져와서 필요한 작업을 수행
+            log.info("Received student data: " + studentData);
+        }
+
         model.addAttribute("message","학생 저장 완료");
-        return "manager/registerStudentList";
+        return "Data received successfully!";
     }
 
 
@@ -286,7 +293,7 @@ public class ManagerController {
     public String registerMajor(MajorDto major) {
         Major addMajor = managerService.addMajor(major);
         if(addMajor != null) {
-            return "/home";
+            return "redirect:/manager/majorList";
         }
         return "manager/registerMajor";
     }
@@ -425,6 +432,7 @@ public class ManagerController {
             return "redirect:/";
         }
     }
+
     @GetMapping("/studentSituation")                // 학생 상태 조회
     public ModelAndView studentSituation(@RequestParam(required = false) String status) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");

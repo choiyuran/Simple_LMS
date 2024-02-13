@@ -104,13 +104,10 @@
 
         </table>
 
-        <!--    내가 사용할 버튼 조건-->
-        <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교직원'}"><a href="/manager/lectureAdd">수정</a></button>      -->
-        <!--    수용이가 사용할 버튼 조건 - 교수일 경우 강의 계획서만 수정 -->
-        <!--    <button class="btn btn-outline-secondary" th:if="${session.user.role == '교수'}"><a href="/manager/lectureAdd">강의계획서 수정</a></button>       -->
-        <button class="btn btn-warning"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
-        <button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
-        <button class="btn btn-outline-secondary"><a href="/professor/lectureList">목록으로</a></button>
+        <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+        <button class="btn btn-danger" onclick="confirmDelete(event)" th:if="${session.user.user.role.toString() == '교직원'}">
+            <a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
+        <button class="btn btn-outline-secondary" onclick="history.go(-1)">목록으로</button>
     </div>
 
     <script>
