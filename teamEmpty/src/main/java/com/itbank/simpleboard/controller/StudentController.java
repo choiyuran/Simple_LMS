@@ -318,8 +318,10 @@ public class StudentController {
         return "redirect:/student/paymentTuition";
     }
 
+    // 등록금 고지서
     @GetMapping("/tuitionBill")
     public String tuitionBill(HttpSession session, Model model){
+
         // 세션에 담긴 idx 를 이용해 해당 학생의 등록금 고지서를 불러오기
         StudentDto dto = (StudentDto) session.getAttribute("user");
 
@@ -329,12 +331,11 @@ public class StudentController {
         }
         // 학생의 정보 가져오기
         Long studentIdx = dto.getIdx();
+
         List<TuitionDto> tuitionDataList = studentService.getTuitionData(studentIdx);
 
         // 모델에 추가
         model.addAttribute("tuitionDataList", tuitionDataList);
-
-        System.out.println("tuitionDataList = " + tuitionDataList);
 
         return "student/tuitionBill";
     }
