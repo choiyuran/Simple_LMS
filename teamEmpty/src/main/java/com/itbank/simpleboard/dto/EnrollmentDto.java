@@ -28,7 +28,8 @@ public class EnrollmentDto {
         this.professor_idx = professor_idx;
     }
 
-    public EnrollmentDto(Long student_idx, Integer student_num, String student_name, Long lecture_idx, String lecture_name, Boolean hasGrade) {
+    public EnrollmentDto(Long idx, Long student_idx, Integer student_num, String student_name, Long lecture_idx, String lecture_name, Boolean hasGrade) {
+        this.idx = idx;
         this.student_idx = student_idx;
         this.student_num = student_num;
         this.student_name = student_name;

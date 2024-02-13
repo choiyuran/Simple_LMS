@@ -31,7 +31,7 @@ public class Payments { // 등록금
     public void prePersist() {
         long millis = System.currentTimeMillis();
         this.date = new Date(millis);
-        this.flag = YesOrNo.Y;
+        this.flag = YesOrNo.N;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

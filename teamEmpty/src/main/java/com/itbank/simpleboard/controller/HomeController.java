@@ -1,11 +1,14 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.ManagerLoginDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
-import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.FileService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -24,11 +26,11 @@ public class HomeController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-    private final ManagerService managerService;
     private final AcademicCalendarService academicCalendarService;
 
     @GetMapping("/")
-    public String root() {
+    public String root(HttpSession session) {
+        session.invalidate();
         return "index";
     }
 
@@ -68,12 +70,12 @@ public class HomeController {
     }
 
     @GetMapping("/list")
-    public String list(){
+    public String list() {
         return "student/lectureList";
     }
 
     @GetMapping("/side")
-    public String side(){
+    public String side() {
         return "layout/sidebar";
     }
 
@@ -84,7 +86,6 @@ public class HomeController {
         System.out.println(n);
         return "home";
     }
-
 
 
     // 테스트용 학생 로그인
@@ -104,25 +105,33 @@ public class HomeController {
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpSession session) {
+        session.invalidate();
         return "redirect:/";
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session) {
-        String url = "home";
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, Model model) {
+        String url = "index";
         UserDTO user = userService.getUser(user_id, user_pw);
+        if (user == null) {
+            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+            return url;
+        }
         switch (user.getRole().toString()) {
             case "교수":
-                session.setAttribute("user", userService.getProfessor(user));
+                ProfessorDto professor = userService.getProfessor(user);
+                session.setAttribute("user", professor);
                 url = "redirect:/professor/home";
                 break;
             case "학생":
-                session.setAttribute("user", userService.getStudent(user));
+                StudentDto student = userService.getStudent(user);
+                session.setAttribute("user", student);
                 url = "redirect:/student/home";
                 break;
             case "교직원":
-                session.setAttribute("user", userService.getManager(user));
+                ManagerLoginDto manager = userService.getManager(user);
+                session.setAttribute("user", manager);
                 url = "redirect:/manager/home";
                 break;
         }

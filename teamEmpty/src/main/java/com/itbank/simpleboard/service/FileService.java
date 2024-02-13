@@ -4,7 +4,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -18,16 +17,20 @@ public class FileService {
 
     public Resource loadAsResource(String filename, String saveDir) {
         try {
-            Path filePath = fileStorageLocation.resolve(Paths.get(saveDir, filename)).normalize(); // 여기서 resolve 안에 사진이나 파일 저장 되는 폴더 이름 넣어야 함(idPhoto_professor, syllabus)
+            Path filePath = getFileStorageLocation(saveDir).resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
-            if (resource.exists()) {
+            if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found: " + filename);
+                throw new RuntimeException("File not found or cannot be read: " + filename);
             }
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("File found Error: " + filename, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error accessing file: " + filename, e);
         }
+    }
+
+    private Path getFileStorageLocation(String saveDir) {
+        return fileStorageLocation.resolve(saveDir);
     }
 }

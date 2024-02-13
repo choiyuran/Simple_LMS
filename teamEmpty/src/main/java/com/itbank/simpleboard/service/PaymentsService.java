@@ -3,6 +3,7 @@ package com.itbank.simpleboard.service;
 import com.itbank.simpleboard.dto.PaymentsDto;
 import com.itbank.simpleboard.entity.Payments;
 import com.itbank.simpleboard.entity.Student;
+import com.itbank.simpleboard.entity.YesOrNo;
 import com.itbank.simpleboard.repository.PaymentsRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,8 @@ public class PaymentsService {
     @Transactional
     public Payments save(PaymentsDto dto) {
         Student student = studentRepository.findById(dto.getStudent()).orElse(null);
-        Payments payments = new Payments(student,dto.getSemester());
+        Payments payments = paymentsRepository.findByStudentAndSemester(student,dto.getSemester());
+        payments.setFlag(YesOrNo.Y);
         return paymentsRepository.save(payments);
     }
 }

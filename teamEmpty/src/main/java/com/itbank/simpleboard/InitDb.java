@@ -109,6 +109,29 @@
 //                em.persist(payments2);
 //                em.persist(payments3);
 //
+//                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
+//                em.persist(scholarship1);
+//                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
+//                em.persist(scholarship2);
+//                Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
+//                em.persist(scholarship3);
+//
+//                Scholarship_Award scholarshipAward1 = new Scholarship_Award(student1,scholarship1);
+//                Scholarship_Award scholarshipAward2 = new Scholarship_Award(student1,scholarship2);
+//                Scholarship_Award scholarshipAward3 = new Scholarship_Award(student1,scholarship3);
+//                Scholarship_Award scholarshipAward4 = new Scholarship_Award(student2,scholarship1);
+//                Scholarship_Award scholarshipAward5 = new Scholarship_Award(student2,scholarship2);
+//                Scholarship_Award scholarshipAward6 = new Scholarship_Award(student3,scholarship1);
+//
+//                em.persist(scholarshipAward1);
+//                em.persist(scholarshipAward2);
+//                em.persist(scholarshipAward3);
+//                em.persist(scholarshipAward4);
+//                em.persist(scholarshipAward5);
+//                em.persist(scholarshipAward6);
+//
+//
+//
 //            } catch (ParseException e) {
 //                throw new RuntimeException(e);
 //            }
@@ -138,12 +161,7 @@
 //        }
 //
 //        public void dbInit3() {
-//            Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
-//            em.persist(scholarship1);
-//            Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
-//            em.persist(scholarship2);
-//            Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
-//            em.persist(scholarship3);
+//
 //        }
 //
 //

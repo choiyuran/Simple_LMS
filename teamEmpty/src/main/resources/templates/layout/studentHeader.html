@@ -54,7 +54,7 @@
                                         <a class="nav-link dropdown-toggle" href="#" role="button"
                                            data-bs-toggle="dropdown">My</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="/student/situation">내 정보수정</a></li>
+                                            <li><a class="dropdown-item" href="/student/situation">휴학신청/복학신청</a></li>
                                             <li><a class="dropdown-item" href="/student/enroll">수강신청</a></li>
                                             <li><a class="dropdown-item" href="/student/evaluationList">내 강의평가</a></li>
                                             <li><a class="dropdown-item" href="/student/paymentTuition">등록금 납부</a></li>
@@ -114,12 +114,8 @@
                                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <th:block th:if="${session.user != null && session.user.img != null}">
-                                                <img class="img-profile rounded-circle" th:src="${session.user.img}" alt="유저 이미지" >
-                                            </th:block>
-                                            <th:block th:unless="${session.user != null && session.user.img != null}">
-                                                <img class="img-profile rounded-circle" src="/img/undraw_profile.svg" alt="유저 이미지">
-                                            </th:block>
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" th:if="${session.user != null && session.user.img != null}" th:src="@{'/images/' + ${session.user.img}}">
+                                            <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg" th:if="${session.user == null || session.user.img == null}">
                                         </a>
                                         <!-- Dropdown - User Information -->
                                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

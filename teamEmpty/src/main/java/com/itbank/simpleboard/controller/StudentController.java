@@ -28,6 +28,9 @@ public class StudentController {
     private final AcademicCalendarService academicCalendarService;
     private final SituationService situationService;
     private final PaymentsService paymentsService;
+    private final MajorService majorService;
+    private final ScholarShipAwardService scholarShipAwardService;
+    private final ScholarShipService scholarShipService;
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
@@ -279,11 +282,30 @@ public class StudentController {
         }
     }
 
+    // 등록금 납부하기 전 내역을 나타내는 페이지
     @GetMapping("/paymentTuition")
-    public String paymentTuition() {
-        return "student/paymentTuition";
+    public ModelAndView paymentTuition(HttpSession session) {
+        ModelAndView mav = new ModelAndView("student/paymentTuition");
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            Integer tuition = majorService.getTuition(((StudentDto) o).getIdx());
+            Integer totalScholarship = scholarShipAwardService.getTotal(((StudentDto) o).getIdx());
+            if(tuition < totalScholarship) {
+                mav.addObject("totalTuition", 0);
+            }else{
+                mav.addObject("totalTuition", tuition-totalScholarship);
+            }
+            mav.addObject("tuition", tuition);
+            mav.addObject("totalScholarship", totalScholarship);
+        }else{
+            session.invalidate();
+            mav.addObject("msg", "다시 학생로그인 하세요");
+            mav.setViewName("/home");
+        }
+        return mav;
     }
 
+    // 등록금 납부 수행 컨트롤러
     @PostMapping("/paymentTuition")
     public String paymentTuitionPro(PaymentsDto dto, RedirectAttributes ra) {
         Payments payments = paymentsService.save(dto);
