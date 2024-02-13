@@ -5,6 +5,7 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -363,20 +364,20 @@ public class StudentController {
     }
 
     @GetMapping("/gradeList")
-    public ModelAndView GradeList(LectureSearchConditionDto condition) {
+    public ModelAndView GradeList(GradeSearchConditionDto condition) {
         ModelAndView mav = new ModelAndView("/student/gradeList");
-        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
+        List<GradeLectureDto> lectureDtoList = studentService.getLectureDtoList(condition);
         // LectureDtoList를 Model에 추가
         mav.addObject("LectureList", lectureDtoList);
 
         // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
         mav.addObject("MajorList", lectureDtoList.stream()
-                .map(ProfessorLectureDto::getMajor)
+                .map(GradeLectureDto::getMajor)
                 .distinct()
                 .collect(Collectors.toList()));
 
         mav.addObject("GradeList", lectureDtoList.stream()
-                .map(ProfessorLectureDto::getGrade)
+                .map(GradeLectureDto::getGrade)
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList()));
@@ -389,6 +390,18 @@ public class StudentController {
         }
         mav.addObject("YearList", yearList);
         return mav;
+    }
+
+    @ResponseBody
+    @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
+    public ResponseEntity<List<GradeLectureDto>> lectureListAjax(@RequestBody GradeSearchConditionDto condition) {
+        long startTime = System.currentTimeMillis();
+        List<GradeLectureDto> lectureDtoList = studentService.getLectureDtoList(condition);
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(lectureDtoList);
     }
 
 }

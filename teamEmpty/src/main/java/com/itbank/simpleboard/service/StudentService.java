@@ -1,10 +1,7 @@
 package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.component.MailComponent;
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.StudentDto;
-import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.student.SituationRepository;
@@ -155,5 +152,7 @@ public class StudentService {
     }
 
 
-
+    public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
+        return studentRepository.getLectureDtoList(condition);
+    }
 }

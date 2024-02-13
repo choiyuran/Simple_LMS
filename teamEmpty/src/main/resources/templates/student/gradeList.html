@@ -11,6 +11,7 @@
             <label>강의명 :
                 <input type="text" name="name">
             </label>
+
             <label>학과 선택 :
                 <select name="major">
                     <option th:text="'전공 선택'" value="">전공 선택</option>
@@ -48,6 +49,7 @@
             </label>
             <button type="button" onclick="searchLectures()">검색</button>
             <input type="reset" value="초기화" onclick="resetAndSearch()">
+            <input type="hidden" name="student_idx" th:value="${session.user.idx}">
         </form>
     </div>
     <table class="table table-bordered">
@@ -72,7 +74,7 @@
                 <div th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</div>
             </td>
             <td>
-                <div th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</div>
+                <div th:text="'성적'">xx 점</div>
             </td>
             <td>
                 <div th:text="'강의 학기'">xxxx년 x학기</div>
@@ -122,7 +124,7 @@
             </td>
             <td>
                 <div>
-                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                    <span th:text="${}"></span>
                 </div>
             </td>
             <td>
@@ -159,7 +161,7 @@
 
             var formData = new FormData(form);
 
-            fetch('/professor/lectureList/data', {
+            fetch('/student/lectureList/data', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -192,7 +194,7 @@
                 var tr = document.createElement("tr");
 
                 // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                appendTd(tr, item.name, true, `/student/viewLecture/${item.idx}`);
                 appendTd(tr, item.major);
                 appendTd(tr, item.type);
                 appendTd(tr, item.credit);
