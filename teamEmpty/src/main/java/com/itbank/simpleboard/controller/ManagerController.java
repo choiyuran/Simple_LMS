@@ -538,11 +538,12 @@ public class ManagerController {
         }
     }
 
-    @GetMapping("/checkTuitionPayments")
-    public String checkTuitionPayment(HttpSession session, Model model) {
-        StudentDto dto = (StudentDto) session.getAttribute("user");
+    @GetMapping("/checkTuitionPayments")    // 납부 확인
+    public String checkTuitionPayment() {
 
+        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment();
 
-
+        System.out.println("result : " + tuitionPayments);
+        return  "manager/checkTuitionPayments";
     }
 }

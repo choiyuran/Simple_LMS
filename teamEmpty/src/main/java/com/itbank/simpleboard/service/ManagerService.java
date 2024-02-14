@@ -553,5 +553,10 @@ public class ManagerService {
         }
         return manager;
     }
+
+
+    public List<CheckTuitionPaymentDto> getCheckTuitionPayment() {
+        return managerRepository.findAllCheckTuitionPayments();
+    }
 }
 

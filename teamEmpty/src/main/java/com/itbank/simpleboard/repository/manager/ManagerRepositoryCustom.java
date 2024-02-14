@@ -11,4 +11,6 @@ public interface ManagerRepositoryCustom {
 
     ManagerDTO selectOneManager(Long idx);
 
+    List<CheckTuitionPaymentDto> findAllCheckTuitionPayments();
+
 }
