@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +43,21 @@ public class ProfessorService {
 
     public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
         return professorRepository.getEnrollmentList(lectureIdx);
+    }
+
+    public List<ProfessorUserDto> getProfessorsByMajor(String majorName) {
+        List<Professor> professorList = professorRepository.findAllByMajorName(majorName);
+        List<ProfessorUserDto> professors = new ArrayList<>();
+        if(!professorList.isEmpty()){
+            for(Professor p : professorList){
+                ProfessorUserDto dto = new ProfessorUserDto(
+                        p.getProfessor_idx(),
+                        p.getUser().getUser_name()
+                );
+                professors.add(dto);
+            }
+        }
+        log.info(professors.toString());
+        return professors;
     }
 }

@@ -7,28 +7,27 @@
 <body>
 <header th:insert="layout/header :: header"> </header>
 <div class="container mt-3">
-    <h2>학생 등록 명단</h2> <p th:text="${students}"></p>
-    <p th:text="${message}"></p>
-    <button id="showDepartmentsBtn" type="button">학과명 확인</button>
-    <h2>학과 및 교수 목록</h2>
+    <h2>학생 등록 명단</h2>
+
     <hr>
-    <div class="row">
-        <div class="col">
+    <button id="showMajorAndProfessorBtn" type="button" onclick="toggleRow()">학과명 확인</button>
+    <div id="rowContainer" class="flex" style="display: none;">
+        <div class="box">
             <h3>대학 목록</h3>
             <ul id="collegeList">
                 <li th:each="college : ${collegeList}" th:text="${college.name}" th:data-college-name="${college.name}" onclick="showMajors(event)"></li>
             </ul>
         </div>
         <!-- 2열: 학과 목록 -->
-        <div class="col">
+        <div class="box">
             <h3>학과 목록</h3>
             <ul id="majorList">
                 <!-- 선택된 대학에 해당하는 학과 목록을 여기에 동적으로 추가 -->
             </ul>
         </div>
         <!-- 3열: 교수 목록 -->
-        <div class="col">
-            <h3>학과 목록</h3>
+        <div class="box">
+            <h3>교수 목록</h3>
             <ul id="professorList">
                 <!-- 선택된 학과에 해당하는 교수 목록을 여기에 동적으로 추가 -->
             </ul>
@@ -63,8 +62,8 @@
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
                 <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
-                <td contenteditable="true" data-field="major" th:text="${student.major}" class="not-found"></td>
-                <td contenteditable="true" data-field="professor" th:text="${student.professor}" class="not-found"></td>
+                <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
+                <td contenteditable="true" data-field="professor" th:text="${student.professor}" ></td>
             </tr>
         </table>
         <button id="saveBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
@@ -77,43 +76,115 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
+
+    function toggleRow(){
+        const rowContainer = document.getElementById('rowContainer');
+        if(rowContainer.style.display ==='none'){
+            rowContainer.style.display = 'block';
+            const firstCollegeLi = document.querySelector("#collegeList li:first-child");
+            const firstCollegeName = firstCollegeLi.textContent;
+            firstCollegeLi.style.color = '#F90'; // 대학 목록의 첫 번째 요소 글자색 변경
+            console.log('firstCollegeName' + firstCollegeName);
+            console.log('firstCollegeLi' + firstCollegeLi);
+            showMajors({ target: firstCollegeLi }); // 대학 목록의 첫 번째 요소 클릭 시 학과 목록 표시
+        }else {
+            rowContainer.style.display = 'none';
+        }
+    }
+
     // 대학을 클릭할 때마다 해당 대학에 속한 학과를 가져와서 majorList를 업데이트하는 함수
     function showMajors(event) {
-        event.preventDefault();
-        // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
-        const collegeName = event.target.getAttribute('data-college-name');
+        // 대학 목록의 색상 변경
+        const clickedCollege = event.target;
+        document.querySelectorAll('#collegeList li').forEach(item => {
+            item.style.color = '#000';
+        });
+        clickedCollege.style.color = '#F90';
 
         // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
+        const collegeName = clickedCollege.getAttribute('data-college-name');
         console.log('collegeName' + collegeName);
         fetch(`/manager/getMajorsByCollege?collegeName=${collegeName}`)
             .then(response => response.json()) // JSON 형식으로 변환
             .then(data => {
-                console.log('data:', data); // 객체 그대로 출력
                 console.log('data.stringify:', JSON.stringify(data)); // 객체를 문자열로 출력
-                console.log('data.propertyName:', data.propertyName); // 해당 속성 출력
 
                 // majorList 업데이트
                 const majorList = document.getElementById("majorList");
                 majorList.innerHTML = ""; // 기존 목록 초기화
-                data.forEach(major => {
+                data.forEach((major, index) => {
                     const li = document.createElement("li");
-                    li.textContent = major.name;
+                    li.textContent = major.name+ "("+major.idx+")";
+                    li.addEventListener('click', () => {
+                        showProfessors(major.name);
+                        // 모든 학과 목록의 글자색을 검정색으로 변경
+                        document.querySelectorAll('#majorList li').forEach(item => {
+                            item.style.color = '#000';
+                        });
+                        // 클릭된 학과 목록의 글자색을 주황색으로 변경
+                        li.style.color = '#F90';
+                    });
+                    // 첫 번째 대학에 해당하는 학과 목록 중 첫 번째 학과는 주황색으로 표시
+                    if (index === 0) {
+                        li.style.color = '#F90';
+                    }
                     majorList.appendChild(li);
                 });
+                const firstMajorName = data[0].name;
+                showProfessors(firstMajorName);
             })
             .catch(error => console.error('Error:', error)); // 오류 처리
     }
 
+    function showProfessors(majorName){
+        fetch(`/manager/getProfessorByMajor?majorName=${majorName}`)
+            .then(response => response.json())
+            .then(data => {
+                const professorList = document.getElementById('professorList');
+                professorList.innerHTML = "" // 기존목록 초기화
+                data.forEach(professor => {
+                    const li = document.createElement('li');
+                    li.textContent = professor.name+ "("+professor.idx+")";
+                    professorList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:',error));
+    }
+
+
     // 페이지 로드 시 초기화: 첫 번째 대학에 속한 학과 목록 표시
     document.addEventListener("DOMContentLoaded", function() {
-        const firstCollegeName = document.querySelector("#collegeList li:first-child").textContent;
-        showMajors(firstCollegeName);
-        document.querySelectorAll('td[data-field="major"], td[data-field="professor"]').forEach(td => {
-            if (!td.innerText.includes('정보없음')) {
-                td.classList.remove('not-found');
+        /*const firstCollegeName = document.querySelector("#collegeList li:first-child").textContent;
+        showMajors({target: document.querySelector('#collegeList li:first-child')});*/
+
+
+        const tableRows = document.querySelectorAll('table tr');
+
+        tableRows.forEach((row, index) => {
+            if (index > 0) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
+                let majorCell = row.querySelector('td[data-field="major"]');
+                let professorCell = row.querySelector('td[data-field="professor"]');
+
+                // 교수 정보가 없는 경우
+                if (professorCell.innerText.includes("정보없음")) {
+                    console.log('professorCell.innerText' + professorCell.innerText);
+                    professorCell.classList.add("not-found");
+                } else {
+                    professorCell.classList.remove("not-found");
+                }
+
+                // 학과 정보가 없는 경우
+                if (majorCell.innerText.includes("정보없음")) {
+                    console.log('majorCell.innerText' + majorCell.innerText);
+                    majorCell.classList.add("not-found");
+                } else {
+                    majorCell.classList.remove("not-found");
+                }
             }
         });
+
     });
+
 
 
 
@@ -125,23 +196,40 @@
 
         tableRows.forEach((row, index) => {
             if (index > 0) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
+                const idx = row.querySelector('td[data-field="idx"]').innerText;
+                const student_num = row.querySelector('td[data-field="student_num"]').innerText;
+                const name = row.querySelector('td[data-field="name"]').innerText;
+                const security = row.querySelector('td[data-field="security"]').innerText;
+                const pnum = row.querySelector('td[data-field="pnum"]').innerText;
+                const address = row.querySelector('td[data-field="address"]').innerText;
+                const email = row.querySelector('td[data-field="email"]').innerText;
+                const entranceDate = row.querySelector('td[data-field="entranceDate"]').innerText;
+                const student_grade = row.querySelector('td[data-field="student_grade"]').innerText;
+                const major = row.querySelector('td[data-field="major"]').innerText;
+                const professor = row.querySelector('td[data-field="professor"]').innerText;
+
+                // 정보없음이 포함된 경우 경고창을 띄우고 저장하지 않음
+                if (major.includes("정보없음") || professor.includes("정보없음")) {
+                    alert(idx + '번의 학과 혹은 지도교수를 확인해 주세요');
+                    return; // 저장하지 않고 종료
+                }
+
                 const student = {
-                    idx: row.querySelector('td[data-field="idx"]').innerText,
-                    student_num: row.querySelector('td[data-field="student_num"]').innerText,
-                    name: row.querySelector('td[data-field="name"]').innerText,
-                    security: row.querySelector('td[data-field="security"]').innerText,
-                    pnum: row.querySelector('td[data-field="pnum"]').innerText,
-                    address: row.querySelector('td[data-field="address"]').innerText,
-                    email: row.querySelector('td[data-field="email"]').innerText,
-                    entranceDate: row.querySelector('td[data-field="entranceDate"]').innerText,
-                    student_grade: row.querySelector('td[data-field="student_grade"]').innerText,
-                    major: row.querySelector('td[data-field="major"]').innerText,
-                    professor: row.querySelector('td[data-field="professor"]').innerText
+                    idx: idx,
+                    student_num: student_num,
+                    name: name,
+                    security: security,
+                    pnum: pnum,
+                    address: address,
+                    email: email,
+                    entranceDate: entranceDate,
+                    student_grade: student_grade,
+                    major: major,
+                    professor: professor
                 };
                 updatedStudents.push(student);
             }
         });
-
         console.log('수정된 학생 정보:', updatedStudents);
 
         // 사용자에게 수정 내용 확인 다이얼로그 표시
