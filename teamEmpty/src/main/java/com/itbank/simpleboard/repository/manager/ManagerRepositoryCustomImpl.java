@@ -2,19 +2,12 @@ package com.itbank.simpleboard.repository.manager;
 
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.QManagerDTO;
-import com.itbank.simpleboard.entity.Manager;
-import com.itbank.simpleboard.entity.QManager;
-import com.itbank.simpleboard.entity.QUser;
-import com.itbank.simpleboard.entity.User;
-import com.itbank.simpleboard.repository.professor.ProfessorRepositoryCustom;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.itbank.simpleboard.entity.QManager.*;
@@ -23,10 +16,12 @@ import static com.itbank.simpleboard.entity.QUser.user;
 @Repository
 public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final EntityManager entityManager;
 
     @Autowired
-    public ManagerRepositoryCustomImpl(EntityManager em) {
+    public ManagerRepositoryCustomImpl(EntityManager em, EntityManager entityManager) {
         this.queryFactory = new JPAQueryFactory(em);
+        this.entityManager = entityManager;
     }
 
     @Override

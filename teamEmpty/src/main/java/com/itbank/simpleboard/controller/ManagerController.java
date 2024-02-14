@@ -623,4 +623,12 @@ public class ManagerController {
             return "redirect:/";
         }
     }
+
+    @GetMapping("/checkTuitionPayments")
+    public String checkTuitionPayment(HttpSession session, Model model) {
+        StudentDto dto = (StudentDto) session.getAttribute("user");
+
+
+
+    }
 }

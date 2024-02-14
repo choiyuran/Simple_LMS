@@ -39,12 +39,12 @@
         </tr>
         <tr th:each="tuition : ${tuitionDataList}">
             <th class="tuition_th">장학금</th>
-            <td class="tuition_td" th:text="${tuition.price}"></td>
+            <td class="tuition_td" th:if="${tuition.price != null}" th:text="${tuition.price}"></td>
             <td class="tuition_td" th:if="${tuition.price == null}" th:text="0"></td>
         </tr>
         <tr th:each="tuition : ${tuitionDataList}">
             <th class="tuition_th">총 납입금</th>
-            <td class="tuition_td"></td>
+            <td class="tuition_td" th:text="${tuition.tuition - (tuition.price != null ? tuition.price : 0)}"></td>
         </tr>
     </table>
 </div>
