@@ -20,7 +20,6 @@ import java.util.List;
 import static com.itbank.simpleboard.entity.QLecture.lecture;
 import static com.itbank.simpleboard.entity.QMajor.major;
 import static com.itbank.simpleboard.entity.QProfessor.professor;
-import static com.itbank.simpleboard.entity.QEnrollment.enrollment;
 
 @Repository
 public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom {
@@ -178,6 +177,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
         return queryFactory
                 .select(Projections.fields(EnrollmentDto.class,
+                        QEnrollment.enrollment.idx.as("idx"),
                         QEnrollment.enrollment.student.idx.as("student_idx"),
                         QEnrollment.enrollment.student.student_num.as("student_num"),
                         QEnrollment.enrollment.student.user.user_name.as("student_name"),
@@ -191,13 +191,20 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                                                 QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
                                                         .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
                                         )
-                                        .exists(), "hasGrade")))
+                                        .exists(), "hasGrade"),
+                        ExpressionUtils
+                                .as(JPAExpressions
+                                        .select(QGrade.grade.score)
+                                        .from(QGrade.grade)
+                                        .where(
+                                                QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
+                                                        .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
+                                        ), "score")))
                 .from(QEnrollment.enrollment)
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
+                .orderBy(QEnrollment.enrollment.student.idx.asc())
                 .fetch();
     }
-
-
 
     @Override
     public List<Tuple> findByMajorAndUserUserNameContaining(String majorName, String professorName) {
@@ -212,8 +219,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         .and(professor.user.user_name.like("%" + professorName + "%")))
                 .fetch();
     }
-
-
 
 
     @Override
@@ -280,8 +285,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     @Override
     public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
-        Long majorIdx = (Long)map.get("major_idx");
-        String name = (String)map.get("name");
+        Long majorIdx = (Long) map.get("major_idx");
+        String name = (String) map.get("name");
 
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -289,7 +294,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
             builder.and(QProfessor.professor.major.idx.eq(majorIdx));
         }
         if (name != null && !name.isEmpty()) {
-            builder.and(QUser.user.user_name.like("%"+name+"%"));
+            builder.and(QUser.user.user_name.like("%" + name + "%"));
         }
 
         return queryFactory

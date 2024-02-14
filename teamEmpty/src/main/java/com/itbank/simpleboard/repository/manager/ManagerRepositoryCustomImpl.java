@@ -2,6 +2,8 @@ package com.itbank.simpleboard.repository.manager;
 
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.QManagerDTO;
+import com.itbank.simpleboard.entity.QManager;
+import com.itbank.simpleboard.entity.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
