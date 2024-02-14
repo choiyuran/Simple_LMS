@@ -428,31 +428,32 @@ public class ManagerService {
         return professorRepository.searchByMajorAndProfessorAndLeave(map);
     }
 
-    public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
-        return professorRepository.searchByMajorAndProfessor(map);
-    }
 
     public ProfessorListDto selectOneProfessor(Long idx) {
         return professorRepository.selectOneProfessor(idx);
     }
 
     @Transactional
-    public Professor updateProfessorByManager(Long idx, java.util.Date hireDate) {
+    public Professor updateProfessorByManager(HashMap<String, Object> map) {
+        Long idx = (Long)map.get("idx");
+        java.util.Date hireDate = (java.util.Date) map.get("hireDate");
+        java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
         Professor professor = professorRepository.findById(idx).get();
-        java.util.Date date = hireDate;
-        Date sqlDate = new Date(date.getTime());
-        professor.setHireDate(sqlDate);
+        professor.setHireDate(new Date(hireDate.getTime()));
+        professor.setLeaveDate(new Date(leaveDate.getTime()));
+
         return professor;
     }
 
     @Transactional
-    public Professor professorDel(Long idx) {
+    public Professor professorDel(HashMap<String, Object> map) {
+        Long idx = (Long)map.get("idx");
+        java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
         Professor professor = professorRepository.findById(idx).get();
         professor.setLeave(YesOrNo.Y);
-        professor.setLeaveDate(Date.valueOf(LocalDate.now()));
+        professor.setLeaveDate(new Date(leaveDate.getTime()));
         return professor;
     }
-
 
     public List<StudentListDto> selectAllStudent(HashMap<String, Object> map) {
         return studentRepository.selectAllStudent(map);
@@ -478,15 +479,27 @@ public class ManagerService {
     public Manager updateManagerByManager(HashMap<String, Object> map) {
         Long idx = (Long)map.get("idx");
         Manager manager = managerRepository.findById(idx).get();
-        java.util.Date hireDate = (Date)map.get("hireDate");
+        java.util.Date hireDate = (java.util.Date)map.get("hireDate");
         Date date = new Date(hireDate.getTime());
         manager.setHireDate(date);
 
         if(map.get("leaveDate") != null) {
-            java.util.Date leaveDate = (Date)map.get("leaveDate");
+            java.util.Date leaveDate = (java.util.Date)map.get("leaveDate");
             Date date2 = new Date(leaveDate.getTime());
             manager.setLeaveDate(date2);
         }
+        return manager;
+    }
+
+    @Transactional
+    public Manager managerDel(Map<String, Object> map) {
+        Long idx = (Long)map.get("idx");
+        java.util.Date leaveDate = (java.util.Date)map.get("leaveDate");
+        Manager manager = managerRepository.findById(idx).get();
+        Date date = new Date(leaveDate.getTime());
+
+        manager.setLeave(YesOrNo.Y);
+        manager.setLeaveDate(date);
         return manager;
     }
 }

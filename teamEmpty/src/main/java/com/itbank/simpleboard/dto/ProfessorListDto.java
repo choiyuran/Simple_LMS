@@ -19,9 +19,10 @@ public class ProfessorListDto {
     private String email;
     private Long major_idx;
     private String major_name;
+    private Date leaveDate;
 
     @QueryProjection
-    public ProfessorListDto(Long idx, String img, Date hireDate, String name, String userid, String address, String pnum, String email, Long major_idx, String major_name) {
+    public ProfessorListDto(Long idx, String img, Date hireDate, String name, String userid, String address, String pnum, String email, Long major_idx, String major_name, Date leaveDate) {
         this.idx = idx;
         this.img = img;
         this.hireDate = hireDate;
@@ -32,5 +33,6 @@ public class ProfessorListDto {
         this.email = email;
         this.major_idx = major_idx;
         this.major_name = major_name;
+        this.leaveDate = leaveDate;
     }
 }

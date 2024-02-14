@@ -18,7 +18,6 @@ public interface ProfessorRepositoryCustom {
 
     List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map);
 
-    List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map);
 
     ProfessorListDto selectOneProfessor(Long idx);
 
