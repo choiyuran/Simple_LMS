@@ -205,11 +205,14 @@ public class ProfessorController {
     }
 
     @PutMapping("/saveGrade")
-    public @ResponseBody Map<String, Object> saveGrade(@RequestBody Map<String, String> request) {
+    @ResponseBody
+    public Map<String, Object> saveGrade(@RequestBody Map<String, String> request) {
         log.info("saveGrade 시작");
         Map<String, Object> responseData = new HashMap<>();
         long enrollment_idx = Long.parseLong(request.get("enrollment_idx"));
+        log.info("saveGrade 시작");
         int save = gradeService.save(enrollment_idx, request.get("score"));
+        log.info("saveGrade 시작");
         if (save != 0) {
             responseData.put("msg", "성적이 입력되었습니다.");
             responseData.put("result", save);
