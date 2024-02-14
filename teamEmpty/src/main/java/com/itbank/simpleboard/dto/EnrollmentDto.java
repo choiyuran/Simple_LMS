@@ -20,6 +20,9 @@ public class EnrollmentDto {
     private Long lecture_idx;
     private Boolean hasGrade;
 
+    // 2월 6일
+    private String score;
+
     @QueryProjection
     public EnrollmentDto(Long idx, String professor_name, String lecture_name, Long professor_idx) {
         this.idx = idx;
@@ -28,7 +31,7 @@ public class EnrollmentDto {
         this.professor_idx = professor_idx;
     }
 
-    public EnrollmentDto(Long idx, Long student_idx, Integer student_num, String student_name, Long lecture_idx, String lecture_name, Boolean hasGrade) {
+    public EnrollmentDto(Long idx, Long student_idx, Integer student_num, String student_name, Long lecture_idx, String lecture_name, Boolean hasGrade, String score) {
         this.idx = idx;
         this.student_idx = student_idx;
         this.student_num = student_num;
@@ -36,5 +39,6 @@ public class EnrollmentDto {
         this.lecture_idx = lecture_idx;
         this.lecture_name = lecture_name;
         this.hasGrade = hasGrade;
+        this.score = score;
     }
 }

@@ -31,9 +31,12 @@ public class StudentController {
     private final AcademicCalendarService academicCalendarService;
     private final SituationService situationService;
     private final PaymentsService paymentsService;
+    private final UserService userService;
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
     private final ProfessorService professorService;
+    private final ScholarShipService scholarShipService;
+
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
         long startTime = System.currentTimeMillis();
@@ -137,7 +140,7 @@ public class StudentController {
 
     @PostMapping("/studentModify/{idx}") // 내 정보 수정
     public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session,RedirectAttributes ra) {
-        UserDTO user = studentService.userUpdate(idx, param);
+        UserDTO user = userService.userUpdate(idx, param);
         StudentDto dto = (StudentDto) session.getAttribute("user");
         dto.getUser().setPnum(user.getPnum());
         dto.getUser().setUser_address(user.getUser_address());
@@ -217,7 +220,7 @@ public class StudentController {
     @PostMapping("email-verification")                      // 이메일 인증
     @ResponseBody
     public Integer SendVerificationCode(String email){
-        return studentService.sendAuthNumber(email);
+        return userService.sendAuthNumber(email);
     }
 
     @PostMapping("genersitu")                               // 일반 휴학

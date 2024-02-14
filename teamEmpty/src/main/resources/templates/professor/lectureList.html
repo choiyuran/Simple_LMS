@@ -45,6 +45,9 @@
             </label>
             <button type="button" onclick="searchLectures()">검색</button>
             <input type="reset" value="초기화" onclick="resetAndSearch()">
+            <label>폐강된 강의 보기
+                <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition">
+            </label>
         </form>
     </div>
     <table class="table table-bordered">
@@ -191,7 +194,6 @@
 
             // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
             tbody.innerHTML = "";
-            console.log(data.length);
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
@@ -201,7 +203,7 @@
                     var tr = document.createElement("tr");
 
                     // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);
                     appendTd(tr, item.professor_name);
                     appendTd(tr, item.major);
                     appendTd(tr, item.type);
@@ -228,11 +230,18 @@
                 a.href = linkHref;
                 a.appendChild(span);
                 div.appendChild(a);
+
+                let split = text.split('_');
+                if (split[1] == 'N') {
+                    span.textContent = split[0];
+                } else {
+                    span.textContent = split[0] + '(폐강)';
+                }
             } else {
                 div.appendChild(span);
+                span.textContent = text;
             }
 
-            span.textContent = text;
             td.appendChild(div);
             parent.appendChild(td);
         }
@@ -241,6 +250,8 @@
             document.getElementById("LectureSearchForm").reset();
             searchLectures();
         }
+
+        document.getElementById('viewAbolition').addEventListener('change', searchLectures);
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>

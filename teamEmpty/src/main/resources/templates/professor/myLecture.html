@@ -44,6 +44,9 @@
             </label>
             <button type="button" onclick="searchLectures()">검색</button>
             <input type="reset" value="초기화" onclick="resetAndSearch()">
+            <label>폐강된 강의 포함
+                <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition">
+            </label>
         </form>
     </div>
     <table class="table table-bordered">
@@ -132,11 +135,11 @@
             <td>
                 <div>
                     <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                    <button th:onclick="'test(\'' + ${row.idx} + '\', \'' + ${row.professor_idx} + '\')'">test</button>
                 </div>
             </td>
-            <td class="viewEvaluationBtnTd">
-                <span th:text="${row.idx}" class="lectureIdxSpan" style="display: none;"></span>
-                <span th:text="${row.professor_idx}" class="professorIdxSpan" style="display: none;"></span>
+            <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}"
+                th:data-professor_idx="${row.professor_idx}">
             </td>
             <td>
                 <button class="btn btn-info btn-lg" data-target="#enrollmentStuList" data-toggle="modal"
@@ -159,6 +162,7 @@
                 searchLectures();
             }
         }
+
         document.getElementById("MySearchInput").addEventListener("keydown", handleKeyDown);
 
         async function searchLectures() {
@@ -208,38 +212,76 @@
                     var tr = document.createElement("tr");
 
                     // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name, true, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.name + '_' + item.abolition, 1, `/professor/viewLecture/${item.idx}`);
                     appendTd(tr, item.major);
                     appendTd(tr, item.type);
                     appendTd(tr, item.credit);
                     appendTd(tr, item.day);
                     appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                    appendTd(tr, item.semester);
+                    appendTd(tr, item.semester, 2, 'semesterValue');
                     appendTd(tr, `${item.grade}학년`);
                     appendTd(tr, `${item.location} ${item.lectureRoom}`);
+                    appendTd(tr, item.idx + '_' + item.professor_idx, 3, 'viewEvaluationBtnTd');
+                    appendTd(tr, item.idx, 4);
 
                     tbody.appendChild(tr);
+                    addEvaluationBtn();
                 });
             }
         }
 
         // 특정 데이터를 <td>에 추가하는 함수
-        function appendTd(parent, text, isLink = false, linkHref = "") {
+        function appendTd(parent, text, checked = 0, checkValue = "") {
             var td = document.createElement("td");
             var div = document.createElement("div");
             var span = document.createElement("span");
 
-            if (isLink) {
-                var a = document.createElement("a");
-                a.href = linkHref;
-                a.appendChild(span);
-                div.appendChild(a);
-            } else {
-                div.appendChild(span);
-            }
+            switch (checked) {
+                case 1:
+                    var a = document.createElement("a");
+                    a.href = checkValue;
+                    a.appendChild(span);
+                    div.appendChild(a);
 
-            span.textContent = text;
-            td.appendChild(div);
+                    let split = text.split('_');
+                    if (split[1] == 'N') {
+                        span.textContent = split[0];
+                    } else {
+                        span.textContent = split[0] + '(폐강)';
+                    }
+                    td.appendChild(div);
+                    break;
+                case 2:
+                    td.classList.add(checkValue);
+                    div.appendChild(span);
+                    span.textContent = text;
+                    td.appendChild(div);
+                    break;
+                case 3:
+                    td.classList.add(checkValue);
+                    let lecture_idx = text.split('_')[0];
+                    let professor_idx = text.split('_')[1];
+                    td.setAttribute('data-lecture-idx', lecture_idx);
+                    td.setAttribute('data-professor_idx', professor_idx);
+                    break;
+                case 4:
+                    var button = document.createElement("button");
+                    button.className = "btn btn-info btn-lg"; // 클래스 추가
+                    button.setAttribute('data-target', '#enrollmentStuList');
+                    button.setAttribute('data-toggle', 'modal');
+                    button.setAttribute('type', 'button');
+                    button.setAttribute('data-lecture-idx', text);
+                    button.textContent = "성적 입력"; // 버튼 텍스트 추가
+                    button.addEventListener('click', function () {
+                        openEnrollmentModal(this);
+                    });
+                    td.appendChild(button);
+                    break;
+                default:
+                    div.appendChild(span);
+                    span.textContent = text;
+                    td.appendChild(div);
+            }
             parent.appendChild(td);
         }
 
@@ -252,8 +294,6 @@
             // 모든 .viewEvaluationBtnTd 클래스를 가진 요소를 선택
             var tdElements = document.querySelectorAll('.viewEvaluationBtnTd');
             var semesterValues = document.querySelectorAll('.semesterValue');
-            var lectureIdxSpan = document.querySelectorAll('.lectureIdxSpan');
-            var professorIdxSpan = document.querySelectorAll('.professorIdxSpan');
 
             // 현재 년도와 월 가져오기
             var currentDate = new Date();
@@ -262,6 +302,8 @@
 
             // 각 요소에 대해 반복
             tdElements.forEach(function (tdElement, index) {
+                let lectureIdx = tdElement.getAttribute("data-lecture-idx");
+                let professorIdx = tdElement.getAttribute("data-professor_idx");
                 tdElement.innerHTML = '';
                 // 'xxxx년 x학기'와 같은 형태의 문자열에서 연도와 학기 추출
                 var matchResult = semesterValues[index].textContent.match(/(\d{4})년 (\d)학기/);
@@ -281,10 +323,10 @@
 
                             // semesterTerm이 currentMonth보다 작을 때만 버튼을 추가
                             if (!isNaN(semesterTerm) && semesterTerm <= currentMonth) {
-                                addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                                addButton(tdElement, lectureIdx, professorIdx);
                             }
                         } else if (semesterYear < currentYear) {
-                            addButton(tdElement, lectureIdxSpan[index].textContent, professorIdxSpan[index].textContent);
+                            addButton(tdElement, lectureIdx, professorIdx);
                         }
                     }
                 }
@@ -304,9 +346,14 @@
             // td 요소에 버튼을 추가
             tdElement.appendChild(buttonElement);
         }
+
         document.addEventListener('DOMContentLoaded', addEvaluationBtn);
 
+        let currentOpenButton = null;
+
         function openEnrollmentModal(button) {
+            currentOpenButton = button;
+
             let modalBody = document.querySelector('#enrollmentStuList .modal-body');
             modalBody.innerHTML = '<img src="/img/loading.gif" alt="로딩" style="width: 100%;0">'; // 기존 내용을 지우고 새로운 내용으로 업데이트
 
@@ -343,9 +390,10 @@
                 tableHTML += `<tr id="row_${student_idx}_${lecture_idx}"><td><div><span>${enrollment.student_num}</span></div></td>`;
                 tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
                 if (hasGrade) {
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${enrollment_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: grey;">수정</button></td></tr>`;
+                    let score = enrollment.score;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${enrollment_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" style="background-color: grey;">수정</button></td></tr>`;
                 } else {
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${hasGrade}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
                 }
             });
 
@@ -355,17 +403,41 @@
             modalBody.innerHTML = tableHTML;
         }
 
-        function enterGrade(student_idx, lecture_idx, enrollment_idx) {
+        function enterGrade(student_idx, lecture_idx, enrollment_idx, score) {
             let rowId = `row_${student_idx}_${lecture_idx}`;
             let targetRow = document.getElementById(rowId);
 
             let gradeTr = document.createElement('tr');
-            gradeTr.innerHTML = `<td colspan="3">
-                               <label for="grade">성적:</label>
-                               <input type="number" id="score" name="score" step="0.01" min="0" max="4.5" placeholder="0.00" required>
-                               <button onclick="saveGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')">저장</button>
-                           </td>`;
 
+            const tdElement = document.createElement('td');
+            tdElement.colSpan = 3;
+            tdElement.style.textAlign = "center";
+
+            const labelElement = document.createElement('label');
+            labelElement.textContent = '성적:';
+
+            const inputElement = document.createElement('input');
+            inputElement.type = 'number';
+            inputElement.id = 'score';
+            inputElement.name = 'score';
+            inputElement.step = '0.01';
+            inputElement.min = '0';
+            inputElement.max = '4.5';
+            inputElement.placeholder = '0.00';
+            inputElement.value = score || '';
+            inputElement.required = true;
+            inputElement.style.width = '30%';
+
+            const buttonElement = document.createElement('button');
+            buttonElement.textContent = '저장';
+            buttonElement.addEventListener('click', () => saveGrade(student_idx, lecture_idx, enrollment_idx));
+
+            tdElement.appendChild(labelElement);
+            tdElement.appendChild(inputElement);
+            tdElement.appendChild(buttonElement);
+
+            gradeTr.innerHTML = ''; // clear existing content
+            gradeTr.appendChild(tdElement);
             // 기존 행 아래에 새로운 행 추가
             targetRow.parentNode.insertBefore(gradeTr, targetRow.nextSibling);
         }
@@ -393,10 +465,8 @@
                 .then(data => {
                     alert(data.msg);
                     if (data.result == 1) {
-                        let button = `button_${student_idx}_${lecture_idx}`;
-                        let buttonRow = document.getElementById(button);
-                        buttonRow.style.backgroundColor = 'grey';
-                        buttonRow.innerText = '수정'
+                        let button = currentOpenButton; // 현재 열려있는 모달을 열었던 버튼
+                        openEnrollmentModal(button);
                     }
                 })
                 .catch(error => {
@@ -407,6 +477,8 @@
             let targetRow = document.getElementById(rowId);
             targetRow.nextSibling.remove();
         }
+
+        document.getElementById('viewAbolition').addEventListener('change', searchLectures);
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>
