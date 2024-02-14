@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!-- 금학기 성적 보기 리스트 -->
+<head th:insert="layout/studentHeader :: head">
+</head>
+<body>
+<header th:insert="layout/studentHeader :: header"></header>
+<main>
+    <div class="container mt-3">
+        <h2 class="my-3" th:text="${session.user.user.user_name+'님의'+ '2024학년 1학기' + '성적'}"></h2>
+        <form id="SemesterSearchForm">
+            <label>학기 선택 :
+                <select name="semester">
+                    <option th:text="'학기 선택'" value="">학기 선택</option>
+                    <option th:each="major : ${SemesterList}" th:value="${semester}" th:text="${semester}"></option>
+                </select>
+            </label>
+        </form>
+        <table class="table table-striped">
+            <tr>
+                <th>과목명</th>
+                <th>강의유형</th>
+                <th>교수이름</th>
+                <th>학기</th>
+                <th>점수</th>
+            </tr>
+            <tr th:each="item:${list}">
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.type}"></td>
+                <td th:text="${item.professor}"></td>
+                <td th:text="${item.semester}"></td>
+                <td th:text="${item.score}"></td>
+            </tr>
+        </table>
+        <p>
+            <button class="btn btn-facebook" onclick="history.go(-1);">이전페이지로</button>
+        </p>
+    </div>
+
+</main>
+<footer th:insert="layout/studentHeader :: footer"></footer>
+</body>
+</html>

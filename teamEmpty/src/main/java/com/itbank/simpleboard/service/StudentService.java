@@ -157,4 +157,8 @@ public class StudentService {
         // 여기서 필요에 따라 TuitionDto를 StudentDto로 변환하는 로직을 추가할 수 있습니다.
         return tuitionDataList;
     }
+
+    public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
+        return studentRepository.getLectureDtoList(condition);
+    }
 }

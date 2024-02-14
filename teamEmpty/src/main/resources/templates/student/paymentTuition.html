@@ -57,9 +57,9 @@
             </tbody>
         </table>
         <div class="d-flex justify-content-around">
-            <form method="post">
+            <form method="post" action="/student/paymentTuition">
                 <input type="hidden" th:value="${session.user.idx}" name="student" required/>
-                <input type="hidden" value="2024학년 1학기" name="semester" required/>
+                <input type="text" th:value="${semester}" name="semester" required/>
                 <button class="btn btn-google">등록금 납부</button>
                 <button type="button" class="btn btn-facebook" onclick="history.go(-1)">돌아가기</button>
             </form>
