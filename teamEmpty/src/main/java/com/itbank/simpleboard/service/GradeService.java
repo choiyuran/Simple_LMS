@@ -20,12 +20,19 @@ public class GradeService {
     @Transactional
     public int save(Long enrollment_idx, String score) {
         int row = 0;
-        Optional<Enrollment> enrollmentById = enrollmentRepository.findById(enrollment_idx);
-        if (enrollmentById.isPresent()) {
-            Enrollment enrollment = enrollmentById.get();
-            Grade grade = new Grade(enrollment, score);
-            gradeRepository.save(grade);
+        Optional<Grade> gradeOptional = gradeRepository.findByenrollment_idx(enrollment_idx);
+        if (gradeOptional.isPresent()) {
+            Grade grade = gradeOptional.get();
+            grade.setScore(score);
             row = 1;
+        } else {
+            Optional<Enrollment> enrollmentById = enrollmentRepository.findById(enrollment_idx);
+            if (enrollmentById.isPresent()) {
+                Enrollment enrollment = enrollmentById.get();
+                Grade grade = new Grade(enrollment, score);
+                gradeRepository.save(grade);
+                row = 1;
+            }
         }
         return row;
     }

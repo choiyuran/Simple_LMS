@@ -8,7 +8,6 @@ import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
-import com.itbank.simpleboard.service.FileService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

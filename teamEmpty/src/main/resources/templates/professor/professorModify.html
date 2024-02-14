@@ -87,6 +87,7 @@
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
                            id="previous" placeholder="기존 패스워드" required>
+                    <span class="my-1" id="previousHelp></span>
                 </div>
 
                 <div class="col-sm-12 mb-3 ">
@@ -129,34 +130,38 @@
         }
 
         function validatePassword(password) {
-            var re = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-z0-9!@#$%^&*]{8,}$/;
+            var re = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
             return re.test(String(password));
         }
 
+        passwordInput.addEventListener('focus', function () {
+            passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+        });
+        repeatPasswordInput.addEventListener('focus', function () {
+            passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요."
+        });
+
         passwordInput.addEventListener('input', function () {
-            if (!validatePassword(passwordInput.value)) {
-                passwordHelp.innerHTML = "총 8자 이상 숫자, 소문자, 특수문자를 각각 하나 이상 ";
-                passwordConfirmHelp.classList.add('text-danger');
+            if (validatePassword(passwordInput.value.trim())) {
+                passwordHelp.classList.remove('text-danger');
+                passwordHelp.classList.add('text-success');
+                passwordHelp.innerHTML = "사용 가능한 비밀번호입니다.";
             } else {
-                passwordHelp.innerHTML = "";
-                // 비밀번호 재확인 입력란 유효성 검사 로직 추가
-                if (passwordInput.value !== repeatPasswordInput.value) {
-                    passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
-                    passwordConfirmHelp.classList.add('text-danger');
-                } else {
-                    passwordConfirmHelp.classList.add('text-primary');
-                    passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
-                }
+                passwordHelp.classList.remove('text-success');
+                passwordHelp.classList.add('text-danger');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
             }
         });
 
         repeatPasswordInput.addEventListener('input', function () {
             if (passwordInput.value !== repeatPasswordInput.value) {
-                passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
-                passwordConfirmHelp.style.color = "red";
+                passwordConfirmHelp.classList.add('text-danger');
+                passwordConfirmHelp.classList.remove('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치하지 않습니다.";
             } else {
-                passwordConfirmHelp.classList.add('text-primary');
-                passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
+                passwordConfirmHelp.classList.remove('text-danger')
+                passwordConfirmHelp.classList.add('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치합니다.";
             }
         });
 
@@ -243,6 +248,16 @@
             alert('이메일 인증 후 시도해주세요');
         }
     })
+
+    document.getElementById('btnChangePw').addEventListener('click', function (e) {
+        let previous = document.getElementById('previous');
+        if (previous.value.trim() === "") {
+            let previousHelp = document.getElementById('previousHelp');
+            previousHelp.innerHTML = "현재 비밀번호를 입력해주세요."
+            previousHelp.classList.add('text-danger');
+        } else {
+        }
+    });
 </script>
 
 </body>
