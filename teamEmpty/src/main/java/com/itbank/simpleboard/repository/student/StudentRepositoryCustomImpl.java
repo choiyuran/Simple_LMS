@@ -16,54 +16,47 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static com.itbank.simpleboard.entity.QLecture.lecture;
+import static com.itbank.simpleboard.entity.QEnrollment.enrollment;
 
 @Repository
 @RequiredArgsConstructor
-public class StudentRepositoryCustomImpl implements StudentRepositoryCustom{
+public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Autowired
     public StudentRepositoryCustomImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
     @Override
     public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
+        BooleanExpression studentIdxCondition = condition.getStudentIdx() != null ?
+                enrollment.student.idx.eq(condition.getStudentIdx()) : null;
+
+        BooleanExpression semesterCondition = condition.getSemester() != null ?
+                enrollment.lecture.semester.eq(condition.getSemester()) : null;
+
         return queryFactory
                 .select(new QGradeLectureDto(
-                        lecture.idx,
-                        lecture.name,
-                        lecture.credit,
-                        lecture.type.stringValue(),
-                        lecture.semester,
-                        lecture.grade,
-                        lecture.abolition.stringValue(),
-                        QGrade.grade.score,
-                        lecture.professor.professor_idx,
-                        QUser.user.user_name,
-                        lecture.plan,
-                        QMajor.major.name,
-                        QCollege.college.location,
-                        QLectureRoom.lectureRoom.room
-                ))
-                .from(lecture)
-                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
+                                enrollment.lecture.idx,
+                                enrollment.lecture.name,
+                                enrollment.lecture.credit,
+                                enrollment.lecture.type.stringValue(),
+                                enrollment.lecture.semester,
+                                enrollment.lecture.grade,
+                                QGrade.grade.score,
+                                QUser.user.user_name,
+                                QMajor.major.name
+                        )
+                ).from(enrollment)
+                .innerJoin(QMajor.major).on(enrollment.lecture.major.eq(QMajor.major))
+                .innerJoin(QProfessor.professor).on(enrollment.lecture.professor.eq(QProfessor.professor))
                 .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .innerJoin(lecture.major, QMajor.major)
-                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
-                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .innerJoin(QGrade.grade).on(QGrade.grade.student.eq(enrollment.student).and(QGrade.grade.lecture.eq(enrollment.lecture)))
                 .where(
-                        QMajor.major.abolition.eq(YesOrNo.valueOf("N")),
-                        student_idxEq(condition.getStudent_idx()),
-                        nameContain(condition.getName()),
-                        typeEq(condition.getType()),
-                        yearEq(condition.getYear()),
-                        semesterEq(condition.getSemester()),
-                        gradeEq(condition.getGrade()),
-                        professorContain(condition.getProfessor()),
-                        majorEq(condition.getMajor()),
-                        professor_idxEq(condition.getProfessor_idx())
-                )
-                .fetch();
+                        studentIdxCondition,
+                        semesterCondition
+                ).fetch();
     }
 
     private Predicate student_idxEq(Long studentIdx) {

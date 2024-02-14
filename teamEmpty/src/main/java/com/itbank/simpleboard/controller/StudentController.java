@@ -364,44 +364,24 @@ public class StudentController {
     }
 
     @GetMapping("/gradeList")
-    public ModelAndView GradeList(GradeSearchConditionDto condition) {
+    public ModelAndView GradeList(GradeSearchConditionDto condition, HttpSession session) {
         ModelAndView mav = new ModelAndView("/student/gradeList");
-        List<GradeLectureDto> lectureDtoList = studentService.getLectureDtoList(condition);
-        // LectureDtoList를 Model에 추가
-        mav.addObject("LectureList", lectureDtoList);
 
-        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-        mav.addObject("MajorList", lectureDtoList.stream()
-                .map(GradeLectureDto::getMajor)
-                .distinct()
-                .collect(Collectors.toList()));
-
-        mav.addObject("GradeList", lectureDtoList.stream()
-                .map(GradeLectureDto::getGrade)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList()));
-
-        int currentYear = LocalDate.now().getYear();
-        List<Integer> yearList = new ArrayList<>();
-        for (int i = 4; i >= 0; i--) {
-            int year = currentYear - i;
-            yearList.add(year);
+        Object o = session.getAttribute("user");
+        if(o instanceof StudentDto) {
+            StudentDto dto = (StudentDto) o;
+            condition.setStudentIdx(dto.getIdx());
+            mav.addObject("list",studentService.getLectureDtoList(condition));
+        }else{
+            mav.addObject("redirect:/");
         }
-        mav.addObject("YearList", yearList);
         return mav;
     }
 
     @ResponseBody
     @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
     public ResponseEntity<List<GradeLectureDto>> lectureListAjax(@RequestBody GradeSearchConditionDto condition) {
-        long startTime = System.currentTimeMillis();
-        List<GradeLectureDto> lectureDtoList = studentService.getLectureDtoList(condition);
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body(lectureDtoList);
+        return null;
     }
 
 }
