@@ -14,7 +14,7 @@
             <form method="POST">
                 <select name="searchType">
                     <option value="name"> 이름</option>
-                    <option value="phone">전화번호</option>
+                    <option value="phone">연락처</option>
                 </select>
                 <input type="text" name="searchValue" placeholder="검색어 입력">
                 <input type="submit" value="검색">
@@ -25,11 +25,9 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>직원사진</th>
-                <th>아이디</th>
                 <th>이름</th>
+                <th>아이디</th>
                 <th>연락처</th>
-                <th>이메일</th>
                 <th>입사일</th>
             </tr>
             </thead>
@@ -40,13 +38,10 @@
                 </td>
             </tr>
             <tr th:unless="${#lists.isEmpty(managerList)}" th:each="row : ${managerList}">
-                <td th:text="${row.getManagerImg()}"></td>
-                <td th:text="${row.getManagerId()}"></td>
-                <td th:text="${row.getManagerName()}"></td>
-                <td th:text="${row.getManagerPnum()}"></td>
-                <td th:text="${row.getManagerEmail()}"></td>
-                <td th:text="${row.getManagerHireDate()}"></td>
-
+                <td><a th:text="${row.managerName}" th:href="@{'/manager/managerView/' + ${row.idx}}"></a></td>
+                <td th:text="${row.managerId}"></td>
+                <td th:text="${row.managerPnum}"></td>
+                <td th:text="${row.managerHireDate}"></td>
              </tr>
             </tbody>
         </table>

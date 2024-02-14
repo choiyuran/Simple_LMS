@@ -6,6 +6,7 @@ import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -302,7 +303,6 @@ public class ManagerController {
     public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
                                   @RequestParam(value = "majorName", required = false) String majorName) {
         ModelAndView mav = new ModelAndView("manager/majorList");
-        log.info("collegeIdx: " + collegeIdx + ", majorName: " + majorName);
         List<Major> list;
 
         // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
@@ -481,6 +481,135 @@ public class ManagerController {
         log.info("param : " + param);
         Situation situation = situationService.situationUpdate(param);
         return "redirect:/manager/studentSituation";
+    }
+
+    @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
+    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
+                                      @RequestParam(value = "name", required = false) String name,
+                                      @RequestParam(value = "leave", required = false) Boolean leave) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("major_idx", major_idx);
+        map.put("name", name);
+        map.put("leave", leave);
+
+        List<ProfessorListDto> professorList;
+        if(Boolean.TRUE.equals(leave)) {
+//        if("true".equals(leave)) {
+            professorList = managerService.searchByMajorAndProfessorAndLeave(map);
+        }
+        else {
+            professorList = managerService.searchByMajorAndProfessor(map);
+        }
+
+        ModelAndView mav = new ModelAndView("manager/professorList");
+        List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject("majorList", majorList);
+        mav.addObject("professorList", professorList);
+        mav.addObject("map", map);
+        return mav;
+    }
+
+//    @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
+//    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
+//                                      @RequestParam(value = "name", required = false) String name,
+//                                      @RequestParam(value = "leave", required = false) String leave) {
+//
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("major_idx", major_idx);
+//        map.put("name", name);
+//        map.put("leave", leave);
+//
+//        ModelAndView mav = new ModelAndView("manager/professorList");
+//        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessor(map);
+//        List<Major> majorList = managerService.selectAllMajor();
+//
+//        mav.addObject("majorList", majorList);
+//        mav.addObject("professorList", professorList);
+//        mav.addObject("map", map);
+//        return mav;
+//    }
+
+    @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
+    public ModelAndView professorView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("redirect:/manager/professorList");
+        ProfessorListDto professor = managerService.selectOneProfessor(idx);
+        if(professor != null) {
+            mav.addObject("professor", professor);
+            mav.setViewName("manager/professorView");
+        }
+        return mav;
+    }
+
+    @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정 - 입사일
+    public String professorUpdateByManager(@PathVariable("idx") Long idx,
+                                           @RequestParam("hireDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date hireDate) {
+        Professor professor = managerService.updateProfessorByManager(idx, hireDate);
+        return "redirect:/manager/professorList";
+    }
+
+    @GetMapping("/professorDel/{idx}")              // 교수 삭제
+    public String professorDel(@PathVariable("idx") Long idx) {
+        Professor professor = managerService.professorDel(idx);
+        return "redirect:/manager/professorList";
+    }
+
+    @GetMapping("/studentList")         // 학생 목록 조회(검색어 있는 경우와 없는 경우)
+    public ModelAndView studentList(@RequestParam(value = "major_idx", required = false) Long major_idx,
+                                    @RequestParam(value = "name", required = false) String name) {
+        ModelAndView mav = new ModelAndView("manager/studentList");
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("major_idx", major_idx);
+        map.put("name", name);
+        List<StudentListDto> studentList = managerService.selectAllStudent(map);
+        List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject("map", map);
+        mav.addObject("majorList", majorList);
+        mav.addObject("studentList", studentList);
+        return mav;
+    }
+
+    @GetMapping("/studentView/{idx}")             // 학생 상세 보기
+    public ModelAndView studentView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("redirect:/manager/studentList");
+        StudentListDto student = managerService.selectOneStudent(idx);
+        if(student != null) {
+            mav.addObject("student", student);
+            mav.setViewName("manager/studentView");
+        }
+        return mav;
+    }
+
+    @PostMapping("/studentUpdateByManager/{idx}")               // 학생 정보 수정(교직원이 입학일만 수정)
+    public String studentUpdateByManager(@PathVariable("idx")Long idx,
+                                         @RequestParam("entranceDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date entranceDate) {
+        Student student = managerService.studentUpdateByManager(idx, entranceDate);
+        return "redirect:/manager/studentList";
+    }
+
+    @GetMapping("/managerView/{idx}")           // 교직원 상세 보기
+    public ModelAndView managerView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("redirect:/manager/managerList");
+        ManagerDTO manager = managerService.selectOneManager(idx);
+        if(manager != null) {
+            mav.addObject("manager", manager);
+            mav.setViewName("manager/managerView");
+        }
+        return mav;
+    }
+
+    @PostMapping("/managerUpdateByManager/{idx}")         // 교직원 정보 수정(교직원이 하는 입사일 수정)
+    public String managerUpdateByManager(@PathVariable("idx") Long idx,
+                                         @RequestParam("hireDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date hireDate,
+                                         @RequestParam("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd")Date leaveDate) {
+        Manager manager;
+        HashMap<String, Object> map = new HashMap<>();
+        if(leaveDate != null) {
+            map.put("leaveDate", leaveDate);
+        }
+        map.put("idx", idx);
+        map.put("hireDate", hireDate);
+        manager = managerService.updateManagerByManager(map);
+        return "redirect:/manager/managerList";
     }
 
 

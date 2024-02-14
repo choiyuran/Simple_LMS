@@ -14,6 +14,7 @@ import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
+import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -45,6 +47,7 @@ public class ManagerService {
     private final LectureRoomRepository lectureRoomRepository;
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
+    private final StudentRepository studentRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -52,12 +55,15 @@ public class ManagerService {
 
         for(Manager m : managerList){
             ManagerDTO dto = new ManagerDTO();
+            dto.setIdx(m.getIdx());
             dto.setManagerImg(m.getManager_img());
             dto.setManagerId(m.getUser().getUser_id());
             dto.setManagerName(m.getUser().getUser_name());
             dto.setManagerPnum(m.getUser().getPnum());
             dto.setManagerEmail(m.getUser().getEmail());
             dto.setManagerHireDate(m.getHireDate());
+            dto.setAddress(m.getUser().getAddress());
+            dto.setLeaveDate(m.getLeaveDate());
             managerDTOList.add(dto);
         }
 
@@ -136,7 +142,6 @@ public class ManagerService {
                param.getType(),
                professor,
                param.getMax_count(),
-               param.getCurrent_count(),
                param.getSemester(),
                param.getGrade(),
                major,
@@ -194,7 +199,6 @@ public class ManagerService {
         lecture.setType(param.getType());
         lecture.setProfessor(professor);
         lecture.setMaxCount(param.getMax_count());
-        lecture.setCurrentCount(param.getCurrent_count());
         lecture.setSemester(param.getSemester());
         lecture.setGrade(param.getGrade());
         lecture.setMajor(major);
@@ -419,6 +423,71 @@ public class ManagerService {
             // 변환 실패 시에는 예외를 처리하거나 null을 반환합니다.
             return null;
         }
+    }
+    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
+        return professorRepository.searchByMajorAndProfessorAndLeave(map);
+    }
+
+    public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
+        return professorRepository.searchByMajorAndProfessor(map);
+    }
+
+    public ProfessorListDto selectOneProfessor(Long idx) {
+        return professorRepository.selectOneProfessor(idx);
+    }
+
+    @Transactional
+    public Professor updateProfessorByManager(Long idx, java.util.Date hireDate) {
+        Professor professor = professorRepository.findById(idx).get();
+        java.util.Date date = hireDate;
+        Date sqlDate = new Date(date.getTime());
+        professor.setHireDate(sqlDate);
+        return professor;
+    }
+
+    @Transactional
+    public Professor professorDel(Long idx) {
+        Professor professor = professorRepository.findById(idx).get();
+        professor.setLeave(YesOrNo.Y);
+        professor.setLeaveDate(Date.valueOf(LocalDate.now()));
+        return professor;
+    }
+
+
+    public List<StudentListDto> selectAllStudent(HashMap<String, Object> map) {
+        return studentRepository.selectAllStudent(map);
+    }
+
+    public StudentListDto selectOneStudent(Long idx) {
+        return studentRepository.selectOndeStudent(idx);
+    }
+
+    @Transactional
+    public Student studentUpdateByManager(Long idx, java.util.Date entranceDate) {
+        Student student = studentRepository.findById(idx).get();
+        Date date = new Date(entranceDate.getTime());
+        student.setEnteranceDate(date);
+        return student;
+    }
+
+    public ManagerDTO selectOneManager(Long idx) {
+        return managerRepository.selectOneManager(idx);
+    }
+
+    @Transactional
+    public Manager updateManagerByManager(HashMap<String, Object> map) {
+        Long idx = (Long)map.get("idx");
+        Manager manager = managerRepository.findById(idx).get();
+        java.util.Date hireDate = (Date)map.get("hireDate");
+        Date date = new Date(hireDate.getTime());
+        manager.setHireDate(date);
+
+        if(map.get("leaveDate") != null) {
+            java.util.Date leaveDate = (Date)map.get("leaveDate");
+            Date date2 = new Date(leaveDate.getTime());
+            manager.setLeaveDate(date2);
+        }
+        return manager;
     }
 }
 

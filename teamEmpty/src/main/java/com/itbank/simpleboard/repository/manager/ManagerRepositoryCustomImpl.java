@@ -44,12 +44,15 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
 
         return queryFactory
                 .select(new QManagerDTO(
+                        manager.idx,
                         manager.manager_img,
                         user.user_id,
                         user.user_name,
                         user.pnum,
                         user.email,
-                        manager.hireDate
+                        manager.hireDate,
+                        user.address,
+                        manager.leaveDate
                 ))
                 .from(manager)
                 .innerJoin(user)
@@ -58,5 +61,25 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                     condition
                 )
                 .fetch();
+    }
+
+    @Override
+    public ManagerDTO selectOneManager(Long idx) {
+        return queryFactory
+                .select(new QManagerDTO(
+                        QManager.manager.idx,
+                        QManager.manager.manager_img,
+                        QUser.user.user_id,
+                        QUser.user.user_name,
+                        QUser.user.pnum,
+                        QUser.user.email,
+                        QManager.manager.hireDate,
+                        QUser.user.address,
+                        QManager.manager.leaveDate
+                        ))
+                .from(QManager.manager)
+                .join(QManager.manager.user, QUser.user)
+                .where(QManager.manager.idx.eq(idx))
+                .fetchOne();
     }
 }

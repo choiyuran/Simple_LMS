@@ -8,6 +8,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class ManagerDTO {
+    private Long idx;
     // 직원사진
     private String managerImg;
 
@@ -26,13 +27,19 @@ public class ManagerDTO {
     // 입사일
     private Date managerHireDate;
 
+    private String address;
+    private Date leaveDate;
+
     @QueryProjection
-    public ManagerDTO(String managerImg, String managerId, String managerName, String managerPnum, String managerEmail, Date managerHireDate) {
+    public ManagerDTO(Long idx, String managerImg, String managerId, String managerName, String managerPnum, String managerEmail, Date managerHireDate, String address, Date leaveDate) {
+        this.idx = idx;
         this.managerImg = managerImg;
         this.managerId = managerId;
         this.managerName = managerName;
         this.managerPnum = managerPnum;
         this.managerEmail = managerEmail;
         this.managerHireDate = managerHireDate;
+        this.address = address;
+        this.leaveDate = leaveDate;
     }
 }
