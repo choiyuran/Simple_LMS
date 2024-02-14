@@ -16,4 +16,5 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long>, Pro
     List<String> findAllMajorNames();
 
 
+
 }

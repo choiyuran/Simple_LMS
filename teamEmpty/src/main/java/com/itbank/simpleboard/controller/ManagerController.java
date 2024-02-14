@@ -123,80 +123,6 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/addManager")   // 교직원 등록
-    public ResponseEntity<Map<String, String>> registerManager(@ModelAttribute UserFormDTO userFormDTO) {
-        try {
-            log.info("교직원등록");
-            long startTime = System.currentTimeMillis();
-            log.info(userFormDTO.getUserType());
-            log.info(userFormDTO.getEmail());
-            Map<String, String> response = new HashMap<>();
-
-            if(userFormDTO.getUserType().equals("manager")){
-                Manager manager = managerService.addManager(userFormDTO);
-                if(manager.getIdx() != null){
-                    // 응답 생성
-                    response.put("message", "폼 등록이 완료되었습니다.");
-                    response.put("name", manager.getUser().getUser_name());
-                    response.put("type", manager.getUser().getRole().toString());
-                }
-            }
-
-
-            long endTime = System.currentTimeMillis();
-            log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("교직원 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    //    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "/addProfessor", produces = MediaType.APPLICATION_JSON_VALUE) // 교수 등록
-    @ResponseBody// 교수 등록
-    public ResponseEntity<Map<String, String>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO) {
-        try {
-            log.info("교수등록 시작");
-            long startTime = System.currentTimeMillis();
-
-            log.info("사용자 타입: " + userFormDTO.getUserType());
-            log.info("이메일: " + userFormDTO.getEmail());
-            log.info("전공: " + userFormDTO.getMajor());
-
-            Map<String, String> response = new HashMap<>();
-
-            if ("professor".equals(userFormDTO.getUserType())) {
-                Professor professor = managerService.addProfessor(userFormDTO);
-                if (professor != null && professor.getProfessor_idx() != null) {
-                    // 성공적으로 교수 등록이 완료된 경우
-                    response.put("message", "폼 등록이 완료되었습니다.");
-                    response.put("name", professor.getUser().getUser_name());
-                    response.put("type", professor.getUser().getRole().toString());
-                    log.info("교수 등록 성공: " + professor.getUser().getUser_name());
-                    long endTime = System.currentTimeMillis();
-                    log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
-                    System.err.println("교수 등록 성공");
-                    return ResponseEntity.ok(response);
-                } else {
-                    // 교수 등록에 실패한 경우
-                    response.put("message", "교수 등록에 실패하였습니다");
-                    log.error("교수 등록 실패");
-                    System.err.println("교수 등록 실패");
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 실패 시 500 에러 응답
-                }
-            } else {
-                // 교수가 아닌 사용자 타입의 요청인 경우
-                response.put("message", "교수 타입의 사용자가 아닙니다");
-                log.error("교수 타입의 사용자가 아닙니다");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // 잘못된 요청 400 에러 응답
-            }
-        } catch (Exception e) {
-            log.error("교수 등록 중 오류 발생", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();// 예외 발생 시 500 에러 응답
-        }
-    }
 
 
     @GetMapping("/addStudent")   // 학생 등록
@@ -228,6 +154,7 @@ public class ManagerController {
 
         model.addAttribute("students","학생등록");
         model.addAttribute("studentList",managerService.saveStudentDTOList(studentFile));
+        model.addAttribute("collegeList",managerService.selectAllCollege());
         return "manager/registerStudentList";
 
     }
@@ -260,19 +187,6 @@ public class ManagerController {
     }
 
 
-    @PostMapping("/addStudentList")   // 학생 등록
-    @ResponseBody
-    public String saveStudentList(@RequestBody List<Map<String, String>> updatedData, Model model) {
-        log.info("학생등록 리스트 저장: AJAX");
-        // 클라이언트에서 전송한 수정된 데이터를 받아 처리
-        for (Map<String, String> studentData : updatedData) {
-            // 각 학생 데이터를 가져와서 필요한 작업을 수행
-            log.info("Received student data: " + studentData);
-        }
-
-        model.addAttribute("message","학생 저장 완료");
-        return "Data received successfully!";
-    }
 
 
     @GetMapping("/addStudentList")   // 학생 등록

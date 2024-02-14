@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
+import java.util.Map;
 
 
 @Data
@@ -35,11 +36,11 @@ public class StudentFormDTO {
     // 학년
     private Integer student_grade;
 
-    // 학과번호
-    private Long major;
+    // 학과
+    private String major;
 
-    // 지도교수번호
-    private Long professor;
+    // 지도교수
+    private String professor;
 
 
 

@@ -16,6 +16,7 @@ import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -321,13 +322,14 @@ public class ManagerService {
                 int cellIndex = 0;
                 boolean hasData = false; // 더 이상 읽어들일 데이터가 없는지 확인하기 위한 플래그
 
+                String mInfo = "";
                 while(cellIterator.hasNext()){
                     Cell currentCell = cellIterator.next();  // 현재 셀을 가져오기
-
                     switch (cellIndex){
                         case 0:
                             if(currentCell.getCellType() == CellType.NUMERIC){   // 셀의 데이터유형이 숫자인지 문자인지 확인
                                 student.setStudent_num((int) currentCell.getNumericCellValue()); // 숫자형 데이터 가져오기
+                                log.info("getStudent_num : " + student.getStudent_num());
                                 hasData = true; // 데이터가 있으면 플래그를 설정
                             }
                             break;
@@ -380,13 +382,52 @@ public class ManagerService {
                             }
                             break;
                         case 8:
-                            if(currentCell.getCellType() == CellType.NUMERIC){
-                                student.setMajor((long) currentCell.getNumericCellValue());
+                            if(currentCell.getCellType() == CellType.STRING){
+                                Major major =  majorRepository.findByName(currentCell.getStringCellValue());
+                                log.info("major : " + major);
+                                String majorInfo;
+
+                                if(major == null) {
+                                    List<Major> majors = majorRepository.findByNameContaining(currentCell.getStringCellValue());
+                                    if(majors.isEmpty()){
+                                        majorInfo = "학과정보없음";
+                                    }else {
+                                        mInfo = majors.get(0).getName();
+                                        majorInfo = mInfo + "("+majors.get(0).getIdx()+")";
+                                    }
+                                }else{
+                                    mInfo = major.getName();
+                                    majorInfo = mInfo + "("+major.getIdx()+")";
+                                }
+                                log.info(" case 8 majorInfo" + majorInfo);
+                                student.setMajor(majorInfo);
+                                log.info("getMajor : " + student.getMajor());
                             }
                             break;
                         case 9:
-                            if(currentCell.getCellType() == CellType.NUMERIC){
-                                student.setProfessor((long) currentCell.getNumericCellValue());
+                            if(currentCell.getCellType() == CellType.STRING){
+                                String professorName = currentCell.getStringCellValue();
+                                log.info("case 9 mInfo :" + mInfo);
+                                log.info("case 9 professorName :" + professorName);
+
+                                List<Tuple> professorNameList = professorRepository.findByMajorAndUserUserNameContaining(mInfo, professorName);
+                                log.info("professorNameList :" + professorNameList.toString());
+
+                                String professorInfo;
+                                if(!professorNameList.isEmpty()){
+                                    Tuple tuple = professorNameList.get(0);
+                                    Long userNum = tuple.get(0, Long.class);
+                                    String userName = tuple.get(1, String.class);
+                                    // 여기서 할 작업 수행
+                                    professorInfo = userName + "(" + userNum + ")";
+                                    log.info("userNum: " + userNum);
+                                    log.info("userName: " + userName);
+                                }else{
+                                    professorInfo = "교수정보없음";
+                                }
+                                student.setProfessor(professorInfo);
+                                log.info(" case 9 professorInfo" + professorInfo);
+                                log.info("getProfessor : " + student.getProfessor());
                             }
                             break;
                     }
@@ -398,7 +439,7 @@ public class ManagerService {
                 }
                 student.setIdx(idx++);
                 studentFormDTOList.add(student);
-                System.err.println("studentFormDTO : "+ student.toString());
+                System.err.println("studentFormDTO : "+ student);
             }
 
         } catch (IOException e) {
@@ -423,6 +464,29 @@ public class ManagerService {
             // 변환 실패 시에는 예외를 처리하거나 null을 반환합니다.
             return null;
         }
+    }
+
+    public List<MajorDto> getMajorList(String collegeName) {
+        List<Major> List = majorRepository.findByCollegeName(collegeName);
+        List<MajorDto> majorList = new ArrayList<>();
+        long idx = 1;
+
+        if(!List.isEmpty()){
+            for (Major m : List){
+                MajorDto dto = new MajorDto(
+                        m.getName(),
+                        m.getCollege().getIdx(),
+                        m.getCollege().getName()
+                );
+                dto.setIdx(idx++);
+                majorList.add(dto);
+                log.info("dto.getName() : " + dto.getName());
+                log.info("dto : " + dto);
+            }
+        }
+        log.info("majorList.get(0).getName() : " + majorList.get(0).getName());
+        log.info("majorList. : " + majorList);
+        return majorList;
     }
     public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
         return professorRepository.searchByMajorAndProfessorAndLeave(map);

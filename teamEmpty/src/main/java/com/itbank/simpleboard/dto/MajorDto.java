@@ -26,4 +26,11 @@ public class MajorDto {
         this.college_name = college;
         this.abolition = YesOrNo.N;
     }
+
+    public MajorDto( String name, Long college_idx, String college_name) {
+        this.name = name;
+        this.college_idx = college_idx;
+        this.college_name = college_name;
+        this.abolition = YesOrNo.N;
+    }
 }

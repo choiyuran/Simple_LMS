@@ -3,11 +3,39 @@
 <head th:insert="layout/header :: head">
 </head>
 
+
 <body>
 <header th:insert="layout/header :: header"> </header>
 <div class="container mt-3">
     <h2>학생 등록 명단</h2> <p th:text="${students}"></p>
     <p th:text="${message}"></p>
+    <button id="showDepartmentsBtn" type="button">학과명 확인</button>
+    <h2>학과 및 교수 목록</h2>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <h3>대학 목록</h3>
+            <ul id="collegeList">
+                <li th:each="college : ${collegeList}" th:text="${college.name}" th:data-college-name="${college.name}" onclick="showMajors(event)"></li>
+            </ul>
+        </div>
+        <!-- 2열: 학과 목록 -->
+        <div class="col">
+            <h3>학과 목록</h3>
+            <ul id="majorList">
+                <!-- 선택된 대학에 해당하는 학과 목록을 여기에 동적으로 추가 -->
+            </ul>
+        </div>
+        <!-- 3열: 교수 목록 -->
+        <div class="col">
+            <h3>학과 목록</h3>
+            <ul id="professorList">
+                <!-- 선택된 학과에 해당하는 교수 목록을 여기에 동적으로 추가 -->
+            </ul>
+        </div>
+    </div>
+
+
     <hr>
     <form method="post" action="/manager/addStudentList">
         <table class="table table-bordered">
@@ -25,24 +53,21 @@
                 <th>지도교수번호</th>
                 <th>수정</th>
             </tr>
-            <tr th:each="student, row : ${studentList}">
+            <tr th:each="student : ${studentList}">
                 <td contenteditable="true" data-field="idx" th:text="${student.idx}"></td>
                 <td contenteditable="true" data-field="student_num" th:text="${student.student_num}"></td>
                 <td contenteditable="true" data-field="name" th:text="${student.name}"></td>
-                <td contenteditable="true" data-field="substring" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
-                <td contenteditable="true" data-field="substring" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
+                <td contenteditable="true" data-field="security" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
+                <td contenteditable="true" data-field="pnum" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
                 <td contenteditable="true" data-field="address" th:text="${student.address}"></td>
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
                 <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
-                <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
-                <td contenteditable="true" data-field="professor" th:text="${student.professor}"></td>
-                <td>
-                    <button class="btn btn-warning" type="button" onclick="saveChanges(${row.index})">수정</button>
-                </td>
+                <td contenteditable="true" data-field="major" th:text="${student.major}" class="not-found"></td>
+                <td contenteditable="true" data-field="professor" th:text="${student.professor}" class="not-found"></td>
             </tr>
         </table>
-        <button id="saveBtn" type="button" onclick="saveAllChanges()">학생 전체 등록</button>
+        <button id="saveBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
     </form>
 
 </div>
@@ -52,62 +77,96 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
-   let updatedData = [];
+    // 대학을 클릭할 때마다 해당 대학에 속한 학과를 가져와서 majorList를 업데이트하는 함수
+    function showMajors(event) {
+        event.preventDefault();
+        // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
+        const collegeName = event.target.getAttribute('data-college-name');
 
-   function saveChanges(index){
-       console.log('index : ' + index);
-       const formData = new FormData(document.getElementById('studentForm'));
-       const studentData = {};
-       for(const pair of formData.entries()){
-           studentData[pair[0]] = pair[1];
-       }
-       updatedData[index] =studentData;
-       console.log('index : ' + index);
-       console.log('studentData : ' + studentData);
-       // 수정된 데이터를 화면에 업데이트
-       updateScreen();
-   }
+        // 해당 대학에 속한 학과 목록을 가져오는 API 호출 (서버와의 통신)
+        console.log('collegeName' + collegeName);
+        fetch(`/manager/getMajorsByCollege?collegeName=${collegeName}`)
+            .then(response => response.json()) // JSON 형식으로 변환
+            .then(data => {
+                console.log('data:', data); // 객체 그대로 출력
+                console.log('data.stringify:', JSON.stringify(data)); // 객체를 문자열로 출력
+                console.log('data.propertyName:', data.propertyName); // 해당 속성 출력
+
+                // majorList 업데이트
+                const majorList = document.getElementById("majorList");
+                majorList.innerHTML = ""; // 기존 목록 초기화
+                data.forEach(major => {
+                    const li = document.createElement("li");
+                    li.textContent = major.name;
+                    majorList.appendChild(li);
+                });
+            })
+            .catch(error => console.error('Error:', error)); // 오류 처리
+    }
+
+    // 페이지 로드 시 초기화: 첫 번째 대학에 속한 학과 목록 표시
+    document.addEventListener("DOMContentLoaded", function() {
+        const firstCollegeName = document.querySelector("#collegeList li:first-child").textContent;
+        showMajors(firstCollegeName);
+        document.querySelectorAll('td[data-field="major"], td[data-field="professor"]').forEach(td => {
+            if (!td.innerText.includes('정보없음')) {
+                td.classList.remove('not-found');
+            }
+        });
+    });
 
 
-   function saveAllChanges(){
-       sendUpdatedData(updatedData);
-   }
 
-   function updateScreen(){
-       const tableRows = document.querySelectorAll('table tr');
-       updatedData.forEach(function (studentData, index){
-           const row = tableRows[index +1];// Header row를 제외한 테이블의 첫 번째 row부터 시작
-           for (const field in studentData){
-               const cell = row.querySelector('[data-field="' + field + '"]');
-               console.log('cell : ' + cell)
-               if(cell){
-                   cell.textContent = studentData[field];
-                   console.log('cell.textContent : ' + cell.textContent)
-               }
-           }
-       })
-   }
 
-   function  sendUpdatedData(data){
-       console.log('data : ' +data )
-       fetch('/manager/addStudentList',{
-           method:'POST',
-           headers:{
-               'Content-Type':'application/json'
-           },
-           body:JSON.stringify(data)
-       })
-           .then(response => {
-               if(!response.ok){
-                   throw new Error('데이터 전송에 실패했습니다.');
-               }
-               console.log('수정된 데이터가 성공적으로 서버에 전송되었습니다.');
-           })
-           .catch(error=>{
-               console.error('데이터 전송에 실패했습니다.', error);
-           })
-   }
+    function saveStudentList() {
+        const updatedStudents = [];
+
+        const tableRows = document.querySelectorAll('table tr');
+
+        tableRows.forEach((row, index) => {
+            if (index > 0) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
+                const student = {
+                    idx: row.querySelector('td[data-field="idx"]').innerText,
+                    student_num: row.querySelector('td[data-field="student_num"]').innerText,
+                    name: row.querySelector('td[data-field="name"]').innerText,
+                    security: row.querySelector('td[data-field="security"]').innerText,
+                    pnum: row.querySelector('td[data-field="pnum"]').innerText,
+                    address: row.querySelector('td[data-field="address"]').innerText,
+                    email: row.querySelector('td[data-field="email"]').innerText,
+                    entranceDate: row.querySelector('td[data-field="entranceDate"]').innerText,
+                    student_grade: row.querySelector('td[data-field="student_grade"]').innerText,
+                    major: row.querySelector('td[data-field="major"]').innerText,
+                    professor: row.querySelector('td[data-field="professor"]').innerText
+                };
+                updatedStudents.push(student);
+            }
+        });
+
+        console.log('수정된 학생 정보:', updatedStudents);
+
+        // 사용자에게 수정 내용 확인 다이얼로그 표시
+        if (confirm('수정된 내용을 저장하시겠습니까?')) {
+            fetch('/manager/addStudentList', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedStudents)
+            })
+                .then(data => {
+                    console.log('학생 정보 업데이트 완료:', data);
+                    // 성공적으로 업데이트되었을 때 수행할 작업 추가
+                    alert('학생 정보가 업데이트되었습니다.');
+                })
+                .catch(error => {
+                    console.error('학생 정보 업데이트 실패:', error);
+                    // 실패 시 처리
+                    alert('학생 정보 업데이트에 실패했습니다.');
+                });
+        }
+    }
 
 </script>
+
 </body>
 </html>

@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.professor;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.itbank.simpleboard.entity.QLecture.lecture;
+import static com.itbank.simpleboard.entity.QMajor.major;
+import static com.itbank.simpleboard.entity.QProfessor.professor;
 import static com.itbank.simpleboard.entity.QEnrollment.enrollment;
 
 @Repository
@@ -47,14 +50,14 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         lecture.professor.professor_idx,
                         QUser.user.user_name.as("professor_name"),
                         lecture.plan,
-                        QMajor.major.name,
+                        major.name,
                         QCollege.college.location,
                         QLectureRoom.lectureRoom.room
                 ))
                 .from(lecture)
-                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
-                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(professor).on(lecture.professor.eq(professor))
+                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, major)
                 .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
                 .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
                 .where(
@@ -94,14 +97,14 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         lecture.professor.professor_idx,
                         QUser.user.user_name,
                         lecture.plan,
-                        QMajor.major.name,
+                        major.name,
                         QCollege.college.location,
                         QLectureRoom.lectureRoom.room
                 ))
                 .from(lecture)
-                .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
-                .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .innerJoin(lecture.major, QMajor.major)
+                .innerJoin(professor).on(lecture.professor.eq(professor))
+                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, major)
                 .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
                 .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
                 .where(
@@ -139,19 +142,19 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     private BooleanExpression professor_idxEq(Long professorIdx) {
-        return professorIdx != null ? QProfessor.professor.professor_idx.eq(professorIdx) : null;
+        return professorIdx != null ? professor.professor_idx.eq(professorIdx) : null;
     }
 
     public List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx) {
         return queryFactory
                 .select(new QProfessorUserDto(
-                        QProfessor.professor.professor_idx,
-                        QProfessor.professor.user.idx,
-                        QProfessor.professor.hireDate,
+                        professor.professor_idx,
+                        professor.user.idx,
+                        professor.hireDate,
                         QUser.user.user_name
                 ))
-                .from(QProfessor.professor)
-                .where(QProfessor.professor.major.idx.eq(majorIdx))
+                .from(professor)
+                .where(professor.major.idx.eq(majorIdx))
                 .fetch();
     }
 
@@ -193,6 +196,25 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
                 .fetch();
     }
+
+
+
+    @Override
+    public List<Tuple> findByMajorAndUserUserNameContaining(String majorName, String professorName) {
+        System.err.println("findByMajorAndUserUserNameContaining :" + majorName);
+        System.err.println("findByMajorAndUserUserNameContaining :" + professorName);
+        return queryFactory
+                .select(professor.professor_idx, professor.user.user_name)
+                .from(professor)
+                .leftJoin(professor.major, major)
+                .leftJoin(professor.user)
+                .where(professor.major.name.eq(majorName)
+                        .and(professor.user.user_name.like("%" + professorName + "%")))
+                .fetch();
+    }
+
+
+
 
     @Override
     public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
