@@ -375,6 +375,9 @@ public class StudentController {
             StudentDto dto = (StudentDto) o;
             condition.setStudentIdx(dto.getIdx());
             mav.addObject("list",studentService.getLectureDtoList(condition));
+            if(studentService.getLectureDtoList(condition)!= null){
+                mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
+            }
         }else{
             mav.addObject("redirect:/");
         }

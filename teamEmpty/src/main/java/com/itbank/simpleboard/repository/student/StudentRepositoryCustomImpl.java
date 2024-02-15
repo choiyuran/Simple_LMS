@@ -60,7 +60,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .innerJoin(QMajor.major).on(enrollment.lecture.major.eq(QMajor.major))
                 .innerJoin(QProfessor.professor).on(enrollment.lecture.professor.eq(QProfessor.professor))
                 .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .innerJoin(QGrade.grade).on(QGrade.grade.enrollment.student.eq(enrollment.student).and(QGrade.grade.enrollment.lecture.eq(enrollment.lecture)))
+                .innerJoin(QGrade.grade).on(QGrade.grade.enrollment.eq(enrollment))
                 .where(
                         studentIdxCondition,
                         semesterCondition
