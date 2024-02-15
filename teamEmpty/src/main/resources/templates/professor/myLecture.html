@@ -135,7 +135,6 @@
             <td>
                 <div>
                     <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
-                    <button th:onclick="'test(\'' + ${row.idx} + '\', \'' + ${row.professor_idx} + '\')'">test</button>
                 </div>
             </td>
             <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}"
