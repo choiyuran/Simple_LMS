@@ -1,11 +1,18 @@
 package com.itbank.simpleboard.repository.manager;
 
+import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.QManagerDTO;
+import com.itbank.simpleboard.entity.QManager;
+import com.itbank.simpleboard.entity.QPayments;
+import com.itbank.simpleboard.entity.QStudent;
+import com.itbank.simpleboard.entity.QUser;
+import com.querydsl.core.types.Projections;
 import com.itbank.simpleboard.entity.QManager;
 import com.itbank.simpleboard.entity.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -78,5 +85,25 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                 .join(QManager.manager.user, QUser.user)
                 .where(QManager.manager.idx.eq(idx))
                 .fetchOne();
+    }
+
+    @Override
+    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments() {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        List<CheckTuitionPaymentDto> tuitionPayments = queryFactory
+                .select(Projections.constructor(CheckTuitionPaymentDto.class,
+                        QStudent.student.idx,
+                        user.user_name,
+                        QStudent.student.student_grade,
+                        QStudent.student.student_num,
+                        QPayments.payments.date,
+                        QPayments.payments.flag,
+                        QPayments.payments.semester))
+                .from(QStudent.student)
+                .leftJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .fetch();
+
+        return tuitionPayments;
     }
 }

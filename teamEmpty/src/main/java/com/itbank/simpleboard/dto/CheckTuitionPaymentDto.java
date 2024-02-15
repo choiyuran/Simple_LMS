@@ -2,33 +2,32 @@ package com.itbank.simpleboard.dto;
 
 import com.itbank.simpleboard.entity.YesOrNo;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CheckTuitionPaymentDto {
 
-    // 학년
-    private Integer student_grade;
-
-    // 학번
-    private Integer student_num;
-
-    // 납부일자
+    private Long idx;
+    private String user_name;
+    private Integer grade;
+    private Integer num;
     private Date date;
-
-    // 납부 여부
     private YesOrNo flag;
+    private String semester;
 
     @QueryProjection
-
-    public CheckTuitionPaymentDto(Integer student_grade, Integer student_num, Date date, YesOrNo flag) {
-        this.student_grade = student_grade;
-        this.student_num = student_num;
+    public CheckTuitionPaymentDto(Long idx, String user_name, Integer grade, Integer num, Date date, YesOrNo flag, String semester) {
+        this.idx = idx;
+        this.user_name = user_name;
+        this.grade = grade;
+        this.num = num;
         this.date = date;
         this.flag = flag;
+        this.semester = semester;
     }
 }

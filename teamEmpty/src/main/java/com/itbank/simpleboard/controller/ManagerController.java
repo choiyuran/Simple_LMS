@@ -544,7 +544,7 @@ public class ManagerController {
     }
 
 
-    @GetMapping("/managerModify")           // 교직원 개인 정보 수정 
+    @GetMapping("/managerModify")           // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {
         Object user = session.getAttribute("user");
         if (user instanceof ManagerLoginDto) {
@@ -553,6 +553,15 @@ public class ManagerController {
             session.invalidate();
             return "redirect:/";
         }
+    }
+
+    @GetMapping("/checkTuitionPayments")    // 납부 확인
+    public String checkTuitionPayment() {
+
+        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment();
+
+        System.out.println("result : " + tuitionPayments);
+        return "manager/checkTuitionPayments";
     }
 
     @GetMapping("/checkTuitionPayments")

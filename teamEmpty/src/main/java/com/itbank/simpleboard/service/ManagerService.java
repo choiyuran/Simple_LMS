@@ -566,5 +566,10 @@ public class ManagerService {
         manager.setLeaveDate(date);
         return manager;
     }
+
+
+    public List<CheckTuitionPaymentDto> getCheckTuitionPayment() {
+        return managerRepository.findAllCheckTuitionPayments();
+    }
 }
 
