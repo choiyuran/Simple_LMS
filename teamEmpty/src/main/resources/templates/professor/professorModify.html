@@ -81,7 +81,7 @@
     <div class="m-auto w-50 mt-5">
         <h2>내 비밀번호 수정</h2>
         <br/>
-        <form method="post" action="">
+        <form method="post" action="/changePassword" id="changePassword">
             <!-- 패스워드 입력란 -->
             <div class="form-group row d-flex flex-wrap">
                 <div class="col-sm-12 mb-3 ">
@@ -250,12 +250,15 @@
     })
 
     document.getElementById('btnChangePw').addEventListener('click', function (e) {
+        e.preventDefault();
+
         let previous = document.getElementById('previous');
         if (previous.value.trim() === "") {
             let previousHelp = document.getElementById('previousHelp');
             previousHelp.innerHTML = "현재 비밀번호를 입력해주세요."
             previousHelp.classList.add('text-danger');
         } else {
+            document.getElementById('changePassword').submit();
         }
     });
 </script>
