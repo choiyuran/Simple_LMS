@@ -107,10 +107,19 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/managerList")    // 교직원 명단 검색 조회
-    public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue){
+    @GetMapping("/managerListKeyword")    // 교직원 명단 검색 조회
+    public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue,
+                                   @RequestParam(value = "leave", required = false) Boolean leave){
         ModelAndView mav = new ModelAndView("manager/managerList");
-        List<ManagerDTO> managerList = managerService.searchManager(searchType,searchValue);
+        HashMap<String, Object> map = new HashMap<>();
+        if(searchType != null) {
+            map.put("searchType", searchType);
+            map.put("searchValue", searchValue);
+            map.put("leave", leave);
+        }
+
+        List<ManagerDTO> managerList = managerService.searchManager(map);
+        mav.addObject("map", map);
         mav.addObject("managerList",managerList);
         mav.addObject("searchValue", searchValue);
         return mav;
@@ -415,26 +424,6 @@ public class ManagerController {
         mav.addObject("map", map);
         return mav;
     }
-
-//    @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
-//    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
-//                                      @RequestParam(value = "name", required = false) String name,
-//                                      @RequestParam(value = "leave", required = false) String leave) {
-//
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("major_idx", major_idx);
-//        map.put("name", name);
-//        map.put("leave", leave);
-//
-//        ModelAndView mav = new ModelAndView("manager/professorList");
-//        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessor(map);
-//        List<Major> majorList = managerService.selectAllMajor();
-//
-//        mav.addObject("majorList", majorList);
-//        mav.addObject("professorList", professorList);
-//        mav.addObject("map", map);
-//        return mav;
-//    }
 
     @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
     public ModelAndView professorView(@PathVariable("idx")Long idx) {

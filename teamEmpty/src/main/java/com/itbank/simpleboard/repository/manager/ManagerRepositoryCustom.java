@@ -4,10 +4,11 @@ import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.entity.Manager;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface ManagerRepositoryCustom {
-    List<ManagerDTO> findBySearchType(String searchType, String searchValue);
+    List<ManagerDTO> findBySearchType(HashMap<String, Object> map);
 
     ManagerDTO selectOneManager(Long idx);
 

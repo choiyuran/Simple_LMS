@@ -9,19 +9,28 @@
     <div class="container mt-3">
         <h2>교직원 명단</h2>
         <hr>
-        <div class="selectBox flex">
-            <div class="form-group">
-            <form method="POST" class="form-inline">
-                <select class="form-control" name="searchType">
-                    <option value="name"> 이름</option>
-                    <option value="phone">연락처</option>
-                </select>
-                <input class="form-control" type="text" name="searchValue" placeholder="검색어 입력">
-                <input class="form-control" type="submit" value="검색">
-            </form>
-            </div>
-        </div>
+            <form id="searchForm" action="/manager/managerListKeyword" class="form-inline">
+                <div class="form-group">
+                    <select class="form-control" id="searchType" name="searchType">
+                        <option value="name"> 이름</option>
+                        <option value="phone">연락처</option>
+                    </select>
+                    <div class="form-group ml-4 mr-2">
+                        <input class="form-control" type="text" id="searchValue" name="searchValue" placeholder="검색어 입력">
+                    </div>
 
+<!--                     퇴사 여부 필터-->
+                    <div class="form-check form-check-inline">
+                        <input type="hidden" id="leave" name="leave" value="false">
+                        <input class="form-check-input" type="checkbox" id="leaveCheckbox"
+                               th:checked="${map != null and map['leave']}">
+                        <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
+                    </div>
+                    <button class="btn btn-primary">검색</button>
+                </div>
+            </form>
+
+        <br>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -45,11 +54,65 @@
              </tr>
             </tbody>
         </table>
-        <button class="btn btn-facebook"><a href="/manager/register">교직원 등록</a></button>
-        <button class="btn btn-primary" th:if="${searchValue != null && searchValue != ''}"><a th:href="@{/manager/managerList}">목록으로</a></button>
+        <button class="btn btn-primary"><a href="/manager/register">교직원 등록</a></button>
+        <button class="btn btn-primary" th:if="${searchValue != null or searchValue != '' or !#strings.isEmpty(map['leave'])}"><a th:href="@{/manager/managerList}">목록으로</a></button>
     </div>
 </main>
 
 <footer th:insert="layout/header :: footer"></footer> <!-- footer 부분 수정 -->
+
+<script>
+    var form = $('#searchForm');
+    var isInitialLoad = true;
+
+    // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
+    var previousSearchType = localStorage.getItem('previousSearchType');
+    var previousSearchValue = localStorage.getItem('previousSearchValue');
+    var previousLeave = localStorage.getItem('previousLeave');
+    if (previousSearchType && previousSearchType !== 'null') {
+        $('#searchType').val(previousSearchType);
+    }
+    if (previousSearchValue && previousSearchValue !== 'null') {
+        $('#searchValue').val(previousSearchValue);
+    }
+    if (previousLeave && previousLeave !== 'null') {
+        $('#leaveCheckbox').prop('checked', previousLeave === 'true');
+    }
+
+    form.submit(function(e) {
+        e.preventDefault();
+
+        // 검색어 저장
+        var searchType = $('#searchType').val();
+        var searchValue = $('#searchValue').val();
+        localStorage.setItem('previousSearchType', searchType);
+        localStorage.setItem('previousSearchValue', searchValue);
+
+        // 체크박스 상태 저장
+        var leaveValue = $('#leaveCheckbox').is(':checked') ? 'true' : 'false';
+        $('#leave').val(leaveValue); // leave input의 값을 변경
+
+        // 검색 실행
+        this.submit();
+    });
+
+    function resetSearchConditions() {
+        localStorage.removeItem('previousSearchType');
+        localStorage.removeItem('previousSearchValue');
+        localStorage.removeItem('previousLeave');
+    }
+
+    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
+    if (isInitialLoad || form.data('fromList')) {
+        resetSearchConditions();
+    }
+    isInitialLoad = false;
+
+    // 검색 결과 페이지에서 체크박스 상태 반영
+    var resultLeaveValue = localStorage.getItem('previousLeave');
+    if (resultLeaveValue && resultLeaveValue !== 'null') {
+        $('#leaveCheckbox').prop('checked', resultLeaveValue === 'true');
+    }
+</script>
 </body>
 </html>
