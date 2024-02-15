@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.repository.professor;
 
+import com.itbank.simpleboard.dto.ProfessorUserDto;
 import com.itbank.simpleboard.dto.ProfessorListDto;
 import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.Professor;
@@ -15,6 +16,8 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long>, Pro
     @Query("SELECT m.name FROM Major m")
     List<String> findAllMajorNames();
 
+    List<Professor> findAllByMajor(Major major);
 
 
+    List<Professor> findAllByMajorName(String majorName);
 }

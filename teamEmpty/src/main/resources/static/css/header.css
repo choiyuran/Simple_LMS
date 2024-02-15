@@ -23,6 +23,11 @@ select::-ms-expand {
 }
 
  .not-found {
-     color: #be2617 ;
+     color:  red !important;
      font-weight: bold;
  }
+.box {
+    flex: 1;
+    border: 1px solid black;
+    padding: 20px;
+}

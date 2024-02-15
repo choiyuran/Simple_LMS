@@ -123,15 +123,13 @@ public class RegisterController {
     @GetMapping("/getMajorsByCollege")
     public List<MajorDto> getMajorList(@RequestParam String collegeName) {
         log.info("학과목록 불러오기: AJAX");
-        List<MajorDto> majorList = managerService.getMajorList(collegeName);
-        log.info("getMajorList / majorList" + majorList.get(0).toString());
-        return majorList;
+        return managerService.getMajorList(collegeName);
     }
 
-    @GetMapping("/getProfessors")
-    public List<ProfessorUserDto> getProfessorsByDepartment(@RequestParam Long majorIdx) {
+    @GetMapping("/getProfessorByMajor")
+    public List<ProfessorUserDto> getProfessorsByDepartment(@RequestParam String majorName) {
         log.info("교수목록 불러오기: AJAX");
-        return professorService.getProfessorsByMajor(majorIdx);
+        return professorService.getProfessorsByMajor(majorName);
     }
 
 

@@ -19,4 +19,9 @@ public class ProfessorUserDto {
         this.hireDate = hireDate;
         this.name = name;
     }
+
+    public ProfessorUserDto(Long professor_idx, String name) {
+        this.professor_idx = professor_idx;
+        this.name = name;
+    }
 }
