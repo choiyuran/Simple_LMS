@@ -144,7 +144,7 @@
                 professorList.innerHTML = "" // 기존목록 초기화
                 data.forEach(professor => {
                     const li = document.createElement('li');
-                    li.textContent = professor.name+ "("+professor.idx+")";
+                    li.textContent = professor.name+ "("+professor.professor_idx+")";
                     professorList.appendChild(li);
                 });
             })
@@ -191,29 +191,29 @@
 
     function saveStudentList() {
         const updatedStudents = [];
+        let studentsWithMissingInfo = ''; // 정보없음이 있는 학생들의 번호를 담을 문자열
 
         const tableRows = document.querySelectorAll('table tr');
 
-        tableRows.forEach((row, index) => {
-            if (index > 0) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
-                const idx = row.querySelector('td[data-field="idx"]').innerText;
-                const student_num = row.querySelector('td[data-field="student_num"]').innerText;
-                const name = row.querySelector('td[data-field="name"]').innerText;
-                const security = row.querySelector('td[data-field="security"]').innerText;
-                const pnum = row.querySelector('td[data-field="pnum"]').innerText;
-                const address = row.querySelector('td[data-field="address"]').innerText;
-                const email = row.querySelector('td[data-field="email"]').innerText;
-                const entranceDate = row.querySelector('td[data-field="entranceDate"]').innerText;
-                const student_grade = row.querySelector('td[data-field="student_grade"]').innerText;
-                const major = row.querySelector('td[data-field="major"]').innerText;
-                const professor = row.querySelector('td[data-field="professor"]').innerText;
+        for (let index = 1; index < tableRows.length; index++) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
+            const row = tableRows[index];
+            const idx = row.querySelector('td[data-field="idx"]').innerText;
+            const student_num = row.querySelector('td[data-field="student_num"]').innerText;
+            const name = row.querySelector('td[data-field="name"]').innerText;
+            const security = row.querySelector('td[data-field="security"]').innerText;
+            const pnum = row.querySelector('td[data-field="pnum"]').innerText;
+            const address = row.querySelector('td[data-field="address"]').innerText;
+            const email = row.querySelector('td[data-field="email"]').innerText;
+            const entranceDate = row.querySelector('td[data-field="entranceDate"]').innerText;
+            const student_grade = row.querySelector('td[data-field="student_grade"]').innerText;
+            const major = row.querySelector('td[data-field="major"]').innerText;
+            const professor = row.querySelector('td[data-field="professor"]').innerText;
 
-                // 정보없음이 포함된 경우 경고창을 띄우고 저장하지 않음
-                if (major.includes("정보없음") || professor.includes("정보없음")) {
-                    alert(idx + '번의 학과 혹은 지도교수를 확인해 주세요');
-                    return; // 저장하지 않고 종료
-                }
-
+            // 정보없음이 포함된 경우
+            if (major.includes("정보없음") || professor.includes("정보없음")) {
+                // 정보없음이 있는 학생의 번호를 문자열에 추가
+                studentsWithMissingInfo += idx + ', ';
+            } else {
                 const student = {
                     idx: idx,
                     student_num: student_num,
@@ -229,7 +229,15 @@
                 };
                 updatedStudents.push(student);
             }
-        });
+        }
+
+        // 정보없음이 있는 학생이 있을 경우 알림창 표시
+        if (studentsWithMissingInfo !== '') {
+            // 마지막 쉼표 제거 후 알림창 표시
+            alert(studentsWithMissingInfo.slice(0, -2) + '번 학생의 학과 혹은 지도교수를 확인해주세요.');
+            return; // 저장하지 않고 종료
+        }
+
         console.log('수정된 학생 정보:', updatedStudents);
 
         // 사용자에게 수정 내용 확인 다이얼로그 표시
@@ -241,10 +249,12 @@
                 },
                 body: JSON.stringify(updatedStudents)
             })
-                .then(data => {
-                    console.log('학생 정보 업데이트 완료:', data);
+                .then(response => response.text()) // 응답을 텍스트로 변환
+                .then(message => {
+                    console.log('서버 응답 메시지:', message);
                     // 성공적으로 업데이트되었을 때 수행할 작업 추가
                     alert('학생 정보가 업데이트되었습니다.');
+                    alert(message); // 예시: 경고창에 응답 메시지 표시
                 })
                 .catch(error => {
                     console.error('학생 정보 업데이트 실패:', error);

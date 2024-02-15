@@ -8,6 +8,7 @@ import com.itbank.simpleboard.entity.Manager;
 import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.service.ManagerService;
 import com.itbank.simpleboard.service.ProfessorService;
+import com.itbank.simpleboard.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.util.Map;
 @Slf4j
 public class RegisterController {
     private final ManagerService managerService;
+    private final StudentService studentService;
     private final ProfessorService professorService;
 
     @PostMapping("/addManager")   // 교직원 등록
@@ -106,17 +108,13 @@ public class RegisterController {
 
 
     @PostMapping("/addStudentList")   // 학생 등록
-    public String saveStudentList(@RequestBody List<StudentFormDTO> studentList, Model model) {
+    public String saveStudentList(@RequestBody List<StudentFormDTO> studentList) {
         log.info("학생등록 리스트 저장: AJAX");
-        // 전달된 학생 정보를 반복하여 처리
-        for (StudentFormDTO student : studentList) {
-            // 각 학생의 정보를 업데이트하거나 저장하는 로직을 수행
-            System.err.println("업데이트된 학생 정보: " + student);
-        }
+        // 전달된 학생 정보 저장
+        int index = managerService.addStudentList(studentList);
 
-        model.addAttribute("message","학생 저장 완료");
         // 업데이트 결과에 대한 응답 메시지 반환
-        return "학생 정보가 성공적으로 업데이트되었습니다.";
+        return index + "명의 학생 정보가 성공적으로 업데이트되었습니다.";
     }
 
 

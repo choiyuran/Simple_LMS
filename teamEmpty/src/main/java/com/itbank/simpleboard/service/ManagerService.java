@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.HashComponent;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
@@ -49,6 +50,7 @@ public class ManagerService {
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
     private final StudentRepository studentRepository;
+    private final HashComponent hashComponent;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -236,8 +238,9 @@ public class ManagerService {
     @Transactional
     public Manager addManager(UserFormDTO dto) {
         System.err.println("userFormDTO : "+ dto.toString());
-        String salt = "";
-        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        String salt = hashComponent.getRandomSalt();
+        String source = dto.getBackSecurity();
+        String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
         String manager_img = dto.getImageFile().toString();
@@ -260,13 +263,50 @@ public class ManagerService {
         );
         return managerRepository.save(manager);
     }
+    @Transactional
+    public int addStudentList(List<StudentFormDTO> studentList) {
+        log.info("addStudentList service");
+        int index = 0;
+        for(StudentFormDTO dto : studentList) {
+            String salt = hashComponent.getRandomSalt();
+            String source = dto.getSecurity().substring(dto.getSecurity().length()-7);
+            String pw = hashComponent.getHash(source,salt);
+            User user = new User(
+                    pw,
+                    salt,
+                    dto.getName(),
+                    dto.getSecurity(),
+                    dto.getAddress(),
+                    dto.getPnum(),
+                    dto.getEmail(),
+                    User_role.학생
+            );
+            userRepository.save(user);
+            Major major = majorRepository.findByName(dto.getMajor());
+            List<Tuple> professorList = professorRepository.findByMajorAndUserUserNameContaining(major.getName(), dto.getProfessor());
 
+            Tuple tuple = professorList.get(0);
+            Student s = new Student(
+                    dto.getStudent_num(),
+                    dto.getStudent_grade(),
+                    user,
+                    (Professor) tuple,
+                    major,
+                    dto.getEntranceDate()
+            );
+            studentRepository.save(s);
+            log.info(s.getUser().getUser_id());
+            index++;
+        }
+
+        return index;
+    }
     @Transactional
     public Professor addProfessor(UserFormDTO dto) {
-        log.info("addProfessor service");
-        System.err.println("userFormDTO : "+ dto.toString());
-        String salt = "";
-        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        log.info("addProfessor service"+ dto.toString());
+        String salt = hashComponent.getRandomSalt();
+        String source = dto.getBackSecurity();
+        String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
         // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
