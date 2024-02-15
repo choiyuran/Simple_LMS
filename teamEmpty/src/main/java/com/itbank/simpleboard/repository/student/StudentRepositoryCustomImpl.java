@@ -41,7 +41,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         BooleanExpression studentIdxCondition = condition.getStudentIdx() != null ?
                 enrollment.student.idx.eq(condition.getStudentIdx()) : null;
 
-        BooleanExpression semesterCondition = condition.getSemester() != null ?
+        BooleanExpression semesterCondition = condition.getSemester() != null && !condition.getSemester().isEmpty() ?
                 enrollment.lecture.semester.eq(condition.getSemester()) : null;
 
         return queryFactory
@@ -91,14 +91,14 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 
     @Override
     public List<StudentListDto> selectAllStudent(HashMap<String, Object> map) {
-        Long majorIdx = (Long)map.get("major_idx");
-        String name = (String)map.get("name");
+        Long majorIdx = (Long) map.get("major_idx");
+        String name = (String) map.get("name");
 
         BooleanBuilder builder = new BooleanBuilder();
-        if(majorIdx != null) {
+        if (majorIdx != null) {
             builder.and(QStudent.student.major.idx.eq(majorIdx));
         }
-        if(name != null && !name.isEmpty()) {
+        if (name != null && !name.isEmpty()) {
             builder.and(QUser.user.user_name.contains(name));
         }
         return queryFactory
