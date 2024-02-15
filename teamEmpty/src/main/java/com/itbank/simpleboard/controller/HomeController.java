@@ -16,7 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -118,31 +120,32 @@ public class HomeController {
         if (user == null) {
             model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
             return url;
-        }
-        switch (user.getRole().toString()) {
-            case "교수":
-                ProfessorDto professor = userService.getProfessor(user);
-                if (professor == null) {
-                    model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                } else {
-                    session.setAttribute("user", professor);
-                    url = "redirect:/professor/home";
-                }
-                break;
-            case "학생":
-                StudentDto student = userService.getStudent(user);
-                session.setAttribute("user", student);
-                url = "redirect:/student/home";
-                break;
-            case "교직원":
-                ManagerLoginDto manager = userService.getManager(user);
-                if (manager == null) {
-                    model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                } else {
-                    session.setAttribute("user", manager);
-                    url = "redirect:/manager/home";
-                }
-                break;
+        } else {
+            switch (user.getRole().toString()) {
+                case "교수":
+                    ProfessorDto professor = userService.getProfessor(user);
+                    if (professor == null) {
+                        model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                    } else {
+                        session.setAttribute("user", professor);
+                        url = "redirect:/professor/home";
+                    }
+                    break;
+                case "학생":
+                    StudentDto student = userService.getStudent(user);
+                    session.setAttribute("user", student);
+                    url = "redirect:/student/home";
+                    break;
+                case "교직원":
+                    ManagerLoginDto manager = userService.getManager(user);
+                    if (manager == null) {
+                        model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                    } else {
+                        session.setAttribute("user", manager);
+                        url = "redirect:/manager/home";
+                    }
+                    break;
+            }
         }
         return url;
     }
@@ -154,8 +157,28 @@ public class HomeController {
     }
 
     @PostMapping("/changePassword")
-    public String changePassword() {
+    public String changePassword(HttpSession session, RedirectAttributes ra, HttpServletRequest request) {
         log.info("비번 변경");
-        return null;
+        String url = "";
+        Object login = session.getAttribute("user");
+        String nowPassword = request.getParameter("nowPassword");
+        String newPassword = request.getParameter("newPassword");
+        int result = userService.changePassword(login, nowPassword, newPassword);
+        if (result != 0) {
+            url = "redirect:/";
+            ra.addFlashAttribute("msg","비밀번호가 변경되었습니다. 다시 로그인 해 주세요");
+        } else {
+            if (login instanceof StudentDto) {
+                url = "redirect:/student/studentModify";
+                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
+            } else if (login instanceof ProfessorDto) {
+                url = "redirect:/professor/professorModify";
+                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
+            } else if (login instanceof ManagerLoginDto) {
+                url = "redirect:/manager/managerModify";
+                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
+            }
+        }
+        return url;
     }
 }

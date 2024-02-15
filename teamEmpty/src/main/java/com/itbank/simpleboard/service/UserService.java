@@ -35,7 +35,7 @@ public class UserService {
 
 
     private UserDTO convertToDto(User user) {
-        if(user == null){
+        if (user == null) {
             return null;
         }
         return new UserDTO(
@@ -124,4 +124,47 @@ public class UserService {
         manager.setUser(user);
         return manager;
     }
+
+    @Transactional
+    public int changePassword(Object login, String previous, String exampleInputPassword) {
+        log.info("userServiceml changePassword");
+        int result = 0;
+        User userEntity = null;
+
+        if (login instanceof StudentDto) {
+            StudentDto user = (StudentDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+        } else if (login instanceof ProfessorDto) {
+            log.info("userEntity 가져오는 if문");
+            ProfessorDto user = (ProfessorDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+            System.out.println("user = " + userEntity);
+        } else if (login instanceof ManagerLoginDto) {
+            ManagerLoginDto user = (ManagerLoginDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+        }
+
+        if (userEntity != null) {
+            log.info("changePasswordForUser 호출");
+            result = changePasswordForUser(userEntity, previous, exampleInputPassword);
+        }
+
+        return result;
+    }
+
+    private int changePasswordForUser(User userEntity, String nowPassword, String newPassword) {
+        int result = 0;
+        String nowSalt = userEntity.getSalt();
+        String nowPw = hashComponent.getHash(nowPassword, nowSalt);
+
+        if (nowPw.equals(userEntity.getUser_pw())) {
+            String newSalt = hashComponent.getRandomSalt();
+            String newPw = hashComponent.getHash(newPassword, newSalt);
+            userEntity.setSalt(newSalt);
+            userEntity.setUser_pw(newPw);
+            result = 1;
+        }
+        return result;
+    }
+
 }

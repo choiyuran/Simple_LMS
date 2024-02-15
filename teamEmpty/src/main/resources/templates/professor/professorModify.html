@@ -85,13 +85,13 @@
             <!-- 패스워드 입력란 -->
             <div class="form-group row d-flex flex-wrap">
                 <div class="col-sm-12 mb-3 ">
-                    <input type="password" class="form-control form-control-user"
+                    <input class="form-control form-control-user" name="nowPassword" type="password"
                            id="previous" placeholder="기존 패스워드" required>
                     <span class="my-1" id="previousHelp"></span>
                 </div>
 
                 <div class="col-sm-12 mb-3 ">
-                    <input type="password" class="form-control form-control-user"
+                    <input class="form-control form-control-user" name="newPassword" type="password"
                            id="exampleInputPassword" placeholder="변경할 패스워드" required>
                     <span class="my-1" id="passwordHelp"></span>
                 </div>
@@ -115,6 +115,8 @@
 
 <script>
     let emailChecked = false;
+    let checkPassword = false;
+    let eachPassword = false;
     window.onload = function () {
         const emailInput = document.getElementById('exampleInputEmail');
         const validationButton = document.getElementById('email_validation');
@@ -146,6 +148,7 @@
                 passwordHelp.classList.remove('text-danger');
                 passwordHelp.classList.add('text-success');
                 passwordHelp.innerHTML = "사용 가능한 비밀번호입니다.";
+                checkPassword = true;
             } else {
                 passwordHelp.classList.remove('text-success');
                 passwordHelp.classList.add('text-danger');
@@ -154,14 +157,15 @@
         });
 
         repeatPasswordInput.addEventListener('input', function () {
-            if (passwordInput.value !== repeatPasswordInput.value) {
-                passwordConfirmHelp.classList.add('text-danger');
-                passwordConfirmHelp.classList.remove('text-success');
-                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치하지 않습니다.";
-            } else {
+            if (passwordInput.value === repeatPasswordInput.value) {
                 passwordConfirmHelp.classList.remove('text-danger')
                 passwordConfirmHelp.classList.add('text-success');
                 passwordConfirmHelp.innerHTML = "새 비밀번호가 일치합니다.";
+                eachPassword = true;
+            } else {
+                passwordConfirmHelp.classList.add('text-danger');
+                passwordConfirmHelp.classList.remove('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치하지 않습니다.";
             }
         });
 
@@ -253,12 +257,29 @@
         e.preventDefault();
 
         let previous = document.getElementById('previous');
-        if (previous.value.trim() === "") {
-            let previousHelp = document.getElementById('previousHelp');
-            previousHelp.innerHTML = "현재 비밀번호를 입력해주세요."
-            previousHelp.classList.add('text-danger');
+        const passwordInput = document.getElementById('exampleInputPassword');
+        const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+
+        if (previous.value.trim() !== "" && passwordInput.value.trim() !== "" && repeatPasswordInput.value.trim() !== "") {
+            if (checkPassword && eachPassword) {
+                document.getElementById('changePassword').submit();
+            }
         } else {
-            document.getElementById('changePassword').submit();
+            if (previous.value.trim() === "") {
+                let previousHelp = document.getElementById('previousHelp');
+                previousHelp.innerHTML = "현재 비밀번호를 입력해주세요.";
+                previousHelp.classList.add('text-danger');
+            }
+            if (passwordInput.value.trim() === "" || !checkPassword) {
+                const passwordHelp = document.getElementById('passwordHelp');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+                passwordHelp.classList.add('text-danger');
+            }
+            if (repeatPasswordInput.value.trim() === "" || !eachPassword) {
+                const passwordConfirmHelp = document.getElementById('passwordConfirmHelp');
+                passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요.";
+                passwordConfirmHelp.classList.add('text-danger');
+            }
         }
     });
 </script>
