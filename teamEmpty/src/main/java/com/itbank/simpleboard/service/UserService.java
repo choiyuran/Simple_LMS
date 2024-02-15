@@ -127,7 +127,6 @@ public class UserService {
 
     @Transactional
     public int changePassword(Object login, String previous, String exampleInputPassword) {
-        log.info("userServiceml changePassword");
         int result = 0;
         User userEntity = null;
 
@@ -135,17 +134,14 @@ public class UserService {
             StudentDto user = (StudentDto) login;
             userEntity = userRepository.findByIdx(user.getUser().getIdx());
         } else if (login instanceof ProfessorDto) {
-            log.info("userEntity 가져오는 if문");
             ProfessorDto user = (ProfessorDto) login;
             userEntity = userRepository.findByIdx(user.getUser().getIdx());
-            System.out.println("user = " + userEntity);
         } else if (login instanceof ManagerLoginDto) {
             ManagerLoginDto user = (ManagerLoginDto) login;
             userEntity = userRepository.findByIdx(user.getUser().getIdx());
         }
 
         if (userEntity != null) {
-            log.info("changePasswordForUser 호출");
             result = changePasswordForUser(userEntity, previous, exampleInputPassword);
         }
 
