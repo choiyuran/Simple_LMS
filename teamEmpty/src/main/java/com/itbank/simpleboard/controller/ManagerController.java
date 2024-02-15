@@ -563,10 +563,4 @@ public class ManagerController {
         System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
     }
-
-    @GetMapping("/checkTuitionPayments")
-    public String checkTuitionPayment(HttpSession session, Model model) {
-        StudentDto dto = (StudentDto) session.getAttribute("user");
-        return "redirect:/";
-    }
 }
