@@ -20,12 +20,14 @@
     <br>
     <table class="table table-bordered">
         <tr>
+            <th>학번</th>
             <th>학생</th>
             <th>전공</th>
             <th>상태</th>
         </tr>
 
         <tr th:each="row : ${studentList}">
+            <td th:text="${row.student_num}"></td>
             <td th:text="${row.name}"></td>
             <td th:text="${row.major}"></td>
             <td th:text="${row.status}"></td>

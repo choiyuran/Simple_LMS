@@ -44,7 +44,7 @@ public class SituationService {
     public Situation situationUpdate(SituationStuDto param) {
         Situation situation = situationRepository.findById(param.getIdx()).get();
         situation.setStart_date(new Date(param.getStart_date().getTime()));
-        if(situation.getEnd_date() != null) {
+        if(param.getEnd_date() != null) {
             situation.setEnd_date(new Date(param.getEnd_date().getTime()));
         }
         situation.setStudent_status(param.getStatus());

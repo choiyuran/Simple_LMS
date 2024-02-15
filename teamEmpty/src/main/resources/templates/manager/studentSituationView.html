@@ -24,12 +24,10 @@
                     <input type="date" th:value="${start}" name="start">
                 </td>
             </tr>
-            <tr th:if="${end != null}">
                 <th>종료일</th>
-                <td th:text="${end}">
+                <td>
                     <input type="date" th:value="${end}" name="end">
                 </td>
-            </tr>
             <tr>
                 <th>상태</th>
                 <td th:text="${situation.status}"></td>
@@ -52,19 +50,14 @@
                         <label for="radio3">재학</label>
                     </div>
 
-                    <div class="radio-option">
+                    <div class="radio-option mr-5">
                         <input type="radio" id="radio4" name="status" value="복학">
                         <label for="radio4">복학</label>
                     </div>
 
                     <div class="radio-option">
-                        <input type="radio" id="radio5" name="status" value="편입">
-                        <label for="radio5">편입</label>
-                    </div>
-
-                    <div class="radio-option mr-5">
-                        <input type="radio" id="radio6" name="status" value="졸업">
-                        <label for="radio6">졸업</label>
+                        <input type="radio" id="radio5" name="status" value="졸업">
+                        <label for="radio5">졸업</label>
                     </div>
                 </div>
             </td>

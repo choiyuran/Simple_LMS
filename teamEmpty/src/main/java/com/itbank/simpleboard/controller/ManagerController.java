@@ -396,12 +396,16 @@ public class ManagerController {
         java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
         param.setStart_date(sqldate);
 
-        if(end != null) {
-            Date end_date = sdf.parse(end);
-            java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
-            param.setEnd_date(sqldate2);
+        // status가 군휴학 또는 일반휴학일 때만 end_date를 설정
+        if(param.getStatus().equals("군휴학") || param.getStatus().equals("일반휴학")) {
+            if(end != null && !end.isEmpty()) {
+                Date end_date = sdf.parse(end);
+                java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
+                param.setEnd_date(sqldate2);
+            }
+        } else {
+            param.setEnd_date(null);
         }
-        log.info("param : " + param);
         Situation situation = situationService.situationUpdate(param);
         return "redirect:/manager/studentSituation";
     }

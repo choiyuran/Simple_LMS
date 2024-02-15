@@ -18,9 +18,7 @@ public class StudentListDto {
     public Date entranceDate;
     public String address;
     public String email;
-//    public Status_type status;
-//    public Date start_date;
-//    public Date end_date;
+
 
     @QueryProjection
     public StudentListDto(Long idx, Integer student_num, String name, Long major_idx, String major_name, String pnum, String userid, Date entranceDate, String address, String email) {
