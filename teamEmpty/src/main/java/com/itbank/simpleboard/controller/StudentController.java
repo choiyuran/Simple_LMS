@@ -374,7 +374,12 @@ public class StudentController {
         if(o instanceof StudentDto) {
             StudentDto dto = (StudentDto) o;
             condition.setStudentIdx(dto.getIdx());
-            mav.addObject("list",studentService.getLectureDtoList(condition));
+            List<GradeLectureDto> list = studentService.getLectureDtoList(condition);
+            mav.addObject("semesterList", list.stream()
+                    .map(GradeLectureDto::getSemester)
+                    .distinct()
+                    .collect(Collectors.toList()));
+            mav.addObject("list",list);
             if(studentService.getLectureDtoList(condition)!= null){
                 mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
             }
@@ -385,9 +390,17 @@ public class StudentController {
     }
 
     @ResponseBody
-    @PutMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
-    public ResponseEntity<List<GradeLectureDto>> lectureListAjax(@RequestBody GradeSearchConditionDto condition) {
-        return null;
+    @PutMapping("/gradeList/data")    // select 결과에 따라 반환하는 Ajax용 메서드(lectureList.html)
+    public ResponseEntity<List<GradeLectureDto>> lectureListAjax(HttpSession session, @RequestBody GradeSearchConditionDto condition) {
+        long startTime = System.currentTimeMillis();
+        condition.setStudentIdx(((StudentDto)session.getAttribute("user")).getIdx());
+        List<GradeLectureDto> gradeLectureDtoList = studentService.getLectureDtoList(condition);
+
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(gradeLectureDtoList);
     }
 
 
