@@ -220,74 +220,11 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetch();
     }
 
-
     @Override
     public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
-        return null;
-//        Long majorIdx = (Long)map.get("major_idx");
-//        String name = (String)map.get("name");
-//        BooleanBuilder builder = new BooleanBuilder();
-//
-//        if (majorIdx != null) {
-//            builder.and(QProfessor.professor.major.idx.eq(majorIdx));
-//        }
-//        if (name != null && !name.isEmpty()) {
-//            builder.and(QUser.user.user_name.like("%"+name+"%"));
-//        }
-//        builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
-//
-//        return queryFactory
-//                .select(Projections.fields(EnrollmentDto.class,
-//                        QEnrollment.enrollment.idx.as("idx"),
-//                        QEnrollment.enrollment.student.idx.as("student_idx"),
-//                        QEnrollment.enrollment.student.student_num.as("student_num"),
-//                        QEnrollment.enrollment.student.user.user_name.as("student_name"),
-//                        QEnrollment.enrollment.lecture.idx.as("lecture_idx"),
-//                        QEnrollment.enrollment.lecture.name.as("lecture_name"),
-//                        ExpressionUtils
-//                                .as(JPAExpressions
-//                                        .select(QGrade.grade.idx)
-//                                        .from(QGrade.grade)
-//                                        .where(
-//                                                QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
-//                                                        .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
-//                                        )
-//                                        .exists(), "hasGrade"),
-//                        ExpressionUtils
-//                                .as(JPAExpressions
-//                                        .select(QGrade.grade.score)
-//                                        .from(QGrade.grade)
-//                                        .where(
-//                                                QGrade.grade.enrollment.student.eq(QEnrollment.enrollment.student)
-//                                                        .and(QGrade.grade.enrollment.lecture.eq(QEnrollment.enrollment.lecture))
-//                                        ), "score")))
-//                .from(QEnrollment.enrollment)
-//                .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
-//                .orderBy(QEnrollment.enrollment.student.idx.asc())
-//                .select(new QProfessorListDto(
-//                        QProfessor.professor.professor_idx,
-//                        QProfessor.professor.professor_img,
-//                        QProfessor.professor.hireDate,
-//                        QUser.user.user_name,
-//                        QUser.user.user_id,
-//                        QUser.user.address,
-//                        QUser.user.pnum,
-//                        QUser.user.email,
-//                        QMajor.major.idx,
-//                        QMajor.major.name
-//                )).from(QProfessor.professor)
-//                .join(QProfessor.professor.user, QUser.user)
-//                .join(QProfessor.professor.major, QMajor.major)
-//                .where(builder)
-//                .fetch();
-    }
-
-
-    @Override
-    public List<ProfessorListDto> searchByMajorAndProfessor(HashMap<String, Object> map) {
         Long majorIdx = (Long) map.get("major_idx");
         String name = (String) map.get("name");
-
+        Boolean leave = (Boolean) map.get("leave");
         BooleanBuilder builder = new BooleanBuilder();
 
         if (majorIdx != null) {
@@ -295,6 +232,9 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         }
         if (name != null && !name.isEmpty()) {
             builder.and(QUser.user.user_name.like("%" + name + "%"));
+        }
+        if (leave != null && leave) {
+            builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
         }
 
         return queryFactory
@@ -308,7 +248,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         QUser.user.pnum,
                         QUser.user.email,
                         QMajor.major.idx,
-                        QMajor.major.name
+                        QMajor.major.name,
+                        QProfessor.professor.leaveDate
                 )).from(QProfessor.professor)
                 .join(QProfessor.professor.user, QUser.user)
                 .join(QProfessor.professor.major, QMajor.major)
@@ -329,11 +270,13 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         QUser.user.pnum,
                         QUser.user.email,
                         QMajor.major.idx,
-                        QMajor.major.name
+                        QMajor.major.name,
+                        QProfessor.professor.leaveDate
                 )).from(QProfessor.professor)
                 .join(QProfessor.professor.user, QUser.user)
                 .join(QProfessor.professor.major, QMajor.major)
                 .where(QProfessor.professor.professor_idx.eq(idx))
                 .fetchOne();
     }
+
 }

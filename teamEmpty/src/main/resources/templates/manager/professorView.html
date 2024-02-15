@@ -40,9 +40,17 @@
                         <th colspan="1">입사일</th>
                         <td><input th:value="${professor.hireDate}" type="date" name="hireDate"></td>
                     </tr>
+
+                    <tr th:if="${professor.leaveDate != null}">
+                        <th>퇴사일</th>
+                        <td><input th:value="${professor.leaveDate}" type="date" name="leaveDate" th:colspan="2"></td>
+                    </tr>
                 </table>
             <button class="btn btn-warning">수정</button>
-            <button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/professorDel/{idx}(idx=${professor.idx})}">퇴사 처리</a></button>
+            <button class="btn btn-danger"><a th:href="@{/manager/professorList}">취소</a></button>
+
+            <button th:if="${professor.leaveDate == null}" type="button" class="btn btn-danger" onclick="handleLeave(this)"
+                    th:data-professor-idx="${professor.idx}">퇴사 처리</button>
             </form>
         </div>
     </div>
@@ -50,13 +58,48 @@
 <footer th:insert="layout/header :: footer"></footer>
 
 <script>
-    function confirmDelete(event) {
-        var result = confirm("정말 삭제하시겠습니까?");
-        if (result) {
+    function handleLeave(button) {
+        var professorIdx = button.dataset.professorIdx;
 
-        } else {
-            event.preventDefault();
-        }
+        // 퇴사일 입력 필드 생성
+        var leaveDateInput = document.createElement("input");
+        leaveDateInput.setAttribute("type", "date");
+        leaveDateInput.setAttribute("name", "leaveDate");
+        leaveDateInput.classList.add("form-control");
+
+        // 완료 버튼 생성
+        var completeButton = document.createElement("button");
+        completeButton.innerHTML = "완료";
+        completeButton.classList.add("btn", "btn-success");
+        completeButton.setAttribute("type", "button");
+
+        completeButton.addEventListener("click", function() {
+            var result = confirm("퇴사 처리하시겠습니까?");
+            if (result) {
+                // 선택한 퇴사일 값을 Hidden Input에 설정
+                var selectedLeaveDate = leaveDateInput.value;
+                console.log("selectedLeaveDate : " + selectedLeaveDate);
+                window.location.href = "/manager/professorDel/" + professorIdx + "/" + selectedLeaveDate;
+            }
+        });
+
+        // 새로운 행 생성
+        var newRow = document.createElement("tr");
+
+        // 제목 셀 생성
+        var newCell = document.createElement("th");
+        newCell.innerHTML = "퇴사일";
+        newRow.appendChild(newCell);
+
+        // 테이블 셀 생성
+        newCell = document.createElement("td");
+        newCell.appendChild(leaveDateInput);
+        newCell.appendChild(completeButton);
+        newRow.appendChild(newCell);
+
+        // 생성한 행을 테이블에 추가
+        var table = document.querySelector("table");
+        table.appendChild(newRow);
     }
 </script>
 </body>

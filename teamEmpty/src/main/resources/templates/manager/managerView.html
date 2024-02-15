@@ -6,12 +6,12 @@
 <body>
 <header th:insert="layout/header :: header"></header>
 <div class="container mt-3">
-    <h2>교수 상세 정보</h2>
+    <h2>교직원 상세 정보</h2>
     <hr>
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form method="post" th:action="@{'/manager/managerUpdateByManager/' + ${manager.idx}}">
+            <form method="post" id="managerForm" th:action="@{'/manager/managerUpdateByManager/' + ${manager.idx}}">
                 <table class="table table-bordered">
                     <tr>
                         <th rowspan="4">
@@ -45,8 +45,9 @@
                 </table>
                 <button class="btn btn-warning">수정</button>
                 <button class="btn btn-danger"><a th:href="@{/manager/managerList}">취소</a></button>
-                <button type="button" class="btn btn-danger" onclick="handleLeave(this)"  data-manager-idx="${manager.idx}">
-                    <a th:if="${manager.leaveDate == null}">퇴사 처리</a></button>
+
+                <button th:if="${manager.leaveDate == null}" type="button" class="btn btn-danger" onclick="handleLeave(this)"
+                        th:data-manager-idx="${manager.idx}">퇴사 처리</button>
             </form>
         </div>
     </div>
@@ -61,16 +62,21 @@
         var leaveDateInput = document.createElement("input");
         leaveDateInput.setAttribute("type", "date");
         leaveDateInput.setAttribute("name", "leaveDate");
+        leaveDateInput.classList.add("form-control");
 
         // 완료 버튼 생성
         var completeButton = document.createElement("button");
         completeButton.innerHTML = "완료";
         completeButton.classList.add("btn", "btn-success");
+        completeButton.setAttribute("type", "button");
 
         completeButton.addEventListener("click", function() {
             var result = confirm("퇴사 처리하시겠습니까?");
             if (result) {
-                window.location.href = "/manager/managerDel/" + managerIdx;
+                // 선택한 퇴사일 값을 Hidden Input에 설정
+                var selectedLeaveDate = leaveDateInput.value;
+                console.log("selectedLeaveDate : " + selectedLeaveDate);
+                window.location.href = "/manager/managerDel/" + managerIdx + "/" + selectedLeaveDate;
             }
         });
 

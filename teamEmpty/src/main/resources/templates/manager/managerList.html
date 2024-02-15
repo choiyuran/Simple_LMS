@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<!--강의 리스트-->
 <head th:insert="layout/header :: head">
 </head>
 <body>
@@ -11,16 +10,17 @@
         <h2>교직원 명단</h2>
         <hr>
         <div class="selectBox flex">
-            <form method="POST">
-                <select name="searchType">
+            <div class="form-group">
+            <form method="POST" class="form-inline">
+                <select class="form-control" name="searchType">
                     <option value="name"> 이름</option>
                     <option value="phone">연락처</option>
                 </select>
-                <input type="text" name="searchValue" placeholder="검색어 입력">
-                <input type="submit" value="검색">
+                <input class="form-control" type="text" name="searchValue" placeholder="검색어 입력">
+                <input class="form-control" type="submit" value="검색">
             </form>
+            </div>
         </div>
-
 
         <table class="table table-bordered">
             <thead>
@@ -45,6 +45,7 @@
              </tr>
             </tbody>
         </table>
+        <button class="btn btn-facebook"><a href="/manager/register">교직원 등록</a></button>
         <button class="btn btn-primary" th:if="${searchValue != null && searchValue != ''}"><a th:href="@{/manager/managerList}">목록으로</a></button>
     </div>
 </main>
