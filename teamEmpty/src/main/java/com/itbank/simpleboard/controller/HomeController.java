@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -194,7 +194,7 @@ public class HomeController {
     }
 
     @PostMapping("/changePassword")
-    public String changePassword() {
+    public String changePassword(HttpSession session, HttpServletRequest request, RedirectAttributes ra) {
         log.info("비번 변경");
         String url = "";
         Object login = session.getAttribute("user");
