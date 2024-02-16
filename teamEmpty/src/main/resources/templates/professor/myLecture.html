@@ -390,9 +390,9 @@
                 tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
                 if (hasGrade) {
                     let score = enrollment.score;
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${enrollment_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" style="background-color: grey;">수정</button></td></tr>`;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" style="background-color: grey;">수정</button></td></tr>`;
                 } else {
-                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${hasGrade}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
+                    tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
                 }
             });
 
@@ -402,7 +402,7 @@
             modalBody.innerHTML = tableHTML;
         }
 
-        function enterGrade(student_idx, lecture_idx, enrollment_idx, score) {
+        function enterGrade(student_idx, lecture_idx, enrollment_idx, score = null) {
             let rowId = `row_${student_idx}_${lecture_idx}`;
             let targetRow = document.getElementById(rowId);
 
@@ -474,7 +474,12 @@
 
             let rowId = `row_${student_idx}_${lecture_idx}`;
             let targetRow = document.getElementById(rowId);
-            targetRow.nextSibling.remove();
+
+            if (targetRow.nextSibling) {
+                targetRow.nextSibling.remove();
+            } else {
+                console.error("Next sibling is null.");
+            }
         }
 
         document.getElementById('viewAbolition').addEventListener('change', searchLectures);

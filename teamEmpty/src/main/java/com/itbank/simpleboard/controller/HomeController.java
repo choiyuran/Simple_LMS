@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -156,28 +156,61 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @PostMapping("/changePassword")
-    public String changePassword(HttpSession session, RedirectAttributes ra, HttpServletRequest request) {
-        log.info("비번 변경");
+    @PostMapping("/userModify")
+    public String userModify(HttpSession session, UserDTO param, RedirectAttributes ra) {  // 회원정보 수정
         String url = "";
         Object login = session.getAttribute("user");
-        String nowPassword = request.getParameter("nowPassword");
-        String newPassword = request.getParameter("newPassword");
-        int result = userService.changePassword(login, nowPassword, newPassword);
-        if (result != 0) {
-            url = "redirect:/";
-            ra.addFlashAttribute("msg","비밀번호가 변경되었습니다. 다시 로그인 해 주세요");
+
+        UserDTO userDTO = userService.userUpdate(login, param);
+        if (userDTO != null) {
+            if (login instanceof StudentDto) {
+                StudentDto user = (StudentDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/student/studentModify";
+            } else if (login instanceof ProfessorDto) {
+                ProfessorDto user = (ProfessorDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/professor/professorModify";
+            } else if (login instanceof ManagerLoginDto) {
+                ManagerLoginDto user = (ManagerLoginDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/manager/managerModify";
+            }
+            ra.addFlashAttribute("msg", "회원 정보가 수정되었습니다.");
         } else {
             if (login instanceof StudentDto) {
                 url = "redirect:/student/studentModify";
-                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
             } else if (login instanceof ProfessorDto) {
                 url = "redirect:/professor/professorModify";
-                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
             } else if (login instanceof ManagerLoginDto) {
                 url = "redirect:/manager/managerModify";
-                ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해 주세요");
             }
+            ra.addFlashAttribute("msg", "회원 정보 수정에 실패하였습니다. 다시 시도해 주세요");
+        }
+        return url;
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword() {
+        log.info("비번 변경");
+        String url = "";
+        Object login = session.getAttribute("user");
+        int result = userService.changePassword(login, request.getParameter("nowPassword"), request.getParameter("newPassword"));
+        if (result != 0) {
+            url = "redirect:/";
+            ra.addFlashAttribute("msg", "비밀번호가 수정되었습니다. 다시 로그인해주세요.");
+        } else {
+            if (login instanceof StudentDto) {
+                url = "redirect:/student/studentModify";
+            } else if (login instanceof ProfessorDto) {
+                url = "redirect:/professor/professorModify";
+            } else if (login instanceof ManagerLoginDto) {
+                url = "redirect:/manager/managerModify";
+            }
+            ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해주세요.");
         }
         return url;
     }

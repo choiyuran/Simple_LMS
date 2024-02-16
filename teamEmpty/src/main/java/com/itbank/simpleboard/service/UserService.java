@@ -35,7 +35,7 @@ public class UserService {
 
 
     private UserDTO convertToDto(User user) {
-        if (user == null) {
+        if(user == null){
             return null;
         }
         return new UserDTO(
@@ -51,15 +51,20 @@ public class UserService {
         );
     }
 
-    @Transactional  // 업데이트 반영 (테이블에 내용이 바꿀때 사용한다)
-    public UserDTO userUpdate(Long userIdx, UserDTO userdto) {   // param에서 idx를 long로 받는다
-        Optional<User> userOptional = userRepository.findById(userIdx);
+    @Transactional
+    public UserDTO userUpdate(Object login, UserDTO userdto) {
+        User user = getUserEntity(login);
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setPnum(userdto.getPnum());
-            user.setEmail(userdto.getEmail());
-            user.setAddress(userdto.getUser_address());
+        if (user != null) {
+            if (userdto.getPnum() != null) {
+                user.setPnum(userdto.getPnum());
+            }
+            if (userdto.getEmail() != null) {
+                user.setEmail(userdto.getEmail());
+            }
+            if (userdto.getUser_address() != null) {
+                user.setAddress(userdto.getUser_address());
+            }
             // 여기서 User 엔티티를 UserDTO로 변환하여 반환하도록 구현
             return getUserDTO(user);
         } else {
@@ -126,26 +131,40 @@ public class UserService {
     }
 
     @Transactional
-    public int changePassword(Object login, String previous, String exampleInputPassword) {
+    public int changePassword(Object login, String nowPassword, String newPassword) {
         int result = 0;
+        User userEntity = getUserEntity(login);
+
+        if (userEntity != null) {
+            result = changePasswordForUser(userEntity, nowPassword, newPassword);
+        }
+
+        return result;
+    }
+
+    private User getUserEntity(Object login) {
         User userEntity = null;
 
         if (login instanceof StudentDto) {
             StudentDto user = (StudentDto) login;
-            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+            Optional<User> userOptional = userRepository.findById(user.getUser().getIdx());
+            if (userOptional.isPresent()) {
+                userEntity = userOptional.get();
+            }
         } else if (login instanceof ProfessorDto) {
             ProfessorDto user = (ProfessorDto) login;
-            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+            Optional<User> userOptional = userRepository.findById(user.getUser().getIdx());
+            if (userOptional.isPresent()) {
+                userEntity = userOptional.get();
+            }
         } else if (login instanceof ManagerLoginDto) {
             ManagerLoginDto user = (ManagerLoginDto) login;
-            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+            Optional<User> userOptional = userRepository.findById(user.getUser().getIdx());
+            if (userOptional.isPresent()) {
+                userEntity = userOptional.get();
+            }
         }
-
-        if (userEntity != null) {
-            result = changePasswordForUser(userEntity, previous, exampleInputPassword);
-        }
-
-        return result;
+        return userEntity;
     }
 
     private int changePasswordForUser(User userEntity, String nowPassword, String newPassword) {
@@ -160,7 +179,7 @@ public class UserService {
             userEntity.setUser_pw(newPw);
             result = 1;
         }
+
         return result;
     }
-
 }

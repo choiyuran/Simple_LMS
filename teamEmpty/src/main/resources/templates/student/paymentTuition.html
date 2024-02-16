@@ -5,7 +5,7 @@
 <header th:insert="layout/studentHeader :: header"></header>
 <main>
     <div class="container mt-3">
-        <h2>등록금 납부하기</h2>
+        <h2 th:text="${semester + ' 등록금 납부하기'}"></h2>
         <hr/>
 
         <table class="table table-striped text-center">
@@ -59,7 +59,7 @@
         <div class="d-flex justify-content-around">
             <form method="post" action="/student/paymentTuition">
                 <input type="hidden" th:value="${session.user.idx}" name="student" required/>
-                <input type="text" th:value="${semester}" name="semester" required/>
+                <input type="hidden" th:value="${semester}" name="semester" required/>
                 <button class="btn btn-google">등록금 납부</button>
                 <button type="button" class="btn btn-facebook" onclick="history.go(-1)">돌아가기</button>
             </form>

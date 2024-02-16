@@ -6,7 +6,7 @@
 <body>
 <header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-4">
-    <form method="post" th:action="@{/student/studentModify/{idx}(idx=${session.user.user.getIdx()})}">
+    <form method="post" action="/userModify" id="modifyForm">
         <div class="w-50 m-auto">
             <h2>내 정보 수정</h2>
             <hr>
@@ -40,7 +40,8 @@
             <div class="form-group row">
                 <div class="col-sm-8 mb-3 mb-sm-0">
                     <input type="email" class="form-control form-control-user"
-                           id="exampleInputEmail" placeholder="Email" name="email" th:value="${session.user.user.email}" required>
+                           id="exampleInputEmail" placeholder="Email" name="email" th:value="${session.user.user.email}"
+                           required>
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-primary btn-user btn-block"
@@ -58,12 +59,14 @@
                            placeholder="인증번호" required>
                 </div>
                 <div class="col-sm-4">
-                    <button type="button" class="btn btn-primary btn-user btn-block" id="checkVerification">인증확인</button>
+                    <button type="button" class="btn btn-primary btn-user btn-block" id="checkVerification">인증확인
+                    </button>
                 </div>
             </div>
 
             <div class="w-50 m-auto">
-                <button type="submit" id="btn-student-modify" class="btn btn-warning" style="margin-right: 10px;">수정</button>
+                <button type="submit" id="btn-student-modify" class="btn btn-warning" style="margin-right: 10px;">수정
+                </button>
                 <button type="button" class="btn btn-outline-secondary">취소</button>
             </div>
         </div>
@@ -74,30 +77,31 @@
     <div class="m-auto w-50 mt-5">
         <h2>내 비밀번호 수정</h2>
         <br/>
-        <form method="post" action="">
+        <form method="post" action="/changePassword" id="changePassword">
             <!-- 패스워드 입력란 -->
             <div class="form-group row d-flex flex-wrap">
                 <div class="col-sm-12 mb-3 ">
-                    <input type="password" class="form-control form-control-user"
-                           id="previous" placeholder="기존 패스워드" required>
+                    <input type="password" class="form-control form-control-user" name="nowPassword"
+                           id="previous" placeholder="기존 패스워드">
+                    <span class="my-1" id="previousHelp"></span>
                 </div>
 
                 <div class="col-sm-12 mb-3 ">
-                    <input type="password" class="form-control form-control-user"
-                           id="exampleInputPassword" placeholder="변경할 패스워드" required>
+                    <input type="password" class="form-control form-control-user" name="newPassword"
+                           id="exampleInputPassword" placeholder="변경할 패스워드">
                     <span class="my-1" id="passwordHelp"></span>
                 </div>
 
                 <!-- 패스워드 확인 입력란 -->
                 <div class="col-sm-12 mb-3 ">
                     <input type="password" class="form-control form-control-user"
-                           id="exampleRepeatPassword" name="repeatPassword" placeholder="변경할 패스워드 확인" required>
+                           id="exampleRepeatPassword" name="repeatPassword" placeholder="변경할 패스워드 확인">
                     <span class="my-1" id="passwordConfirmHelp"></span>
                 </div>
 
                 <div class="col-sm-6 mb-3 justify-content-center">
                     <input type="submit" class="btn btn-facebook"
-                           id="btnChangePw" name="repeatPassword" value="비밀번호 변경하기" required>
+                           id="passwordChangeBtn" value="비밀번호 변경하기">
                 </div>
             </div>
         </form>
@@ -106,6 +110,10 @@
 <footer th:insert="layout/studentHeader :: footer"></footer>
 
 <script>
+    let emailChecked = false;
+    let checkPassword = false;
+    let eachPassword = false;
+
     window.onload = function () {
         const emailInput = document.getElementById('exampleInputEmail');
         const validationButton = document.getElementById('email_validation');
@@ -121,34 +129,40 @@
         }
 
         function validatePassword(password) {
-            var re = /^(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-z0-9!@#$%^&*]{8,}$/;
+            var re = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
             return re.test(String(password));
         }
 
+        passwordInput.addEventListener('focus', function () {
+            passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+        });
+        repeatPasswordInput.addEventListener('focus', function () {
+            passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요."
+        });
+
         passwordInput.addEventListener('input', function () {
-            if (!validatePassword(passwordInput.value)) {
-                passwordHelp.innerHTML = "총 8자 이상 숫자, 소문자, 특수문자를 각각 하나 이상 ";
-                passwordConfirmHelp.classList.add('text-danger');
+            if (validatePassword(passwordInput.value.trim())) {
+                passwordHelp.classList.remove('text-danger');
+                passwordHelp.classList.add('text-success');
+                passwordHelp.innerHTML = "사용 가능한 비밀번호입니다.";
+                checkPassword = true;
             } else {
-                passwordHelp.innerHTML = "";
-                // 비밀번호 재확인 입력란 유효성 검사 로직 추가
-                if (passwordInput.value !== repeatPasswordInput.value) {
-                    passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
-                    passwordConfirmHelp.classList.add('text-danger');
-                } else {
-                    passwordConfirmHelp.classList.add('text-primary');
-                    passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
-                }
+                passwordHelp.classList.remove('text-success');
+                passwordHelp.classList.add('text-danger');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
             }
         });
 
         repeatPasswordInput.addEventListener('input', function () {
-            if (passwordInput.value !== repeatPasswordInput.value) {
-                passwordConfirmHelp.innerHTML = "패스워드가 일치하지 않습니다.";
-                passwordConfirmHelp.style.color = "red";
+            if (passwordInput.value === repeatPasswordInput.value) {
+                passwordConfirmHelp.classList.remove('text-danger')
+                passwordConfirmHelp.classList.add('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치합니다.";
+                eachPassword = true;
             } else {
-                passwordConfirmHelp.classList.add('text-primary');
-                passwordConfirmHelp.innerHTML = "유효한 비밀번호입니다.";
+                passwordConfirmHelp.classList.add('text-danger');
+                passwordConfirmHelp.classList.remove('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치하지 않습니다.";
             }
         });
 
@@ -163,7 +177,6 @@
 
         // 취소 버튼 클릭 시 이벤트 처리
         document.querySelector('.btn-outline-secondary').addEventListener('click', function () {
-
             history.go(-1);
         });
 
@@ -199,12 +212,12 @@
             data: {
                 email: $('#exampleInputEmail').val() // 이메일 입력란의 값
             },
-            success: function(response) {
+            success: function (response) {
                 alert('인증번호가 전송되었습니다.');
                 $('#verificationCode1').val(response); // 인증번호 입력란에 인증번호 설정
                 document.getElementById('verificationField').style.display = 'flex';
             },
-            error: function(request, status, error) {
+            error: function (request, status, error) {
                 console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
             }
         });
@@ -212,7 +225,6 @@
 
 
     document.querySelector('#checkVerification').addEventListener('click', function (e) {
-        const btnStudentModify = document.getElementById('btn-student-modify');
         e.preventDefault();
         // 인증번호 확인 부분
         var userCode = $('#verificationCode').val();
@@ -220,13 +232,51 @@
 
         if (userCode === serverCode) {
             alert('인증이 완료되었습니다.');
-            btnStudentModify.disabled = false;
+            emailChecked = true;
         } else {
             alert('인증번호가 일치하지 않습니다.');
         }
     });
 
+    document.getElementById('btn-student-modify').addEventListener('click', function (e) {
+        e.preventDefault();
 
+        if (emailChecked) {
+            document.getElementById('modifyForm').submit();
+        } else {
+            alert('이메일 인증 후 시도해주세요');
+        }
+    })
+
+    document.getElementById('passwordChangeBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        let previous = document.getElementById('previous');
+        const passwordInput = document.getElementById('exampleInputPassword');
+        const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+
+        if (previous.value.trim() !== "" && passwordInput.value.trim() !== "" && repeatPasswordInput.value.trim() !== "") {
+            if (checkPassword && eachPassword) {
+                document.getElementById('changePassword').submit();
+            }
+        } else {
+            if (previous.value.trim() === "") {
+                let previousHelp = document.getElementById('previousHelp');
+                previousHelp.innerHTML = "현재 비밀번호를 입력해주세요.";
+                previousHelp.classList.add('text-danger');
+            }
+            if (passwordInput.value.trim() === "" || !checkPassword) {
+                const passwordHelp = document.getElementById('passwordHelp');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+                passwordHelp.classList.add('text-danger');
+            }
+            if (repeatPasswordInput.value.trim() === "" || !eachPassword) {
+                const passwordConfirmHelp = document.getElementById('passwordConfirmHelp');
+                passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요.";
+                passwordConfirmHelp.classList.add('text-danger');
+            }
+        }
+    });
 </script>
 
 </body>

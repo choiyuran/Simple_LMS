@@ -105,6 +105,13 @@
 //                em.persist(situation2);
 //                em.persist(situation3);
 //
+//                SituationRecord record1 = new SituationRecord(Status_type.재학,student1,situation1.getStart_date(),null);
+//                SituationRecord record2 = new SituationRecord(Status_type.재학,student2,situation2.getStart_date(),null);
+//                SituationRecord record3 = new SituationRecord(Status_type.재학,student3,situation3.getStart_date(),null);
+//
+//                em.persist(record1);
+//                em.persist(record2);
+//                em.persist(record3);
 //
 //                Payments payments = new Payments(student1, "2023학년 1학기");
 //                Payments payments2 = new Payments(student2,"2023학년 1학기");
