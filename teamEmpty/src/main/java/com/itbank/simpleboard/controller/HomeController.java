@@ -116,36 +116,43 @@ public class HomeController {
     @PostMapping("/login")
     public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, Model model) {
         String url = "index";
-        UserDTO user = userService.getUser(user_id, user_pw);
-        if (user == null) {
-            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-            return url;
-        } else {
-            switch (user.getRole().toString()) {
-                case "교수":
-                    ProfessorDto professor = userService.getProfessor(user);
-                    if (professor == null) {
-                        model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                    } else {
-                        session.setAttribute("user", professor);
-                        url = "redirect:/professor/home";
-                    }
-                    break;
-                case "학생":
-                    StudentDto student = userService.getStudent(user);
-                    session.setAttribute("user", student);
-                    url = "redirect:/student/home";
-                    break;
-                case "교직원":
-                    ManagerLoginDto manager = userService.getManager(user);
-                    if (manager == null) {
-                        model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                    } else {
-                        session.setAttribute("user", manager);
-                        url = "redirect:/manager/home";
-                    }
-                    break;
+        if (!user_id.isEmpty() && !user_pw.isEmpty()) {
+            UserDTO user = userService.getUser(user_id, user_pw);
+            if (user == null) {
+                model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+            } else {
+                switch (user.getRole().toString()) {
+                    case "교수":
+                        ProfessorDto professor = userService.getProfessor(user);
+                        if (professor == null) {
+                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            session.setAttribute("user", professor);
+                            url = "redirect:/professor/home";
+                        }
+                        break;
+                    case "학생":
+                        StudentDto student = userService.getStudent(user);
+                        if (student == null) {
+                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            session.setAttribute("user", student);
+                            url = "redirect:/student/home";
+                        }
+                        break;
+                    case "교직원":
+                        ManagerLoginDto manager = userService.getManager(user);
+                        if (manager == null) {
+                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            session.setAttribute("user", manager);
+                            url = "redirect:/manager/home";
+                        }
+                        break;
+                }
             }
+        } else {
+            model.addAttribute("msg", "ID와 Password를 입력해주세요.");
         }
         return url;
     }
