@@ -137,21 +137,6 @@ public class StudentController {
         return mav;
     }
 
-
-    @PostMapping("/studentModify/{idx}") // 내 정보 수정
-    public String usersUpdate(@PathVariable("idx") Long idx, UserDTO param, HttpSession session,RedirectAttributes ra) {
-        UserDTO user = userService.userUpdate(idx, param);
-        StudentDto dto = (StudentDto) session.getAttribute("user");
-        dto.getUser().setPnum(user.getPnum());
-        dto.getUser().setUser_address(user.getUser_address());
-        dto.getUser().setEmail(user.getEmail());
-
-        session.setAttribute("user",dto);
-        ra.addFlashAttribute("msg","회원수정 완료");
-
-        return "redirect:/student/studentModify";
-    }
-
     @GetMapping("/evaluationList")              // 강의 평가 목록
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();

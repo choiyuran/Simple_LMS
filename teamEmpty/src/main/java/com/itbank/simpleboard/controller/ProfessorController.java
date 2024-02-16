@@ -182,19 +182,6 @@ public class ProfessorController {
         return userService.sendAuthNumber(email);
     }
 
-    @PostMapping("/professorModify")
-    public String professorModify(HttpSession session, UserDTO param, RedirectAttributes ra) {
-        ProfessorDto user = (ProfessorDto) session.getAttribute("user");
-        UserDTO userDTO = userService.userUpdate(user.getUser().getIdx(), param);
-        if (userDTO != null) {
-            user.setUser(userDTO);
-            session.setAttribute("user", user);
-            ra.addFlashAttribute("msg","회원수정 완료");
-        } else {
-            ra.addFlashAttribute("msg","회원 정보 수정에 실패하였습니다. 다시 시도해 주세요");
-        }
-        return "redirect:/professor/professorModify";
-    }
 
     @GetMapping("/enrollmentList")  // myLecture에서 성적 기입을 눌렀을 때, 수강생 목록을 보여주는 메서드
     public ResponseEntity<List<EnrollmentDto>> enterGrade(@RequestParam("lectureIdx") Long lectureIdx) {

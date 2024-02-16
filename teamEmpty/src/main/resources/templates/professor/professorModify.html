@@ -6,7 +6,7 @@
 <body>
 <header th:insert="layout/professorHeader :: header"></header>
 <div class="container mt-4">
-    <form method="post" th:action="@{/professor/professorModify}" id="modifyForm">
+    <form method="post" action="/userModify" id="modifyForm">
         <div class="w-50 m-auto">
             <h2>내 정보 수정</h2>
             <hr>
@@ -234,7 +234,6 @@
 
 
     document.querySelector('#checkVerification').addEventListener('click', function (e) {
-        const btnProfessorModify = document.getElementById('btn-professor-modify');
         e.preventDefault();
         // 인증번호 확인 부분
         var userCode = $('#verificationCode').val();
@@ -243,7 +242,6 @@
         if (userCode === serverCode) {
             alert('인증이 완료되었습니다.');
             emailChecked = true;
-            btnProfessorModify.disabled = false;
         } else {
             alert('인증번호가 일치하지 않습니다.');
         }

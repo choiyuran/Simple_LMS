@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -155,6 +156,43 @@ public class HomeController {
         return "redirect:/";
     }
 
+    @PostMapping("/userModify")
+    public String userModify(HttpSession session, UserDTO param, RedirectAttributes ra) {  // 회원정보 수정
+        String url = "";
+        Object login = session.getAttribute("user");
+
+        UserDTO userDTO = userService.userUpdate(login, param);
+        if (userDTO != null) {
+            if (login instanceof StudentDto) {
+                StudentDto user = (StudentDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/student/studentModify";
+            } else if (login instanceof ProfessorDto) {
+                ProfessorDto user = (ProfessorDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/professor/professorModify";
+            } else if (login instanceof ManagerLoginDto) {
+                ManagerLoginDto user = (ManagerLoginDto) login;
+                user.setUser(userDTO);
+                session.setAttribute("user", user);
+                url = "redirect:/manager/managerModify";
+            }
+            ra.addFlashAttribute("msg", "회원 정보가 수정되었습니다.");
+        } else {
+            if (login instanceof StudentDto) {
+                url = "redirect:/student/studentModify";
+            } else if (login instanceof ProfessorDto) {
+                url = "redirect:/professor/professorModify";
+            } else if (login instanceof ManagerLoginDto) {
+                url = "redirect:/manager/managerModify";
+            }
+            ra.addFlashAttribute("msg", "회원 정보 수정에 실패하였습니다. 다시 시도해 주세요");
+        }
+        return url;
+    }
+
     @PostMapping("/changePassword")
     public String changePassword(HttpSession session, HttpServletRequest request, RedirectAttributes ra) {
         log.info("비번 변경");
@@ -163,22 +201,17 @@ public class HomeController {
         int result = userService.changePassword(login, request.getParameter("nowPassword"), request.getParameter("newPassword"));
         if (result != 0) {
             url = "redirect:/";
-            ra.addFlashAttribute("msg","비밀번호가 수정되었습니다. 다시 로그인해주세요.");
+            ra.addFlashAttribute("msg", "비밀번호가 수정되었습니다. 다시 로그인해주세요.");
         } else {
             if (login instanceof StudentDto) {
                 url = "redirect:/student/studentModify";
-                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
             } else if (login instanceof ProfessorDto) {
                 url = "redirect:/professor/professorModify";
-                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
             } else if (login instanceof ManagerLoginDto) {
                 url = "redirect:/manager/managerModify";
-                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
             }
+            ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해주세요.");
         }
         return url;
     }
 }
-
-//- 반환값이 0이 아니면, 로그인 페이지로 redirect 하면서, 비밀번호가 변경되었다는 메세지 전달
-//- 반환값이 0이면, Object login을 StudentDto, ProfessorDto, ManagerLoginDto로 다운캐스팅 할 수 있는지 확인하고, “비밀번호를 정확히 입력해주세요”라는 메세지와 함께 각각 studentModify, professorModify, managerModify로 redirect한다.
