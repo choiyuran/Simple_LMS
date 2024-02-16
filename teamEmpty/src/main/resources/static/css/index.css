@@ -18,18 +18,13 @@
     }
 }
 
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
 
-body{
-    font-family: 'Poppins', sans-serif;
-    overflow: hidden;
-}
-
-.wave{
+.wave {
     position: fixed;
     bottom: 0;
     left: -200px;
@@ -38,7 +33,7 @@ body{
     animation: slideInFromLeft 1.5s ease-out;
 }
 
-.wave2{
+.wave2 {
     position: fixed;
     top: 0;
     right: -200px;
@@ -47,48 +42,51 @@ body{
     animation: slideInFromRight 1.5s ease-out;
 }
 
-.container{
+div.index_container {
     width: 100vw;
     height: 100vh;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap :7rem;
+    grid-gap: 7rem;
     padding: 0 2rem;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
 }
 
-.img{
+div.index_container .img {
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-.login-content{
+div.index_container .login-content {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     text-align: center;
 }
 
-.img img{
+div.index_container .img img {
     width: 500px;
 }
 
-form{
+div.index_container form {
     width: 360px;
 }
 
-.login-content img{
+div.index_container .login-content img {
     height: 100px;
 }
 
-.login-content h2{
+div.index_container .login-content h2 {
+    font-weight: bold;
     margin: 15px 0;
     color: #333;
     text-transform: uppercase;
     font-size: 2.9rem;
 }
 
-.login-content .input-div{
+div.index_container .login-content .input-div {
     position: relative;
     display: grid;
     grid-template-columns: 7% 93%;
@@ -97,27 +95,28 @@ form{
     border-bottom: 2px solid #d9d9d9;
 }
 
-.login-content .input-div.one{
+div.index_container .login-content .input-div.one {
     margin-top: 0;
 }
 
-.i{
+div.index_container .i {
     color: #d9d9d9;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.i i{
+div.index_container .i i {
     transition: .3s;
 }
 
-.input-div > div{
+div.index_container .input-div > div {
     position: relative;
     height: 45px;
 }
 
-.input-div > div > h5{
+div.index_container .input-div > div > h5 {
+    font-weight: bold;
     position: absolute;
     left: 10px;
     top: 50%;
@@ -127,7 +126,7 @@ form{
     transition: .3s;
 }
 
-.input-div:before, .input-div:after{
+div.index_container .input-div:before, .input-div:after {
     content: '';
     position: absolute;
     bottom: -2px;
@@ -137,28 +136,29 @@ form{
     transition: .4s;
 }
 
-.input-div:before{
+div.index_container .input-div:before {
     right: 50%;
 }
 
-.input-div:after{
+div.index_container .input-div:after {
     left: 50%;
 }
 
-.input-div.focus:before, .input-div.focus:after{
+div.index_container .input-div.focus:before, div.index_container .input-div.focus:after {
     width: 50%;
 }
 
-.input-div.focus > div > h5{
+div.index_container .input-div.focus > div > h5 {
+    font-weight: bold;
     top: -5px;
     font-size: 15px;
 }
 
-.input-div.focus > .i > i{
+div.index_container .input-div.focus > .i > i {
     color: #38d39f;
 }
 
-.input-div > div > input{
+div.index_container .input-div > div > input {
     position: absolute;
     left: 0;
     top: 0;
@@ -173,11 +173,11 @@ form{
     font-family: 'poppins', sans-serif;
 }
 
-.input-div.pass{
+div.index_container .input-div.pass {
     margin-bottom: 4px;
 }
 
-a{
+div.index_container a {
     display: block;
     text-align: right;
     text-decoration: none;
@@ -186,11 +186,11 @@ a{
     transition: .3s;
 }
 
-a:hover{
+div.index_container a:hover {
     color: #38d39f;
 }
 
-.btn{
+div.index_container .btn {
     display: block;
     width: 100%;
     height: 50px;
@@ -207,61 +207,64 @@ a:hover{
     cursor: pointer;
     transition: .5s;
 }
-.btn:hover{
+
+div.index_container .btn:hover {
     background-position: right;
 }
-.between {
+
+div.index_container .between {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.between label {
+div.index_container .between label {
     display: flex;
     align-items: center;
 }
 
-.between label span {
+div.index_container .between label span {
     margin-left: 8px; /* 조절 가능한 마진값 */
     color: #999;
     font-size: 0.9rem;
 }
 
-@media screen and (max-width: 1050px){
-    .container{
+@media screen and (max-width: 1050px) {
+    .index_container {
         grid-gap: 5rem;
     }
 }
 
-@media screen and (max-width: 1000px){
-    form{
+@media screen and (max-width: 1000px) {
+    div.index_container form {
         width: 290px;
     }
 
-    .login-content h2{
+    div.index_container .login-content h2 {
+        font-weight: bold;
         font-size: 2.4rem;
         margin: 8px 0;
     }
 
-    .img img{
+    div.index_container .img img {
         width: 400px;
     }
 }
 
-@media screen and (max-width: 900px){
-    .container{
+@media screen and (max-width: 900px) {
+    div.index_container {
         grid-template-columns: 1fr;
     }
 
-    .img{
+    div.index_container .img {
         display: none;
     }
 
-    .wave{
+    div.index_container .wave {
         display: none;
     }
 
-    .login-content{
+    div.index_container .login-content {
         justify-content: center;
     }
 }
