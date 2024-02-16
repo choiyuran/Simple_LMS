@@ -110,11 +110,17 @@ public class RegisterController {
     @PostMapping("/addStudentList")   // 학생 등록
     public String saveStudentList(@RequestBody List<StudentFormDTO> studentList) {
         log.info("학생등록 리스트 저장: AJAX");
-        // 전달된 학생 정보 저장
-        int index = managerService.addStudentList(studentList);
+        // 전달된 학생 정보 확인
 
-        // 업데이트 결과에 대한 응답 메시지 반환
-        return index + "명의 학생 정보가 성공적으로 업데이트되었습니다.";
+        String resultMsg;
+        String msg = managerService.verificationStudentDTOList(studentList);
+        if(msg.equals("성공")){
+            resultMsg = managerService.addStudentList(studentList);
+        }else{
+            resultMsg = msg;
+        }
+
+        return resultMsg;
     }
 
 

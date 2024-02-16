@@ -15,6 +15,8 @@ import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
+import com.itbank.simpleboard.repository.student.SituationRecordRepository;
+import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.querydsl.core.Tuple;
@@ -51,6 +53,8 @@ public class ManagerService {
     private final FileComponent fileComponent;
     private final StudentRepository studentRepository;
     private final HashComponent hashComponent;
+    private final SituationRepository situationRepository;
+    private final SituationRecordRepository situationRecordRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -264,13 +268,18 @@ public class ManagerService {
         return managerRepository.save(manager);
     }
     @Transactional
-    public int addStudentList(List<StudentFormDTO> studentList) {
+    public String addStudentList(List<StudentFormDTO> studentList) {
         log.info("addStudentList service");
         int index = 0;
         for(StudentFormDTO dto : studentList) {
+            System.err.println(index + "번 학생 추가 시작");
             String salt = hashComponent.getRandomSalt();
             String source = dto.getSecurity().substring(dto.getSecurity().length()-7);
             String pw = hashComponent.getHash(source,salt);
+            int indexOfMajor = dto.getMajor().indexOf('('); // 괄호의 위치를 찾음
+            int indexOfProfessor = dto.getProfessor().indexOf('('); // 괄호의 위치를 찾음
+            String majorName = dto.getMajor().substring(0, indexOfMajor);
+            String professorName = dto.getProfessor().substring(0, indexOfProfessor);
             User user = new User(
                     pw,
                     salt,
@@ -282,25 +291,49 @@ public class ManagerService {
                     User_role.학생
             );
             userRepository.save(user);
-            Major major = majorRepository.findByName(dto.getMajor());
-            List<Tuple> professorList = professorRepository.findByMajorAndUserUserNameContaining(major.getName(), dto.getProfessor());
-
-            Tuple tuple = professorList.get(0);
+            System.err.println(index + "번 학생 유저저장");
+            System.err.println(majorName + "majorName");
+            System.err.println(professorName + "professorName");
+            Major major = majorRepository.findByName(majorName);
+            System.err.println(major.getName() + "major");
+            Long in = 10L;
+            Optional<Professor> professor = professorRepository.findById(in);
             Student s = new Student(
                     dto.getStudent_num(),
                     dto.getStudent_grade(),
                     user,
-                    (Professor) tuple,
+                    professor.get(),
                     major,
                     dto.getEntranceDate()
             );
+            System.err.println(index + "번 학생엔티티");
+            Situation situation = new Situation(
+                    s,
+                    Status_type.재학
+            );
+            SituationRecord situationRecord = new SituationRecord(
+                    Status_type.입학,
+                    s
+            );
+            System.err.println("major" + major.getName());
+//            System.err.println("professor" + professor.getUser().getUser_name());
+
             studentRepository.save(s);
-            log.info(s.getUser().getUser_id());
+            situationRepository.save(situation);
+            situationRecordRepository.save(situationRecord);
+            log.info("s.getUser().getUser_id()"+ s.getUser().getUser_id());
+
+
+
+            log.info("index"+index);
             index++;
+
         }
 
-        return index;
+        return index + "명의 학생 등록에 성공하였습니다.";
     }
+
+
     @Transactional
     public Professor addProfessor(UserFormDTO dto) {
         log.info("addProfessor service"+ dto.toString());
@@ -369,7 +402,7 @@ public class ManagerService {
                         case 0:
                             if(currentCell.getCellType() == CellType.NUMERIC){   // 셀의 데이터유형이 숫자인지 문자인지 확인
                                 student.setStudent_num((int) currentCell.getNumericCellValue()); // 숫자형 데이터 가져오기
-                                log.info("getStudent_num : " + student.getStudent_num());
+//                                log.info("getStudent_num : " + student.getStudent_num());
                                 hasData = true; // 데이터가 있으면 플래그를 설정
                             }
                             break;
@@ -424,7 +457,7 @@ public class ManagerService {
                         case 8:
                             if(currentCell.getCellType() == CellType.STRING){
                                 Major major =  majorRepository.findByName(currentCell.getStringCellValue());
-                                log.info("major : " + major);
+//                                log.info("major : " + major);
                                 String majorInfo;
 
                                 if(major == null) {
@@ -439,35 +472,24 @@ public class ManagerService {
                                     mInfo = major.getName();
                                     majorInfo = mInfo + "("+major.getIdx()+")";
                                 }
-                                log.info(" case 8 majorInfo" + majorInfo);
+//                                log.info(" case 8 majorInfo" + majorInfo);
                                 student.setMajor(majorInfo);
-                                log.info("getMajor : " + student.getMajor());
+//                                log.info("getMajor : " + student.getMajor());
                             }
                             break;
                         case 9:
                             if(currentCell.getCellType() == CellType.STRING){
                                 String professorName = currentCell.getStringCellValue();
-                                log.info("case 9 mInfo :" + mInfo);
-                                log.info("case 9 professorName :" + professorName);
+//                                log.info("case 9 mInfo :" + mInfo);
+//                                log.info("case 9 professorName :" + professorName);
 
-                                List<Tuple> professorNameList = professorRepository.findByMajorAndUserUserNameContaining(mInfo, professorName);
-                                log.info("professorNameList :" + professorNameList.toString());
+                                List<ProfessorUserDto> professorList = professorRepository.findByMajorAndUserUserNameContainingDto(mInfo,professorName);
 
-                                String professorInfo;
-                                if(!professorNameList.isEmpty()){
-                                    Tuple tuple = professorNameList.get(0);
-                                    Long userNum = tuple.get(0, Long.class);
-                                    String userName = tuple.get(1, String.class);
-                                    // 여기서 할 작업 수행
-                                    professorInfo = userName + "(" + userNum + ")";
-                                    log.info("userNum: " + userNum);
-                                    log.info("userName: " + userName);
-                                }else{
-                                    professorInfo = "교수정보없음";
-                                }
+
+                                String professorInfo = getString(professorList);
                                 student.setProfessor(professorInfo);
-                                log.info(" case 9 professorInfo" + professorInfo);
-                                log.info("getProfessor : " + student.getProfessor());
+//                                log.info(" case 9 professorInfo" + professorInfo);
+//                                log.info("getProfessor : " + student.getProfessor());
                             }
                             break;
                     }
@@ -479,7 +501,7 @@ public class ManagerService {
                 }
                 student.setIdx(idx++);
                 studentFormDTOList.add(student);
-                System.err.println("studentFormDTO : "+ student);
+//                System.err.println("studentFormDTO : "+ student);
             }
 
         } catch (IOException e) {
@@ -488,6 +510,18 @@ public class ManagerService {
         }
 
         return  studentFormDTOList;
+    }
+
+    private static String getString(List<ProfessorUserDto> professorList) {
+        String professorInfo;
+        if(!professorList.isEmpty()){
+            professorInfo = professorList.get(0).getName() + "(" + professorList.get(0).getProfessor_idx() + ")";
+//                                    log.info("userNum: " + userNum);
+//                                    log.info("userName: " + userName);
+        }else{
+            professorInfo = "교수정보없음";
+        }
+        return professorInfo;
     }
 
     // 엑셀의 날짜 값을 java.sql.Date로 변환하는 메서드
@@ -610,6 +644,47 @@ public class ManagerService {
 
     public List<CheckTuitionPaymentDto> getCheckTuitionPayment() {
         return managerRepository.findAllCheckTuitionPayments();
+    }
+
+    public String verificationStudentDTOList(List<StudentFormDTO> studentList) {
+        log.info("verificationStudentDTOList service");
+        int index = 1;
+        StringBuilder notFoundStudents  = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
+        for(StudentFormDTO dto : studentList) {
+            System.err.println(index + "번 학생 확인 시작");
+            int indexOfMajor = dto.getMajor().indexOf('('); // 괄호의 위치를 찾음
+            int indexOfProfessor = dto.getProfessor().indexOf('('); // 괄호의 위치를 찾음
+            String majorName = dto.getMajor().substring(0, indexOfMajor);
+            String professorName = dto.getProfessor().substring(0, indexOfProfessor);
+
+            Major major = majorRepository.findByName(majorName);
+            System.err.println(major.getName() + "major");
+
+            List<Professor> professors = professorRepository.findAllByMajor(major);
+            boolean found = false;
+            for(Professor p : professors){
+                if(p.getUser().getUser_name().equals(professorName)){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                notFoundStudents.append(index).append(", ");
+            }
+            log.info("index"+index);
+            index++;
+
+        }
+
+        String msg;
+        if(notFoundStudents.length() >0){
+            msg = notFoundStudents.substring(0,notFoundStudents.length()-2) + "번의 학생의 교수정보를 찾을 수 없습니다.";
+        }else{
+
+            msg = "성공";
+        }
+        return msg;
+
     }
 }
 
