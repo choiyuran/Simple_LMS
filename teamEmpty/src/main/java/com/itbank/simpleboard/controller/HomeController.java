@@ -16,7 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -154,8 +156,29 @@ public class HomeController {
     }
 
     @PostMapping("/changePassword")
-    public String changePassword() {
+    public String changePassword(HttpSession session, HttpServletRequest request, RedirectAttributes ra) {
         log.info("비번 변경");
-        return null;
+        String url = "";
+        Object login = session.getAttribute("user");
+        int result = userService.changePassword(login, request.getParameter("nowPassword"), request.getParameter("newPassword"));
+        if (result != 0) {
+            url = "redirect:/";
+            ra.addFlashAttribute("msg","비밀번호가 수정되었습니다. 다시 로그인해주세요.");
+        } else {
+            if (login instanceof StudentDto) {
+                url = "redirect:/student/studentModify";
+                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
+            } else if (login instanceof ProfessorDto) {
+                url = "redirect:/professor/professorModify";
+                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
+            } else if (login instanceof ManagerLoginDto) {
+                url = "redirect:/manager/managerModify";
+                ra.addFlashAttribute("msg","비밀번호를 정확히 입력해주세요.");
+            }
+        }
+        return url;
     }
 }
+
+//- 반환값이 0이 아니면, 로그인 페이지로 redirect 하면서, 비밀번호가 변경되었다는 메세지 전달
+//- 반환값이 0이면, Object login을 StudentDto, ProfessorDto, ManagerLoginDto로 다운캐스팅 할 수 있는지 확인하고, “비밀번호를 정확히 입력해주세요”라는 메세지와 함께 각각 studentModify, professorModify, managerModify로 redirect한다.

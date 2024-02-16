@@ -124,4 +124,43 @@ public class UserService {
         manager.setUser(user);
         return manager;
     }
+
+    @Transactional
+    public int changePassword(Object login, String nowPassword, String newPassword) {
+        int result = 0;
+        User userEntity = null;
+
+        if (login instanceof StudentDto) {
+            StudentDto user = (StudentDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+        } else if (login instanceof ProfessorDto) {
+            ProfessorDto user = (ProfessorDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+        } else if (login instanceof ManagerLoginDto) {
+            ManagerLoginDto user = (ManagerLoginDto) login;
+            userEntity = userRepository.findByIdx(user.getUser().getIdx());
+        }
+
+        if (userEntity != null) {
+            result = changePasswordForUser(userEntity, nowPassword, newPassword);
+        }
+
+        return result;
+    }
+
+    private int changePasswordForUser(User userEntity, String nowPassword, String newPassword) {
+        int result = 0;
+        String nowSalt = userEntity.getSalt();
+        String nowPw = hashComponent.getHash(nowPassword, nowSalt);
+
+        if (nowPw.equals(userEntity.getUser_pw())) {
+            String newSalt = hashComponent.getRandomSalt();
+            String newPw = hashComponent.getHash(newPassword, newSalt);
+            userEntity.setSalt(newSalt);
+            userEntity.setUser_pw(newPw);
+            result = 1;
+        }
+
+        return result;
+    }
 }
