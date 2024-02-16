@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<!--공지 사항 리스트-->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:insert="layout/header :: head">
 </head>
+
 <body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>공지 사항</h2>
+    <hr>
+    <table class="table table-bordered">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>등록일</th>
+            <th>조회수</th>
+        </tr>
+
+        <tr th:each="row : ${noticeList}">
+            <td th:text="${row.idx}"></td>
+            <td><a th:href="@{'/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
+            <td th:text="${row.content}"></td>
+            <td th:text="${row.wdate}"></td>
+            <td th:text="${row.viewCount}"></td>
+        </tr>
+    </table>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
 
 </body>
 </html>

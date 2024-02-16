@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>상태 기록</h2>
+    <hr>
+<!--    <form th:action="@{/manager/studentSituation}">-->
+<!--        &lt;!&ndash; 학생의 상태로 검색할 수 있는 검색창 추가 &ndash;&gt;-->
+<!--        <div class="form-group mr-2">-->
+<!--            <label for="status">상태 검색</label>-->
+<!--            <input type="text" class="form-control" id="status" name="status" placeholder="상태를 입력하세요.">-->
+<!--        </div>-->
+
+<!--        <button class="btn btn-primary">검색</button>-->
+<!--    </form>-->
+    <br>
+    <table class="table table-bordered">
+        <tr>
+            <th>시작일</th>
+            <th>종료일</th>
+            <th>상태</th>
+        </tr>
+
+        <tr th:each="row : ${situationRecord}">
+            <td th:text="${row.start_date}"></td>
+            <td th:text="${row.end_date != null ? row.end_date : '-'}"></td>
+            <td th:text="${row.student_status}"></td>
+        </tr>
+
+    </table>
+    <button class="btn btn-primary"><a href="/manager/studentSituation">목록으로</a></button>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+</body>
+</html>

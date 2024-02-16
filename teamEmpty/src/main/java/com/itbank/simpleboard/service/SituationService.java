@@ -3,7 +3,9 @@ package com.itbank.simpleboard.service;
 import com.itbank.simpleboard.dto.SituationChageDto;
 import com.itbank.simpleboard.dto.SituationStuDto;
 import com.itbank.simpleboard.entity.Situation;
+import com.itbank.simpleboard.entity.SituationRecord;
 import com.itbank.simpleboard.entity.Student;
+import com.itbank.simpleboard.repository.student.SituationRecordRepository;
 import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -19,6 +23,8 @@ import java.util.List;
 public class SituationService {
     private final SituationRepository situationRepository;
     private final StudentRepository studentRepository;
+    private final SituationRecordRepository situationRecordRepository;
+
 
     public Situation selectById(Long studentIdx) {
         Student student = studentRepository.findById(studentIdx).get();
@@ -47,6 +53,9 @@ public class SituationService {
         if(param.getEnd_date() != null) {
             situation.setEnd_date(new Date(param.getEnd_date().getTime()));
         }
+        else {
+            situation.setEnd_date(null);
+        }
         situation.setStudent_status(param.getStatus());
         return situation;
     }
@@ -62,5 +71,27 @@ public class SituationService {
             situation.setStudent_status(dto.getStatus());
         }
         return situation;
+    }
+
+    @Transactional
+    public SituationRecord situationRecordAdd(SituationStuDto param) {
+        Student student = studentRepository.findById(param.getStudent_idx()).get();
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        Date startDate = new Date(param.getStart_date().getTime());
+        Date endDate = null;
+        if(param.getEnd_date() != null) {
+            endDate = new Date(param.getEnd_date().getTime());
+        }
+
+        SituationRecord situationRecord = new SituationRecord(
+            param.getStatus(),student,startDate,endDate
+        );
+        return situationRecordRepository.save(situationRecord);
+    }
+
+    public List<SituationRecord> situationRecordAllByIdx(Long idx) {
+        Student student = studentRepository.findById(idx).get();
+        return situationRecordRepository.findAllByStudent(student);
+
     }
 }

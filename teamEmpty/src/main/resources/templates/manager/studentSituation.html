@@ -28,7 +28,7 @@
 
         <tr th:each="row : ${studentList}">
             <td th:text="${row.student_num}"></td>
-            <td th:text="${row.name}"></td>
+            <td><a th:text="${row.name}" th:href="@{'/manager/situationRecord/' + ${row.student_idx}}"></a></td>
             <td th:text="${row.major}"></td>
             <td th:text="${row.status}"></td>
             <td><button class="btn btn-warning"><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}">수정</a></button></td>

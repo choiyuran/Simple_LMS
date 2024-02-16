@@ -5,9 +5,11 @@ import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.entity.Notice;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.itbank.simpleboard.service.AcademicCalendarService;
+import com.itbank.simpleboard.service.NoticeService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -28,6 +31,7 @@ public class HomeController {
     private final UserRepository userRepository;
     private final UserService userService;
     private final AcademicCalendarService academicCalendarService;
+    private final NoticeService noticeService;
 
     @GetMapping("/")
     public String root(HttpSession session) {
@@ -157,5 +161,13 @@ public class HomeController {
     public String changePassword() {
         log.info("비번 변경");
         return null;
+    }
+
+    @GetMapping("/noticeList")          // 공지 사항 조회
+    public ModelAndView noticeList() {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        List<Notice> noticeList = noticeService.selectAll();
+        mav.addObject("noticeList", noticeList);
+        return mav;
     }
 }

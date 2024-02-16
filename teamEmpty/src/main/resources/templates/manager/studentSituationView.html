@@ -8,7 +8,7 @@
 <div class="container mt-3">
     <h2>학생 상태 수정</h2>
     <hr>
-    <form th:action="@{/manager/studentSituationUpdate/{idx}(idx=${situation.idx})}">
+    <form th:action="@{'/manager/studentSituationUpdate/' + ${situation.idx} + '/' + ${situation.student_idx}}">
         <table class="table table-bordered">
             <tr>
                 <th>학생</th>

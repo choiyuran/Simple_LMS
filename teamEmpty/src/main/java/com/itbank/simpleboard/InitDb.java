@@ -129,7 +129,6 @@
 //                Payments payments11 = new Payments(student2,"2024학년 2학기");
 //                Payments payments12 = new Payments(student3,"2024학년 2학기");
 //
-//
 //                em.persist(payments);
 //                em.persist(payments2);
 //                em.persist(payments3);
@@ -143,7 +142,6 @@
 //                em.persist(payments11);
 //                em.persist(payments12);
 //
-//
 //                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
 //                em.persist(scholarship1);
 //                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
@@ -156,7 +154,6 @@
 //                em.persist(scholarship5);
 //                Scholarship scholarship6 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
 //                em.persist(scholarship6);
-//
 //
 //                Scholarship_Award scholarshipAward1 = new Scholarship_Award(student1,scholarship1);
 //                Scholarship_Award scholarshipAward2 = new Scholarship_Award(student1,scholarship2);
@@ -184,11 +181,9 @@
 //                em.persist(scholarshipAward11);
 //                em.persist(scholarshipAward12);
 //
-//
 //            } catch (ParseException e) {
 //                throw new RuntimeException(e);
 //            }
-//
 //        }
 //
 //        public void insertCalendar() throws Exception {

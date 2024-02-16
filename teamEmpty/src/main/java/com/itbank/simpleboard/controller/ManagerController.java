@@ -384,20 +384,22 @@ public class ManagerController {
         return mav;
     }
 
-    @GetMapping("/studentSituationUpdate/{idx}")           // 학생 상태 변경
+    @GetMapping("/studentSituationUpdate/{idx}/{student_idx}")           // 학생 상태 변경
     public String studentSituationUpdate(@PathVariable("idx")Long idx,
-                                         SituationStuDto param,
-                                         String start, String end) throws ParseException {
+                                         @PathVariable("student_idx")Long student_idx,
+                                         SituationStuDto param, String start, String end) throws ParseException {
         if(param.getStatus() == null) {
             return "redirect:/manager/studentSituationView/" + idx;
         }
+        param.setIdx(idx);
+        param.setStudent_idx(student_idx);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start_date = sdf.parse(start);
         java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
         param.setStart_date(sqldate);
 
         // status가 군휴학 또는 일반휴학일 때만 end_date를 설정
-        if(param.getStatus().equals("군휴학") || param.getStatus().equals("일반휴학")) {
+        if(param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
             if(end != null && !end.isEmpty()) {
                 Date end_date = sdf.parse(end);
                 java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
@@ -406,8 +408,17 @@ public class ManagerController {
         } else {
             param.setEnd_date(null);
         }
-        Situation situation = situationService.situationUpdate(param);
+        Situation situation = situationService.situationUpdate(param);          // situation 테이블 update
+        SituationRecord situationRecord = situationService.situationRecordAdd(param);        // situationRecord 테이블 insert
         return "redirect:/manager/studentSituation";
+    }
+
+    @GetMapping("/situationRecord/{idx}")           // 상태 기록 보기
+    public ModelAndView situationRecord(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("manager/situationRecord");
+        List<SituationRecord> situationRecords = situationService.situationRecordAllByIdx(idx);
+        mav.addObject("situationRecord", situationRecords);
+        return mav;
     }
 
     @GetMapping("/professorList")               // 교수 목록 조회

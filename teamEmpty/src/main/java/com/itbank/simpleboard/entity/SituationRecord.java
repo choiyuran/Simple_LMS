@@ -25,7 +25,7 @@ public class SituationRecord {      // Situation은 현 상황을 나타내고 S
 
     // 학생번호
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_idx", unique = true)
+    @JoinColumn(name = "student_idx")
     private Student student;
 
     // 시작일
