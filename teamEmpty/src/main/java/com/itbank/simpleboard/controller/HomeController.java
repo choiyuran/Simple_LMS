@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -161,6 +162,12 @@ public class HomeController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    @ResponseBody
+    @PostMapping("email-verification")                      // 이메일 인증
+    public Integer SendVerificationCode(String email){
+        return userService.sendAuthNumber(email);
     }
 
     @PostMapping("/userModify")

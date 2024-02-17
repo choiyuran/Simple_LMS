@@ -13,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -200,12 +199,6 @@ public class StudentController {
             mav.setViewName("redirect:/");
         }
         return mav;
-    }
-
-    @PostMapping("email-verification")                      // 이메일 인증
-    @ResponseBody
-    public Integer SendVerificationCode(String email){
-        return userService.sendAuthNumber(email);
     }
 
     @PostMapping("genersitu")                               // 일반 휴학

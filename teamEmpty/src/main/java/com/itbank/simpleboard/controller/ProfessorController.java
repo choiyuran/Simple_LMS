@@ -1,6 +1,9 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.dto.EnrollmentDto;
+import com.itbank.simpleboard.dto.LectureSearchConditionDto;
+import com.itbank.simpleboard.dto.ProfessorDto;
+import com.itbank.simpleboard.dto.ProfessorLectureDto;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -175,13 +177,6 @@ public class ProfessorController {
             return "redirect:/";
         }
     }
-
-    @ResponseBody
-    @PostMapping("email-verification")                      // 이메일 인증
-    public Integer SendVerificationCode(String email){
-        return userService.sendAuthNumber(email);
-    }
-
 
     @GetMapping("/enrollmentList")  // myLecture에서 성적 기입을 눌렀을 때, 수강생 목록을 보여주는 메서드
     public ResponseEntity<List<EnrollmentDto>> enterGrade(@RequestParam("lectureIdx") Long lectureIdx) {

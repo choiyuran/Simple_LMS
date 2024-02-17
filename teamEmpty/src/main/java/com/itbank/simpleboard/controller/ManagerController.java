@@ -16,15 +16,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
 import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -554,12 +556,6 @@ public class ManagerController {
             session.invalidate();
             return "redirect:/";
         }
-    }
-
-    @ResponseBody
-    @PostMapping("email-verification")                      // 이메일 인증
-    public Integer SendVerificationCode(String email){
-        return userService.sendAuthNumber(email);
     }
 
     @GetMapping("/checkTuitionPayments")    // 납부 확인
