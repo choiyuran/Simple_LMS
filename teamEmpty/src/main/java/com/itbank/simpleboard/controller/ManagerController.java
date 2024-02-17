@@ -40,6 +40,7 @@ public class ManagerController {
     private final ProfessorService professorService;
     private final CollegeService collegeService;
     private final SituationService situationService;
+    private final NoticeService noticeService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -547,6 +548,67 @@ public class ManagerController {
         return "redirect:/manager/managerList";
     }
 
+    @GetMapping("/noticeList")          // 공지 사항 조회
+    public ModelAndView noticeList() {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        List<Notice> noticeList = noticeService.selectAll();
+        mav.addObject("noticeList", noticeList);
+        return mav;
+    }
+
+    @GetMapping("/noticeView/{idx}")      // 공지 사항 상세보기
+    public ModelAndView noticeView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            noticeService.increaseViewCount(idx);
+            mav.addObject("notice", notice);
+            mav.setViewName("common/noticeView");
+        }
+
+        return mav;
+    }
+
+    @GetMapping("/noticeAdd")            // 공지 사항 등록 페이지 이동
+    public String noticeAdd() {
+        return "manager/noticeAdd";
+    }
+
+    @PostMapping("/noticeAdd")              // 공지 사항 등록
+    public String noticeAdd(@RequestParam String title, @RequestParam String content) {
+        Map<String,String> map = new HashMap<>();
+        map.put("title", title);
+        map.put("content", content);
+        noticeService.noticeAdd(map);
+        return "redirect:/manager/noticeList";
+    }
+    
+    @GetMapping("/noticeUpdate/{idx}")              // 공지사항 수정 페이지로 이동
+    public ModelAndView noticeUpdate(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("manager/noticeUpdate");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            mav.addObject("notice", notice);
+        }
+        return mav;
+    }
+
+    @PostMapping("/noticeUpdate/{idx}")         // 공지사항 수정
+    public String noticeUpdate(@PathVariable("idx")Long idx,
+                               @RequestParam String title, @RequestParam String content) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("idx", idx);
+        map.put("title", title);
+        map.put("content", content);
+        Notice notice = noticeService.noticeUpdate(map);
+        return "redirect:/manager/noticeView/" + idx;
+    }
+
+    @GetMapping("/noticeDel/{idx}")           // 공지 사항 삭제
+    public String noticeDel(@PathVariable("idx")Long idx) {
+        noticeService.noticeDel(idx);
+        return "redirect:/manager/noticeList";
+    }
 
     @GetMapping("/managerModify")           // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {

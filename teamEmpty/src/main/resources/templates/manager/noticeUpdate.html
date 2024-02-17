@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>공지 수정</h2>
+    <hr>
+
+    <div class="d-flex flex-column align-items-center">
+        <form method="post">
+            <table class="table table-bordered">
+                <tr>
+                    <td th:colspan="2">
+                        <input th:value="${notice.title}" name="title" style="width: 330px;">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td th:text="${notice.wdate}"></td>
+                    <td th:text="${notice.viewCount}"></td>
+                </tr>
+
+                <tr>
+                    <td  th:colspan="2">
+                        <label>
+                            <textarea th:text="${notice.content}" name="content" cols="40" rows="10"></textarea>
+                        </label>
+                    </td>
+                </tr>
+            </table>
+            <button class="btn btn-warning">수정 완료</button>
+            <a href="/manager/noticeList"><button type="button" class="btn btn-primary">목록으로</button></a>
+        </form>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+</body>
+</html>
