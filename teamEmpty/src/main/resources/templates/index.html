@@ -58,14 +58,33 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">비밀번호 찾기</h4>
+                    <h4 class="modal-title">비밀번호 재설정</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- 모달 내용 입력 -->
-                    비밀번호를 찾는 내용을 입력하세요.
+                    <div>
+<!--                        ID와 이메일로 인증이 끝나면 아래 div가 나와야하기 때문에 ajax로 진행해야할듯?-->
+                        <form id="email-form">
+                            <div>
+                                <label>학번 또는 ID를 입력하세요.</label><br>
+                                <input name="user_id" type="text">
+                            </div>
+                            <div>
+                                <label>이메일을 입력하세요</label><br>
+                                <input name="email" type="email">
+                                <button id="email_validation" type="button">인증하기</button>
+                            </div>
+                            <div>
+                                <input id="email-check" type="text">
+                            </div>
+                            <input type="submit" value="재설정">
+                        </form>
+                    </div>
+                    <div style="display: none">
+<!--                        ID와 이메일로 인증이 끝나면 비밀번호 재설정을 위한 창이 나오도록-->
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" data-dismiss="modal" type="button">닫기</button>
