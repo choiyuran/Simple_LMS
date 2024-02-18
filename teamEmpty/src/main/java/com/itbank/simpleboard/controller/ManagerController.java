@@ -40,6 +40,7 @@ public class ManagerController {
     private final ProfessorService professorService;
     private final CollegeService collegeService;
     private final SituationService situationService;
+    private final StudentService studentService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -556,17 +557,32 @@ public class ManagerController {
     }
 
     @GetMapping("/checkTuitionPayments")    // 납부 확인
-    public String checkTuitionPayment() {
+    public String checkTuitionPayment(Model model,CheckTuitionPaymentDto conditions, GradeSearchConditionDto condition) {
 
-        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment();
+        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(conditions);
 
-        System.out.println("result : " + tuitionPayments);
+//        Object o = session.getAttribute("user");
+//        if(o instanceof StudentDto) {
+//            StudentDto dto = (StudentDto) o;
+//            condition.setStudentIdx(dto.getIdx());
+//            mav.addObject("list",studentService.getLectureDtoList(condition));
+//            if(studentService.getLectureDtoList(condition)!= null){
+//                mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
+//            }
+//        }else{
+//            mav.addObject("redirect:/");
+//        }
+
+        model.addAttribute("semester",studentService.getLectureDtoList(condition));
+        if(managerService.getCheckTuitionPayment(conditions)!= null){
+               model.addAttribute("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
+            }
+        else {
+            return "redirect:/";
+        }
+        model.addAttribute("list", tuitionPayments);
+
+//        System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
-    }
-
-    @GetMapping("/checkTuitionPayments")
-    public String checkTuitionPayment(HttpSession session, Model model) {
-        StudentDto dto = (StudentDto) session.getAttribute("user");
-        return "redirect:/";
     }
 }

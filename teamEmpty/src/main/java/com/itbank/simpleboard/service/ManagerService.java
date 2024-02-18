@@ -568,8 +568,8 @@ public class ManagerService {
     }
 
 
-    public List<CheckTuitionPaymentDto> getCheckTuitionPayment() {
-        return managerRepository.findAllCheckTuitionPayments();
+    public List<CheckTuitionPaymentDto> getCheckTuitionPayment(CheckTuitionPaymentDto condition) {
+        return managerRepository.findAllCheckTuitionPayments(condition);
     }
 }
 
