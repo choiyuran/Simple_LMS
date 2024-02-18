@@ -136,29 +136,41 @@
 
 
 
-        $("#frontSecurity, #backSecurity").on("input", function () {    // 주민번호입력확인
-            var inputVal = $(this).val();
+        document.getElementById("frontSecurity").addEventListener("input", function () {
+            var inputVal = this.value;
             // 숫자가 아닌 문자가 포함되어 있는지 확인
             if (/[^\d]/.test(inputVal)) {
                 alert("숫자만 입력 가능합니다.");
                 // 숫자가 아닌 문자를 모두 제거
-                $(this).val(inputVal.replace(/[^0-9]/g, ""));
+                this.value = inputVal.replace(/[^0-9]/g, "");
             }
 
-            // 앞자리는 6자리, 뒷자리는 7자리로 제한
-            if (this.id == 'frontSecurity' && $(this).val().length > 6) {
-                $(this).val($(this).val().slice(0, 6));
-            }
-            if (this.id == 'backSecurity' && $(this).val().length > 7) {
-                $(this).val($(this).val().slice(0, 7));
+            // 앞자리는 6자리로 제한
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
             }
         });
 
-        $("#phonenumber").on("input", function () { // 휴대폰번호 검증
+        document.getElementById("backSecurity").addEventListener("input", function () {
+            var inputVal = this.value;
+            // 숫자가 아닌 문자가 포함되어 있는지 확인
+            if (/[^\d]/.test(inputVal)) {
+                alert("숫자만 입력 가능합니다.");
+                // 숫자가 아닌 문자를 모두 제거
+                this.value = inputVal.replace(/[^0-9]/g, "");
+            }
+
+            // 뒷자리는 7자리로 제한
+            if (this.value.length > 7) {
+                this.value = this.value.slice(0, 7);
+            }
+        });
+
+        document.getElementById("phonenumber").addEventListener("input", function () {
             // 숫자만 입력되도록 필터링
-            $(this).val($(this).val().replace(/[^0-9]/g, ""));
+            this.value = this.value.replace(/[^0-9]/g, "");
             // 010이 이미 입력되어있는 상태에서 추가적으로 숫자를 입력받아 '-'를 붙이는 과정
-            var inputVal = $(this).val();
+            var inputVal = this.value;
             var formatted = inputVal;
             if (inputVal.length > 3) {
                 var front = inputVal.substr(0, 3);
@@ -172,7 +184,7 @@
                     formatted += "-" + back;
                 }
             }
-            $(this).val(formatted);
+            this.value = formatted;
         });
 
 

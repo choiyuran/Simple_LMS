@@ -268,7 +268,7 @@ public class ManagerService {
         return managerRepository.save(manager);
     }
     @Transactional
-    public String addStudentList(List<StudentFormDTO> studentList) {
+    public String addStudentList(List<StudentFormDTO> studentList){
         log.info("addStudentList service");
         int index = 0;
         for(StudentFormDTO dto : studentList) {
@@ -276,10 +276,8 @@ public class ManagerService {
             String salt = hashComponent.getRandomSalt();
             String source = dto.getSecurity().substring(dto.getSecurity().length()-7);
             String pw = hashComponent.getHash(source,salt);
-            int indexOfMajor = dto.getMajor().indexOf('('); // 괄호의 위치를 찾음
-            int indexOfProfessor = dto.getProfessor().indexOf('('); // 괄호의 위치를 찾음
-            String majorName = dto.getMajor().substring(0, indexOfMajor);
-            String professorName = dto.getProfessor().substring(0, indexOfProfessor);
+            String majorName = extractedName(dto.getMajor());
+            String professorName = extractedName(dto.getProfessor());
             User user = new User(
                     pw,
                     salt,
@@ -294,16 +292,16 @@ public class ManagerService {
             System.err.println(index + "번 학생 유저저장");
             System.err.println(majorName + "majorName");
             System.err.println(professorName + "professorName");
-            Major major = majorRepository.findByName(majorName);
-            System.err.println(major.getName() + "major");
-            Long in = 10L;
-            Optional<Professor> professor = professorRepository.findById(in);
+            Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
+
+            System.err.println(major.get().getName() + "major");
+            Optional<Professor> professor = professorRepository.findById(extractedIdx(dto.getProfessor()));
             Student s = new Student(
                     dto.getStudent_num(),
                     dto.getStudent_grade(),
                     user,
                     professor.get(),
-                    major,
+                    major.get(),
                     dto.getEntranceDate()
             );
             System.err.println(index + "번 학생엔티티");
@@ -315,7 +313,7 @@ public class ManagerService {
                     Status_type.입학,
                     s
             );
-            System.err.println("major" + major.getName());
+            System.err.println("major" + major.get().getName());
 //            System.err.println("professor" + professor.getUser().getUser_name());
 
             studentRepository.save(s);
@@ -645,25 +643,27 @@ public class ManagerService {
     public List<CheckTuitionPaymentDto> getCheckTuitionPayment() {
         return managerRepository.findAllCheckTuitionPayments();
     }
-
+    @Transactional
     public String verificationStudentDTOList(List<StudentFormDTO> studentList) {
         log.info("verificationStudentDTOList service");
         int index = 1;
         StringBuilder notFoundStudents  = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
         for(StudentFormDTO dto : studentList) {
             System.err.println(index + "번 학생 확인 시작");
-            int indexOfMajor = dto.getMajor().indexOf('('); // 괄호의 위치를 찾음
-            int indexOfProfessor = dto.getProfessor().indexOf('('); // 괄호의 위치를 찾음
-            String majorName = dto.getMajor().substring(0, indexOfMajor);
-            String professorName = dto.getProfessor().substring(0, indexOfProfessor);
+//            Long idx = extractedIdx(dto.getMajor());
 
-            Major major = majorRepository.findByName(majorName);
-            System.err.println(major.getName() + "major");
+            Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
+            if(!major.get().getName().equals(extractedName(dto.getMajor()))){
+                notFoundStudents.append(index).append(", ");
+                index++;
+                continue;
+            }
+            System.err.println(major.get().getName()+ "major");
+            List<Professor> professors = professorRepository.findAllByMajor(major.get());
 
-            List<Professor> professors = professorRepository.findAllByMajor(major);
             boolean found = false;
             for(Professor p : professors){
-                if(p.getUser().getUser_name().equals(professorName)){
+                if(p.getProfessor_idx().equals(extractedIdx(dto.getProfessor()))){
                     found = true;
                     break;
                 }
@@ -678,13 +678,35 @@ public class ManagerService {
 
         String msg;
         if(notFoundStudents.length() >0){
-            msg = notFoundStudents.substring(0,notFoundStudents.length()-2) + "번의 학생의 교수정보를 찾을 수 없습니다.";
+            msg = notFoundStudents.substring(0,notFoundStudents.length()-2) + "번의 학생의 학과 혹은 교수정보를 찾을 수 없습니다.";
         }else{
 
             msg = "성공";
         }
         return msg;
 
+    }
+
+    private String extractedName(String str) {
+        int end = str.indexOf('(');
+        log.info("end : " + end);
+        log.info("name : " + str.substring(0,end));
+        return str.substring(0,end);
+    }
+
+    private static Long extractedIdx(String str) {
+        long idx = 0L;
+        int start = str.indexOf('(') + 1; // '(' 다음부터 시작
+        int end = str.indexOf(')');
+        log.info("start : " + start);
+        log.info("end : " + end);
+        try {
+            idx = Long.parseLong(str.substring(start, end));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        log.info("idx : " + idx); // 변수 idx로 수정
+        return idx;
     }
 }
 
