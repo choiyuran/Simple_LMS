@@ -22,12 +22,13 @@ select::-ms-expand {
     margin: 30px 0;
 }
 
- .not-found {
+.not-found {
      color:  red !important;
      font-weight: bold;
  }
-.box {
+.listBox {
     flex: 1;
+    width: 280px;
     border: 1px solid black;
-    padding: 20px;
+    margin: 0 10px;
 }

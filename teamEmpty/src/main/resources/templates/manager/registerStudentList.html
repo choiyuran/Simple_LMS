@@ -14,21 +14,21 @@
     <hr>
     <button id="showMajorAndProfessorBtn" type="button" onclick="toggleRow()">학과명 확인</button>
     <div id="rowContainer" class="flex" style="display: none;">
-        <div class="box" style="width: 150px !important;">
+        <div class="listBox">
             <h3>대학 목록</h3>
             <ul id="collegeList">
                 <li th:each="college : ${collegeList}" th:text="${college.name}" th:data-college-name="${college.name}" onclick="showMajors(event)"></li>
             </ul>
         </div>
         <!-- 2열: 학과 목록 -->
-        <div class="box" style="width: 150px !important;">
+        <div class="listBox">
             <h3>학과 목록</h3>
             <ul id="majorList">
                 <!-- 선택된 대학에 해당하는 학과 목록을 여기에 동적으로 추가 -->
             </ul>
         </div>
         <!-- 3열: 교수 목록 -->
-        <div class="box" style="width: 150px !important;">
+        <div class="listBox">
             <h3>교수 목록</h3>
             <ul id="professorList">
                 <!-- 선택된 학과에 해당하는 교수 목록을 여기에 동적으로 추가 -->
