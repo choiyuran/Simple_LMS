@@ -13,6 +13,8 @@ import com.itbank.simpleboard.service.NoticeService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,97 +22,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class HomeController {
-
-    private final UserRepository userRepository;
     private final UserService userService;
     private final AcademicCalendarService academicCalendarService;
     private final NoticeService noticeService;
 
     @GetMapping("/")
-    public String root(HttpSession session) {
-        session.invalidate();
+    public String root() {
         return "index";
-    }
-
-    @GetMapping("/home")
-    public String home(Model model) {
-//        에러 테스트용 예외발생 코드
-//        int n = 10 / 0;
-//        System.out.println(n);
-
-        // home 에서 calendar 불러오기
-        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
-
-        model.addAttribute("calendar", calendar);
-
-        return "home";
-    }
-
-    @GetMapping("/test1")
-    public String test1() {
-        return "manager/registerLecture";
-    }
-
-    @GetMapping("/test2")
-    public String test2() {
-        return "manager/registerLectureEvaluationStu";
-    }
-
-    @GetMapping("/test3")
-    public String test3() {
-        return "manager/registerMajor";
-    }
-
-    @GetMapping("/test4")
-    public String test4() {
-//        int n = 2/0;
-        return "manager/studentStatManage";
-    }
-
-    @GetMapping("/list")
-    public String list() {
-        return "student/lectureList";
-    }
-
-    @GetMapping("/side")
-    public String side() {
-        return "layout/sidebar";
-    }
-
-
-    @GetMapping("/err")
-    public String error() {
-        int n = 10 / 0;
-        System.out.println(n);
-        return "home";
-    }
-
-
-    // 테스트용 학생 로그인
-    @GetMapping("/logintest")
-    public String loginTest(HttpSession session) {
-        User user = userRepository.findById(4L).get();
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUser_id(user.getUser_id());
-        userDTO.setIdx(user.getIdx());
-        userDTO.setUser_name(user.getUser_name());
-        userDTO.setPnum(user.getPnum());
-        userDTO.setRole(user.getRole());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setUser_address(user.getAddress());
-        session.setAttribute("user", userDTO);
-        return "home";
     }
 
     @GetMapping("/login")
@@ -121,7 +52,7 @@ public class HomeController {
 
     @PostMapping("/login")
     public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, Model model) {
-        String url = "index";
+        String url = "/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
             UserDTO user = userService.getUser(user_id, user_pw);
             if (user == null) {
@@ -232,6 +163,44 @@ public class HomeController {
             ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해주세요.");
         }
         return url;
+    }
+
+    @ResponseBody
+    @PostMapping("findUserByUser_idAndEmail")
+    public ResponseEntity<Map<String, Object>> findUser(@RequestBody Map<String, String> request) {
+        log.info("findUser 시작");
+
+        Map<String, Object> response = new HashMap<>();
+
+        // Null 체크
+        String userId = request.get("user_id");
+        String email = request.get("email");
+
+        if ((userId == null || userId.isEmpty()) || (email == null || email.isEmpty())) {
+            response.put("result", 0);
+            response.put("msg", "유효한 ID와 이메일을 입력하세요.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        try {
+            // 유효성 검사 메서드 호출
+            Integer result = userService.checkByUser_idAndEmail(userId, email);
+            response.put("result", result);
+
+            if (result != 0) {
+                response.put("msg", "인증번호가 발송되었습니다.");
+            } else {
+                response.put("msg", "ID 또는 이메일을 확인해주세요.");
+            }
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            // 예외 처리
+            log.error("findUser 오류: " + e.getMessage(), e);
+            response.put("result", 0);
+            response.put("msg", "서버 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 }

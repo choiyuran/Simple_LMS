@@ -34,7 +34,6 @@ public class StudentController {
     private final AcademicCalendarService academicCalendarService;
     private final SituationService situationService;
     private final PaymentsService paymentsService;
-    private final UserService userService;
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
     private final ProfessorService professorService;
@@ -191,8 +190,7 @@ public class StudentController {
             model.addAttribute("calendar", calendar);
             return "student/home";
         } else {
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -200,10 +198,8 @@ public class StudentController {
     public ModelAndView mySituation(HttpSession session) {
         Object o = session.getAttribute("user");
         ModelAndView mav = new ModelAndView("student/mysituation");
-        if(!(o instanceof StudentDto)) {
-            mav.setViewName("redirect:/");
-        }else{
-            mav.addObject("status",situationService.findByUserIdx(((StudentDto) o).getIdx()));
+        if(!(o instanceof StudentDto)){
+            mav.setViewName("redirect:/login");
         }
         return mav;
     }
@@ -225,8 +221,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -247,8 +242,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -268,8 +262,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -346,7 +339,7 @@ public class StudentController {
             mav.addObject("list", dtos);
         }else{
             ra.addFlashAttribute("msg", "학생 전용 페이지 입니다.");
-            mav.setViewName("redirect:/");
+            mav.setViewName("redirect:/login");
         }
         return mav;
     }
@@ -369,7 +362,7 @@ public class StudentController {
                 mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
             }
         }else{
-            mav.addObject("redirect:/");
+            mav.addObject("redirect:/login");
         }
         return mav;
     }
@@ -398,7 +391,7 @@ public class StudentController {
 
         // 세션에 user가 없으면 로그인 페이지로 이동
         if(dto == null){
-            return "redirect:/";
+            return "redirect:/login";
         }
         // 학생의 정보 가져오기
         Long studentIdx = dto.getIdx();
@@ -446,15 +439,15 @@ public class StudentController {
         // 군 휴학 상태를 취소하기 위해서는 일반 휴학 신청 이전의 정보로 다시 되돌려야 한다.
         // 이 정보는 SituationRecord에 있는 가장 최신의 내용으로 바꿔주면 된다.
         Long studentIdx = Long.parseLong(request.get("idx"));
-        
+
         int row = studentService.changeLatestSituation(studentIdx);
-        
+
         if(row == 1){
             responseData.put("msg", "휴학 신청이 취소 되었습니다. ");
         }else{
             responseData.put("msg", "휴학 신청을 취소하지 못했습니다.");
         }
-        
+
         return responseData;
     }
 }

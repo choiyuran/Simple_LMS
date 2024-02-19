@@ -64,26 +64,24 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div>
-<!--                        ID와 이메일로 인증이 끝나면 아래 div가 나와야하기 때문에 ajax로 진행해야할듯?-->
-                        <form id="email-form">
-                            <div>
-                                <label>학번 또는 ID를 입력하세요.</label><br>
-                                <input name="user_id" type="text">
-                            </div>
-                            <div>
-                                <label>이메일을 입력하세요</label><br>
-                                <input name="email" type="email">
-                                <button id="email_validation" type="button">인증하기</button>
-                            </div>
-                            <div>
-                                <input id="email-check" type="text">
-                            </div>
-                            <input type="submit" value="재설정">
-                        </form>
+                    <div id="findPasswordFirst">
+                        <div>
+                            <label>학번 또는 ID를 입력하세요.</label><br>
+                            <input name="user_id" type="text" id="findUser_id">
+                        </div>
+                        <div>
+                            <label>이메일을 입력하세요</label><br>
+                            <input type="email" name="email" id="exampleInputEmail">
+                            <button id="email_validation" type="button" disabled>인증번호 발송</button>
+                        </div>
+                        <div style="display: none" id="checkAuthNumberDiv">
+                            <input type="text" name="inputAuthNumber" id="inputAuthNumber">
+                            <input type="hidden" id="checkAuthNumber">
+                            <button id="checkAuthNumberBtn" type="button">인증하기</button>
+                        </div>
                     </div>
-                    <div style="display: none">
-<!--                        ID와 이메일로 인증이 끝나면 비밀번호 재설정을 위한 창이 나오도록-->
+                    <div style="display: none" id="findPasswordSecond">
+                        <h4>test</h4>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -99,6 +97,67 @@
 <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="/js/sb-admin-2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    window.onload = function () {
+        let findUser_id = document.getElementById('findUser_id');
+        const emailInput = document.getElementById('exampleInputEmail');
+        const validationButton = document.getElementById('email_validation');
+
+        function validateEmail(email) {
+            var re = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        emailInput.addEventListener('input', function () {
+            validationButton.disabled = !validateEmail(emailInput.value);
+        });
+    }
+
+    document.getElementById('email_validation').addEventListener('click', function () {
+        let findUser_id = document.getElementById('findUser_id').value;
+        let emailInput = document.getElementById('exampleInputEmail').value;
+        let url = '/findUserByUser_idAndEmail';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: findUser_id,
+                email: emailInput
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 정상이 아닙니다');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.msg);
+                if (data.result !== 0) {
+                    document.getElementById('checkAuthNumberDiv').style.display = 'block';
+                    document.getElementById('checkAuthNumber').value = data.result;
+                }
+            })
+            .catch(error => {
+                console.error('에러:', error);
+            });
+    });
+
+    document.getElementById('checkAuthNumberBtn').addEventListener('click', function () {
+        let inputAuthNumber = document.getElementById('inputAuthNumber');
+        let checkAuthNumber = document.getElementById('checkAuthNumber');
+
+        if (inputAuthNumber.value === checkAuthNumber.value) {
+            document.getElementById('findPasswordFirst').style.display = 'none';
+            document.getElementById('findPasswordSecond').style.display = 'block';
+        } else {
+            alert("인증번호가 일치하지 않습니다.");
+        }
+    });
+</script>
 <script>
     const inputs = document.querySelectorAll(".input");
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 @Component
-public class AuthInteceptor implements HandlerInterceptor {
+public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession httpSession = request.getSession();
