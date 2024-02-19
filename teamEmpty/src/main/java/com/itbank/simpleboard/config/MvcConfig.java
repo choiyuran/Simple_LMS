@@ -15,7 +15,7 @@ public class MvcConfig implements WebMvcConfigurer { // 로그인 안돼있으�
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/css/**", "/js/**", "/excelForm/**", "/img/**", "/scss/**", "/vendor/**", "/", "/login", "/manager/calendar", "/findUserByUser_idAndEmail");
+                .excludePathPatterns("/css/**", "/js/**", "/excelForm/**", "/img/**", "/scss/**", "/vendor/**", "/", "/login", "/manager/calendar", "/findUserByUser_idAndEmail", "/findPassword");
     }
 
     @Override

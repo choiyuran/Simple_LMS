@@ -196,4 +196,19 @@ public class UserService {
             return 0;
         }
     }
+
+    @Transactional
+    public int changePassword(String userId, String newPassword) {
+        int result = 0;
+        Optional<User> userOptional = userRepository.findByUser_id(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            String newSalt = hashComponent.getRandomSalt();
+            String newPw = hashComponent.getHash(newPassword, newSalt);
+            user.setSalt(newSalt);
+            user.setUser_pw(newPw);
+            result = 1;
+        }
+        return result;
+    }
 }
