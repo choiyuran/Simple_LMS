@@ -1,6 +1,6 @@
 package com.itbank.simpleboard.config;
 
-//import com.itbank.simpleboard.interceptor.AuthInterceptor;
+import com.itbank.simpleboard.interceptor.AuthInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
@@ -11,12 +11,12 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer { // 로그인 안돼있으면
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(new AuthInterceptor())
-//                .addPathPatterns("/**")
-//                .excludePathPatterns("/css/**", "/js/**", "/excelForm/**", "/img/**", "/scss/**", "/vendor/**", "/", "/login", "/manager/calendar", "/findUserByUser_idAndEmail");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new AuthInterceptor())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/js/**", "/excelForm/**", "/img/**", "/scss/**", "/vendor/**", "/", "/login", "/manager/calendar", "/findUserByUser_idAndEmail");
+    }
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
