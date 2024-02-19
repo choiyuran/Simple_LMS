@@ -219,6 +219,24 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         .and(professor.user.user_name.like("%" + professorName + "%")))
                 .fetch();
     }
+    @Override
+    public List<ProfessorUserDto> findByMajorAndUserUserNameContainingDto(String majorName, String professorName) {
+        return queryFactory
+                .select(new QProfessorUserDto(
+                        professor.professor_idx,
+                        professor.user.idx,
+                        professor.hireDate,
+                        professor.user.user_name
+                ))
+                .from(professor)
+                .leftJoin(professor.major, major)
+                .leftJoin(professor.user)
+                .where(professor.major.name.eq(majorName)
+                        .and(professor.user.user_name.like("%" + professorName + "%")))
+                .fetch();
+    }
+
+
 
     @Override
     public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {

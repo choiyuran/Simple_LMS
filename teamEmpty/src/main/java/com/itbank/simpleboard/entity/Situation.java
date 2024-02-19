@@ -40,4 +40,9 @@ public class Situation {
         this.start_date = start_date;
         this.end_date = end_date;
     }
+    public Situation(Student student, Status_type student_status) {
+        this.student = student;
+        this.student_status = student_status;
+        this.start_date = student.getEnteranceDate();
+    }
 }

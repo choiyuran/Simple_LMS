@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -130,9 +127,10 @@ public class StudentService {
     }
 
     public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
-        System.out.println("test");
         return studentRepository.getLectureDtoList(condition);
     }
+
+
 
     public OverallGradeDto getOverallGrade(Long stuIdx) {
         return studentRepository.findOverallGrade(stuIdx);

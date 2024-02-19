@@ -41,4 +41,10 @@ public class SituationRecord {      // Situation은 현 상황을 나타내고 S
         this.start_date = start_date;
         this.end_date = end_date;
     }
+
+    public SituationRecord(Status_type student_status, Student student) {
+        this.student_status = student_status;
+        this.student = student;
+        this.start_date = student.getEnteranceDate();
+    }
 }

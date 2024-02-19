@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.HashComponent;
 import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
@@ -14,6 +15,8 @@ import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import com.itbank.simpleboard.repository.student.LectureRepository;
+import com.itbank.simpleboard.repository.student.SituationRecordRepository;
+import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import com.querydsl.core.Tuple;
@@ -49,6 +52,9 @@ public class ManagerService {
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
     private final StudentRepository studentRepository;
+    private final HashComponent hashComponent;
+    private final SituationRepository situationRepository;
+    private final SituationRecordRepository situationRecordRepository;
 
     public List<ManagerDTO> findAllManager() {
         List<Manager> managerList = managerRepository.findAll();
@@ -236,8 +242,9 @@ public class ManagerService {
     @Transactional
     public Manager addManager(UserFormDTO dto) {
         System.err.println("userFormDTO : "+ dto.toString());
-        String salt = "";
-        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        String salt = hashComponent.getRandomSalt();
+        String source = dto.getBackSecurity();
+        String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
         String manager_img = dto.getImageFile().toString();
@@ -260,13 +267,77 @@ public class ManagerService {
         );
         return managerRepository.save(manager);
     }
+    @Transactional
+    public String addStudentList(List<StudentFormDTO> studentList){
+        log.info("addStudentList service");
+        int index = 0;
+        for(StudentFormDTO dto : studentList) {
+            System.err.println(index + "번 학생 추가 시작");
+            String salt = hashComponent.getRandomSalt();
+            String source = dto.getSecurity().substring(dto.getSecurity().length()-7);
+            String pw = hashComponent.getHash(source,salt);
+            String majorName = extractedName(dto.getMajor());
+            String professorName = extractedName(dto.getProfessor());
+            User user = new User(
+                    pw,
+                    salt,
+                    dto.getName(),
+                    dto.getSecurity(),
+                    dto.getAddress(),
+                    dto.getPnum(),
+                    dto.getEmail(),
+                    User_role.학생
+            );
+            userRepository.save(user);
+            System.err.println(index + "번 학생 유저저장");
+            System.err.println(majorName + "majorName");
+            System.err.println(professorName + "professorName");
+            Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
+
+            System.err.println(major.get().getName() + "major");
+            Optional<Professor> professor = professorRepository.findById(extractedIdx(dto.getProfessor()));
+            Student s = new Student(
+                    dto.getStudent_num(),
+                    dto.getStudent_grade(),
+                    user,
+                    professor.get(),
+                    major.get(),
+                    dto.getEntranceDate()
+            );
+            System.err.println(index + "번 학생엔티티");
+            Situation situation = new Situation(
+                    s,
+                    Status_type.재학
+            );
+            SituationRecord situationRecord = new SituationRecord(
+                    Status_type.입학,
+                    s
+            );
+            System.err.println("major" + major.get().getName());
+//            System.err.println("professor" + professor.getUser().getUser_name());
+
+            studentRepository.save(s);
+            situationRepository.save(situation);
+            situationRecordRepository.save(situationRecord);
+            log.info("s.getUser().getUser_id()"+ s.getUser().getUser_id());
+
+
+
+            log.info("index"+index);
+            index++;
+
+        }
+
+        return index + "명의 학생 등록에 성공하였습니다.";
+    }
+
 
     @Transactional
     public Professor addProfessor(UserFormDTO dto) {
-        log.info("addProfessor service");
-        System.err.println("userFormDTO : "+ dto.toString());
-        String salt = "";
-        String pw = dto.getBackSecurity() /*security.substring(security.length()-7)*/;
+        log.info("addProfessor service"+ dto.toString());
+        String salt = hashComponent.getRandomSalt();
+        String source = dto.getBackSecurity();
+        String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
         // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
@@ -329,7 +400,7 @@ public class ManagerService {
                         case 0:
                             if(currentCell.getCellType() == CellType.NUMERIC){   // 셀의 데이터유형이 숫자인지 문자인지 확인
                                 student.setStudent_num((int) currentCell.getNumericCellValue()); // 숫자형 데이터 가져오기
-                                log.info("getStudent_num : " + student.getStudent_num());
+//                                log.info("getStudent_num : " + student.getStudent_num());
                                 hasData = true; // 데이터가 있으면 플래그를 설정
                             }
                             break;
@@ -384,7 +455,7 @@ public class ManagerService {
                         case 8:
                             if(currentCell.getCellType() == CellType.STRING){
                                 Major major =  majorRepository.findByName(currentCell.getStringCellValue());
-                                log.info("major : " + major);
+//                                log.info("major : " + major);
                                 String majorInfo;
 
                                 if(major == null) {
@@ -399,35 +470,24 @@ public class ManagerService {
                                     mInfo = major.getName();
                                     majorInfo = mInfo + "("+major.getIdx()+")";
                                 }
-                                log.info(" case 8 majorInfo" + majorInfo);
+//                                log.info(" case 8 majorInfo" + majorInfo);
                                 student.setMajor(majorInfo);
-                                log.info("getMajor : " + student.getMajor());
+//                                log.info("getMajor : " + student.getMajor());
                             }
                             break;
                         case 9:
                             if(currentCell.getCellType() == CellType.STRING){
                                 String professorName = currentCell.getStringCellValue();
-                                log.info("case 9 mInfo :" + mInfo);
-                                log.info("case 9 professorName :" + professorName);
+//                                log.info("case 9 mInfo :" + mInfo);
+//                                log.info("case 9 professorName :" + professorName);
 
-                                List<Tuple> professorNameList = professorRepository.findByMajorAndUserUserNameContaining(mInfo, professorName);
-                                log.info("professorNameList :" + professorNameList.toString());
+                                List<ProfessorUserDto> professorList = professorRepository.findByMajorAndUserUserNameContainingDto(mInfo,professorName);
 
-                                String professorInfo;
-                                if(!professorNameList.isEmpty()){
-                                    Tuple tuple = professorNameList.get(0);
-                                    Long userNum = tuple.get(0, Long.class);
-                                    String userName = tuple.get(1, String.class);
-                                    // 여기서 할 작업 수행
-                                    professorInfo = userName + "(" + userNum + ")";
-                                    log.info("userNum: " + userNum);
-                                    log.info("userName: " + userName);
-                                }else{
-                                    professorInfo = "교수정보없음";
-                                }
+
+                                String professorInfo = getString(professorList);
                                 student.setProfessor(professorInfo);
-                                log.info(" case 9 professorInfo" + professorInfo);
-                                log.info("getProfessor : " + student.getProfessor());
+//                                log.info(" case 9 professorInfo" + professorInfo);
+//                                log.info("getProfessor : " + student.getProfessor());
                             }
                             break;
                     }
@@ -439,7 +499,7 @@ public class ManagerService {
                 }
                 student.setIdx(idx++);
                 studentFormDTOList.add(student);
-                System.err.println("studentFormDTO : "+ student);
+//                System.err.println("studentFormDTO : "+ student);
             }
 
         } catch (IOException e) {
@@ -448,6 +508,18 @@ public class ManagerService {
         }
 
         return  studentFormDTOList;
+    }
+
+    private static String getString(List<ProfessorUserDto> professorList) {
+        String professorInfo;
+        if(!professorList.isEmpty()){
+            professorInfo = professorList.get(0).getName() + "(" + professorList.get(0).getProfessor_idx() + ")";
+//                                    log.info("userNum: " + userNum);
+//                                    log.info("userName: " + userName);
+        }else{
+            professorInfo = "교수정보없음";
+        }
+        return professorInfo;
     }
 
     // 엑셀의 날짜 값을 java.sql.Date로 변환하는 메서드
@@ -570,6 +642,71 @@ public class ManagerService {
 
     public List<CheckTuitionPaymentDto> getCheckTuitionPayment(CheckTuitionPaymentDto condition) {
         return managerRepository.findAllCheckTuitionPayments(condition);
+    }
+    @Transactional
+    public String verificationStudentDTOList(List<StudentFormDTO> studentList) {
+        log.info("verificationStudentDTOList service");
+        int index = 1;
+        StringBuilder notFoundStudents  = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
+        for(StudentFormDTO dto : studentList) {
+            System.err.println(index + "번 학생 확인 시작");
+//            Long idx = extractedIdx(dto.getMajor());
+
+            Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
+            if(!major.get().getName().equals(extractedName(dto.getMajor()))){
+                notFoundStudents.append(index).append(", ");
+                index++;
+                continue;
+            }
+            System.err.println(major.get().getName()+ "major");
+            List<Professor> professors = professorRepository.findAllByMajor(major.get());
+
+            boolean found = false;
+            for(Professor p : professors){
+                if(p.getProfessor_idx().equals(extractedIdx(dto.getProfessor()))){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                notFoundStudents.append(index).append(", ");
+            }
+            log.info("index"+index);
+            index++;
+
+        }
+
+        String msg;
+        if(notFoundStudents.length() >0){
+            msg = notFoundStudents.substring(0,notFoundStudents.length()-2) + "번의 학생의 학과 혹은 교수정보를 찾을 수 없습니다.";
+        }else{
+
+            msg = "성공";
+        }
+        return msg;
+
+    }
+
+    private String extractedName(String str) {
+        int end = str.indexOf('(');
+        log.info("end : " + end);
+        log.info("name : " + str.substring(0,end));
+        return str.substring(0,end);
+    }
+
+    private static Long extractedIdx(String str) {
+        long idx = 0L;
+        int start = str.indexOf('(') + 1; // '(' 다음부터 시작
+        int end = str.indexOf(')');
+        log.info("start : " + start);
+        log.info("end : " + end);
+        try {
+            idx = Long.parseLong(str.substring(start, end));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        log.info("idx : " + idx); // 변수 idx로 수정
+        return idx;
     }
 }
 

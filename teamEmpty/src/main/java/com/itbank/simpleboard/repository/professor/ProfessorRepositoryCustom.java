@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.repository.professor;
 
 import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.entity.Professor;
 import com.querydsl.core.Tuple;
 
 import java.util.HashMap;
@@ -22,4 +23,6 @@ public interface ProfessorRepositoryCustom {
     ProfessorListDto selectOneProfessor(Long idx);
 
     List<Tuple> findByMajorAndUserUserNameContaining(String majorName, String professorName);
+    List<ProfessorUserDto> findByMajorAndUserUserNameContainingDto(String majorName, String professorName);
+
 }

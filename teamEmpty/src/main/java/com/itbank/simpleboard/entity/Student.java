@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Optional;
 
 @Entity
 @Data
@@ -49,4 +50,5 @@ public class Student {
         this.major = major;
         this.enteranceDate = enteranceDate;
     }
+
 }
