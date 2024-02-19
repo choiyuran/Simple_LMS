@@ -154,8 +154,6 @@ public class HomeController {
     @ResponseBody
     @PostMapping("findUserByUser_idAndEmail")
     public ResponseEntity<Map<String, Object>> findUser(@RequestBody Map<String, String> request) {
-        log.info("findUser 시작");
-
         Map<String, Object> response = new HashMap<>();
 
         // Null 체크
@@ -187,5 +185,18 @@ public class HomeController {
             response.put("msg", "서버 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @PostMapping("/findPassword")
+    public String findPassword(HttpServletRequest request, RedirectAttributes ra) {
+        log.info("findPassword 시작");
+        String url = "redirect:/";
+        int result = userService.changePassword(request.getParameter("user_id"), request.getParameter("newPassword"));
+        if (result != 0) {
+            ra.addFlashAttribute("msg", "비밀번호가 재설정 되었습니다.");
+        } else {
+            ra.addFlashAttribute("msg", "비밀번호 재설정에 실패하였습니다. 다시 시도해주세요.");
+        }
+        return url;
     }
 }

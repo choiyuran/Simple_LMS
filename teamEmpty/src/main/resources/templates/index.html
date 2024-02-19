@@ -64,25 +64,37 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="findPasswordFirst">
-                        <div>
-                            <label>학번 또는 ID를 입력하세요.</label><br>
-                            <input name="user_id" type="text" id="findUser_id">
+                    <form action="/findPassword" id="findPasswordForm" method="post">
+                        <div id="findPasswordFirst">
+                            <div>
+                                <label>학번 또는 ID를 입력하세요.</label><br>
+                                <input id="findUser_id" name="user_id" type="text">
+                            </div>
+                            <div>
+                                <label>이메일을 입력하세요</label><br>
+                                <input id="exampleInputEmail" name="email" type="email">
+                                <button disabled id="email_validation" type="button">인증번호 발송</button>
+                            </div>
+                            <div id="checkAuthNumberDiv" style="display: none">
+                                <input id="inputAuthNumber" name="inputAuthNumber" oninput="limitToSixDigits(this)"
+                                       type="text">
+                                <input id="checkAuthNumber" type="hidden">
+                                <button id="checkAuthNumberBtn" type="button">인증하기</button>
+                            </div>
                         </div>
-                        <div>
-                            <label>이메일을 입력하세요</label><br>
-                            <input type="email" name="email" id="exampleInputEmail">
-                            <button id="email_validation" type="button" disabled>인증번호 발송</button>
+                        <div id="findPasswordSecond" style="display: none">
+                            <label>새 비밀번호를 입력하세요.</label>
+                            <input class="form-control form-control-user" id="exampleInputPassword" name="newPassword"
+                                   placeholder="변경할 패스워드" type="password">
+                            <span class="my-1" id="passwordHelp"></span>
+                            <label>새 비밀번호를 다시 입력해주세요.</label>
+                            <input class="form-control form-control-user" id="exampleRepeatPassword"
+                                   name="repeatPassword" placeholder="변경할 패스워드 확인" type="password">
+                            <span class="my-1" id="passwordConfirmHelp"></span>
+                            <input class="btn btn-facebook" id="findPasswordBtn"
+                                   type="submit" value="비밀번호 변경하기">
                         </div>
-                        <div style="display: none" id="checkAuthNumberDiv">
-                            <input type="text" name="inputAuthNumber" id="inputAuthNumber">
-                            <input type="hidden" id="checkAuthNumber">
-                            <button id="checkAuthNumberBtn" type="button">인증하기</button>
-                        </div>
-                    </div>
-                    <div style="display: none" id="findPasswordSecond">
-                        <h4>test</h4>
-                    </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-default" data-dismiss="modal" type="button">닫기</button>
@@ -98,24 +110,71 @@
 <script src="/js/sb-admin-2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    let checkPassword = false;
+    let eachPassword = false;
+
     window.onload = function () {
-        let findUser_id = document.getElementById('findUser_id');
         const emailInput = document.getElementById('exampleInputEmail');
         const validationButton = document.getElementById('email_validation');
+        const passwordInput = document.getElementById('exampleInputPassword');
+        const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+        const passwordHelp = document.getElementById('passwordHelp');
+        const passwordConfirmHelp = document.getElementById('passwordConfirmHelp');
 
         function validateEmail(email) {
             var re = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
             return re.test(String(email).toLowerCase());
         }
 
+        function validatePassword(password) {
+            var re = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+            return re.test(String(password));
+        }
+
         emailInput.addEventListener('input', function () {
             validationButton.disabled = !validateEmail(emailInput.value);
         });
+
+        passwordInput.addEventListener('focus', function () {
+            passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+        });
+        repeatPasswordInput.addEventListener('focus', function () {
+            passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요."
+        });
+
+        passwordInput.addEventListener('input', function () {
+            if (validatePassword(passwordInput.value.trim())) {
+                passwordHelp.classList.remove('text-danger');
+                passwordHelp.classList.add('text-success');
+                passwordHelp.innerHTML = "사용 가능한 비밀번호입니다.";
+                checkPassword = true;
+            } else {
+                passwordHelp.classList.remove('text-success');
+                passwordHelp.classList.add('text-danger');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+                checkPassword = false;
+            }
+        });
+
+        repeatPasswordInput.addEventListener('input', function () {
+            if (passwordInput.value === repeatPasswordInput.value) {
+                passwordConfirmHelp.classList.remove('text-danger')
+                passwordConfirmHelp.classList.add('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치합니다.";
+                eachPassword = true;
+            } else {
+                passwordConfirmHelp.classList.add('text-danger');
+                passwordConfirmHelp.classList.remove('text-success');
+                passwordConfirmHelp.innerHTML = "새 비밀번호가 일치하지 않습니다.";
+                eachPassword = false;
+            }
+        });
     }
 
-    document.getElementById('email_validation').addEventListener('click', function () {
-        let findUser_id = document.getElementById('findUser_id').value;
-        let emailInput = document.getElementById('exampleInputEmail').value;
+    document.getElementById('email_validation').addEventListener('click', function (e) {
+        e.preventDefault();
+        let findUser_id = document.getElementById('findUser_id');
+        let emailInput = document.getElementById('exampleInputEmail');
         let url = '/findUserByUser_idAndEmail';
 
         fetch(url, {
@@ -124,14 +183,11 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: findUser_id,
-                email: emailInput
+                user_id: findUser_id.value,
+                email: emailInput.value
             })
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 정상이 아닙니다');
-                }
                 return response.json();
             })
             .then(data => {
@@ -139,12 +195,26 @@
                 if (data.result !== 0) {
                     document.getElementById('checkAuthNumberDiv').style.display = 'block';
                     document.getElementById('checkAuthNumber').value = data.result;
+                } else {
+                    findUser_id.value = "";
+                    emailInput.value = "";
                 }
             })
             .catch(error => {
                 console.error('에러:', error);
             });
     });
+
+    function limitToSixDigits(inputElement) {
+        // 입력된 값에서 숫자 이외의 문자 제거
+        let inputValue = inputElement.value.replace(/\D/g, '');
+
+        // 최대 6자리로 제한
+        inputValue = inputValue.substring(0, 6);
+
+        // 제한된 값을 다시 입력 필드에 설정
+        inputElement.value = inputValue;
+    }
 
     document.getElementById('checkAuthNumberBtn').addEventListener('click', function () {
         let inputAuthNumber = document.getElementById('inputAuthNumber');
@@ -155,6 +225,30 @@
             document.getElementById('findPasswordSecond').style.display = 'block';
         } else {
             alert("인증번호가 일치하지 않습니다.");
+        }
+    });
+
+    document.getElementById('findPasswordBtn').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const passwordInput = document.getElementById('exampleInputPassword');
+        const repeatPasswordInput = document.getElementById('exampleRepeatPassword');
+
+        if (passwordInput.value.trim() !== "" && repeatPasswordInput.value.trim() !== "") {
+            if (checkPassword && eachPassword) {
+                document.getElementById('findPasswordForm').submit();
+            }
+        } else {
+            if (passwordInput.value.trim() === "" || !checkPassword) {
+                const passwordHelp = document.getElementById('passwordHelp');
+                passwordHelp.innerHTML = "영문/숫자/특수문자를 모두 포함(8자 이상)";
+                passwordHelp.classList.add('text-danger');
+            }
+            if (repeatPasswordInput.value.trim() === "" || !eachPassword) {
+                const passwordConfirmHelp = document.getElementById('passwordConfirmHelp');
+                passwordConfirmHelp.innerHTML = "확인을 위해 새 비밀번호를 다시 입력해주세요.";
+                passwordConfirmHelp.classList.add('text-danger');
+            }
         }
     });
 </script>
