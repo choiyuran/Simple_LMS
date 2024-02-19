@@ -12,7 +12,7 @@
             margin-right: 10px;
             padding: 5px;
             border: 1px solid #999;
-            font-family: 'Nanumgothic',serif;
+            font-family: 'Nanumgothic', serif;
             border-radius: 3px;
         }
 
@@ -26,8 +26,8 @@
     </style>
 </head>
 <body>
+<input type="hidden" th:value="${session.user.idx}" id="studentIdx">
 <header th:insert="layout/studentHeader :: header"></header>
-
 <main>
     <div class="container mt-3">
         <h2>내 상태변경</h2>
@@ -38,7 +38,10 @@
                 <div class="card-body">
                     <h4 class="card-title">복학 신청</h4>
                     <p class="card-text">복학을 신청할 수 있습니다.</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1">복학신청</button>
+                    <button th:if="${status.toString() == '군휴학' or status.toString() == '일반휴학'}" th:text="${'복학신청'}"
+                            class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1"/>
+                    <button th:unless="${status.toString() == '군휴학' or status.toString() == '일반휴학'}"
+                            th:text="${'복학신청 대상 아님'}" class="btn btn-dark" disabled/>
                 </div>
             </div>
             <div class="card" style="width:300px">
@@ -46,7 +49,13 @@
                 <div class="card-body">
                     <h4 class="card-title">군 휴학</h4>
                     <p class="card-text">군 입대 사유로 휴학을 신청합니다.</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">군 휴학신청</button>
+                    <button th:if="${status.toString() == '군휴학신청' or status.toString() == '일반휴학신청'}" th:text="${'휴학 신청 취소'}" class="btn btn-warning"
+                            onclick="cancelLeave()"/>
+                    <button th:if="${status.toString() == '군휴학' or status.toString() == '일반휴학'}" th:text="${'휴학 중'}" class="btn btn-dark"
+                            th:onclick="alert('휴학 중입니다.')" disabled/>
+                    <button th:unless="${status.toString() == '군휴학신청' or status.toString() == '군휴학' or status.toString() == '일반휴학' or status.toString() == '일반휴학신청'}"
+                            th:text="${'군 휴학 신청'}" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#myModal"/>
                 </div>
             </div>
             <div class="card" style="width:300px">
@@ -54,7 +63,12 @@
                 <div class="card-body">
                     <h4 class="card-title">일반 휴학</h4>
                     <p class="card-text">일반 사유로 휴학을 신청합니다.</p>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal2">일반 휴학신청</button>
+                    <button th:if="${status.toString() == '일반휴학신청' or status.toString() == '군휴학신청'}" th:text="${'휴학 신청 취소'}" class="btn btn-warning"
+                            onclick="cancelLeave()"/>
+                    <button th:if="${status.toString() == '군휴학' or status.toString() == '일반휴학'}" th:text="${'휴학 중'}" class="btn btn-dark"
+                            th:onclick="alert('휴학 중입니다.')" disabled/>
+                    <button th:unless="${status.toString() == '일반휴학' or status.toString() == '일반휴학신청' or status.toString() == '군휴학신청' or status.toString() == '군휴학'}" th:text="${'일반 휴학 신청'}" class="btn btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#myModal2"/>
                 </div>
             </div>
         </div>
@@ -64,7 +78,6 @@
     <div class="modal fade" id="myModal">
         <div class="modal-dialog">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h4 class="modal-title">군 휴학신청</h4>
@@ -76,13 +89,13 @@
                     <form method="post" action="/student/armysitu">
                         <div class="form-group">
                             <label for="start_date">휴학 시작일</label>
-                            <input type="date"  name="start_date" id="start_date" required class="form-control">
+                            <input type="date" name="start_date" id="start_date" required class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="end_date">휴학 종료 예정일</label>
-                            <input type="date"  name="end_date" id="end_date" required class="form-control">
+                            <input type="date" name="end_date" id="end_date" required class="form-control">
                         </div>
-                        <button type="submit" class="btn btn-primary">휴학신청</button>
+                        <button type="submit" class="btn btn-primary" id="mil_submit">휴학신청</button>
                     </form>
                 </div>
 
@@ -148,7 +161,7 @@
                             <label for="end_date2">휴학 종료 예정일</label>
                             <input type="date" name="end_date" id="end_date2" required class="form-control">
                         </div>
-                        <button type="submit" class="btn btn-primary">휴학신청</button>
+                        <button type="submit" class="btn btn-primary" id="gen_submit">휴학신청</button>
                     </form>
                 </div>
 
@@ -165,5 +178,123 @@
 </main>
 
 <footer th:insert="layout/studentHeader :: footer"></footer> <!-- footer 부분 수정 -->
+<script>
+    const student_idx = document.getElementById("studentIdx").value;
+    console.log('student_idx : ' + student_idx);
+
+
+    async function cancelLeave() {
+        let url = '/student/cancel';
+        await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idx: student_idx
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 정상이 아닙니다');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert(data.msg);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('예외 발생 :', error);
+            });
+    }
+    // 휴학 시작일과 종료 예정일을 제어하는 자바스크립트 코드
+    document.addEventListener('DOMContentLoaded', function() {
+        var startDateInput = document.getElementById('start_date');
+        var endDateInput = document.getElementById('end_date');
+        var submitButton = document.getElementById('mil_submit');
+
+        // 내일 날짜를 가져오는 함수
+        function getTomorrowDate() {
+            var tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            var year = tomorrow.getFullYear();
+            var month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            var day = String(tomorrow.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // 휴학 시작일을 내일 날짜로 설정
+        startDateInput.value = getTomorrowDate();
+        startDateInput.min = getTomorrowDate();
+
+        // 휴학 시작일 변경 시, 휴학 종료 예정일의 최소값을 설정
+        startDateInput.addEventListener('change', function() {
+            endDateInput.min = startDateInput.value;
+            checkDateValidity();
+        });
+
+        // 휴학 종료 예정일 변경 시, 시작일의 최대값을 설정하지 않음
+        endDateInput.addEventListener('change', function() {
+            checkDateValidity();
+        });
+
+        // 휴학 시작일과 종료일이 올바른지 확인하는 함수
+        function checkDateValidity() {
+            if (startDateInput.value && endDateInput.value && endDateInput.value >= startDateInput.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        // 페이지 로드 시 날짜 유효성 확인
+        checkDateValidity();
+    });
+
+    // 휴학 시작일과 종료 예정일을 제어하는 자바스크립트 코드
+    document.addEventListener('DOMContentLoaded', function() {
+        var startDateInput = document.getElementById('start_date2');
+        var endDateInput = document.getElementById('end_date2');
+        var submitButton = document.getElementById('gen_submit');
+
+        // 내일 날짜를 가져오는 함수
+        function getTomorrowDate() {
+            var tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            var year = tomorrow.getFullYear();
+            var month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+            var day = String(tomorrow.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // 휴학 시작일을 내일 날짜로 설정
+        startDateInput.value = getTomorrowDate();
+        startDateInput.min = getTomorrowDate();
+
+        // 휴학 시작일 변경 시, 휴학 종료 예정일의 최소값을 설정
+        startDateInput.addEventListener('change', function() {
+            endDateInput.min = startDateInput.value;
+            checkDateValidity();
+        });
+
+        // 휴학 종료 예정일 변경 시, 시작일의 최대값을 설정하지 않음
+        endDateInput.addEventListener('change', function() {
+            checkDateValidity();
+        });
+
+        // 휴학 시작일과 종료일이 올바른지 확인하는 함수
+        function checkDateValidity() {
+            if (startDateInput.value && endDateInput.value && endDateInput.value >= startDateInput.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        // 페이지 로드 시 날짜 유효성 확인
+        checkDateValidity();
+    });
+</script>
 </body>
 </html>

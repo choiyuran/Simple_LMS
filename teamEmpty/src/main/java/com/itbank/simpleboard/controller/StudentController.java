@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,7 +16,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -35,6 +39,7 @@ public class StudentController {
     private final ScholarShipAwardService scholarShipAwardService;
     private final ProfessorService professorService;
     private final ScholarShipService scholarShipService;
+    private final SituationRecordService situationRecordService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
@@ -195,8 +200,10 @@ public class StudentController {
     public ModelAndView mySituation(HttpSession session) {
         Object o = session.getAttribute("user");
         ModelAndView mav = new ModelAndView("student/mysituation");
-        if(!(o instanceof StudentDto)){
+        if(!(o instanceof StudentDto)) {
             mav.setViewName("redirect:/");
+        }else{
+            mav.addObject("status",situationService.findByUserIdx(((StudentDto) o).getIdx()));
         }
         return mav;
     }
@@ -209,7 +216,7 @@ public class StudentController {
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.일반휴학신청);
             Situation chageSituation = situationService.updateSitu(dto);
-            System.err.println("dto : " + dto);
+
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "일반 휴학 신청 완료");
             }else{
@@ -402,5 +409,52 @@ public class StudentController {
         model.addAttribute("tuitionDataList", tuitionDataList);
 
         return "student/tuitionBill";
+    }
+
+    @GetMapping("/overallGrade")
+    public ModelAndView overallGradeList(HttpSession session) {
+        ModelAndView mav = new ModelAndView("student/overallGrade");
+        Object o = session.getAttribute("user");
+
+        if(o instanceof StudentDto) {
+            StudentDto dto = (StudentDto) o;
+            Long stuIdx = dto.getIdx();
+
+            OverallGradeDto overall= studentService.getOverallGrade(stuIdx);
+            GradeSearchConditionDto condition = new GradeSearchConditionDto();
+
+            condition.setSemester(null);
+            condition.setStudentIdx(stuIdx);
+
+            List<GradeLectureDto> list = studentService.getLectureDtoList(condition);
+            mav.addObject("semesterList", list.stream()
+                    .map(GradeLectureDto::getSemester)
+                    .distinct()
+                    .collect(Collectors.toList()));
+
+            mav.addObject("overall",overall);
+            mav.addObject("list",list);
+        }
+        return mav;
+    }
+
+    @ResponseBody
+    @PutMapping("cancel")
+    public Map<String, Object> cancelGeneral(@RequestBody Map<String, String> request) {
+        log.info("일반 휴학 신청 취소 로직 시작");
+        Map<String, Object> responseData = new HashMap<>();
+        // 군 휴학 상태를 취소하기 위해서는 일반 휴학 신청 이전의 정보로 다시 되돌려야 한다.
+        // 이 정보는 SituationRecord에 있는 가장 최신의 내용으로 바꿔주면 된다.
+        Long studentIdx = Long.parseLong(request.get("idx"));
+        
+        int row = studentService.changeLatestSituation(studentIdx);
+        
+        if(row == 1){
+            responseData.put("msg", "휴학 신청이 취소 되었습니다. ");
+        }else{
+            responseData.put("msg", "휴학 신청을 취소하지 못했습니다.");
+        }
+        
+        return responseData;
     }
 }

@@ -6,6 +6,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jdk.jfr.Registered;
 import lombok.Data;
@@ -138,6 +139,26 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .join(QStudent.student.user, QUser.user)
                 .join(QStudent.student.major, QMajor.major)
                 .where(QStudent.student.idx.eq(idx))
+                .fetchOne();
+    }
+
+    @Override
+    public OverallGradeDto findOverallGrade(Long stuIdx) {
+        NumberExpression<Double> scoreAsDouble = QGrade.grade.score.castToNum(Double.class);
+
+        return queryFactory
+                .select(new QOverallGradeDto(
+                        student.major.college.name.as("collegeName"),
+                        student.major.name.as("majorName"),
+                        student.student_grade.as("grade"),
+                        lecture.credit.sum().as("totalCredit"),
+                        scoreAsDouble.sum(),
+                        scoreAsDouble.avg()
+                )).from(QGrade.grade)
+                .join(QGrade.grade.enrollment.lecture,lecture)
+                .join(QGrade.grade.enrollment.student,student)
+                .where(student.idx.eq(stuIdx))
+                .groupBy(student.major.college.name, student.major.name, student.student_grade)
                 .fetchOne();
     }
 }

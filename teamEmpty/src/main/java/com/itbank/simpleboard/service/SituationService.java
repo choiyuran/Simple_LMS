@@ -2,8 +2,10 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.dto.SituationChageDto;
 import com.itbank.simpleboard.dto.SituationStuDto;
+import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.entity.Situation;
 import com.itbank.simpleboard.entity.SituationRecord;
+import com.itbank.simpleboard.entity.Status_type;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.repository.student.SituationRecordRepository;
 import com.itbank.simpleboard.repository.student.SituationRepository;
@@ -65,12 +67,22 @@ public class SituationService {
         Student student = studentRepository.findById(dto.getStudent()).orElse(null);
         Situation situation = situationRepository.findByStudent(student).orElse(null);
         if(situation != null){
-            situation.setEnd_date(Date.valueOf(dto.getStart_date()));
+            situation.setEnd_date(Date.valueOf(dto.getEnd_date()));
             if(dto.getEnd_date() != null)
-                situation.setStart_date(Date.valueOf(dto.getEnd_date()));
+                situation.setStart_date(Date.valueOf(dto.getStart_date()));
             situation.setStudent_status(dto.getStatus());
         }
         return situation;
+    }
+
+    public Status_type findByUserIdx(Long stuIdx) {
+        Student student  = studentRepository.findById(stuIdx).orElse(null);
+        return situationRepository.findByStudent(student).get().getStudent_status();
+    }
+
+    public Situation findByStudentIdx(Long studentIdx) {
+        Student student = studentRepository.findById(studentIdx).orElseGet(() -> null);
+        return situationRepository.findByStudent(student).orElseGet(() -> null);
     }
 
     @Transactional

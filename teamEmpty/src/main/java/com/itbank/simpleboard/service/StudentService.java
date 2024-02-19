@@ -2,6 +2,8 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.component.MailComponent;
 import com.itbank.simpleboard.dto.*;
+import com.itbank.simpleboard.entity.Situation;
+import com.itbank.simpleboard.entity.SituationRecord;
 import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.entity.User;
 import com.itbank.simpleboard.repository.student.SituationRepository;
@@ -24,6 +26,8 @@ import java.util.Random;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
+    private final SituationRecordService situationRecordService;
+    private final SituationService situationService;
 
     public StudentDto findByUserIdx(Long userIdx) {
         StudentDto dto = new StudentDto();
@@ -126,6 +130,24 @@ public class StudentService {
     }
 
     public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
+        System.out.println("test");
         return studentRepository.getLectureDtoList(condition);
+    }
+
+    public OverallGradeDto getOverallGrade(Long stuIdx) {
+        return studentRepository.findOverallGrade(stuIdx);
+    }
+
+
+    @Transactional
+    public Integer changeLatestSituation(Long studentIdx) {
+
+        SituationRecord lastest = situationRecordService.findFirstRecordByIdOrderByDesc(studentIdx);
+        Situation situation = situationService.findByStudentIdx(studentIdx);
+        if(lastest == null || situation == null) {
+            return 0;
+        }
+        situation.setStudent_status(lastest.getStudent_status());
+        return 1;
     }
 }
