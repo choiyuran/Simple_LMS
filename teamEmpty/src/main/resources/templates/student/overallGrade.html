@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/studentHeader :: head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<header th:insert="layout/studentHeader :: header"></header>
+<div class="container mt-3">
+    <h2 id="gradeTitle" class="my-3" th:text="${session.user.user.user_name+'님의 '+ '전체' + '성적'}" th:data-user-name="${session.user.user.user_name}"></h2>
+    <form id="SemesterSearchForm">
+        <label>학기 선택 :
+            <select name="semester" id="option" onchange="handleOptionSelect(this.value)">
+                <option th:text="'전 학기'" value="" selected></option>
+                <option th:each="semester : ${semesterList}" th:value="${semester}" th:text="${semester}"></option>
+            </select>
+        </label>
+    </form>
+    <table class="table table-striped" id="gradeTable">
+        <thead>
+        <tr>
+            <th>과목명</th>
+            <th>강의유형</th>
+            <th>교수이름</th>
+            <th>학기</th>
+            <th>점수</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item:${list}">
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.type}"></td>
+            <td th:text="${item.professor}"></td>
+            <td th:text="${item.semester}"></td>
+            <td th:text="${item.score + '점'}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <hr/>
+    <h2 class="mt-3 mb-2" th:text="${session.user.user.user_name + '님의 전체성적 통계'}"></h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>단과대학</th>
+                <th>학과</th>
+                <th>학년</th>
+                <th>총 이수학점</th>
+                <th>성적합계</th>
+                <th>평균</th>
+            </tr>
+        </thead>
+        <tbody>
+            <td th:text="${overall.collegeName}"></td>
+            <td th:text="${overall.majorName}"></td>
+            <td th:text="${overall.grade + '학년'}"></td>
+            <td th:text="${overall.totalCredit + '학점'}"></td>
+            <td th:text="${overall.sum + '점 '}"></td>
+            <td th:text="${overall.avg + '점 / 4.5 점'}"></td>
+        </tbody>
+    </table>
+    <p class="my-2">
+        <button class="btn btn-facebook" onclick="history.go(-1);">이전페이지로</button>
+    </p>
+</div>
+<script>
+    let selectedSemester = ''; // 선택한 학기를 저장할 변수
+
+    // 옵션 선택 이벤트 핸들러
+    function handleOptionSelect(selectedOption) {
+        // 선택한 옵션 값을 가져옴
+        selectedSemester = selectedOption;
+
+        // 선택한 옵션 값을 활용하여 AJAX 요청 함수 호출
+        getGradeList(selectedOption);
+
+        // gradeTitle 내용 변경
+        const gradeTitleElement = document.getElementById('gradeTitle');
+        const userName = gradeTitleElement.dataset.userName;
+        if(selectedSemester === ''){
+            gradeTitleElement.textContent = `${userName}님의 전체 성적`;
+        }else{
+            gradeTitleElement.textContent = `${userName}님의 ${selectedSemester} 성적`;
+        }
+
+    }
+
+    // 받아온 데이터를 활용하여 테이블의 내용을 변경하는 함수
+    function updateTable(data) {
+        // 테이블의 tbody 요소를 선택
+        const tableBody = document.querySelector("#gradeTable tbody");
+
+        // 기존의 테이블 내용을 모두 제거
+        tableBody.innerHTML = "";
+
+        // 데이터를 순회하며 새로운 행을 생성하여 테이블에 추가
+        for (const item of data) {
+            const row = document.createElement("tr");
+
+            // 각 열에 데이터를 추가
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            const typeCell = document.createElement("td");
+            typeCell.textContent = item.type;
+            row.appendChild(typeCell);
+
+            const professorCell = document.createElement("td");
+            professorCell.textContent = item.professor;
+            row.appendChild(professorCell);
+
+            const semesterCell = document.createElement("td");
+            semesterCell.textContent = item.semester;
+            row.appendChild(semesterCell);
+
+            const scoreCell = document.createElement("td");
+            scoreCell.textContent = item.score;
+            row.appendChild(scoreCell);
+
+            // 테이블에 행 추가
+            tableBody.appendChild(row);
+        }
+    }
+
+    // AJAX 요청 함수
+    async function getGradeList(selectedOption) {
+        try {
+            const condition = {
+                semester: selectedOption // 선택한 옵션 값을 사용하여 조건 설정
+            };
+            const response = await fetch('/student/gradeList/data', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(condition)
+            });
+
+            if (!response.ok) {
+                throw new Error('데이터를 불러오는 중 오류가 발생했습니다.');
+            }
+
+            const data = await response.json();
+            console.log(data); // 받아온 데이터 처리 (예시로 콘솔에 출력)
+
+            // 받아온 데이터를 활용하여 필요한 작업 수행
+            updateTable(data);
+
+        } catch (error) {
+            console.error(error);
+            // 오류 처리
+        }
+    }
+
+    // 옵션 선택 이벤트에 핸들러 바인딩
+    const optionElement = document.getElementById('option');
+    optionElement.addEventListener('change', function() {
+        handleOptionSelect(this.value);
+    });
+</script>
+<footer th:insert="layout/studentHeader :: footer"></footer>
+</body>
+</html>
