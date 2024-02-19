@@ -2,7 +2,7 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.entity.SituationRecord;
 import com.itbank.simpleboard.entity.Student;
-import com.itbank.simpleboard.repository.SituationRecordRepository;
+import com.itbank.simpleboard.repository.student.SituationRecordRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 
