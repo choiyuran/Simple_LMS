@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.itbank.simpleboard.entity.QEnrollment.enrollment;
 import static com.itbank.simpleboard.entity.QManager.*;
 import static com.itbank.simpleboard.entity.QUser.user;
 
@@ -95,13 +96,19 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     }
 
     @Override
-    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments() {
+    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTuitionPaymentDto conditions) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        BooleanExpression studentIdxCondition = conditions.getIdx() != null ?
+                QStudent.student.idx.eq(conditions.getIdx()) : null;
+
+        BooleanExpression semesterCondition = conditions.getSemester() != null ?
+                QPayments.payments.semester.eq(conditions.getSemester()) : null;
 
         List<CheckTuitionPaymentDto> tuitionPayments = queryFactory
                 .select(Projections.constructor(CheckTuitionPaymentDto.class,
                         QStudent.student.idx,
-                        user.user_name,
+                        QStudent.student.user.user_name,
                         QStudent.student.student_grade,
                         QStudent.student.student_num,
                         QPayments.payments.date,
@@ -109,6 +116,10 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                         QPayments.payments.semester))
                 .from(QStudent.student)
                 .leftJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .where(
+                        studentIdxCondition,
+                        semesterCondition
+                )
                 .fetch();
 
         return tuitionPayments;
