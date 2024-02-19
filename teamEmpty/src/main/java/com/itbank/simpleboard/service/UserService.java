@@ -27,10 +27,15 @@ public class UserService {
     private final MailComponent mailComponent;
 
     // 아이디로 사용자 찾기
-    public UserDTO getUserByUserId(Long idx) {
-        User user = userRepository.findByIdx(idx);
+    public UserDTO getUserByUserIdx(Long idx) {
+        Optional<User> userOptional = userRepository.findById(idx);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
         // 여기서 User 엔터티를 UserDTO로 변환하여 반환
-        return convertToDto(user);
+            return convertToDto(user);
+        } else {
+            return null;
+        }
     }
 
 
@@ -181,5 +186,15 @@ public class UserService {
         }
 
         return result;
+    }
+
+    public Integer checkByUser_idAndEmail(String userId, String email) {
+        Optional<User> userOptional = userRepository.findByUser_idAndEmail(userId, email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return sendAuthNumber(email);
+        } else {
+            return 0;
+        }
     }
 }

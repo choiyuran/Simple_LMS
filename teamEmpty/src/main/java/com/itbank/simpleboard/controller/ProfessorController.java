@@ -112,7 +112,7 @@ public class ProfessorController {
             log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
             return "professor/myLecture";
         } else {
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -162,8 +162,7 @@ public class ProfessorController {
             model.addAttribute("calendar", calendar);
             return "professor/home";
         } else {
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -173,8 +172,7 @@ public class ProfessorController {
         if (user instanceof ProfessorDto) {
             return "professor/professorModify";
         } else {
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -186,18 +184,17 @@ public class ProfessorController {
                 .body(enrollment);
     }
 
-    @PutMapping("/saveGrade")
     @ResponseBody
+    @PutMapping("/saveGrade")
     public Map<String, Object> saveGrade(@RequestBody Map<String, String> request) {
         Map<String, Object> responseData = new HashMap<>();
         long enrollment_idx = Long.parseLong(request.get("enrollment_idx"));
         int save = gradeService.save(enrollment_idx, request.get("score"));
+        responseData.put("result", save);
         if (save != 0) {
             responseData.put("msg", "성적이 입력되었습니다.");
-            responseData.put("result", save);
         } else {
             responseData.put("msg", "성적 입력을 실패하였습니다.");
-            responseData.put("result", save);
         }
         return responseData;
     }

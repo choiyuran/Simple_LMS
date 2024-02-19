@@ -186,8 +186,7 @@ public class StudentController {
             model.addAttribute("calendar", calendar);
             return "student/home";
         } else {
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -196,7 +195,7 @@ public class StudentController {
         Object o = session.getAttribute("user");
         ModelAndView mav = new ModelAndView("student/mysituation");
         if(!(o instanceof StudentDto)){
-            mav.setViewName("redirect:/");
+            mav.setViewName("redirect:/login");
         }
         return mav;
     }
@@ -218,8 +217,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -240,8 +238,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -261,8 +258,7 @@ public class StudentController {
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -339,7 +335,7 @@ public class StudentController {
             mav.addObject("list", dtos);
         }else{
             ra.addFlashAttribute("msg", "학생 전용 페이지 입니다.");
-            mav.setViewName("redirect:/");
+            mav.setViewName("redirect:/login");
         }
         return mav;
     }
@@ -362,7 +358,7 @@ public class StudentController {
                 mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
             }
         }else{
-            mav.addObject("redirect:/");
+            mav.addObject("redirect:/login");
         }
         return mav;
     }
@@ -391,7 +387,7 @@ public class StudentController {
 
         // 세션에 user가 없으면 로그인 페이지로 이동
         if(dto == null){
-            return "redirect:/";
+            return "redirect:/login";
         }
         // 학생의 정보 가져오기
         Long studentIdx = dto.getIdx();

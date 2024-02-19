@@ -313,7 +313,7 @@ public class ManagerController {
         List<Major> majorList = managerService.selectAllMajor();
 
         // 해당 교수의 user_idx로 user의 정보를 찾음
-        UserDTO user = userService.getUserByUserId(lecture.getProfessor().getUser().getIdx());
+        UserDTO user = userService.getUserByUserIdx(lecture.getProfessor().getUser().getIdx());
         String professor_name = user.getUser_name();
 
         mav.addObject("majorList", majorList);
@@ -346,7 +346,7 @@ public class ManagerController {
             model.addAttribute("calendar", calendar);
             return "manager/home";
         } else {
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
@@ -553,8 +553,7 @@ public class ManagerController {
         if (user instanceof ManagerLoginDto) {
             return "manager/managerModify";
         } else {
-            session.invalidate();
-            return "redirect:/";
+            return "redirect:/login";
         }
     }
 
