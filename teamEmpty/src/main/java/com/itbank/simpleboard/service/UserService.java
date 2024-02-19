@@ -191,7 +191,6 @@ public class UserService {
     public Integer checkByUser_idAndEmail(String userId, String email) {
         Optional<User> userOptional = userRepository.findByUser_idAndEmail(userId, email);
         if (userOptional.isPresent()) {
-            User user = userOptional.get();
             return sendAuthNumber(email);
         } else {
             return 0;

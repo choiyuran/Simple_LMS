@@ -30,11 +30,8 @@ public class StudentController {
     private final AcademicCalendarService academicCalendarService;
     private final SituationService situationService;
     private final PaymentsService paymentsService;
-    private final UserService userService;
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
-    private final ProfessorService professorService;
-    private final ScholarShipService scholarShipService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {

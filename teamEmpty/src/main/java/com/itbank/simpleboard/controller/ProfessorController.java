@@ -31,7 +31,6 @@ public class ProfessorController {
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
-    private final UserService userService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
