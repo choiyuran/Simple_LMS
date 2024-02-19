@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>공지 등록</h2>
+    <hr>
+
+    <div class="d-flex flex-column align-items-center">
+        <form method="post">
+            <table class="table table-bordered w-50">
+                <tr>
+                    <th>제목</th>
+                    <td>
+                        <input type="text" name="title" required style="width: 335px; height: 40px">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>내용</th>
+                    <td>
+                        <textarea cols="40" rows="10" name="content" required></textarea>
+                    </td>
+                </tr>
+            </table>
+            <button class="btn btn-primary">등록</button>
+            <a href="/manager/noticeList"><button type="button" class="btn btn-primary">취소</button></a>
+        </form>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+</body>
+</html>

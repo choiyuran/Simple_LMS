@@ -30,6 +30,7 @@ public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
         return queryFactory
                 .select(new QSituationStuDto(
                         QSituation.situation.idx,
+                        QStudent.student.student_num,
                         QUser.user.user_name, // name
                         QMajor.major.name, // major
                         QSituation.situation.start_date, // start_date
@@ -52,6 +53,7 @@ public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
         return queryFactory
                 .select(new QSituationStuDto(
                         QSituation.situation.idx,
+                        QStudent.student.student_num,
                         QUser.user.user_name, // name
                         QMajor.major.name, // major
                         QSituation.situation.start_date, // start_date

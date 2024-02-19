@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<!--공지 사항 리스트-->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:insert="layout/header :: head">
 </head>
+
 <body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>공지 사항</h2>
+    <hr>
+    <table class="table table-bordered">
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>내용</th>
+            <th>등록일</th>
+            <th>조회수</th>
+        </tr>
+
+        <tr th:each="row : ${noticeList}">
+            <td th:text="${row.idx}"></td>
+            <td><a th:href="@{'/manager/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
+            <td th:text="${row.content}"></td>
+            <td th:text="${row.wdate}"></td>
+            <td th:text="${row.viewCount}"></td>
+            <td th:if="${session.user.user.role.toString() == '교직원'}">
+                <a th:href="@{'/manager/noticeUpdate/' + ${row.idx}}">
+                    <button class="btn btn-warning">수정</button></a>
+            </td>
+            <td th:if="${session.user.user.role.toString() == '교직원'}">
+                <a th:href="@{'/manager/noticeDel/' + ${row.idx}}">
+                    <button class="btn btn-danger" onclick="confirmDelete(event)">삭제</button></a>
+            </td>
+        </tr>
+    </table>
+    <a href="/manager/noticeAdd"><button class="btn btn-primary" th:if="${session.user.user.role.toString() == '교직원'}">등록</button></a>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function confirmDelete(event) {
+        var result = confirm("정말 삭제하시겠습니까?");
+        if (result) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
 
 </body>
 </html>

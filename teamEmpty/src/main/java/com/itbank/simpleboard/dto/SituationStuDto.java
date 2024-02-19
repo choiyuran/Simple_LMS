@@ -9,6 +9,7 @@ import java.util.Date;
 @Data
 public class SituationStuDto {
     private Long idx;
+    private Integer student_num;
     private String name;
     private String major;
     private Date start_date;
@@ -19,8 +20,9 @@ public class SituationStuDto {
     private Long user_idx;
 
     @QueryProjection
-    public SituationStuDto(Long idx, String name, String major, Date start_date, Date end_date, Status_type status, Long student_idx, Long major_idx, Long user_idx) {
+    public SituationStuDto(Long idx, Integer student_num ,String name, String major, Date start_date, Date end_date, Status_type status, Long student_idx, Long major_idx, Long user_idx) {
         this.idx = idx;
+        this.student_num = student_num;
         this.name = name;
         this.major = major;
         this.start_date = start_date;

@@ -43,6 +43,7 @@ public class ManagerController {
     private final ProfessorService professorService;
     private final CollegeService collegeService;
     private final SituationService situationService;
+    private final NoticeService noticeService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -110,10 +111,19 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/managerList")    // 교직원 명단 검색 조회
-    public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue){
+    @GetMapping("/managerListKeyword")    // 교직원 명단 검색 조회
+    public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue,
+                                   @RequestParam(value = "leave", required = false) Boolean leave){
         ModelAndView mav = new ModelAndView("manager/managerList");
-        List<ManagerDTO> managerList = managerService.searchManager(searchType,searchValue);
+        HashMap<String, Object> map = new HashMap<>();
+        if(searchType != null) {
+            map.put("searchType", searchType);
+            map.put("searchValue", searchValue);
+            map.put("leave", leave);
+        }
+
+        List<ManagerDTO> managerList = managerService.searchManager(map);
+        mav.addObject("map", map);
         mav.addObject("managerList",managerList);
         mav.addObject("searchValue", searchValue);
         return mav;
@@ -378,26 +388,41 @@ public class ManagerController {
         return mav;
     }
 
-    @GetMapping("/studentSituationUpdate/{idx}")           // 학생 상태 변경
+    @GetMapping("/studentSituationUpdate/{idx}/{student_idx}")           // 학생 상태 변경
     public String studentSituationUpdate(@PathVariable("idx")Long idx,
-                                         SituationStuDto param,
-                                         String start, String end) throws ParseException {
+                                         @PathVariable("student_idx")Long student_idx,
+                                         SituationStuDto param, String start, String end) throws ParseException {
         if(param.getStatus() == null) {
             return "redirect:/manager/studentSituationView/" + idx;
         }
+        param.setIdx(idx);
+        param.setStudent_idx(student_idx);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date start_date = sdf.parse(start);
         java.sql.Date sqldate = new java.sql.Date(start_date.getTime());
         param.setStart_date(sqldate);
 
-        if(end != null) {
-            Date end_date = sdf.parse(end);
-            java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
-            param.setEnd_date(sqldate2);
+        // status가 군휴학 또는 일반휴학일 때만 end_date를 설정
+        if(param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
+            if(end != null && !end.isEmpty()) {
+                Date end_date = sdf.parse(end);
+                java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
+                param.setEnd_date(sqldate2);
+            }
+        } else {
+            param.setEnd_date(null);
         }
-        log.info("param : " + param);
-        Situation situation = situationService.situationUpdate(param);
+        Situation situation = situationService.situationUpdate(param);          // situation 테이블 update
+        SituationRecord situationRecord = situationService.situationRecordAdd(param);        // situationRecord 테이블 insert
         return "redirect:/manager/studentSituation";
+    }
+
+    @GetMapping("/situationRecord/{idx}")           // 상태 기록 보기
+    public ModelAndView situationRecord(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("manager/situationRecord");
+        List<SituationRecord> situationRecords = situationService.situationRecordAllByIdx(idx);
+        mav.addObject("situationRecord", situationRecords);
+        return mav;
     }
 
     @GetMapping("/professorList")               // 교수 목록 조회
@@ -418,26 +443,6 @@ public class ManagerController {
         mav.addObject("map", map);
         return mav;
     }
-
-//    @GetMapping("/professorList")          // 교수 목록 조회(검색어가 있는 경우와 없는 경우 같이 사용)
-//    public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
-//                                      @RequestParam(value = "name", required = false) String name,
-//                                      @RequestParam(value = "leave", required = false) String leave) {
-//
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("major_idx", major_idx);
-//        map.put("name", name);
-//        map.put("leave", leave);
-//
-//        ModelAndView mav = new ModelAndView("manager/professorList");
-//        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessor(map);
-//        List<Major> majorList = managerService.selectAllMajor();
-//
-//        mav.addObject("majorList", majorList);
-//        mav.addObject("professorList", professorList);
-//        mav.addObject("map", map);
-//        return mav;
-//    }
 
     @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
     public ModelAndView professorView(@PathVariable("idx")Long idx) {
@@ -546,6 +551,67 @@ public class ManagerController {
         return "redirect:/manager/managerList";
     }
 
+    @GetMapping("/noticeList")          // 공지 사항 조회
+    public ModelAndView noticeList() {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        List<Notice> noticeList = noticeService.selectAll();
+        mav.addObject("noticeList", noticeList);
+        return mav;
+    }
+
+    @GetMapping("/noticeView/{idx}")      // 공지 사항 상세보기
+    public ModelAndView noticeView(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            noticeService.increaseViewCount(idx);
+            mav.addObject("notice", notice);
+            mav.setViewName("common/noticeView");
+        }
+
+        return mav;
+    }
+
+    @GetMapping("/noticeAdd")            // 공지 사항 등록 페이지 이동
+    public String noticeAdd() {
+        return "manager/noticeAdd";
+    }
+
+    @PostMapping("/noticeAdd")              // 공지 사항 등록
+    public String noticeAdd(@RequestParam String title, @RequestParam String content) {
+        Map<String,String> map = new HashMap<>();
+        map.put("title", title);
+        map.put("content", content);
+        noticeService.noticeAdd(map);
+        return "redirect:/manager/noticeList";
+    }
+    
+    @GetMapping("/noticeUpdate/{idx}")              // 공지사항 수정 페이지로 이동
+    public ModelAndView noticeUpdate(@PathVariable("idx")Long idx) {
+        ModelAndView mav = new ModelAndView("manager/noticeUpdate");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            mav.addObject("notice", notice);
+        }
+        return mav;
+    }
+
+    @PostMapping("/noticeUpdate/{idx}")         // 공지사항 수정
+    public String noticeUpdate(@PathVariable("idx")Long idx,
+                               @RequestParam String title, @RequestParam String content) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("idx", idx);
+        map.put("title", title);
+        map.put("content", content);
+        Notice notice = noticeService.noticeUpdate(map);
+        return "redirect:/manager/noticeView/" + idx;
+    }
+
+    @GetMapping("/noticeDel/{idx}")           // 공지 사항 삭제
+    public String noticeDel(@PathVariable("idx")Long idx) {
+        noticeService.noticeDel(idx);
+        return "redirect:/manager/noticeList";
+    }
 
     @GetMapping("/managerModify")           // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {

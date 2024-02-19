@@ -63,12 +63,19 @@
         leaveDateInput.setAttribute("type", "date");
         leaveDateInput.setAttribute("name", "leaveDate");
         leaveDateInput.classList.add("form-control");
+        leaveDateInput.classList.add("border");
+        leaveDateInput.classList.add("border-success");
+        leaveDateInput.classList.add("w-50");
+        leaveDateInput.classList.add("me-2");
 
         // 완료 버튼 생성
         var completeButton = document.createElement("button");
         completeButton.innerHTML = "완료";
-        completeButton.classList.add("btn", "btn-success");
         completeButton.setAttribute("type", "button");
+        completeButton.style.backgroundColor = '#28a745';
+        completeButton.style.color = 'white';
+        completeButton.style.borderRadius = '5px';
+        completeButton.style.borderColor = '#28a745';
 
         completeButton.addEventListener("click", function() {
             var result = confirm("퇴사 처리하시겠습니까?");
@@ -86,6 +93,7 @@
         // 제목 셀 생성
         var newCell = document.createElement("th");
         newCell.innerHTML = "퇴사일";
+        newCell.style.color = 'black';
         newRow.appendChild(newCell);
 
         // 테이블 셀 생성
@@ -93,6 +101,7 @@
         newCell.appendChild(leaveDateInput);
         newCell.appendChild(completeButton);
         newRow.appendChild(newCell);
+        newCell.classList.add("d-flex");
 
         // 생성한 행을 테이블에 추가
         var table = document.querySelector("table");

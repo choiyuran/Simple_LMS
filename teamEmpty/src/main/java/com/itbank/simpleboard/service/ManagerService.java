@@ -71,8 +71,8 @@ public class ManagerService {
         return managerDTOList;
     }
 
-    public List<ManagerDTO> searchManager(String searchType, String searchValue) {
-        List<ManagerDTO> searchManagerList = managerRepository.findBySearchType(searchType,searchValue);
+    public List<ManagerDTO> searchManager(HashMap<String, Object> map) {
+        List<ManagerDTO> searchManagerList = managerRepository.findBySearchType(map);
         return searchManagerList;
     }
 

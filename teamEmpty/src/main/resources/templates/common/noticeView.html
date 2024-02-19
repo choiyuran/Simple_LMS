@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>공지 상세보기</h2>
+    <hr>
+
+    <div class="d-flex flex-column align-items-center">
+        <table class="table table-bordered w-50">
+            <tr>
+                <td th:text="${notice.title}" th:colspan="2"></td>
+            </tr>
+
+            <tr>
+                <td th:text="${notice.wdate}"></td>
+                <td th:text="${notice.viewCount}"></td>
+            </tr>
+
+            <tr>
+                <td th:text="${notice.content}" style="width: 150px; height: 200px;" th:colspan="2"></td>
+            </tr>
+        </table>
+        <a href="/manager/noticeList"><button class="btn btn-primary">목록으로</button></a>
+    </div>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+</body>
+</html>

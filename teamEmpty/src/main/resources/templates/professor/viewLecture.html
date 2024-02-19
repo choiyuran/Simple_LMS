@@ -107,7 +107,7 @@
         <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
         <button class="btn btn-danger" onclick="confirmDelete(event)" th:if="${session.user.user.role.toString() == '교직원'}">
             <a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
-        <button class="btn btn-outline-secondary" onclick="history.go(-1)">목록으로</button>
+        <button class="btn btn-outline-secondary" onclick="Url()">목록으로</button>
     </div>
 
     <script>
@@ -163,6 +163,17 @@
 
             } else {
                 event.preventDefault();
+            }
+        }
+
+        function Url() {
+            var previousUrl = window.localStorage.getItem("previousUrl");
+
+            if(previousUrl) {
+                window.location.href = previousUrl;
+            }
+            else {
+                alert('잘못된 주소!');
             }
         }
     </script>

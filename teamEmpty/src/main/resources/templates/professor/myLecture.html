@@ -483,6 +483,13 @@
         }
 
         document.getElementById('viewAbolition').addEventListener('change', searchLectures);
+
+        function onPageChange() {
+            window.localStorage.setItem("previousUrl", window.location.href);
+        }
+        window.onload = function () {
+            onPageChange();
+        }
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>
