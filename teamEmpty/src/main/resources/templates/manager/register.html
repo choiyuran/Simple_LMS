@@ -6,6 +6,7 @@
     <header th:insert = "layout/header :: header" ></header>
 
     <div class="container">
+        <p th:text="${msg}"></p>
 
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
@@ -17,7 +18,7 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">등록하기</h1>
                             </div>
-                            <form class="userForm" method="post" enctype="multipart/form-data" >
+                            <form class="userForm" enctype="multipart/form-data" name="userForm">
                                 <div class="form-group row">
                                     <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
 <!--                                        <label><input type="radio" name="userType" value="student"-->
@@ -93,7 +94,7 @@
 
                                 <!-- ID field will change based on user type -->
 
-                                <button class="btn btn-primary btn-user btn-block" id="btn-register">
+                                <button type="button" class="btn btn-primary btn-user btn-block" id="btn-register">
                                     등록하기
                                 </button>
                             </form>
@@ -216,113 +217,124 @@
 
         }
 
+
+
         var btnRegister = document.getElementById('btn-register');
         btnRegister.addEventListener('click', submitForm);
-
-
-
         function submitForm() {
-            const form = document.querySelector(".userForm");
+            const form = $(".userForm")[0];
             const formData = new FormData(form);
-            const userType = document.querySelector('input[name="userType"]:checked').value;
-            var imageFile = document.getElementById("imageFile").files[0];
-            const major = document.getElementById("major").value;
+            const userType = $('input[name="userType"]:checked').val();
+            const major = $("#major").val();
+            var imageFile = $("#imageFile")[0].files[0];
 
-
-            // 폼 데이터 생성
             formData.set("userType", userType);
-            // if (imageFile === undefined) {
-            //     imageFile = null;
-            // }
-            formData.append("imageFile", imageFile);
-            formData.append("firstName", document.getElementById("exampleFirstName").value);
-            formData.append("lastName", document.getElementById("exampleLastName").value);
-            formData.append("email", document.getElementById("exampleInputEmail").value);
-            formData.append("address", document.getElementById("exampleInputUserid").value);
-            formData.append("frontSecurity", document.getElementById("frontSecurity").value);
-            formData.append("backSecurity", document.getElementById("backSecurity").value);
-            formData.append("pnum", document.getElementById("phonenumber").value);
-            formData.append("hireDate", document.getElementById("hireDate").value);
-            formData.append("major", major);
+            formData.set("major", major);
+            formData.set("imageFile", imageFile);
 
-
-            // form 내용 확인을 위한 콘솔 코드 추가
-            console.log("name:",document.getElementById("exampleFirstName").value);
+            console.log("name:", $("#exampleFirstName").val());
             console.log("userType:", userType);
             console.log("imageFile:", imageFile);
             console.log("major:", major);
 
-
-            // fetch API를 사용하여 Ajax 요청을 보냄
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-                // body: JSON.stringify(Object.fromEntries(formData))
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error('서버 응답이 실패했습니다.');
-                    }
-                })
-                .then(data => {
-                    if (data.message) {
-                        console.log('등록 메시지:', data.message);
-                        if (data.message === "폼 등록이 완료되었습니다.") {
-                            alert(data.name + '님이 ' + data.type + '으로 등록 되었습니다');
-                            const additionalRegistration = confirm('추가로 등록하시겠습니까?');
-                            if (additionalRegistration) {
-                                console.log("추가 등록을 진행합니다.");
-                                window.location.href = '/manager/register';
-                            } else {
-                                console.log("추가 등록을 취소합니다.");
-                                window.location.href = '/home';
-                            }
-                        } else {
-                            alert("폼 등록이 실패하였습니다. 오류 메시지: " + data.message);
+            $.ajax({
+                url: form.action,
+                type: 'POST',
+                data: formData,
+                processData: false, // 데이터 처리 방식을 설정합니다. FormData를 사용하므로 false로 설정합니다.
+                contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
+                success: function(message) {
+                    console.log('등록 메시지:', message);
+                    if (message.includes('등록')) {
+                        var additionalRegistration = confirm('추가로 등록하시겠습니까?');
+                        if (additionalRegistration) {
+                            console.log("추가 등록을 진행합니다.");
                             window.location.href = '/manager/register';
+                        } else {
+                            console.log("추가 등록을 취소합니다.");
+                            window.location.href = '/home';
                         }
                     } else {
-                        console.error('올바른 응답 형식이 아닙니다.');
-                        window.location.href = '/manager/register';
+                        alert("폼 등록이 실패하였습니다. 오류 메시지: " + message);
                     }
-                })
-                .catch(error => {
-                    console.error('폼 등록이 실패하였습니다:', error.message);
-                    window.location.href = '/manager/register';
-                });
-                /*.then(response => {
-                    /!*const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.includes('application/json')) {
-                        // 서버 응답이 JSON 형식인 경우
-                        return response.json();
-                    } else{
-                        // 서버 응답이 JSON 형식이 아닌 경우
-                        throw new Error('서버 응답이 JSON 형식이 아닙니다.');
-                    }*!/
-                    /!*if (!response.ok) {
-                        console.log(response.headers)
-                        console.log(response.ok)
-                        console.log(response.url)
-                        console.log(response.statusText)
-                        console.log(response.body)
-                        console.log(response.formData())
-                        console.error('서버 측에서 오류 발생:', response.statusText);
-                        console.error('서버 측에서 오류 발생:', response.status);
-                        throw new Error('Network response was not ok');
-                    }*!/
-                    console.log("1차 then")
-                    return response.json(); // 응답을 JSON 형식으로 파싱하여 반환
-                })*/
-
-
+                },
+                error: function(xhr, status, error) {
+                    console.error('폼 등록이 실패하였습니다:', error);
+                }
+            });
         }
+
+
     </script>
 
 </body>
+/* function submitForm() {
+const form = document.querySelector(".userForm");
+const formData = new FormData(form);
+const userType = document.querySelector('input[name="userType"]:checked').value;
+// var imageFile = document.getElementById("imageFile").files[0];
+const major = document.getElementById("major").value;
+
+
+// 이미지 파일 가져오기
+// 이미지 파일 가져오기
+var imageFile = document.getElementById("imageFile").files[0];
+//
+// // 경계 생성
+//             const boundary = "boundary-" + new Date().getTime();
+
+
+// 폼 데이터 생성
+formData.set("userType", userType);
+formData.append("firstName", document.getElementById("exampleFirstName").value);
+formData.append("lastName", document.getElementById("exampleLastName").value);
+formData.append("email", document.getElementById("exampleInputEmail").value);
+formData.append("address", document.getElementById("exampleInputUserid").value);
+formData.append("frontSecurity", document.getElementById("frontSecurity").value);
+formData.append("backSecurity", document.getElementById("backSecurity").value);
+formData.append("pnum", document.getElementById("phonenumber").value);
+formData.append("hireDate", document.getElementById("hireDate").value);
+formData.append("major", major);
+formData.append("imageFile", imageFile);
+
+
+// form 내용 확인을 위한 콘솔 코드 추가
+console.log("name:",document.getElementById("exampleFirstName").value);
+console.log("userType:", userType);
+console.log("imageFile:", imageFile);
+console.log("major:", major);
+
+
+// fetch API를 사용하여 Ajax 요청을 보냄
+fetch(form.action, {
+method: 'POST',
+headers: {
+'Content-Type': 'multipart/form-data'
+},
+// body: JSON.stringify(Object.fromEntries(formData))
+body: formData
+}).then(response => response.text()) // 응답을 텍스트로 변환하여 반환
+.then(message => {
+console.log('등록 메시지:', message);
+if (message.includes('등록')) {
+// alert(data.name + '님이 ' + data.type + '으로 등록 되었습니다');
+const additionalRegistration = confirm('추가로 등록하시겠습니까?');
+if (additionalRegistration) {
+console.log("추가 등록을 진행합니다.");
+window.location.href = '/manager/register';
+} else {
+console.log("추가 등록을 취소합니다.");
+window.location.href = '/home';
+}
+} else {
+alert("폼 등록이 실패하였습니다. 오류 메시지: " + message);
+// window.location.href = '/manager/register';
+}
+})
+.catch(error => {
+console.error('폼 등록이 실패하였습니다:', error.message);
+// window.location.href = '/manager/register';
+});
+}*/
 
 </html>

@@ -123,7 +123,34 @@ public class ManagerController {
         return mav;
     }
 
+    @PostMapping(value = "/addManager", headers = "Content-Type= multipart/form-data")   // 교직원 등록
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> registerManager(@ModelAttribute UserFormDTO userFormDTO,
+                                                               @RequestParam("imageFile") MultipartFile imageFile) {
+        Map<String, Object> response = new HashMap<>();
 
+        String msg;
+        if (userFormDTO.getUserType().equals("manager")) {
+            Manager manager = managerService.addManager(userFormDTO, imageFile);
+            if (manager.getIdx() != null) {
+                // 교직원 등록 성공 시
+                msg = manager.getUser().getUser_name() + "님 교직원 등록완료";
+                response.put("success", true);
+            } else {
+                // 교직원 등록 실패 시
+                msg = "교직원 등록에 실패하였습니다";
+                response.put("success", false);
+            }
+        } else {
+            // 교직원 타입의 사용자가 아닌 경우
+            msg = "교직원 타입의 사용자가 아닙니다";
+            response.put("success", false);
+        }
+
+        response.put("message", msg);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {

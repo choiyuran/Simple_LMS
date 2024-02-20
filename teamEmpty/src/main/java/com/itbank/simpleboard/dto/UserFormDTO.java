@@ -33,9 +33,9 @@ public class UserFormDTO {
 
     // dtype
     private String userType;
-
-    //직원사진
-    private MultipartFile imageFile;
+//
+//    //직원사진
+//    private MultipartFile imageFile;
 
     // 입사일
     @DateTimeFormat(pattern = "yyyy-MM-dd")
