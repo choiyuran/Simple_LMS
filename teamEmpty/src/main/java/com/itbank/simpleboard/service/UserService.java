@@ -31,7 +31,7 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(idx);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-        // 여기서 User 엔터티를 UserDTO로 변환하여 반환
+            // 여기서 User 엔터티를 UserDTO로 변환하여 반환
             return convertToDto(user);
         } else {
             return null;
@@ -40,7 +40,7 @@ public class UserService {
 
 
     private UserDTO convertToDto(User user) {
-        if(user == null){
+        if (user == null) {
             return null;
         }
         return new UserDTO(
@@ -108,13 +108,13 @@ public class UserService {
     public UserDTO getUser(String userId, String userPw) {
         // 여기서 UserDTO 불러와서 userPw로 비교하고
         UserDTO user = userRepository.getUser(userId);
-        // 해쉬처리 이래저래 해서
-        String loginPw = hashComponent.getHash(userPw, user.getSalt());
-        if (user.getUser_pw().equals(loginPw)) {
-            return user;
-        } else {
-            return null;
+        if (user != null) {
+            String loginPw = hashComponent.getHash(userPw, user.getSalt());
+            if (user.getUser_pw().equals(loginPw)) {
+                return user;
+            }
         }
+        return null;
     }
 
     public ProfessorDto getProfessor(UserDTO user) {
