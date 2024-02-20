@@ -245,7 +245,7 @@
                 contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
                 success: function(message) {
                     console.log('등록 메시지:', message);
-                    if (message.includes('등록')) {
+                    if (message.success) { // success가 true인 경우에만 실행
                         var additionalRegistration = confirm('추가로 등록하시겠습니까?');
                         if (additionalRegistration) {
                             console.log("추가 등록을 진행합니다.");
@@ -255,7 +255,7 @@
                             window.location.href = '/home';
                         }
                     } else {
-                        alert("폼 등록이 실패하였습니다. 오류 메시지: " + message);
+                        alert("폼 등록이 실패하였습니다. 오류 메시지: " + message.message);
                     }
                 },
                 error: function(xhr, status, error) {
