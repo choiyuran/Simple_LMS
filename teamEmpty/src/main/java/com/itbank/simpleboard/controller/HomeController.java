@@ -45,18 +45,18 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, Model model) {
-        String url = "/";
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, RedirectAttributes ra) {
+        String url = "redirect:/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
             UserDTO user = userService.getUser(user_id, user_pw);
             if (user == null) {
-                model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
             } else {
                 switch (user.getRole().toString()) {
                     case "교수":
                         ProfessorDto professor = userService.getProfessor(user);
                         if (professor == null) {
-                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
                         } else {
                             session.setAttribute("user", professor);
                             url = "redirect:/professor/home";
@@ -65,7 +65,7 @@ public class HomeController {
                     case "학생":
                         StudentDto student = userService.getStudent(user);
                         if (student == null) {
-                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
                         } else {
                             session.setAttribute("user", student);
                             url = "redirect:/student/home";
@@ -74,7 +74,7 @@ public class HomeController {
                     case "교직원":
                         ManagerLoginDto manager = userService.getManager(user);
                         if (manager == null) {
-                            model.addAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
                         } else {
                             session.setAttribute("user", manager);
                             url = "redirect:/manager/home";
@@ -83,7 +83,7 @@ public class HomeController {
                 }
             }
         } else {
-            model.addAttribute("msg", "ID와 Password를 입력해주세요.");
+            ra.addFlashAttribute("msg", "ID와 Password를 입력해주세요");
         }
         return url;
     }
@@ -96,7 +96,7 @@ public class HomeController {
 
     @ResponseBody
     @PostMapping("email-verification")                      // 이메일 인증
-    public Integer SendVerificationCode(String email){
+    public Integer SendVerificationCode(String email) {
         return userService.sendAuthNumber(email);
     }
 

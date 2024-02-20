@@ -158,10 +158,10 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<EvaluateFormDto> getMyEvaluation(Long idx) {
+    public List<EvaluateFormDto> viewEvaluation(Long idx) {
         return queryFactory
                 .select(new QEvaluateFormDto(
-                        QEvaluation.evaluation.idx,
+                        QEvaluation.evaluation.enrollment.idx,
                         QEvaluation.evaluation.q1,
                         QEvaluation.evaluation.q2,
                         QEvaluation.evaluation.q3,
@@ -169,7 +169,10 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         QEvaluation.evaluation.q5
                 ))
                 .from(QEvaluation.evaluation)
-                .innerJoin(QEnrollment.enrollment).on(QEnrollment.enrollment.lecture.idx.eq(idx))
+                .innerJoin(QEnrollment.enrollment).on(QEvaluation.evaluation.enrollment.eq(QEnrollment.enrollment))
+                .where(
+                        QEnrollment.enrollment.lecture.idx.eq(idx)
+                )
                 .fetch();
     }
 

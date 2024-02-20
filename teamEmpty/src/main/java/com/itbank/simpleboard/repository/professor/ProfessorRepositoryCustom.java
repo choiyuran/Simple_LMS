@@ -14,7 +14,7 @@ public interface ProfessorRepositoryCustom {
 
     List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx);
 
-    List<EvaluateFormDto> getMyEvaluation(Long idx);
+    List<EvaluateFormDto> viewEvaluation(Long idx);
 
     List<EnrollmentDto> getEnrollmentList(Long lectureIdx);
 
