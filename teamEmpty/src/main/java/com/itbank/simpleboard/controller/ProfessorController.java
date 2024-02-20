@@ -1,9 +1,6 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.EnrollmentDto;
-import com.itbank.simpleboard.dto.LectureSearchConditionDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.ProfessorLectureDto;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
@@ -142,14 +139,18 @@ public class ProfessorController {
         return "professor/viewLecture";
     }
 
-    @GetMapping("/viewEvaluation/{professorIdx}/{idx}")    // 내 강의 평가 보기
-    public String viewEvaluation(@PathVariable("professorIdx") Long professorIdx, @PathVariable("idx") Long idx, Model model, HttpSession session) {
-        Object user = session.getAttribute("user");
-        if (user instanceof ProfessorDto) {
-            model.addAttribute("Evaluation", professorService.getEvaluation(idx));
+    @GetMapping("/viewEvaluation/{idx}")    // 내 강의 평가 보기
+    public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ProfessorDto) {
+            List<EvaluateFormDto> evaluation = professorService.getEvaluation(idx);
+            if (evaluation != null) {
+                model.addAttribute("evaluation", evaluation);
+                model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
+            }
             return "/professor/myLectureEvaluation";
         }
-        return "redirect:/home";
+        return "redirect:/login";
     }
 
     @GetMapping("/home")    // 교수 홈으로 이동

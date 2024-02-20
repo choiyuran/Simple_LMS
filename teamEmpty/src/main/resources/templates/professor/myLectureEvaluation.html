@@ -1,11 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--내 강의 평가-->
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<head th:insert="layout/professorHeader :: head"></head>
 <body>
+<header th:insert="layout/professorHeader :: header"></header>
+<main>
+    <div class="w-50 m-auto">
+        <div class="evaluationTitle">
+            <span>강의 내용이 강의 계획서대로 진행되었다.</span>
+            <div>
+                <span>A : <span th:text="${total['q1']['1'] != null ? total['q1']['1'] : 0}"></span></span>
+                <span>B : <span th:text="${total['q1']['2'] != null ? total['q1']['2'] : 0}"></span></span>
+                <span>C : <span th:text="${total['q1']['3'] != null ? total['q1']['3'] : 0}"></span></span>
+                <span>D : <span th:text="${total['q1']['4'] != null ? total['q1']['4'] : 0}"></span></span>
+                <span>E : <span th:text="${total['q1']['5'] != null ? total['q1']['5'] : 0}"></span></span>
+            </div>
+        </div>
+        <div class="evaluationTitle">
+            <span>나는 이 수업을 전체적으로 우수하다고 평가한다.</span>
+            <div>
+                <span>A : <span th:text="${total['q2']['1'] != null ? total['q2']['1'] : 0}"></span></span>
+                <span>B : <span th:text="${total['q2']['2'] != null ? total['q2']['2'] : 0}"></span></span>
+                <span>C : <span th:text="${total['q2']['3'] != null ? total['q2']['3'] : 0}"></span></span>
+                <span>D : <span th:text="${total['q2']['4'] != null ? total['q2']['4'] : 0}"></span></span>
+                <span>E : <span th:text="${total['q2']['5'] != null ? total['q2']['5'] : 0}"></span></span>
+            </div>
+        </div>
+        <div class="evaluationTitle">
+            <span>나는 이 수업을 통하여 많은 지식을 얻었다.</span>
+            <div>
+                <span>A : <span th:text="${total['q3']['1'] != null ? total['q3']['1'] : 0}"></span></span>
+                <span>B : <span th:text="${total['q3']['2'] != null ? total['q3']['2'] : 0}"></span></span>
+                <span>C : <span th:text="${total['q3']['3'] != null ? total['q3']['3'] : 0}"></span></span>
+                <span>D : <span th:text="${total['q3']['4'] != null ? total['q3']['4'] : 0}"></span></span>
+                <span>E : <span th:text="${total['q3']['5'] != null ? total['q3']['5'] : 0}"></span></span>
+            </div>
+        </div>
+        <div class="evaluationTitle">
+            <span>개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</span>
 
+        </div>
+        <div class="evaluationTitle">
+            <span>개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</span>
+
+            <div></div>
+        </div>
+    </div>
+</main>
+<footer th:insert="layout/professorHeader :: footer"></footer>
 </body>
 </html>

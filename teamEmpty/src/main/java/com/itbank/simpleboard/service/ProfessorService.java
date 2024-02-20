@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,7 +38,29 @@ public class ProfessorService {
     }
 
     public List<EvaluateFormDto> getEvaluation(Long idx) {
-        return professorRepository.getMyEvaluation(idx);
+        return professorRepository.viewEvaluation(idx);
+    }
+
+    public Map<String, Map<String, Long>> countTotalQ1Q2Q3(List<EvaluateFormDto> evaluation) {
+        Map<String, Map<String, Long>> result = new HashMap<>();
+
+        Map<String, Long> q1 = evaluation.stream()
+                .flatMap(dto -> Stream.of(dto.getQ1()))
+                .collect(Collectors.groupingBy(Object::toString, Collectors.counting()));
+
+        Map<String, Long> q2 = evaluation.stream()
+                .flatMap(dto -> Stream.of(dto.getQ2()))
+                .collect(Collectors.groupingBy(Object::toString, Collectors.counting()));
+
+        Map<String, Long> q3 = evaluation.stream()
+                .flatMap(dto -> Stream.of(dto.getQ3()))
+                .collect(Collectors.groupingBy(Object::toString, Collectors.counting()));
+
+        result.put("q1", q1);
+        result.put("q2", q2);
+        result.put("q3", q3);
+
+        return result;
     }
 
     public List<EnrollmentDto> getEnrollmentList(Long lectureIdx) {
@@ -48,8 +70,8 @@ public class ProfessorService {
     public List<ProfessorUserDto> getProfessorsByMajor(String majorName) {
         List<Professor> professorList = professorRepository.findAllByMajorName(majorName);
         List<ProfessorUserDto> professors = new ArrayList<>();
-        if(!professorList.isEmpty()){
-            for(Professor p : professorList){
+        if (!professorList.isEmpty()) {
+            for (Professor p : professorList) {
                 ProfessorUserDto dto = new ProfessorUserDto(
                         p.getProfessor_idx(),
                         p.getUser().getUser_name()
