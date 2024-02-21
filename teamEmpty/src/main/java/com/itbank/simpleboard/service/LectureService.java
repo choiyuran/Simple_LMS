@@ -21,9 +21,6 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
 
-    private final JPAQueryFactory queryFactory;
-    QLecture lecture = QLecture.lecture;
-
     public List<LectureDto> selectAll() {
         return lectureRepository.getLectureDtos();
     }

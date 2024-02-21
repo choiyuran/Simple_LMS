@@ -6,12 +6,9 @@ import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 @Service
 public class FileService {
@@ -28,7 +25,7 @@ public class FileService {
             String key = getPath(saveDir, fileName);
 
             // URL 디코딩
-            String decodedFileName = URLDecoder.decode(key, StandardCharsets.UTF_8.toString());
+            String decodedFileName = URLDecoder.decode(key, StandardCharsets.UTF_8);
 
             S3Object s3Object = amazonS3.getObject(s3BucketName, decodedFileName);
             return new InputStreamResource(s3Object.getObjectContent());
