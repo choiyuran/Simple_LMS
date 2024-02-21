@@ -19,7 +19,6 @@ import com.itbank.simpleboard.repository.student.SituationRecordRepository;
 import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -33,7 +32,6 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -240,14 +238,23 @@ public class ManagerService {
     }
 
     @Transactional
-    public Manager addManager(UserFormDTO dto) {
+    public Manager addManager(UserFormDTO dto, MultipartFile imageFile) {
         System.err.println("userFormDTO : "+ dto.toString());
         String salt = hashComponent.getRandomSalt();
         String source = dto.getBackSecurity();
         String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
-        String manager_img = dto.getImageFile().toString();
+//        String originalFilename = dto.getImageFile().getOriginalFilename();
+        String originalFilename = imageFile.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+        String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
+//        String manager_img = fileComponent.uploadIdPhoto(dto.getImageFile(), "idPhoto_manager",newFileName);
+        String manager_img = fileComponent.uploadIdPhoto(imageFile, "idPhoto_manager",newFileName);
+        System.err.println("manager_img : " + manager_img);
+        System.err.println("newFileName : " + newFileName);
+//        System.err.println("imageFile : " + dto.getImageFile().getOriginalFilename());
+        System.err.println("imageFile : " + imageFile.getOriginalFilename());
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,
@@ -332,7 +339,7 @@ public class ManagerService {
     }
 
 
-    @Transactional
+    /*@Transactional
     public Professor addProfessor(UserFormDTO dto) {
         log.info("addProfessor service"+ dto.toString());
         String salt = hashComponent.getRandomSalt();
@@ -342,6 +349,7 @@ public class ManagerService {
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
         // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
         String newFileName = userName + "_" + dto.getFrontSecurity();
+//        String professor_img = fileComponent.uploadIdPhoto(dto.getImageFile(), "idPhoto_professor",newFileName);
         String professor_img = fileComponent.uploadIdPhoto(dto.getImageFile(), "idPhoto_professor",newFileName);
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
@@ -368,7 +376,7 @@ public class ManagerService {
 
         return professorRepository.save(professor);
     }
-
+*/
     public List<StudentFormDTO> saveStudentDTOList(MultipartFile studentFile) {
         log.info("saveStudentDTOList service");
         List<StudentFormDTO> studentFormDTOList = new ArrayList<>();

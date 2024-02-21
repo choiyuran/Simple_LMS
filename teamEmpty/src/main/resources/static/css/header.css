@@ -15,7 +15,7 @@ select {
 }
 
 select::-ms-expand {
-    display: none;
+    display: inline-block;
 }
 
 .selectBox {
@@ -29,6 +29,10 @@ select::-ms-expand {
 .listBox {
     flex: 1;
     width: 280px;
+    min-height: 200px;
     border: 1px solid black;
-    margin: 0 10px;
+    margin: 10px 0 10px 10px;
+    padding: 5px;
+    display: inline-block;
+    vertical-align: top;
 }
