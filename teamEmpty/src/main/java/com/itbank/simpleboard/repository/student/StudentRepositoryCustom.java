@@ -15,4 +15,6 @@ public interface StudentRepositoryCustom {
     List<StudentListDto> selectAllStudent(HashMap<String, Object> map);
 
     StudentListDto selectOndeStudent(Long idx);
+
+
 }

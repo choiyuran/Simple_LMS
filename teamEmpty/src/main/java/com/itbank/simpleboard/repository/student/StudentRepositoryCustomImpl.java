@@ -140,4 +140,6 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .where(QStudent.student.idx.eq(idx))
                 .fetchOne();
     }
+
+
 }
