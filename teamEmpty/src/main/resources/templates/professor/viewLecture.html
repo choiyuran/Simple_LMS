@@ -143,7 +143,7 @@
                     if (data !== undefined) {
                         console.log('업로드 성공');
                         planExist.innerHTML = '';
-                        planExist.innerHTML = '<a href="/download/' + encodeURIComponent(data) + '" download>' + data + '</a>';
+                        planExist.innerHTML = '<a href="/download/' + data + '" download>' + data + '</a>';
                         planExist.innerHTML += '<span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>';
                         planExist.innerHTML += '<input type="hidden" class="lectureIdx" value="' + lectureIdx + '">';
                         planExist.innerHTML += '<input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">';
