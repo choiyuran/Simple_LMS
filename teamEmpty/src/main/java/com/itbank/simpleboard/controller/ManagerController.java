@@ -1,11 +1,16 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,6 +50,7 @@ public class ManagerController {
     private final SituationService situationService;
     private final NoticeService noticeService;
     private final StudentService studentService;
+    private final PagingComponent pagingComponent;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -265,9 +271,6 @@ public class ManagerController {
                 .headers(headers)
                 .body(data);
     }
-
-
-
 
     @GetMapping("/addStudentList")   // 학생 등록
     public String registerStudentList() {
@@ -731,4 +734,20 @@ public class ManagerController {
 //        System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
     }
+
+    @GetMapping("/pagingTest")          // 페이징 테스트
+    public ModelAndView pagingTest(@PageableDefault(page = 0, size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("/manager/majorPaging");
+        Page<Major> list = managerService.majorListPaging(pageable);
+        int start = pagingComponent.calculateStart(list.getNumber());
+        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
+        mav.addObject("list", list);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("maxPage", 5);
+        return mav;
+    }
+
 }
+

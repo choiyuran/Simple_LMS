@@ -23,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -745,6 +747,15 @@ public class ManagerService {
         }
         log.info("idx : " + idx); // 변수 idx로 수정
         return idx;
+    }
+
+    /**
+     * 게시글 전체조회
+     * @param pageable 페이징 처리
+     * @return 게시글 목록 (페이징)
+     */
+    public Page<Major> majorListPaging(Pageable pageable) {
+        return majorRepository.findAll(pageable);
     }
 }
 
