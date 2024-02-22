@@ -25,9 +25,9 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="div">
-                    <h5>학번</h5>
+                    <h5>학번/아이디</h5>
                     <!-- 인풋 Id 창-->
-                    <input type="text" class="input" name="user_id">
+                    <input type="text" class="input" name="user_id" id="user_id">
                 </div>
             </div>
             <div class="input-div pass">
@@ -37,12 +37,12 @@
                 <div class="div">
                     <h5>비밀번호</h5>
                     <!-- 인풋 비번창 -->
-                    <input type="password" class="input" name="user_pw">
+                    <input type="password" class="input" name="user_pw" id="user_pw">
                 </div>
             </div>
             <div class="i between">
                 <label>
-                    <input type="checkbox" class="input">
+                    <input type="checkbox" class="input" name="rememberMe" id="rememberMe">
                     <span>학번 기억하기</Span>
                 </label>
                 <!-- 나중에 여기 찾기 주소 추가 -->
@@ -112,6 +112,35 @@
 <script>
     let checkPassword = false;
     let eachPassword = false;
+
+    // 페이지 로딩시 쿠키에서 아이디 읽어오기
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const user_id = getCookie("user_id");
+        if (user_id) {
+            document.getElementById("user_id").value = user_id;
+            document.getElementById("rememberMe").checked = true;
+        }
+    });
+
+    // '내 아이디 기억하기' 체크박스 클릭 이벤트
+    document.getElementById("rememberMe").addEventListener("change", function() {
+        if (this.checked) {
+            const date = new Date();
+            date.setDate(date.getDate() + 7); // 일주일 후
+            document.cookie = `user_id=${document.getElementById("user_id").value};expires=${date.toUTCString()};path=/;`;
+        } else {
+            document.cookie = "user_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        }
+    });
+
+    // 쿠키에서 이름이 'name'인 값을 가져오는 함수
+    function getCookie(name) {
+        const value = "; " + document.cookie;
+        const parts = value.split("; " + name + "=");
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+    }
 
     window.onload = function () {
         const emailInput = document.getElementById('exampleInputEmail');

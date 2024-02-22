@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--학생 등록 페이지-->
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 
 
 <body>
-    <header th:insert="layout/header :: header"> </header>
+    <header th:insert="layout/managerHeader :: header"> </header>
     <div class="container mt-3">
         <h2>학생 등록</h2><p th:text="${message}"></p>
         <hr>
@@ -39,7 +39,7 @@
 
 
     </div>
-    <footer th:insert="layout/header :: footer"></footer>
+    <footer th:insert="layout/managerHeader :: footer"></footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>

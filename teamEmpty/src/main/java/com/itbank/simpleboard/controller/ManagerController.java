@@ -130,6 +130,7 @@ public class ManagerController {
         return mav;
     }
 
+    // 등록하기
     @GetMapping("/register")
     public ModelAndView register() {
         ModelAndView mav = new ModelAndView("manager/register");
@@ -656,17 +657,6 @@ public class ManagerController {
 
         List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(conditions);
 
-//        Object o = session.getAttribute("user");
-//        if(o instanceof StudentDto) {
-//            StudentDto dto = (StudentDto) o;
-//            condition.setStudentIdx(dto.getIdx());
-//            mav.addObject("list",studentService.getLectureDtoList(condition));
-//            if(studentService.getLectureDtoList(condition)!= null){
-//                mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
-//            }
-//        }else{
-//            mav.addObject("redirect:/");
-//        }
 
         model.addAttribute("semester",studentService.getLectureDtoList(condition));
         if(managerService.getCheckTuitionPayment(conditions)!= null){

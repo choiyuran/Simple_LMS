@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 </head>
 
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <form method="post" th:action="@{/manager/majorUpdate/{idx}(idx=${major.idx})}">
         <table class="table table-bordered">
@@ -33,6 +33,6 @@
         <button class="btn btn-primary">수정 완료</button>
     </form>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 </body>
 </html>

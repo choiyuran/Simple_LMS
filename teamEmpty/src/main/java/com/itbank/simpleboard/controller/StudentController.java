@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -449,5 +450,60 @@ public class StudentController {
         }
 
         return responseData;
+    }
+
+    @ResponseBody
+    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
+    public ResponseEntity<List<StudentLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
+        long startTime = System.currentTimeMillis();
+
+        condition.setStudent_idx(((StudentDto) session.getAttribute("user")).getIdx());
+        List<StudentLectureDto> studentLectureDtoList = studentService.getStudentLectureDtoList(condition);
+
+        long endTime = System.currentTimeMillis();
+        log.info("StudentController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(studentLectureDtoList);
+    }
+
+    @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
+    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition) {
+        Object user = session.getAttribute("user");
+        if (user instanceof StudentDto) {
+            long startTime = System.currentTimeMillis();
+
+            StudentDto student = (StudentDto) user;
+            condition.setProfessor_idx(student.getIdx());
+            System.err.println("test1");
+            List<StudentLectureDto> myLectureDtoList = studentService.getStudentLectureDtoList(condition);
+            model.addAttribute("MyList", myLectureDtoList);
+
+            // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
+            model.addAttribute("MajorList", myLectureDtoList.stream()
+                    .map(StudentLectureDto::getMajor)
+                    .distinct()
+                    .collect(Collectors.toList()));
+
+            model.addAttribute("GradeList", myLectureDtoList.stream()
+                    .map(StudentLectureDto::getGrade)
+                    .distinct()
+                    .sorted()
+                    .collect(Collectors.toList()));
+
+            int currentYear = LocalDate.now().getYear();
+            List<Integer> yearList = new ArrayList<>();
+            for (int i = 4; i >= 0; i--) {
+                int year = currentYear - i;
+                yearList.add(year);
+            }
+            model.addAttribute("YearList", yearList);
+
+            long endTime = System.currentTimeMillis();
+            log.info("StudentController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
+            return "/student/myLecture";
+        } else {
+            return "redirect:/login";
+        }
     }
 }

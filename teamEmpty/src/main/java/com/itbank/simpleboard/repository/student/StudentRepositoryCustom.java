@@ -17,4 +17,6 @@ public interface StudentRepositoryCustom {
     StudentListDto selectOndeStudent(Long idx);
 
     OverallGradeDto findOverallGrade(Long stuIdx);
+
+    List<StudentLectureDto> getStudentLectureDto(LectureSearchConditionDto condition);
 }

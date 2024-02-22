@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 </head>
 
 
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <h2>학생 등록 명단</h2>
     <p>학과, 교수 입력시 반드시 학과번호와 교수번호까지 함께 입력해주세요 EX)유아교육과(001) 김교수(123)</p>
@@ -72,7 +72,7 @@
     </form>
 
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -148,4 +148,8 @@ public class StudentService {
         situation.setStudent_status(lastest.getStudent_status());
         return 1;
     }
+
+    public List<StudentLectureDto> getStudentLectureDtoList(LectureSearchConditionDto condition) {
+        return studentRepository.getStudentLectureDto(condition);
+    }
 }

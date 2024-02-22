@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,13 +47,22 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, @RequestParam String user_pw, HttpSession session, RedirectAttributes ra) {
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
         String url = "redirect:/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
             UserDTO user = userService.getUser(user_id, user_pw);
             if (user == null) {
                 ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
             } else {
+                // '내 아이디 기억하기'가 체크되었을 때
+                if (rememberMe) {
+                    // 쿠키 생성
+                    Cookie cookie = new Cookie("user_id", user_id);
+                    // 쿠키 유효시간 설정(7일)
+                    cookie.setMaxAge(7 * 24 * 60 * 60);
+                    // 쿠키 저장
+                    response.addCookie(cookie);
+                }
                 switch (user.getRole().toString()) {
                     case "교수":
                         ProfessorDto professor = userService.getProfessor(user);
@@ -96,8 +107,14 @@ public class HomeController {
 
     @ResponseBody
     @PostMapping("email-verification")                      // 이메일 인증
-    public Integer SendVerificationCode(String email) {
-        return userService.sendAuthNumber(email);
+    public Integer SendVerificationCode(String email, HttpServletResponse response) {
+        Integer authNumber = userService.sendAuthNumber(email);
+
+        Cookie cookie = new Cookie("authNumber", authNumber.toString());
+        cookie.setMaxAge(3 * 60); // 쿠키 유효시간을 3분으로 설정
+        response.addCookie(cookie); // 클라이언트에 쿠키 추가
+
+        return authNumber;
     }
 
     @PostMapping("/userModify")

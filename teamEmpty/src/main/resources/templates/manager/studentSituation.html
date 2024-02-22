@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 </head>
 
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <h2>신청 현황</h2>
     <hr>
@@ -41,7 +41,7 @@
     </table>
     <button class="btn btn-primary" th:if="${!#strings.isEmpty(status)}"><a href="/manager/studentSituation">목록으로</a></button>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 
 </body>
 </html>
