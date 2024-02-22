@@ -1,90 +1,73 @@
 package com.itbank.simpleboard.component;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
 @Component
 @Slf4j
 public class FileComponent {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Autowired
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String s3BucketName;
+
+    public FileComponent(AmazonS3 amazonS3) {
+        this.amazonS3 = amazonS3;
+    }
 
     /**
      * 파일 업로드 메서드
      *
-     * @param upload 업로드할 파일
-     * @param directoryName 업로드할 디렉토리 이름
-     * @return 업로드된 파일의 이름, 실패 시 null
+     * @param upload         업로드할 파일
+     * @param directoryName  업로드할 디렉토리 이름
+     * @return 업로드된 파일의 URL, 실패 시 null
      */
     public String upload(MultipartFile upload, String directoryName) {
         log.info("fileUpload");
-        String dirString = getSpecificUploadDir(directoryName);
 
-        File dir = new File(dirString);
+        // 파일명에서 공백을 "_"로 대체
+        String originalFileName = upload.getOriginalFilename();
+        String sanitizedFileName = (originalFileName != null) ? originalFileName.replaceAll(" ", "_") : UUID.randomUUID().toString();
 
-        // 저장 디렉토리가 존재하지 않으면 생성
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        String key = directoryName + "/" + sanitizedFileName;
 
-        // 업로드된 파일의 원본 파일명 획득
-        String fileName = upload.getOriginalFilename();
+        try (InputStream inputStream = upload.getInputStream()) {
+            amazonS3.putObject(s3BucketName, key, inputStream, null);
 
-        // 파일명이 존재할 경우에만 처리
-        if (fileName != null) {
-            fileName = fileName.replaceAll(" ", "_");
-            File dest = new File(dirString, fileName);
-
-            try {
-                // 파일을 저장
-                upload.transferTo(dest);
-                log.info("File uploaded to {}: {}", directoryName, fileName);
-                return fileName;
-            } catch (IllegalStateException | IOException e) {
-                e.printStackTrace();
-                // 파일 저장 실패 시 예외 처리
-            }
+            log.info("File uploaded to S3: {}", key);
+            return sanitizedFileName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 파일 저장 실패 시 예외 처리
         }
         return null;
     }
 
     public String uploadIdPhoto(MultipartFile upload, String directoryName, String newFileName) {
         log.info("fileUpload");
-        String dirString = getSpecificUploadDir(directoryName);
 
-        File dir = new File(dirString);
+        // 파일명에서 공백을 "_"로 대체
+        String sanitizedFileName = (newFileName != null) ? newFileName.replaceAll(" ", "_") : UUID.randomUUID().toString();
 
-        // 저장 디렉토리가 존재하지 않으면 생성
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        String key = directoryName + "/" + sanitizedFileName;
 
-        // 업로드할 파일의 원본 파일명 획득
-        String originalFileName = upload.getOriginalFilename();
+        try (InputStream inputStream = upload.getInputStream()) {
+            amazonS3.putObject(s3BucketName, key, inputStream, null);
 
-        // 새 파일 이름이 지정되었으면 사용, 아니면 원본 파일명 사용
-        String fileName = (newFileName != null && !newFileName.isEmpty()) ? newFileName : originalFileName;
-
-        // 파일명이 존재할 경우에만 처리
-        if (fileName != null) {
-            fileName = fileName.replaceAll(" ", "_");
-            File dest = new File(dirString, fileName);
-
-            try {
-                // 파일을 저장
-                upload.transferTo(dest);
-                log.info("File uploaded to {}: {}", directoryName, fileName);
-                return fileName;
-            } catch (IllegalStateException | IOException e) {
-                e.printStackTrace();
-                // 파일 저장 실패 시 예외 처리
-            }
+            log.info("File uploaded to S3: {}", key);
+            return sanitizedFileName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 파일 저장 실패 시 예외 처리
         }
         return null;
     }
@@ -92,27 +75,19 @@ public class FileComponent {
     /**
      * 파일 삭제 메서드
      *
-     * @param fileName 삭제할 파일의 이름
-     * @param directoryName
+     * @param fileName       삭제할 파일의 이름
+     * @param directoryName  디렉토리 이름
      */
     public void deleteFile(String fileName, String directoryName) {
         log.info("deleteFile");
-        String specificUploadDir = getSpecificUploadDir(directoryName);
-        File dest = new File(specificUploadDir, fileName);
+        String key = directoryName + "/" + fileName;
 
         // 파일이 존재하면 삭제
-        if (dest.exists()) {
-            dest.delete();
-            log.info("File deleted from {}: {}", directoryName, fileName);
+        if (amazonS3.doesObjectExist(s3BucketName, key)) {
+            amazonS3.deleteObject(s3BucketName, key);
+            log.info("File deleted from S3: {}", key);
         } else {
-            log.warn("File not found in {}: {}", directoryName, fileName);
+            log.warn("File not found in S3: {}", key);
         }
-    }
-
-    /**
-     * 디렉토리 이름에 따라 적절한 uploadDir을 반환하는 메서드
-     */
-    private String getSpecificUploadDir(String directoryName) {
-        return uploadDir + File.separator + directoryName;
     }
 }

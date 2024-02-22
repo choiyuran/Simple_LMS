@@ -67,6 +67,9 @@ dependencies {
 
     // 메일
     implementation 'com.sun.mail:jakarta.mail:1.6.7' // Jakarta Mail dependency
+
+    // 파일 업로드를 위한 cloud 연결
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('bootBuildImage') {

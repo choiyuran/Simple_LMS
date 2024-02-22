@@ -642,6 +642,29 @@ public class ManagerController {
         return "redirect:/manager/noticeList";
     }
 
+    @GetMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ManagerLoginDto) {
+            return "manager/modifyCheck";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
+        String url = "manager/modifyCheck";
+        Object login = session.getAttribute("user");
+        int result = userService.checkPassword(login, password);
+        if (result != 0) {
+            url = "redirect:/manager/managerModify";
+        } else {
+            model.addAttribute("msg", "비밀번호를 확인해주세요.");
+        }
+        return url;
+    }
+
     @GetMapping("/managerModify")           // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {
         Object user = session.getAttribute("user");

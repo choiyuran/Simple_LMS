@@ -21,32 +21,31 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
 
-    private final JPAQueryFactory queryFactory;
-    QLecture lecture = QLecture.lecture;
-
     public List<LectureDto> selectAll() {
         return lectureRepository.getLectureDtos();
     }
 
     public List<LectureDto> selectAll(String searchType, String keyword) {
-        return lectureRepository.getLectureListDtos(searchType,keyword);
+        return lectureRepository.getLectureListDtos(searchType, keyword);
     }
 
 
     @Transactional
     public String planUpload(MultipartFile plan, Long lectureIdx) {
         String stringPlan = null;
-        Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
-        if (optionalLecture.isPresent()) {
-            Lecture lecture = optionalLecture.get();
-            if (lecture.getPlan() != null) {
-                fileComponent.deleteFile(lecture.getPlan(), "syllabus");
-            }
-            String syllabus = fileComponent.upload(plan, "syllabus");
-            if (syllabus != null) {
-                lecture.setPlan(syllabus);
-                lectureRepository.save(lecture);
-                stringPlan = syllabus;
+        if (!plan.isEmpty()) {
+            Optional<Lecture> optionalLecture = lectureRepository.findById(lectureIdx);
+            if (optionalLecture.isPresent()) {
+                Lecture lecture = optionalLecture.get();
+                if (lecture.getPlan() != null) {
+                    fileComponent.deleteFile(lecture.getPlan(), "syllabus");
+                }
+                String syllabus = fileComponent.upload(plan, "syllabus");
+                if (syllabus != null) {
+                    lecture.setPlan(syllabus);
+                    lectureRepository.save(lecture);
+                    stringPlan = syllabus;
+                }
             }
         }
         return stringPlan;

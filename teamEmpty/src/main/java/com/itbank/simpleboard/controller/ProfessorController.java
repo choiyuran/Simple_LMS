@@ -28,6 +28,7 @@ public class ProfessorController {
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
+    private final UserService userService;
 
     @GetMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -164,6 +165,29 @@ public class ProfessorController {
         } else {
             return "redirect:/login";
         }
+    }
+
+    @GetMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ProfessorDto) {
+            return "professor/modifyCheck";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
+        String url = "professor/modifyCheck";
+        Object login = session.getAttribute("user");
+        int result = userService.checkPassword(login, password);
+        if (result != 0) {
+            url = "redirect:/professor/professorModify";
+        } else {
+            model.addAttribute("msg", "비밀번호를 확인해주세요.");
+        }
+        return url;
     }
 
     @GetMapping("/professorModify") // 교수 개인 정보 수정

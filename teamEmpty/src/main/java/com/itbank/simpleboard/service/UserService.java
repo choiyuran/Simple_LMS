@@ -211,4 +211,32 @@ public class UserService {
         }
         return result;
     }
+
+    public int checkPassword(Object login, String password) {
+        int row = 0;
+
+        if (login instanceof StudentDto) {
+            StudentDto user = (StudentDto) login;
+            String hash = hashComponent.getHash(password, user.getUser().getSalt());
+            String userPw = user.getUser().getUser_pw();
+            if (hash.equals(userPw)) {
+                row = 1;
+            }
+        } else if (login instanceof ProfessorDto) {
+            ProfessorDto user = (ProfessorDto) login;
+            String hash = hashComponent.getHash(password, user.getUser().getSalt());
+            String userPw = user.getUser().getUser_pw();
+            if (hash.equals(userPw)) {
+                row = 1;
+            }
+        } else if (login instanceof ManagerLoginDto) {
+            ManagerLoginDto user = (ManagerLoginDto) login;
+            String hash = hashComponent.getHash(password, user.getUser().getSalt());
+            String userPw = user.getUser().getUser_pw();
+            if (hash.equals(userPw)) {
+                row = 1;
+            }
+        }
+        return row;
+    }
 }

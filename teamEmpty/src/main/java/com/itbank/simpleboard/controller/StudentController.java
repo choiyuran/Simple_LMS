@@ -37,6 +37,7 @@ public class StudentController {
     private final PaymentsService paymentsService;
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
+    private final UserService userService;
     private final ProfessorService professorService;
     private final ScholarShipService scholarShipService;
     private final SituationRecordService situationRecordService;
@@ -130,6 +131,29 @@ public class StudentController {
     public String cancel(Long stuIdx, Long idx) {
         enrollmentService.cancel(stuIdx, idx);
         return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
+    }
+
+    @GetMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof StudentDto) {
+            return "student/modifyCheck";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
+        String url = "student/modifyCheck";
+        Object login = session.getAttribute("user");
+        int result = userService.checkPassword(login, password);
+        if (result != 0) {
+            url = "redirect:/student/studentModify";
+        } else {
+            model.addAttribute("msg", "비밀번호를 확인해주세요.");
+        }
+        return url;
     }
 
     // 내 정보 수정
