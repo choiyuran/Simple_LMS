@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.professor;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -10,6 +11,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -239,10 +243,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetch();
     }
 
-
-
     @Override
-    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
+    public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
         Long majorIdx = (Long) map.get("major_idx");
         String name = (String) map.get("name");
         Boolean leave = (Boolean) map.get("leave");
@@ -258,7 +260,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
             builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
         }
 
-        return queryFactory
+        QueryResults<ProfessorListDto> results = queryFactory
                 .select(new QProfessorListDto(
                         QProfessor.professor.professor_idx,
                         QProfessor.professor.professor_img,
@@ -275,7 +277,12 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .join(QProfessor.professor.user, QUser.user)
                 .join(QProfessor.professor.major, QMajor.major)
                 .where(builder)
-                .fetch();
+                .orderBy(professor.professor_idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override

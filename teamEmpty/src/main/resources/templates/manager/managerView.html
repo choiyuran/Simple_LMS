@@ -44,7 +44,7 @@
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>
-                <button class="btn btn-danger"><a th:href="@{/manager/managerList}">취소</a></button>
+                <a th:href="@{/manager/managerList}"><button class="btn btn-danger">취소</button></a>
 
                 <button th:if="${manager.leaveDate == null}" type="button" class="btn btn-danger" onclick="handleLeave(this)"
                         th:data-manager-idx="${manager.idx}">퇴사 처리</button>

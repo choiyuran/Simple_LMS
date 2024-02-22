@@ -11,6 +11,8 @@ import com.itbank.simpleboard.repository.student.SituationRecordRepository;
 import com.itbank.simpleboard.repository.student.SituationRepository;
 import com.itbank.simpleboard.repository.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,8 +42,8 @@ public class SituationService {
     }
 
 
-    public List<SituationStuDto> selectSituationStu(String status) {
-        return situationRepository.findAllSituationStu(status);
+    public Page<SituationStuDto> selectSituationStu(String status, Pageable pageable) {
+        return situationRepository.findAllSituationStu(status, pageable);
     }
 
     public SituationStuDto selectOneSituation(Long idx) {

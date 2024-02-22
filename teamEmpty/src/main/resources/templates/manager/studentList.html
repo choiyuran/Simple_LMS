@@ -43,13 +43,65 @@
             <td th:text="${row.pnum}"></td>
         </tr>
 
-        <tr th:if="${#lists.isEmpty(studentList)}">
+        <tr th:if="${studentList == null || studentList.isEmpty()}">
             <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <button class="btn btn-facebook"><a href="/manager/addStudent">학생 등록</a></button>
-    <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name'])}"><a href="/manager/studentList">목록으로</a></button>
+    <a href="/manager/addStudent"><button class="btn btn-facebook">학생 등록</button></a>
+    <a href="/manager/studentList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name'])}">목록으로</button></a>
+
+    <div class="d-flex justify-content-center">
+        <nav style="text-align: center;" th:if="${studentList != null && !studentList.isEmpty()}">
+            <ul class="pagination">
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/studentList(page=0)}" th:text="'<<'"></a>
+                </li>
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/studentList(page=${start - maxPage})}" th:text="'<'"></a>
+                </li>
+
+                <li class="mx-2"  th:each="page: ${#numbers.sequence(start, end)}">
+                    <a th:text="${page}"
+                       th:if="${num != page}"
+                       th:href="@{/manager/studentList(page=${page - 1})}"></a>
+                    <a th:text="${page}"
+                       th:if="${num == page}" disabled="true"></a>
+                </li>
+
+                <li class="mx-2" th:if="${end < studentList.totalPages}">
+                    <a th:href="@{/manager/studentList(page=${start + maxPage})}" th:text="'>'"></a>
+                </li>
+                <li class="mx-2" th:if="${end < studentList.totalPages}">
+                    <a th:href="@{/manager/studentList(page=${studentList.totalPages - 1})}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
 </div>
 <footer th:insert="layout/header :: footer"></footer>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let major_idx = /*[[${map['major_idx']}]]*/ null;
+        let name = /*[[${map['name']}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+
+            let href = $(this).attr('href');
+
+            if (major_idx !== null) {
+                href += '&major_idx=' + encodeURIComponent(major_idx);
+            }
+            if (name !== null) {
+                href += '&name=' + encodeURIComponent(name);
+            }
+            location.href = href;
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

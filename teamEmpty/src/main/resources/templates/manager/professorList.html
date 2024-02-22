@@ -54,12 +54,40 @@
 
         </tr>
 
-        <tr th:if="${#lists.isEmpty(professorList)}">
+        <tr th:if="${professorList == null || professorList.isEmpty()}">
             <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
         </tr>
     </table>
     <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
     <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}"><a href="/manager/professorList" onclick="resetSearchConditions()">목록으로</a></button>
+
+    <div class="d-flex justify-content-center">
+        <nav style="text-align: center;" th:if="${professorList != null && !professorList.isEmpty()}">
+            <ul class="pagination">
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/professorList(page=0)}" th:text="'<<'"></a>
+                </li>
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/professorList(page=${start - maxPage})}" th:text="'<'"></a>
+                </li>
+
+                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a th:text="${page}"
+                       th:if="${num != page}"
+                       th:href="@{/manager/professorList(page=${page - 1})}"></a>
+                    <a th:text="${page}"
+                       th:if="${num == page}" disabled="true"></a>
+                </li>
+
+                <li class="mx-2" th:if="${end < professorList.totalPages}">
+                    <a th:href="@{/manager/professorList(page=${start + maxPage})}" th:text="'>'"></a>
+                </li>
+                <li class="mx-2" th:if="${end < professorList.totalPages}">
+                    <a th:href="@{/manager/professorList(page=${professorList.totalPages - 1})}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 
@@ -117,5 +145,33 @@
         $('#leaveCheckbox').prop('checked', resultLeaveValue === 'true');
     }
 </script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let major_idx = /*[[${map['major_idx']}]]*/ null;
+        let name = /*[[${map['name']}]]*/ null;
+        let leave = /*[[${map['leave']}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+
+            let href = $(this).attr('href');
+
+            if (major_idx !== null) {
+                href += '&major_idx=' + encodeURIComponent(major_idx);
+            }
+            if (name !== null) {
+                href += '&name=' + encodeURIComponent(name);
+            }
+            if (leave !== null) {
+                href += '&leave=' + leave;
+            }
+            location.href = href;
+        });
+    });
+    /*]]>*/
+</script>
+
 </body>
 </html>
