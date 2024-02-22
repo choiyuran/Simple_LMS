@@ -34,4 +34,5 @@ jobs:
       run: chmod +x ./teamEmpty/gradlew
     
     - name: Build with Gradle
-      run: ./teamEmpty/gradlew clean build
+      run: ./gradlew clean build
+      working-directory: ./teamEmpty
