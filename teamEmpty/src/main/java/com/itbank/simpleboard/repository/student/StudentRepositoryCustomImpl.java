@@ -143,6 +143,8 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .fetchOne();
     }
 
+
+
     @Override
     public OverallGradeDto findOverallGrade(Long stuIdx) {
         NumberExpression<Double> scoreAsDouble = QGrade.grade.score.castToNum(Double.class);

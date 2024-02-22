@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface StudentRepositoryCustom {
     List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition);
+
     List<TuitionDto> getTuitionData(Long idx);
 
     List<StudentListDto> selectAllStudent(HashMap<String, Object> map);

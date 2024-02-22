@@ -42,7 +42,7 @@
         <table class="table table-bordered">
             <tr>
                 <th>번호</th>
-                <th>학번</th>
+<!--                <th>학번</th>-->
                 <th>이름</th>
                 <th>주민번호</th>
                 <th>연락처</th>
@@ -52,14 +52,17 @@
                 <th>학년</th>
                 <th>학과번호</th>
                 <th>지도교수번호</th>
-                <th>수정</th>
+<!--                <th>수정</th>-->
             </tr>
             <tr th:each="student : ${studentList}">
                 <td contenteditable="true" data-field="idx" th:text="${student.idx}"></td>
-                <td contenteditable="true" data-field="student_num" th:text="${student.student_num}"></td>
+<!--                <td contenteditable="true" data-field="student_num" th:text="${student.student_num}"></td>-->
                 <td contenteditable="true" data-field="name" th:text="${student.name}"></td>
-                <td contenteditable="true" data-field="security" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>
-                <td contenteditable="true" data-field="pnum" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>
+                <td contenteditable="true" data-field="security" th:text="${student.security.contains('-') ? student.security : #strings.substring(student.security, 0, 6) + '-' + #strings.substring(student.security, 6)}"></td>
+                <td contenteditable="true" data-field="pnum" th:text="${student.pnum.contains('-') ? student.pnum : #strings.substring(student.pnum,0,3) + '-' + #strings.substring(student.pnum,3,7) + '-' + #strings.substring(student.pnum,7)}"></td>
+
+                <!--                <td contenteditable="true" data-field="security" th:text="${#strings.substring(student.security, 0, 6)} + '-' + ${#strings.substring(student.security, 6)}"></td>-->
+<!--                <td contenteditable="true" data-field="pnum" th:text="${#strings.substring(student.pnum,0,3)}+'-'+${#strings.substring(student.pnum,3,7)}+'-'+${#strings.substring(student.pnum,7)}"></td>-->
                 <td contenteditable="true" data-field="address" th:text="${student.address}"></td>
                 <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                 <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
@@ -189,8 +192,6 @@
 
 
 
-
-
     function saveStudentList() {
         const updatedStudents = [];
         let studentsWithMissingInfo = ''; // 정보없음이 있는 학생들의 번호를 담을 문자열
@@ -200,7 +201,7 @@
         for (let index = 1; index < tableRows.length; index++) { // Header row를 제외한 테이블의 첫 번째 row부터 시작
             const row = tableRows[index];
             const idx = row.querySelector('td[data-field="idx"]').innerText;
-            const student_num = row.querySelector('td[data-field="student_num"]').innerText;
+            // const student_num = row.querySelector('td[data-field="student_num"]').innerText;
             const name = row.querySelector('td[data-field="name"]').innerText;
             const security = row.querySelector('td[data-field="security"]').innerText;
             const pnum = row.querySelector('td[data-field="pnum"]').innerText;
@@ -218,7 +219,7 @@
             } else {
                 const student = {
                     idx: idx,
-                    student_num: student_num,
+                    // student_num: student_num,
                     name: name,
                     security: security,
                     pnum: pnum,
