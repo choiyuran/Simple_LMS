@@ -366,6 +366,7 @@ public class ManagerService {
     public String addStudentList(List<StudentFormDTO> studentList){
         log.info("addStudentList service");
         int index = 0;
+
         for(StudentFormDTO dto : studentList) {
             System.err.println(index + "번 학생 추가 시작");
             String salt = hashComponent.getRandomSalt();
@@ -374,6 +375,7 @@ public class ManagerService {
 
             Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
             Optional<Professor> professor = professorRepository.findById(extractedIdx(dto.getProfessor()));
+
             if(major.isPresent() && professor.isPresent()){
                 User user = new User(
                         pw,
@@ -387,17 +389,22 @@ public class ManagerService {
                 );
                 userRepository.save(user);
                 System.err.println(index + "번 학생 유저저장");
-
-                System.err.println(major.get().getName() + "major");
-
-                System.err.println(professor.get().getProfessor_idx() + "getProfessor_idx");
+                log.info("dto.getStudent_grade() : {} ",dto.getStudent_grade());
+                log.info("user : {} ",user);
+                log.info("professor.get() : {} ",professor.get());
+                log.info("major.get() : {} ",major.get().getIdx());
+                log.info("dto.getEntranceDate() : {} ",dto.getEntranceDate().toLocalDate().getYear());
+                log.info("major.get().getIdx() : {} ",major.get().getIdx());
+                Integer lastStudentNum = studentRepository.findByEntranceDateAndMajorIdx(dto.getEntranceDate().toLocalDate().getYear()%100,major.get().getIdx());
+                log.info("lastStudentNum : {} ",lastStudentNum);
                 Student s = new Student(
                         dto.getStudent_grade(),
                         user,
                         professor.get(),
                         major.get(),
                         dto.getEntranceDate(),
-                        major.get().getIdx()
+                        major.get().getIdx(),
+                        lastStudentNum
                 );
                 System.err.println(index + "번 학생엔티티");
                 Situation situation = new Situation(
@@ -414,6 +421,11 @@ public class ManagerService {
                 studentRepository.save(s);
                 situationRepository.save(situation);
                 situationRecordRepository.save(situationRecord);
+
+                log.info("user.getUser_id : {} ",user.getUser_id());
+                user.setUser_id(String.valueOf(s.getStudent_num()));
+
+                log.info("user.setUser_id : {} ",user.getUser_id());
                 log.info("s.getUser().getUser_id()"+ s.getUser().getUser_id());
 
 

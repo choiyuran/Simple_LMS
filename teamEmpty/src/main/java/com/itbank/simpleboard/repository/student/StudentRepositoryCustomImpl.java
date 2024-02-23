@@ -209,6 +209,22 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public Integer findByEntranceDateAndMajorIdx(int year,Long majorIdx) {
+        // 입력된 연도와 동일한 입학년도를 가진 학생들 중에서 가장 최근에 등록된 학생의 학번 전체를 조회하는 쿼리
+
+        Integer lastStudentNum = queryFactory
+                .select(student.student_num)
+                .from(student)
+                .where(student.major.idx.eq(majorIdx))
+                .where(student.student_num.intValue().between(year * 1000000, (year + 1) * 1000000 - 1))
+                .orderBy(student.idx.desc())
+                .fetchFirst();
+
+        // 년도가 일치하는 학생이 없는 경우 "00000000"을 반환
+        return lastStudentNum != null ? lastStudentNum : 0;
+    }
+
     private BooleanExpression nameOrProfessorContain(String name) {
         if (StringUtils.hasText(name)) {
             return lecture.name.contains(name)
