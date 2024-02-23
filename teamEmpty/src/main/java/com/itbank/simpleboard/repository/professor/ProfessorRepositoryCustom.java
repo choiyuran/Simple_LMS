@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public interface ProfessorRepositoryCustom {
-    List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition);
+    Page<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition, Pageable pageable);
 
     ProfessorLectureDto getLectureDto(Long idx);
 

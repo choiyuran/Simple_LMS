@@ -638,10 +638,16 @@ public class ManagerController {
     }
 
     @GetMapping("/noticeList")          // 공지 사항 조회
-    public ModelAndView noticeList() {
+    public ModelAndView noticeList(@PageableDefault(size = 2) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/noticeList");
-        List<Notice> noticeList = noticeService.selectAll();
+        Page<Notice> noticeList = noticeService.selectAll(pageable);
+        int start = pagingComponent.calculateStart(noticeList.getNumber());
+        int end = pagingComponent.calculateEnd(noticeList.getTotalPages(), start);
         mav.addObject("noticeList", noticeList);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 

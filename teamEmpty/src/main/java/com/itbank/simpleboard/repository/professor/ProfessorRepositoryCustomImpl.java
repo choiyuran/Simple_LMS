@@ -35,8 +35,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
-        return queryFactory
+    public Page<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition, Pageable pageable) {
+        QueryResults<ProfessorLectureDto> results = queryFactory
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
@@ -73,8 +73,55 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         professor_idxEq(condition.getProfessor_idx()),
                         isAbolition(condition.getIsAbolition())
                 )
-                .fetch();
+                .orderBy(lecture.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
+
+//    @Override
+//    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
+//        return queryFactory
+//                .select(new QProfessorLectureDto(
+//                        lecture.idx,
+//                        lecture.name,
+//                        lecture.credit,
+//                        lecture.day,
+//                        lecture.start,
+//                        lecture.end,
+//                        lecture.type.stringValue(),
+//                        lecture.maxCount,
+//                        lecture.currentCount,
+//                        lecture.semester,
+//                        lecture.grade,
+//                        lecture.abolition.stringValue(),
+//                        lecture.professor.professor_idx,
+//                        QUser.user.user_name.as("professor_name"),
+//                        lecture.plan,
+//                        major.name,
+//                        QCollege.college.location,
+//                        QLectureRoom.lectureRoom.room
+//                ))
+//                .from(lecture)
+//                .innerJoin(professor).on(lecture.professor.eq(professor))
+//                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+//                .innerJoin(lecture.major, major)
+//                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+//                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+//                .where(
+//                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
+//                        typeEq(condition.getType()),
+//                        yearEq(condition.getYear()),
+//                        semesterEq(condition.getSemester()),
+//                        gradeEq(condition.getGrade()),
+//                        majorEq(condition.getMajor()),
+//                        professor_idxEq(condition.getProfessor_idx()),
+//                        isAbolition(condition.getIsAbolition())
+//                )
+//                .fetch();
+//    }
 
     private BooleanExpression isAbolition(String isAbolition) {
         return StringUtils.hasText(isAbolition) ? null : lecture.abolition.eq(YesOrNo.valueOf("N"));
