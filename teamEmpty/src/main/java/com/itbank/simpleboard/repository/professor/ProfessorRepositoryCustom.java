@@ -10,6 +10,8 @@ import java.util.List;
 public interface ProfessorRepositoryCustom {
     List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition);
 
+    List<String> getMajorNameList(LectureSearchConditionDto condition);
+
     ProfessorLectureDto getLectureDto(Long idx);
 
     List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx);

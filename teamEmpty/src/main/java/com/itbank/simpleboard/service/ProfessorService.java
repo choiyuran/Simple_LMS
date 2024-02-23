@@ -23,6 +23,10 @@ public class ProfessorService {
         return professorRepository.getLectureDtoList(condition);
     }
 
+    public List<String> getMajorNameList(LectureSearchConditionDto condition) {
+        return professorRepository.getMajorNameList(condition);
+    }
+
     public ProfessorLectureDto getLectureDto(Long idx) {
         return professorRepository.getLectureDto(idx);
     }
