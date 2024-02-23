@@ -1,6 +1,7 @@
 package com.itbank.simpleboard.repository.manager;
 
 import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
+import com.itbank.simpleboard.dto.CheckTutionPaymentConditionDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.QManagerDTO;
 import com.itbank.simpleboard.entity.*;
@@ -96,14 +97,14 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     }
 
     @Override
-    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTuitionPaymentDto conditions) {
+    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTutionPaymentConditionDto conditions) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        BooleanExpression studentIdxCondition = conditions.getIdx() != null ?
-                QStudent.student.idx.eq(conditions.getIdx()) : null;
+        BooleanExpression lectureIdxCondition = conditions.getMajor_idx() != null ?
+                QMajor.major.idx.eq(conditions.getMajor_idx()) : null;
 
-        BooleanExpression semesterCondition = conditions.getSemester() != null ?
-                QPayments.payments.semester.eq(conditions.getSemester()) : null;
+        BooleanExpression userNameCondition = conditions.getUsername() != null ?
+                user.user_name.eq(conditions.getUsername()) : null;
 
         List<CheckTuitionPaymentDto> tuitionPayments = queryFactory
                 .select(Projections.constructor(CheckTuitionPaymentDto.class,
@@ -115,13 +116,14 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                         QPayments.payments.flag,
                         QPayments.payments.semester))
                 .from(QStudent.student)
-                .leftJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .innerJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .innerJoin(user).on(QStudent.student.user.eq(user))
+                .innerJoin(QMajor.major).on(QStudent.student.major.eq(QMajor.major))
                 .where(
-                        studentIdxCondition,
-                        semesterCondition
+                        lectureIdxCondition,
+                        userNameCondition
                 )
                 .fetch();
-
         return tuitionPayments;
     }
 }

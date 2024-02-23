@@ -723,7 +723,7 @@ public class ManagerService {
     }
 
 
-    public List<CheckTuitionPaymentDto> getCheckTuitionPayment(CheckTuitionPaymentDto condition) {
+    public List<CheckTuitionPaymentDto> getCheckTuitionPayment(CheckTutionPaymentConditionDto condition) {
         return managerRepository.findAllCheckTuitionPayments(condition);
     }
 
