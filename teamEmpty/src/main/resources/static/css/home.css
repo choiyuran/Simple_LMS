@@ -55,9 +55,12 @@ li {
     flex-direction: column;
 }
 
+.main-img {
+    text-align: center;
+}
+
 .main-img img{
-    width: 1500px;
-    height: 500px;
+    height: 100%;
     margin-bottom: 40px;
 }
 

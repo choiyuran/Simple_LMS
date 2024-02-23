@@ -1,11 +1,16 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,6 +50,7 @@ public class ManagerController {
     private final SituationService situationService;
     private final NoticeService noticeService;
     private final StudentService studentService;
+    private final PagingComponent pagingComponent;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -130,6 +136,7 @@ public class ManagerController {
         return mav;
     }
 
+    // 등록하기
     @GetMapping("/register")
     public ModelAndView register() {
         ModelAndView mav = new ModelAndView("manager/register");
@@ -142,7 +149,8 @@ public class ManagerController {
     public ResponseEntity<Map<String, Object>> registerManager(@ModelAttribute UserFormDTO userFormDTO,
                                                                @RequestParam("imageFile") MultipartFile imageFile) {
         Map<String, Object> response = new HashMap<>();
-
+        log.info("교직원 등록 시작");
+        long startTime = System.currentTimeMillis();
         String msg;
         if (userFormDTO.getUserType().equals("manager")) {
             Manager manager = managerService.addManager(userFormDTO, imageFile);
@@ -150,6 +158,8 @@ public class ManagerController {
                 // 교직원 등록 성공 시
                 msg = manager.getUser().getUser_name() + "님 교직원 등록완료";
                 response.put("success", true);
+                long endTime = System.currentTimeMillis();
+                log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
             } else {
                 // 교직원 등록 실패 시
                 msg = "교직원 등록에 실패하였습니다";
@@ -165,6 +175,41 @@ public class ManagerController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping(value = "/addProfessor", headers = "Content-Type= multipart/form-data")   // 교수 등록
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO,
+                                                                 @RequestParam("imageFile") MultipartFile imageFile) {
+        log.info("교수등록 시작");
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> response = new HashMap<>();
+        log.info("사용자 타입: " + userFormDTO.getUserType());
+        String msg;
+        if (userFormDTO.getUserType().equals("professor")) {
+            Professor professor = managerService.addProfessor(userFormDTO, imageFile);
+            if (professor.getProfessor_idx() != null) {
+                // 교수 등록 성공 시
+                msg = professor.getUser().getUser_name() + "님 교수 등록완료";
+                response.put("success", true);
+                long endTime = System.currentTimeMillis();
+                log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
+            } else {
+                // 교수 등록 실패 시
+                msg = "교수 등록에 실패하였습니다";
+                response.put("success", false);
+            }
+        } else {
+            // 교수 타입의 사용자가 아닌 경우
+            msg = "교수 타입의 사용자가 아닙니다";
+            response.put("success", false);
+        }
+
+        response.put("message", msg);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
     @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
@@ -226,9 +271,6 @@ public class ManagerController {
                 .headers(headers)
                 .body(data);
     }
-
-
-
 
     @GetMapping("/addStudentList")   // 학생 등록
     public String registerStudentList() {
@@ -679,17 +721,6 @@ public class ManagerController {
 
         List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(conditions);
 
-//        Object o = session.getAttribute("user");
-//        if(o instanceof StudentDto) {
-//            StudentDto dto = (StudentDto) o;
-//            condition.setStudentIdx(dto.getIdx());
-//            mav.addObject("list",studentService.getLectureDtoList(condition));
-//            if(studentService.getLectureDtoList(condition)!= null){
-//                mav.addObject("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
-//            }
-//        }else{
-//            mav.addObject("redirect:/");
-//        }
 
         model.addAttribute("semester",studentService.getLectureDtoList(condition));
         if(managerService.getCheckTuitionPayment(conditions)!= null){
@@ -703,4 +734,20 @@ public class ManagerController {
 //        System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
     }
+
+    @GetMapping("/pagingTest")          // 페이징 테스트
+    public ModelAndView pagingTest(@PageableDefault(page = 0, size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("/manager/majorPaging");
+        Page<Major> list = managerService.majorListPaging(pageable);
+        int start = pagingComponent.calculateStart(list.getNumber());
+        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
+        mav.addObject("list", list);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("maxPage", 5);
+        return mav;
+    }
+
 }
+

@@ -38,8 +38,8 @@ public class Evaluation { // 수강 평가
     private String q5;
 
     // 수강 현황과 연결(학생 번호, 강의 번호)
-    @OneToOne
-    @JoinColumn(name = "enrollment_idx")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "enrollment_idx", unique = true)
     private Enrollment enrollment;
 
     public Evaluation(Integer q1, Integer q2, Integer q3, String q4, String q5, Enrollment enrollment) {

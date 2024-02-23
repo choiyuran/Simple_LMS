@@ -54,11 +54,15 @@
                     <input type="hidden" class="form-control form-control-user" id="verificationCode1"
                            placeholder="인증번호" disabled>
                     <input type="text" class="form-control form-control-user" id="verificationCode"
-                           placeholder="인증번호" required>
+                           placeholder="인증번호확인" required>
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-primary btn-user btn-block" id="checkVerification">인증확인
                     </button>
+                </div>
+                <!-- 인증번호 유효시간 표시란 -->
+                <div class="col-sm-12">
+                    <p id="timer">남은 시간: 3:00</p>
                 </div>
             </div>
 
@@ -201,27 +205,45 @@
         $(this).val(formatted);
     });
 
+    let countdown = null;
+
     document.querySelector('#email_validation').addEventListener('click', function (e) {
         e.preventDefault();
         let url = "/email-verification"
-        // AJAX 요청 부분
+
         $.ajax({
             type: "POST",
-            url: url, // 이메일 인증번호를 반환하는 컨트롤러 URL
+            url: url,
             data: {
-                email: $('#exampleInputEmail').val() // 이메일 입력란의 값
+                email: $('#exampleInputEmail').val()
             },
             success: function (response) {
                 alert('인증번호가 전송되었습니다.');
-                $('#verificationCode1').val(response); // 인증번호 입력란에 인증번호 설정
+                $('#verificationCode1').val(response);
                 document.getElementById('verificationField').style.display = 'flex';
+
+                // 인증번호 유효시간 카운트다운 시작
+                var remaining = 180;
+                countdown = setInterval(function() {
+                    remaining--;
+                    var minutes = Math.floor(remaining / 60);
+                    var seconds = remaining % 60;
+                    document.getElementById('timer').innerText = `남은 시간: ${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                    if (remaining <= 0) {
+                        clearInterval(countdown);
+                        document.getElementById('timer').innerText = "인증번호가 만료되었습니다.";
+                        document.getElementById('checkVerification').disabled = true; // 만료시 인증확인 버튼 비활성화
+                        document.getElementById('email_validation').disabled = false; // 인증하기 버튼 활성화
+                    }
+                }, 1000);
+                document.getElementById('email_validation').disabled = true; // 인증하기 버튼 비활성화
+                document.getElementById('checkVerification').disabled = false;
             },
             error: function (request, status, error) {
                 console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
             }
         });
     });
-
 
     document.querySelector('#checkVerification').addEventListener('click', function (e) {
         e.preventDefault();
@@ -231,7 +253,10 @@
 
         if (userCode === serverCode) {
             alert('인증이 완료되었습니다.');
-            emailChecked = true;
+            document.cookie = "authNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 만료시키기
+            clearInterval(countdown); // 카운트다운 멈추기
+            document.getElementById('timer').innerText = "인증이 완료되었습니다.";
+            emailChecked = true
         } else {
             alert('인증번호가 일치하지 않습니다.');
         }

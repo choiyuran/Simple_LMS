@@ -6,25 +6,27 @@
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 <main>
-    <form id="SemesterSearchForm">
-        <label>학기 선택 :
-            <select name="semester">
-                <option th:text="'학기 선택'" value="">학기 선택</option>
-                <option th:each="major : ${SemesterList}" th:value="${semester}" th:text="${semester}"></option>
-            </select>
-        </label>
-    </form>
-    <table>
-        <tr th:each="item : ${list}">
-            <td th:text="${item.idx}"></td>
-            <td th:text="${item.user_name}"></td>
-            <td th:text="${item.date}"></td>
-            <td th:text="${item.flag}"></td>
-            <td th:text="${item.num}"></td>
-            <td th:text="${item.semester}"></td>
-            <td th:text="${item.grade}"></td>
-        </tr>
-    </table>
+    <div class="container mt-3">
+        <form id="SemesterSearchForm">
+            <label>학기 선택 :
+                <select name="semester">
+                    <option th:text="'학기 선택'" value="">학기 선택</option>
+                    <option th:each="major : ${SemesterList}" th:value="${semester}" th:text="${semester}"></option>
+                </select>
+            </label>
+        </form>
+        <table>
+            <tr th:each="item : ${list}">
+                <td th:text="${item.idx}"></td>
+                <td th:text="${item.user_name}"></td>
+                <td th:text="${item.date}"></td>
+                <td th:text="${item.flag}"></td>
+                <td th:text="${item.num}"></td>
+                <td th:text="${item.semester}"></td>
+                <td th:text="${item.grade}"></td>
+            </tr>
+        </table>
+    </div>
 </main>
 <footer th:insert="layout/managerHeader :: footer"></footer>
 </body>

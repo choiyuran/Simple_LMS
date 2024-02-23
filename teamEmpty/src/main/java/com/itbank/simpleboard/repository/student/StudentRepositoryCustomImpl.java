@@ -23,6 +23,7 @@ import static com.itbank.simpleboard.entity.QLecture.lecture;
 import static com.itbank.simpleboard.entity.QEnrollment.enrollment;
 import static com.itbank.simpleboard.entity.QMajor.major;
 import static com.itbank.simpleboard.entity.QPayments.payments;
+import static com.itbank.simpleboard.entity.QProfessor.professor;
 import static com.itbank.simpleboard.entity.QScholarship.scholarship;
 import static com.itbank.simpleboard.entity.QScholarship_Award.scholarship_Award;
 import static com.itbank.simpleboard.entity.QStudent.student;
@@ -142,6 +143,8 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .fetchOne();
     }
 
+
+
     @Override
     public OverallGradeDto findOverallGrade(Long stuIdx) {
         NumberExpression<Double> scoreAsDouble = QGrade.grade.score.castToNum(Double.class);
@@ -161,4 +164,84 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .groupBy(student.major.college.name, student.major.name, student.student_grade)
                 .fetchOne();
     }
+
+    @Override
+    public List<StudentLectureDto> getStudentLectureDto(LectureSearchConditionDto condition) {
+        return queryFactory
+                .select(new QStudentLectureDto(
+                        lecture.idx,
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        lecture.abolition.stringValue(),
+                        lecture.professor.professor_idx,
+                        QUser.user.user_name.as("student_name"),
+                        lecture.plan,
+                        major.name,
+                        QCollege.college.location,
+                        QLectureRoom.lectureRoom.room
+                ))
+                .from(lecture,student)
+                .innerJoin(professor).on(lecture.professor.eq(professor))
+                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .innerJoin(enrollment).on(lecture.eq(enrollment.lecture).and(student.eq(enrollment.student)))
+                .where(
+                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
+                        typeEq(condition.getType()),
+                        yearEq(condition.getYear()),
+                        semesterEq(condition.getSemester()),
+                        gradeEq(condition.getGrade()),
+                        majorEq(condition.getMajor()),
+                        student_idxEq(condition.getStudent_idx()),
+                        isAbolition(condition.getIsAbolition())
+                )
+                .fetch();
+    }
+
+    private BooleanExpression nameOrProfessorContain(String name) {
+        if (StringUtils.hasText(name)) {
+            return lecture.name.contains(name)
+                    .or(QUser.user.user_name.contains(name));
+        }
+        return null;
+    }
+
+    private BooleanExpression isAbolition(String isAbolition) {
+        return StringUtils.hasText(isAbolition) ? null : lecture.abolition.eq(YesOrNo.valueOf("N"));
+    }
+    private BooleanExpression typeEq(String type) {
+        return StringUtils.hasText(type) ? lecture.type.eq(Lecture_Type.valueOf(type)) : null;
+    }
+
+    private BooleanExpression yearEq(Integer year) {
+        return year != null ? lecture.semester.contains(String.valueOf(year)) : null;
+    }
+
+    private BooleanExpression semesterEq(Integer semester) {
+        return semester != null ? lecture.semester.contains(semester + "학기") : null;
+    }
+
+    private BooleanExpression gradeEq(Integer grade) {
+        return grade != null ? lecture.grade.eq(grade) : null;
+    }
+
+    private BooleanExpression majorEq(String major) {
+        return StringUtils.hasText(major) ? QMajor.major.name.eq(major) : null;
+    }
+
+    private BooleanExpression student_idxEq(Long studentIdx) {
+        return studentIdx != null ? student.idx.eq(studentIdx) : null;
+    }
+
 }

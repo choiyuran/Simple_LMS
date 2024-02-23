@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 </head>
 
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <h2>학생 명단</h2>
     <hr>
@@ -50,6 +50,6 @@
     <button class="btn btn-facebook"><a href="/manager/addStudent">학생 등록</a></button>
     <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name'])}"><a href="/manager/studentList">목록으로</a></button>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 </body>
 </html>

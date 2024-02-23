@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
     <style>
         h4 {
             text-align: center;
@@ -55,7 +55,7 @@
     </style>
 </head>
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-4">
     <h4>학생 현황 등록</h4>
     <hr>
@@ -117,6 +117,6 @@
         <button type="button" class="btn btn-outline-secondary">취소</button>
     </div>
 </div>
-<footer th:insert = "layout/header :: footer"></footer>
+<footer th:insert = "layout/managerHeader :: footer"></footer>
 </body>
 </html>

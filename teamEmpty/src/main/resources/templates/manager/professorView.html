@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
 </head>
 
 <body>
-<header th:insert="layout/header :: header"></header>
+<header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-3">
     <h2>교수 상세 정보</h2>
     <hr>
@@ -55,7 +55,7 @@
         </div>
     </div>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 
 <script>
     function handleLeave(button) {

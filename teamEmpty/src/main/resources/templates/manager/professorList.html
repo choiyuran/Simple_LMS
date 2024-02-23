@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
+<head th:insert="layout/managerHeader :: head">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-<header th:insert="layout/header :: header"> </header>
+<header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <h2>교수 명단</h2>
     <hr>
@@ -61,7 +61,7 @@
     <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
     <button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}"><a href="/manager/professorList" onclick="resetSearchConditions()">목록으로</a></button>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 
 
 <script>
