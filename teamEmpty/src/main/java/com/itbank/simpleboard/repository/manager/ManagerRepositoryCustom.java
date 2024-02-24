@@ -2,6 +2,7 @@ package com.itbank.simpleboard.repository.manager;
 
 import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
 import com.itbank.simpleboard.dto.CheckTutionPaymentConditionDto;
+import com.itbank.simpleboard.dto.EvaluateFormDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.entity.Manager;
 
@@ -15,4 +16,5 @@ public interface ManagerRepositoryCustom {
 
     List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTutionPaymentConditionDto conditions);
 
+    List<EvaluateFormDto> viewEvaluation(Long idx);
 }

@@ -21,6 +21,26 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final FileComponent fileComponent;
 
+    public LectureDto selectOne(Long idx){
+        Lecture lecture = lectureRepository.findById(idx).orElse(null);
+        LectureDto dto = new LectureDto();
+        dto.setIdx(lecture.getIdx());
+        dto.setName(lecture.getName());
+        dto.setIntro(lecture.getIntro());
+        dto.setCredit(lecture.getCredit());
+        dto.setDay(lecture.getDay());
+        dto.setStart(lecture.getStart());
+        dto.setEnd(lecture.getEnd());
+        dto.setType(lecture.getType().toString());
+        dto.setMaxCount(lecture.getMaxCount());
+        dto.setCurrentCount(lecture.getCurrentCount());
+        dto.setSemester(lecture.getSemester());
+        dto.setGrade(lecture.getGrade());
+        dto.setProfessor(lecture.getProfessor().getProfessor_idx());
+        dto.setPlan(lecture.getPlan());
+        return dto;
+    }
+
     public List<LectureDto> selectAll() {
         return lectureRepository.getLectureDtos();
     }

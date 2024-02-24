@@ -52,6 +52,7 @@ public class ManagerController {
     private final StudentService studentService;
     private final PagingComponent pagingComponent;
     private final MajorService majorService;
+    private final LectureService lectureService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -746,5 +747,20 @@ public class ManagerController {
         return mav;
     }
 
+    // 교직원 입장에서 강의별 평가보기
+    @GetMapping("/viewEvaluation/{idx}")
+    public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ManagerLoginDto) {
+            List<EvaluateFormDto> evaluation = managerService.getEvaluation(idx);
+            if (evaluation != null) {
+                model.addAttribute("lecture", lectureService.selectOne(idx));
+                model.addAttribute("evaluation", evaluation);
+                model.addAttribute("total", managerService.countTotalQ1Q2Q3(evaluation));
+            }
+            return "/manager/myLectureEvaluation";
+        }
+        return "redirect:/login";
+    }
 }
 

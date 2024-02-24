@@ -1,9 +1,6 @@
 package com.itbank.simpleboard.repository.manager;
 
-import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
-import com.itbank.simpleboard.dto.CheckTutionPaymentConditionDto;
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.QManagerDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.types.Projections;
 import com.itbank.simpleboard.entity.QManager;
@@ -125,5 +122,24 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                 )
                 .fetch();
         return tuitionPayments;
+    }
+
+    @Override
+    public List<EvaluateFormDto> viewEvaluation(Long idx) {
+        return queryFactory
+                .select(new QEvaluateFormDto(
+                        QEvaluation.evaluation.enrollment.idx,
+                        QEvaluation.evaluation.q1,
+                        QEvaluation.evaluation.q2,
+                        QEvaluation.evaluation.q3,
+                        QEvaluation.evaluation.q4,
+                        QEvaluation.evaluation.q5
+                ))
+                .from(QEvaluation.evaluation)
+                .innerJoin(QEnrollment.enrollment).on(QEvaluation.evaluation.enrollment.eq(QEnrollment.enrollment))
+                .where(
+                        QEnrollment.enrollment.lecture.idx.eq(idx)
+                )
+                .fetch();
     }
 }
