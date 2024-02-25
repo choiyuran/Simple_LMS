@@ -22,4 +22,6 @@ public interface StudentRepositoryCustom {
     OverallGradeDto findOverallGrade(Long stuIdx);
 
     List<StudentLectureDto> getStudentLectureDto(LectureSearchConditionDto condition);
+
+    Integer findByEntranceDateAndMajorIdx(int year,Long majorIdx);
 }

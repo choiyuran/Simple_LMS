@@ -44,7 +44,7 @@ public class StudentService {
             dto.setIdx(realStudent.getIdx());
             dto.setUser(getUserDTO(realStudent.getUser()));
             dto.setStudent_grade(realStudent.getStudent_grade());
-            dto.setStudent_num(realStudent.getStudent_num());
+            dto.setStudent_num(Math.toIntExact(realStudent.getStudent_num()));
             dto.setMajor(getMajorDto(realStudent));
             dto.setProfessor(getProfessorDto(realStudent, dto.getMajor()));
             dto.setEnteranceDate(realStudent.getEnteranceDate());

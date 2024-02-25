@@ -236,60 +236,7 @@ public class ManagerController {
         return "manager/registerStudent";
     }
 
-    @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
-    public String uploadStudentList(@RequestParam("studentFile")MultipartFile studentFile, Model model) throws IOException {
-        log.info("학생등록엑셀업로드");
-        if(studentFile.isEmpty()){
-            model.addAttribute("message","파일을 업로드해주세요");
-            return "manager/registerStudent";
-        }
 
-
-        String fileName = studentFile.getOriginalFilename();
-
-        if (fileName == null || fileName.isEmpty()) {
-            model.addAttribute("message", "잘못된 양식의 파일입니다");
-            return "manager/registerStudent";
-        }
-        if(!fileName.contains("학생등록폼")){
-            model.addAttribute("message","지정된 양식의 폼이 아닙니다");
-            return "manager/registerStudent";
-
-        }
-
-        model.addAttribute("students","학생등록");
-        model.addAttribute("studentList",managerService.saveStudentDTOList(studentFile));
-        model.addAttribute("collegeList",managerService.selectAllCollege());
-        return "manager/registerStudentList";
-
-    }
-
-
-    @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
-    public ResponseEntity<byte[]> downloadStudentForm() throws IOException {
-
-        // 엑셀 템플릿 파일을 클래스패스에서 로드
-        ClassPathResource resource = new ClassPathResource("static/excelForm/studentForm.xlsx");
-
-        // 다운로드할 파일명 설정
-        String filename = "학생등록폼(양식변경금지).xlsx";
-
-        // 엑셀 파일 데이터 읽기
-        byte[] data = new byte[(int) resource.contentLength()];
-        try (InputStream inputStream = resource.getInputStream()) {
-            inputStream.read(data);
-        }
-
-        // 다운로드할 파일 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDispositionFormData("attachment", new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
-        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.setContentLength(data.length);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(data);
-    }
 
     @GetMapping("/addStudentList")   // 학생 등록
     public String registerStudentList() {

@@ -21,12 +21,10 @@
                             <form class="userForm" enctype="multipart/form-data" name="userForm">
                                 <div class="form-group row">
                                     <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
-<!--                                        <label><input type="radio" name="userType" value="student"-->
-<!--                                                onclick="changeForm('student')" checked> 학생 등록</label>-->
                                         <label><input type="radio" name="userType" value="professor"
-                                                onclick="changeForm('professor')"> 교수 등록</label>
+                                                onclick="changeForm('professor')" required> 교수 등록</label>
                                         <label><input type="radio" name="userType" value="manager"
-                                                onclick="changeForm('manager')"> 교직원 등록</label>
+                                                onclick="changeForm('manager')" required> 교직원 등록</label>
                                     </div>
                                 </div>
                                 <div class="form-group row pb-0">
@@ -38,7 +36,7 @@
 
                                         </div>
                                         <div class="form-group">
-                                            <input type="file" class="form-control form-control-user" name="imageFile" id="imageFile" accept="image/*">
+                                            <input type="file" class="form-control form-control-user" name="imageFile" id="imageFile" accept="image/*" required>
                                         </div>
 
                                         <div class="form-group" id="majorSection">
@@ -65,7 +63,7 @@
                                                    id="exampleInputEmail" name="email" placeholder="Email" required>
                                         </div>
                                         <div class="form-group pb-0">
-
+                                            <label for="hireDate">입사 날짜</label>
                                             <input type="date" class="form-control form-control-user"
                                                    id="hireDate" name="hireDate" required>
                                         </div>
@@ -123,17 +121,39 @@
         function previewImage(event) {
             var input = event.target;
             var imageContainer = document.getElementById('imageContainer');
-            // var imageElement = imageContainer.querySelector('img');
-            if(input.files && input.files[0]) {
+            if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
                 reader.onload = function () {
+                    // 이미지 로딩이 완료되면 이미지 컨테이너의 src를 설정하여 이미지를 미리보기로 표시
                     imageContainer.src = reader.result;
-                }
+
+                    // 이미지 크기를 조절하여 이미지 컨테이너에 맞게 표시
+                    imageContainer.onload = function () {
+                        var maxWidth = 130;
+                        var maxHeight = 100;
+                        var width = imageContainer.width;
+                        var height = imageContainer.height;
+                        var ratio = 1;
+
+                        if (width > maxWidth) {
+                            ratio = maxWidth / width;
+                            height *= ratio;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            ratio = maxHeight / height;
+                            width *= ratio;
+                            height = maxHeight;
+                        }
+
+                        imageContainer.style.width = width + 'px';
+                        imageContainer.style.height = height + 'px';
+                    };
+                };
                 reader.readAsDataURL(input.files[0]);
             }
         }
-
 
 
 
@@ -222,11 +242,16 @@
         var btnRegister = document.getElementById('btn-register');
         btnRegister.addEventListener('click', submitForm);
         function submitForm() {
+            // 필수 입력 필드들의 값을 확인하여 모두 작성되었는지 검사
+            if (!validateForm()) {
+                return; // 필수 입력 필드 중 하나라도 작성되지 않은 경우 함수 종료
+            }
             const form = $(".userForm")[0];
             const formData = new FormData(form);
             const userType = $('input[name="userType"]:checked').val();
             const major = $("#major").val();
             var imageFile = $("#imageFile")[0].files[0];
+
 
             formData.set("userType", userType);
             formData.set("major", major);
@@ -269,7 +294,40 @@
             });
         }
 
+        function validateForm() {
+            // 필수 입력 필드의 값들을 확인하여 모두 작성되었는지 검사
+            const userType = $('input[name="userType"]:checked').val();
+            if(!userType){
+                alert('등록할 사용자의 타입을 체크해주세요.');
+                return false;
+            }
 
+            if (userType === 'professor') {
+                const major = $("#major").val();
+                if (major === '') {
+                    alert('학과를 선택해주세요.'); // professor인 경우에는 학과를 선택해야 함
+                    return false; // 작성되지 않은 경우 false 반환
+                }
+            }
+
+            // 나머지 필수 입력 필드들의 검사를 진행
+            const firstName = $("#exampleFirstName").val();
+            const lastName = $("#exampleLastName").val();
+            const email = $("#exampleInputEmail").val();
+            const hireDate = $("#hireDate").val();
+            const address = $("#exampleInputUserid").val();
+            const frontSecurity = $("#frontSecurity").val();
+            const backSecurity = $("#backSecurity").val();
+            const phonenumber = $("#phonenumber").val();
+            const imageFile = $("#imageFile").val();
+
+            if (!firstName || !lastName || !email || !hireDate || !address || !frontSecurity || !backSecurity || !phonenumber || !imageFile) {
+                alert('모든 입력 항목을 작성해주세요.');
+                return false; // 하나라도 작성되지 않은 경우 false 반환
+            }
+
+            return true; // 모든 필수 입력 항목이 작성된 경우 true 반환
+        }
     </script>
 
 </body>
