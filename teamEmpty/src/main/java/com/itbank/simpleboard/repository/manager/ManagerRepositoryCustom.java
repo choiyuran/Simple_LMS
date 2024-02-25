@@ -1,6 +1,8 @@
 package com.itbank.simpleboard.repository.manager;
 
 import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
+import com.itbank.simpleboard.dto.CheckTutionPaymentConditionDto;
+import com.itbank.simpleboard.dto.EvaluateFormDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.entity.Manager;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ public interface ManagerRepositoryCustom {
 
     ManagerDTO selectOneManager(Long idx);
 
-    List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTuitionPaymentDto conditions);
+    List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTutionPaymentConditionDto conditions);
 
+    List<EvaluateFormDto> viewEvaluation(Long idx);
 }

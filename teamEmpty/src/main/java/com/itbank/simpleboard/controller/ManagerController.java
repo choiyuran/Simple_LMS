@@ -51,6 +51,8 @@ public class ManagerController {
     private final NoticeService noticeService;
     private final StudentService studentService;
     private final PagingComponent pagingComponent;
+    private final MajorService majorService;
+    private final LectureService lectureService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -484,7 +486,7 @@ public class ManagerController {
 
     @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
     public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
-        ModelAndView mav = new ModelAndView("/manager/studentSituationView");
+        ModelAndView mav = new ModelAndView("manager/studentSituationView");
         SituationStuDto situation = situationService.selectOneSituation(idx);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -777,22 +779,18 @@ public class ManagerController {
         }
     }
 
-    @GetMapping("/checkTuitionPayments")    // 교직원 납부 확인
-    public String checkTuitionPayment(Model model,CheckTuitionPaymentDto conditions, GradeSearchConditionDto condition) {
-
-        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(conditions);
-
-
-        model.addAttribute("semester",studentService.getLectureDtoList(condition));
-        if(managerService.getCheckTuitionPayment(conditions)!= null){
-               model.addAttribute("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
-            }
-        else {
-            return "redirect:/";
+    @GetMapping("/checkTuitionPayments")    // 납부 확인
+    public String checkTuitionPayment(Model model, CheckTutionPaymentConditionDto condition) {
+        List<Major> majorDtos = majorService.findById();
+        model.addAttribute("majorList",majorDtos);
+        System.err.println("test : "+ majorDtos);
+        if(condition.getUsername() == null || condition.getUsername().isEmpty()){
+            model.addAttribute("list", null);
+            return "manager/checkTuitionPayments";
+        }else{
+            List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(condition);
+            model.addAttribute("list", tuitionPayments);
         }
-        model.addAttribute("list", tuitionPayments);
-
-//        System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
     }
 
@@ -810,5 +808,20 @@ public class ManagerController {
         return mav;
     }
 
+    // 교직원 입장에서 강의별 평가보기
+    @GetMapping("/viewEvaluation/{idx}")
+    public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ManagerLoginDto) {
+            List<EvaluateFormDto> evaluation = managerService.getEvaluation(idx);
+            if (evaluation != null) {
+                model.addAttribute("lecture", lectureService.selectOne(idx));
+                model.addAttribute("evaluation", evaluation);
+                model.addAttribute("total", managerService.countTotalQ1Q2Q3(evaluation));
+            }
+            return "/manager/myLectureEvaluation";
+        }
+        return "redirect:/login";
+    }
 }
 

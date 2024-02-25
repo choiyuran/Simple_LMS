@@ -7,23 +7,43 @@
 <header th:insert="layout/managerHeader :: header"></header>
 <main>
     <div class="container mt-3">
-        <form id="SemesterSearchForm">
-            <label>학기 선택 :
-                <select name="semester">
-                    <option th:text="'학기 선택'" value="">학기 선택</option>
-                    <option th:each="major : ${SemesterList}" th:value="${semester}" th:text="${semester}"></option>
-                </select>
-            </label>
+        <h2>등록금 납부 검색 / 조회</h2>
+        <form id="SemesterSearchForm" class="row w-100">
+            <div class="input-group input-group-sm mb-3">
+
+                    <span class="input-group-text">학과선택</span>
+                    <select class="form-control" th:name="'major_idx'" required>
+                        <option th:each="row:${majorList}" th:value="${row.idx}" th:text="${row.name}"></option>
+                    </select>
+            </div>
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text">학생 이름</span>
+                <input class="form-control" th:name="'username'" placeholder="학생이름 입력">
+            </div>
+            <button class="btn btn-primary pt-3 mb-3">학생찾기</button>
         </form>
-        <table>
-            <tr th:each="item : ${list}">
+        <hr/>
+        <table class="table table-striped mt-3 w-100 text-center">
+            <tr>
+                <th th:text="'고유번호'"></th>
+                <th th:text="'이름'"></th>
+                <th th:text="'날짜'"></th>
+                <th th:text="'납부여부'"></th>
+                <th th:text="'학번'"></th>
+                <th th:text="'학기'"></th>
+                <th th:text="'학년'"></th>
+            </tr>
+            <tr th:if="${!list.equals(null) or (!list.isEmpty())}" th:each="item : ${list}">
                 <td th:text="${item.idx}"></td>
                 <td th:text="${item.user_name}"></td>
                 <td th:text="${item.date}"></td>
-                <td th:text="${item.flag}"></td>
+                <td th:text="${item.flag.toString() == 'Y' ? '납부완료' : '미납'}"></td>
                 <td th:text="${item.num}"></td>
                 <td th:text="${item.semester}"></td>
-                <td th:text="${item.grade}"></td>
+                <td th:text="${item.grade + '학년'}"></td>
+            </tr>
+            <tr th:unless="${!list.equals(null) or (!list.isEmpty())}" th:each="item : ${list}">
+                <td rowspan="7" class="text-center" th:text="'검색 결과가 없습니다.'"></td>
             </tr>
         </table>
     </div>

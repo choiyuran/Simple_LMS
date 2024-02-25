@@ -60,6 +60,7 @@ public class StudentController {
             return mav;
         }
         Page<LectureDto> list;
+        // 키워드 없을 때 전체검색
         if (searchType == null || keyword == null) {
             list = lectureService.selectAll(pageable);
             mav.addObject("list", list);
@@ -77,6 +78,7 @@ public class StudentController {
         mav.addObject("searchType", searchType);
         mav.addObject("keyword", keyword);
 
+        // 등록 - 수강신청(로그인한 학생의 수강목록) - 수강신청한 enrollment를 가져오는거
         List<Enrollment> enrollmentList = enrollmentService.findByStudent(student.getIdx());
         List<LectureDto> lectureList = new ArrayList<>();
 
@@ -103,7 +105,7 @@ public class StudentController {
         }
 
         if(student.getUser().getRole().toString().equals("학생")){
-            mav.setViewName("/student/enrollment");
+            mav.setViewName("student/enrollment");
             mav.addObject("lectureList", lectureList);
             mav.addObject("stuIdx", student.getIdx());
         }
@@ -143,9 +145,9 @@ public class StudentController {
     }
 
     // 수강 취소
-    @GetMapping("/cancel")
+    @GetMapping("/cancelEnroll")
     @ResponseBody
-    public String cancel(Long stuIdx, Long idx) {
+    public String cancelEnroll(Long stuIdx, Long idx) {
         enrollmentService.cancel(stuIdx, idx);
         return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
     }
@@ -236,17 +238,19 @@ public class StudentController {
         }
     }
 
-    @GetMapping("situation")
+    @GetMapping("/situation")
     public ModelAndView mySituation(HttpSession session) {
         Object o = session.getAttribute("user");
         ModelAndView mav = new ModelAndView("student/mysituation");
         if(!(o instanceof StudentDto)){
             mav.setViewName("redirect:/login");
+        }else{
+            mav.addObject("status",situationService.findByStudentIdx(((StudentDto) o).getIdx()).getStudent_status());
         }
         return mav;
     }
 
-    @PostMapping("genersitu")                               // 일반 휴학
+    @PostMapping("/genersitu")                               // 일반 휴학
     public String generSitu(HttpSession session, SituationChageDto dto, RedirectAttributes ra) {
         Object o = session.getAttribute("user");
         if(o instanceof StudentDto) {
@@ -267,7 +271,7 @@ public class StudentController {
         }
     }
 
-    @PostMapping("armysitu")                             // 군 휴학 신청
+    @PostMapping("/armysitu")                             // 군 휴학 신청
     public String armySitu(HttpSession session, SituationChageDto dto,RedirectAttributes ra) {
         Object o = session.getAttribute("user");
         if(o instanceof StudentDto) {
@@ -288,7 +292,7 @@ public class StudentController {
         }
     }
 
-    @PostMapping("return") // 복학신청
+    @PostMapping("/return") // 복학신청
     public String returnSitu(HttpSession session,SituationChageDto dto,RedirectAttributes ra) {
         Object o = session.getAttribute("user");
         if(o instanceof StudentDto) {
@@ -372,7 +376,7 @@ public class StudentController {
     // 등록금 납부 내역 리스트
     @GetMapping("/paymentsList")
     public ModelAndView paymentsList(HttpSession session, RedirectAttributes ra) {
-        ModelAndView mav = new ModelAndView("/student/paymentsList");
+        ModelAndView mav = new ModelAndView("student/paymentsList");
         Object o = session.getAttribute("user");
         if(o instanceof StudentDto) {
             StudentDto dto = (StudentDto) o;
@@ -388,7 +392,7 @@ public class StudentController {
 
     @GetMapping("/gradeList")
     public ModelAndView GradeList(GradeSearchConditionDto condition, HttpSession session) {
-        ModelAndView mav = new ModelAndView("/student/gradeList");
+        ModelAndView mav = new ModelAndView("student/gradeList");
 
         Object o = session.getAttribute("user");
         if(o instanceof StudentDto) {
@@ -474,7 +478,7 @@ public class StudentController {
     }
 
     @ResponseBody
-    @PutMapping("cancel")
+    @PutMapping("/cancel")
     public Map<String, Object> cancelGeneral(@RequestBody Map<String, String> request) {
         log.info("일반 휴학 신청 취소 로직 시작");
         Map<String, Object> responseData = new HashMap<>();
@@ -542,7 +546,7 @@ public class StudentController {
 
             long endTime = System.currentTimeMillis();
             log.info("StudentController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
-            return "/student/myLecture";
+            return "student/myLecture";
         } else {
             return "redirect:/login";
         }
