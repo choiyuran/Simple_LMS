@@ -1,11 +1,16 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,6 +50,9 @@ public class ManagerController {
     private final SituationService situationService;
     private final NoticeService noticeService;
     private final StudentService studentService;
+    private final PagingComponent pagingComponent;
+    private final MajorService majorService;
+    private final LectureService lectureService;
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model){
@@ -105,16 +113,24 @@ public class ManagerController {
     }
 
     @GetMapping("/managerList") // 교직원 명단 조회
-    public ModelAndView list(){
+    public ModelAndView list(@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable){
         ModelAndView mav = new ModelAndView("manager/managerList");
-        List<ManagerDTO> managerList = managerService.findAllManager();
+        Page<ManagerDTO> managerList = managerService.findAllManager(pageable);
+
+        int start = pagingComponent.calculateStart(managerList.getNumber());
+        int end = pagingComponent.calculateEnd(managerList.getTotalPages(), start);
         mav.addObject("managerList",managerList);
+        mav.addObject("start",start);
+        mav.addObject("end",end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 
     @GetMapping("/managerListKeyword")    // 교직원 명단 검색 조회
     public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue,
-                                   @RequestParam(value = "leave", required = false) Boolean leave){
+                                   @RequestParam(value = "leave", required = false) Boolean leave,
+                                   @PageableDefault(size = 2) Pageable pageable){
         ModelAndView mav = new ModelAndView("manager/managerList");
         HashMap<String, Object> map = new HashMap<>();
         if(searchType != null) {
@@ -123,10 +139,19 @@ public class ManagerController {
             map.put("leave", leave);
         }
 
-        List<ManagerDTO> managerList = managerService.searchManager(map);
+        Page<ManagerDTO> managerList = managerService.searchManager(map, pageable);
+        int start = pagingComponent.calculateStart(managerList.getNumber());
+        int end = pagingComponent.calculateEnd(managerList.getTotalPages(), start);
         mav.addObject("map", map);
         mav.addObject("managerList",managerList);
         mav.addObject("searchValue", searchValue);
+        mav.addObject("searchType", searchType);
+        mav.addObject("leave", leave);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
+
         return mav;
     }
 
@@ -143,7 +168,8 @@ public class ManagerController {
     public ResponseEntity<Map<String, Object>> registerManager(@ModelAttribute UserFormDTO userFormDTO,
                                                                @RequestParam("imageFile") MultipartFile imageFile) {
         Map<String, Object> response = new HashMap<>();
-
+        log.info("교직원 등록 시작");
+        long startTime = System.currentTimeMillis();
         String msg;
         if (userFormDTO.getUserType().equals("manager")) {
             Manager manager = managerService.addManager(userFormDTO, imageFile);
@@ -151,6 +177,8 @@ public class ManagerController {
                 // 교직원 등록 성공 시
                 msg = manager.getUser().getUser_name() + "님 교직원 등록완료";
                 response.put("success", true);
+                long endTime = System.currentTimeMillis();
+                log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
             } else {
                 // 교직원 등록 실패 시
                 msg = "교직원 등록에 실패하였습니다";
@@ -167,67 +195,46 @@ public class ManagerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/addProfessor", headers = "Content-Type= multipart/form-data")   // 교수 등록
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> registerProfessor(@ModelAttribute UserFormDTO userFormDTO,
+                                                                 @RequestParam("imageFile") MultipartFile imageFile) {
+        log.info("교수등록 시작");
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> response = new HashMap<>();
+        log.info("사용자 타입: " + userFormDTO.getUserType());
+        String msg;
+        if (userFormDTO.getUserType().equals("professor")) {
+            Professor professor = managerService.addProfessor(userFormDTO, imageFile);
+            if (professor.getProfessor_idx() != null) {
+                // 교수 등록 성공 시
+                msg = professor.getUser().getUser_name() + "님 교수 등록완료";
+                response.put("success", true);
+                long endTime = System.currentTimeMillis();
+                log.info("교수 등록 처리 시간: {} 밀리초", endTime - startTime);
+            } else {
+                // 교수 등록 실패 시
+                msg = "교수 등록에 실패하였습니다";
+                response.put("success", false);
+            }
+        } else {
+            // 교수 타입의 사용자가 아닌 경우
+            msg = "교수 타입의 사용자가 아닙니다";
+            response.put("success", false);
+        }
+
+        response.put("message", msg);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
     @GetMapping("/addStudent")   // 학생 등록
     public String addStudent() {
         log.info("학생등록페이지");
         return "manager/registerStudent";
     }
-
-    @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
-    public String uploadStudentList(@RequestParam("studentFile")MultipartFile studentFile, Model model) throws IOException {
-        log.info("학생등록엑셀업로드");
-        if(studentFile.isEmpty()){
-            model.addAttribute("message","파일을 업로드해주세요");
-            return "manager/registerStudent";
-        }
-
-
-        String fileName = studentFile.getOriginalFilename();
-
-        if (fileName == null || fileName.isEmpty()) {
-            model.addAttribute("message", "잘못된 양식의 파일입니다");
-            return "manager/registerStudent";
-        }
-        if(!fileName.contains("학생등록폼")){
-            model.addAttribute("message","지정된 양식의 폼이 아닙니다");
-            return "manager/registerStudent";
-
-        }
-
-        model.addAttribute("students","학생등록");
-        model.addAttribute("studentList",managerService.saveStudentDTOList(studentFile));
-        model.addAttribute("collegeList",managerService.selectAllCollege());
-        return "manager/registerStudentList";
-
-    }
-
-
-    @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
-    public ResponseEntity<byte[]> downloadStudentForm() throws IOException {
-
-        // 엑셀 템플릿 파일을 클래스패스에서 로드
-        ClassPathResource resource = new ClassPathResource("static/excelForm/studentForm.xlsx");
-
-        // 다운로드할 파일명 설정
-        String filename = "학생등록폼(양식변경금지).xlsx";
-
-        // 엑셀 파일 데이터 읽기
-        byte[] data = new byte[(int) resource.contentLength()];
-        try (InputStream inputStream = resource.getInputStream()) {
-            inputStream.read(data);
-        }
-
-        // 다운로드할 파일 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDispositionFormData("attachment", new String(filename.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1));
-        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.setContentLength(data.length);
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(data);
-    }
-
 
 
 
@@ -257,30 +264,45 @@ public class ManagerController {
 
     @GetMapping("/majorList")       // 학과 목록 (검색어가 있는 경우와 없는 경우 같이 사용)
     public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
-                                  @RequestParam(value = "majorName", required = false) String majorName) {
+                                  @RequestParam(value = "majorName", required = false) String majorName,
+                                  @PageableDefault(size = 2, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/majorList");
-        List<Major> list;
+        Page<Major> list = null;
 
         // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
         if (collegeIdx != null  && majorName != null && !majorName.isEmpty()) {
-            list = managerService.searchByCollegeAndMajor(collegeIdx, majorName);
+            list = managerService.searchByCollegeAndMajor(collegeIdx, majorName, pageable);
         }
         // 단과대학 이름만 검색어가 있는 경우
         else if (collegeIdx != null) {
-            list = managerService.searchByCollege(collegeIdx);
+            list = managerService.searchByCollege(collegeIdx, pageable);
         }
         // 학과명만 검색어가 있는 경우
         else if (majorName != null && !majorName.isEmpty()) {
-            list = managerService.searchByMajor(majorName);
-            log.info("major : " + list);
+            list = managerService.searchByMajorPaging(majorName, pageable);
         }
         // 검색어가 없는 경우, 모든 학과 목록을 반환
         else {
-            list = managerService.selectAllMajor();
+            list = managerService.selectAllMajorPaging(pageable);
         }
+
+        if(list == null) {
+            list = Page.empty();
+        }
+
+        int start = pagingComponent.calculateStart(list.getNumber());
+        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
+
+        log.info("start : " + start);
+        log.info("end : " + end);
         mav.addObject("list", list);
         mav.addObject("majorName", majorName);
         mav.addObject("collegeIdx", collegeIdx);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
+
         return mav;
     }
 
@@ -390,20 +412,28 @@ public class ManagerController {
     }
 
     @GetMapping("/studentSituation")                // 학생 상태 조회
-    public ModelAndView studentSituation(@RequestParam(required = false) String status) {
+    public ModelAndView studentSituation(@RequestParam(required = false) String status,
+                                         @PageableDefault(size = 2)Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");
 
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
-        List<SituationStuDto> studentList = situationService.selectSituationStu(status);
+        Page<SituationStuDto> studentList = situationService.selectSituationStu(status, pageable);
+        int start = pagingComponent.calculateStart(studentList.getNumber());
+        int end = pagingComponent.calculateEnd(studentList.getTotalPages(), start);
         mav.addObject("status", status);
         mav.addObject("studentList", studentList);
+        mav.addObject("status", status);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 
     @GetMapping("/studentSituationView/{idx}")              // 학생 상태 변경을 위한 view
     public ModelAndView studentSituationView(@PathVariable("idx") Long idx) {
-        ModelAndView mav = new ModelAndView("/manager/studentSituationView");
+        ModelAndView mav = new ModelAndView("manager/studentSituationView");
         SituationStuDto situation = situationService.selectOneSituation(idx);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -457,19 +487,26 @@ public class ManagerController {
     @GetMapping("/professorList")               // 교수 목록 조회
     public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
                                       @RequestParam(value = "name", required = false) String name,
-                                      @RequestParam(value = "leave", required = false) Boolean leave) {
+                                      @RequestParam(value = "leave", required = false) Boolean leave,
+                                      @PageableDefault(size = 2)Pageable pageable) {
+        ModelAndView mav = new ModelAndView("manager/professorList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
         map.put("leave", leave);
 
-        List<ProfessorListDto> professorList = managerService.searchByMajorAndProfessorAndLeave(map);
-
-        ModelAndView mav = new ModelAndView("manager/professorList");
+        Page<ProfessorListDto> professorList = managerService.searchByMajorAndProfessorAndLeave(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
+        int start = pagingComponent.calculateStart(professorList.getNumber());
+        int end = pagingComponent.calculateEnd(professorList.getTotalPages(), start);
+
         mav.addObject("majorList", majorList);
         mav.addObject("professorList", professorList);
         mav.addObject("map", map);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -511,16 +548,24 @@ public class ManagerController {
 
     @GetMapping("/studentList")         // 학생 목록 조회(검색어 있는 경우와 없는 경우)
     public ModelAndView studentList(@RequestParam(value = "major_idx", required = false) Long major_idx,
-                                    @RequestParam(value = "name", required = false) String name) {
+                                    @RequestParam(value = "name", required = false) String name,
+                                    @PageableDefault(size = 2) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
-        List<StudentListDto> studentList = managerService.selectAllStudent(map);
+        Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
+        int start = pagingComponent.calculateStart(studentList.getNumber());
+        int end = pagingComponent.calculateEnd(studentList.getTotalPages(), start);
+
         mav.addObject("map", map);
         mav.addObject("majorList", majorList);
         mav.addObject("studentList", studentList);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -581,10 +626,16 @@ public class ManagerController {
     }
 
     @GetMapping("/noticeList")          // 공지 사항 조회
-    public ModelAndView noticeList() {
+    public ModelAndView noticeList(@PageableDefault(size = 2) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/noticeList");
-        List<Notice> noticeList = noticeService.selectAll();
+        Page<Notice> noticeList = noticeService.selectAll(pageable);
+        int start = pagingComponent.calculateStart(noticeList.getNumber());
+        int end = pagingComponent.calculateEnd(noticeList.getTotalPages(), start);
         mav.addObject("noticeList", noticeList);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -642,6 +693,29 @@ public class ManagerController {
         return "redirect:/manager/noticeList";
     }
 
+    @GetMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ManagerLoginDto) {
+            return "manager/modifyCheck";
+        } else {
+            return "redirect:/login";
+        }
+    }
+
+    @PostMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
+        String url = "manager/modifyCheck";
+        Object login = session.getAttribute("user");
+        int result = userService.checkPassword(login, password);
+        if (result != 0) {
+            url = "redirect:/manager/managerModify";
+        } else {
+            model.addAttribute("msg", "비밀번호를 확인해주세요.");
+        }
+        return url;
+    }
+
     @GetMapping("/managerModify")           // 교직원 개인 정보 수정
     public String managerModify(HttpSession session) {
         Object user = session.getAttribute("user");
@@ -653,21 +727,48 @@ public class ManagerController {
     }
 
     @GetMapping("/checkTuitionPayments")    // 납부 확인
-    public String checkTuitionPayment(Model model,CheckTuitionPaymentDto conditions, GradeSearchConditionDto condition) {
-
-        List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(conditions);
-
-
-        model.addAttribute("semester",studentService.getLectureDtoList(condition));
-        if(managerService.getCheckTuitionPayment(conditions)!= null){
-               model.addAttribute("semester", condition.getSemester() == null ? "2024년 1학기" : condition.getSemester());
-            }
-        else {
-            return "redirect:/";
+    public String checkTuitionPayment(Model model, CheckTutionPaymentConditionDto condition) {
+        List<Major> majorDtos = majorService.findById();
+        model.addAttribute("majorList",majorDtos);
+        System.err.println("test : "+ majorDtos);
+        if(condition.getUsername() == null || condition.getUsername().isEmpty()){
+            model.addAttribute("list", null);
+            return "manager/checkTuitionPayments";
+        }else{
+            List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(condition);
+            model.addAttribute("list", tuitionPayments);
         }
-        model.addAttribute("list", tuitionPayments);
-
-//        System.out.println("result : " + tuitionPayments);
         return "manager/checkTuitionPayments";
     }
+
+    @GetMapping("/pagingTest")          // 페이징 테스트
+    public ModelAndView pagingTest(@PageableDefault(size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("/manager/majorPaging");
+        Page<Major> list = managerService.majorListPaging(pageable);
+        int start = pagingComponent.calculateStart(list.getNumber());
+        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
+        mav.addObject("list", list);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("maxPage", 5);
+        return mav;
+    }
+
+    // 교직원 입장에서 강의별 평가보기
+    @GetMapping("/viewEvaluation/{idx}")
+    public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
+        Object login = session.getAttribute("user");
+        if (login instanceof ManagerLoginDto) {
+            List<EvaluateFormDto> evaluation = managerService.getEvaluation(idx);
+            if (evaluation != null) {
+                model.addAttribute("lecture", lectureService.selectOne(idx));
+                model.addAttribute("evaluation", evaluation);
+                model.addAttribute("total", managerService.countTotalQ1Q2Q3(evaluation));
+            }
+            return "/manager/myLectureEvaluation";
+        }
+        return "redirect:/login";
+    }
 }
+

@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.professor;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
@@ -10,6 +11,9 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -31,8 +35,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     }
 
     @Override
-    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
-        return queryFactory
+    public Page<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition, Pageable pageable) {
+        QueryResults<ProfessorLectureDto> results = queryFactory
                 .select(new QProfessorLectureDto(
                         lecture.idx,
                         lecture.name,
@@ -69,6 +73,65 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                         professor_idxEq(condition.getProfessor_idx()),
                         isAbolition(condition.getIsAbolition())
                 )
+                .orderBy(lecture.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+//    @Override
+//    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
+//        return queryFactory
+//                .select(new QProfessorLectureDto(
+//                        lecture.idx,
+//                        lecture.name,
+//                        lecture.credit,
+//                        lecture.day,
+//                        lecture.start,
+//                        lecture.end,
+//                        lecture.type.stringValue(),
+//                        lecture.maxCount,
+//                        lecture.currentCount,
+//                        lecture.semester,
+//                        lecture.grade,
+//                        lecture.abolition.stringValue(),
+//                        lecture.professor.professor_idx,
+//                        QUser.user.user_name.as("professor_name"),
+//                        lecture.plan,
+//                        major.name,
+//                        QCollege.college.location,
+//                        QLectureRoom.lectureRoom.room
+//                ))
+//                .from(lecture)
+//                .innerJoin(professor).on(lecture.professor.eq(professor))
+//                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+//                .innerJoin(lecture.major, major)
+//                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+//                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+//                .where(
+//                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
+//                        typeEq(condition.getType()),
+//                        yearEq(condition.getYear()),
+//                        semesterEq(condition.getSemester()),
+//                        gradeEq(condition.getGrade()),
+//                        majorEq(condition.getMajor()),
+//                        professor_idxEq(condition.getProfessor_idx()),
+//                        isAbolition(condition.getIsAbolition())
+//                )
+//                .fetch();
+//    }
+
+    @Override
+    public List<String> getMajorNameList(LectureSearchConditionDto condition) {
+        return queryFactory
+                .select(lecture.major.name)
+                .from(lecture)
+                .where(
+                        professor_idxEq(condition.getProfessor_idx())
+                )
+                .distinct()
                 .fetch();
     }
 
@@ -239,10 +302,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .fetch();
     }
 
-
-
     @Override
-    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
+    public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
         Long majorIdx = (Long) map.get("major_idx");
         String name = (String) map.get("name");
         Boolean leave = (Boolean) map.get("leave");
@@ -258,7 +319,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
             builder.and(QProfessor.professor.leave.eq(YesOrNo.valueOf("N")));
         }
 
-        return queryFactory
+        QueryResults<ProfessorListDto> results = queryFactory
                 .select(new QProfessorListDto(
                         QProfessor.professor.professor_idx,
                         QProfessor.professor.professor_img,
@@ -275,7 +336,12 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                 .join(QProfessor.professor.user, QUser.user)
                 .join(QProfessor.professor.major, QMajor.major)
                 .where(builder)
-                .fetch();
+                .orderBy(professor.professor_idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override

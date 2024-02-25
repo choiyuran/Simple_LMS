@@ -4,12 +4,17 @@ import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.dto.QLectureDto;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.itbank.simpleboard.entity.QLecture.*;
 
@@ -22,12 +27,11 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
     }
 
     @Override
-    public List<LectureDto> getLectureListDtos(String searchType, String keyword) {
+    public Page<LectureDto> getLectureListDtos(String searchType, String keyword, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
-        List<LectureDto> lectureDtoList = new ArrayList<>();
 
         if ("professor".equals(searchType)) {
-            builder.and(lecture.professor.user.user_name.contains(keyword)); // 수정: user_name 대신 userName 사용
+            builder.and(lecture.professor.user.user_name.contains(keyword));
         } else if ("subject".equals(searchType)) {
             builder.and(lecture.name.contains(keyword));
         } else if ("grade".equals(searchType)) {
@@ -35,20 +39,21 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
         } else {
             if (isNumeric(keyword)) {
                 builder.or(lecture.name.contains(keyword))
-                        .or(lecture.professor.user.user_name.contains(keyword)) // 수정: user_name 대신 userName 사용
+                        .or(lecture.professor.user.user_name.contains(keyword))
                         .or(lecture.grade.eq(Integer.parseInt(keyword)));
             } else {
                 builder.or(lecture.name.contains(keyword))
-                        .or(lecture.professor.user.user_name.contains(keyword)); // 수정: user_name 대신 userName 사용
+                        .or(lecture.professor.user.user_name.contains(keyword));
             }
         }
 
-        List<Lecture> lectureList = queryFactory.selectFrom(lecture)
-                .where(builder) // 수정: 조건을 builder로 설정
-                .fetch();
+        QueryResults<Lecture> results = queryFactory.selectFrom(lecture)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
 
-        // Convert Lecture to LectureDto and return
-        for (Lecture lecture1 : lectureList) {
+        List<LectureDto> content = results.getResults().stream().map(lecture1 -> {
             LectureDto dto = new LectureDto();
             dto.setIdx(lecture1.getIdx());
             dto.setStart(lecture1.getStart());
@@ -69,10 +74,10 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
             dto.setVisible(lecture1.getVisible().toString());
             dto.setAbolition(lecture1.getAbolition().toString());
 
-            lectureDtoList.add(dto);
-        }
+            return dto;
+        }).collect(Collectors.toList());
 
-        return lectureDtoList;
+        return new PageImpl<>(content, pageable, results.getTotal());
     }
 
     public static boolean isNumeric(String str) {
@@ -88,8 +93,8 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
     }
 
     @Override
-    public List<LectureDto> getLectureDtos() {
-        return queryFactory
+    public Page<LectureDto> getLectureDtos(Pageable pageable) {
+        QueryResults<LectureDto> results = queryFactory
                 .select(new QLectureDto(
                         lecture.idx,
                         lecture.name,
@@ -110,7 +115,11 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
                 .from(lecture)
                 .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
                 .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
-                .fetch();
+                .orderBy(lecture.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
 }

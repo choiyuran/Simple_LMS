@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
             mav.addObject("statusCode", statusCode);
         }
 
-        mav.setViewName("/common/errorPage");
+        mav.setViewName("common/errorPage");
         return mav;
     }
 }

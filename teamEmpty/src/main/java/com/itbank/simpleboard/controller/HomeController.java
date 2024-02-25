@@ -47,15 +47,58 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, @RequestParam String user_pw, Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, @RequestParam Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
         String url = "redirect:/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
+            log.info("test1");
             UserDTO user = userService.getUser(user_id, user_pw);
             if (user == null) {
+                log.info("test2 : user가 null일 때");
                 ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
             } else {
                 // '내 아이디 기억하기'가 체크되었을 때
+                log.info("test2 : user가 null아닐 때");
+                log.info("test5 : 스위치 타기 직전");
+                switch (user.getRole().toString()) {
+                    case "교수":
+                        log.info("test6 : 교수");
+                        ProfessorDto professor = userService.getProfessor(user);
+                        if (professor == null) {
+                            log.info("test6 : 교수 null");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            log.info("test6 : 교수 null x");
+                            session.setAttribute("user", professor);
+                            url = "redirect:/professor/home";
+                        }
+                        break;
+                    case "학생":
+                        log.info("test7 : 학생");
+                        StudentDto student = userService.getStudent(user);
+                        if (student == null) {
+                            log.info("test7 : 학생 null");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            log.info("test7 : 학생 null 아님");
+                            session.setAttribute("user", student);
+                            url = "redirect:/student/home";
+                        }
+                        break;
+                    case "교직원":
+                        log.info("test8 : 교직원 탔다");
+                        ManagerLoginDto manager = userService.getManager(user);
+                        if (manager == null) {
+                            log.info("test8 : 교직원 null");
+                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                        } else {
+                            log.info("test8 : 교직원 null 아님");
+                            session.setAttribute("user", manager);
+                            url = "redirect:/manager/home";
+                        }
+                        break;
+                }
                 if (rememberMe) {
+                    log.info("test4 : 내가 만든 쿠키");
                     // 쿠키 생성
                     Cookie cookie = new Cookie("user_id", user_id);
                     // 쿠키 유효시간 설정(7일)
@@ -63,37 +106,9 @@ public class HomeController {
                     // 쿠키 저장
                     response.addCookie(cookie);
                 }
-                switch (user.getRole().toString()) {
-                    case "교수":
-                        ProfessorDto professor = userService.getProfessor(user);
-                        if (professor == null) {
-                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                        } else {
-                            session.setAttribute("user", professor);
-                            url = "redirect:/professor/home";
-                        }
-                        break;
-                    case "학생":
-                        StudentDto student = userService.getStudent(user);
-                        if (student == null) {
-                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                        } else {
-                            session.setAttribute("user", student);
-                            url = "redirect:/student/home";
-                        }
-                        break;
-                    case "교직원":
-                        ManagerLoginDto manager = userService.getManager(user);
-                        if (manager == null) {
-                            ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
-                        } else {
-                            session.setAttribute("user", manager);
-                            url = "redirect:/manager/home";
-                        }
-                        break;
-                }
             }
         } else {
+            log.info("test9 : 메시지 호출 else문");
             ra.addFlashAttribute("msg", "ID와 Password를 입력해주세요");
         }
         return url;

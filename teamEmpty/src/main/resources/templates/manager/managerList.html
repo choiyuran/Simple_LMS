@@ -41,7 +41,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${#lists.isEmpty(managerList)}">
+            <tr th:if="${managerList == null || managerList.isEmpty()}">
                 <td colspan="6" style="text-align: center; height: 100px; vertical-align: middle;">
                     <h5>조건에 해당하는 결과가 존재하지 않습니다.</h5>
                 </td>
@@ -54,8 +54,36 @@
              </tr>
             </tbody>
         </table>
-        <button class="btn btn-primary"><a href="/manager/register">교직원 등록</a></button>
-        <button class="btn btn-primary" th:if="${searchValue != null or searchValue != '' or !#strings.isEmpty(map['leave'])}"><a th:href="@{/manager/managerList}">목록으로</a></button>
+        <a href="/manager/register"><button class="btn btn-primary">교직원 등록</button></a>
+        <a th:href="@{/manager/managerList}"><button class="btn btn-primary" th:if="${searchValue != null or searchValue != '' or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
+
+        <div class="d-flex justify-content-center">
+            <nav style="text-align: center;" th:if="${managerList != null && !managerList.isEmpty()}">
+                <ul class="pagination">
+                    <li class="mx-2" th:if="${start > 1}">
+                        <a th:href="@{/manager/managerList(page=0)}" th:text="'<<'"></a>
+                    </li>
+                    <li class="mx-2" th:if="${start > 1}">
+                        <a th:href="@{/manager/managerList(page=${start - maxPage})}" th:text="'<'"></a>
+                    </li>
+
+                    <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                        <a th:text="${page}"
+                           th:if="${num != page}"
+                           th:href="@{/manager/managerList(page=${page - 1})}"></a>
+                        <a th:text="${page}"
+                           th:if="${num == page}" disabled="true"></a>
+                    </li>
+
+                    <li class="mx-2" th:if="${end < managerList.totalPages}">
+                        <a th:href="@{/manager/managerList(page=${start + maxPage})}" th:text="'>'"></a>
+                    </li>
+                    <li class="mx-2" th:if="${end < managerList.totalPages}">
+                        <a th:href="@{/manager/managerList(page=${managerList.totalPages - 1})}" th:text="'>>'"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </main>
 
@@ -113,6 +141,39 @@
     if (resultLeaveValue && resultLeaveValue !== 'null') {
         $('#leaveCheckbox').prop('checked', resultLeaveValue === 'true');
     }
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let searchValue = /*[[${searchValue}]]*/ null;
+        let searchType = /*[[${searchType}]]*/ null;
+        let leave = /*[[${leave}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+
+            let href = $(this).attr('href');
+            let page = href.split('=')[1];
+
+            if (searchValue !== null || searchType !== null || leave !== null) {
+                href = '/manager/managerListKeyword?page=' + page;
+
+                if (searchValue !== null) {
+                    href += '&searchValue=' + encodeURIComponent(searchValue);
+                }
+                if (searchType !== null) {
+                    href += '&searchType=' + encodeURIComponent(searchType);
+                }
+                if (leave !== null) {
+                    href += '&leave=' + leave;
+                }
+            }
+
+            location.href = href;
+        });
+    });
+    /*]]>*/
 </script>
 </body>
 </html>

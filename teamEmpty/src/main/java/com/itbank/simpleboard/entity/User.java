@@ -35,7 +35,7 @@ public class User {
     @Column(name = "user_pnum", nullable = false)
     private String pnum;   // 연락처
 
-    @Column(name = "user_email", nullable = false)
+    @Column(name = "user_email", nullable = false, unique = true)
     private String email;  // email
 
     @Column(name = "user_role", nullable = false)
@@ -48,7 +48,7 @@ public class User {
 
 
     public User(String user_pw,String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
-        this.user_id = randomId();
+        this.user_id = email;
         this.user_pw = user_pw;
         this.salt = salt;
         this.user_name = user_name;
@@ -57,14 +57,8 @@ public class User {
         this.pnum = pnum;
         this.email = email;
         this.role = role;
-        this.authority =  YesOrNo.Y;;
+        this.authority =  YesOrNo.Y;
     }
 
-
-
-    private String randomId() {
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString().substring(0,8);
-    }
 
 }

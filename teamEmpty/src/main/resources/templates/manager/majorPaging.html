@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
+</head>
+
+<body>
+<header th:insert="layout/header :: header"> </header>
+<div class="container mt-3">
+    <h2>학과 명단</h2>
+    <hr>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>단과대학</th>
+            <th>학과명</th>
+        </tr>
+        <tr th:each="item : ${list}">
+            <td th:text="${item.college.name}"></td>
+            <td th:text="${item.name}"></td>
+            <td><button class="btn btn-warning"><a th:href="@{/manager/majorView/{idx}(idx=${item.idx})}">수정</a></button></td>
+            <td><button class="btn btn-danger" onclick="confirmDelete(event)"><a th:href="@{/manager/majorDelete/{idx}(idx=${item.idx})}">삭제</a></button></td>
+        </tr>
+    </table>
+
+    <nav style="text-align: center;">
+        <ul class="pagination">
+            <li th:if="${start > 1}">
+                <a th:href="@{/manager/pagingTest(page=0)}" th:text="'<<'"></a>
+            </li>
+            <li th:if="${start > 1}">
+                <a th:href="@{/manager/pagingTest(page=${start - maxPage})}" th:text="'<'"></a>
+            </li>
+
+            <li th:each="page: ${#numbers.sequence(start, end)}">
+                <a th:text="${page}"
+                   th:if="${num != page}"
+                   th:href="@{/manager/pagingTest(page=${page - 1})}"></a>
+                <a th:text="${page}"
+                   th:if="${num == page}" disabled="true"></a>
+            </li>
+
+            <li th:if="${end < list.totalPages}">
+                <a th:href="@{/manager/pagingTest(page=${start + maxPage})}" th:text="'>'"></a>
+            </li>
+            <li th:if="${end < list.totalPages}">
+                <a th:href="@{/manager/pagingTest(page=${list.totalPages - 1})}" th:text="'>>'"></a>
+            </li>
+        </ul>
+    </nav>
+    <button class="btn btn-facebook"><a href="/manager/registerMajor">학과 등록</a></button>
+</div>
+<footer th:insert="layout/header :: footer"></footer>
+
+<script>
+    function confirmDelete(event) {
+        var result = confirm("정말 삭제하시겠습니까?");
+        if (result) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
+
+
+</body>
+</html>

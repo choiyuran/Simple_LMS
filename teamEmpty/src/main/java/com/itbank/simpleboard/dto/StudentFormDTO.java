@@ -11,9 +11,9 @@ import java.util.Map;
 @NoArgsConstructor
 public class StudentFormDTO {
     private Long idx;
-
-    // 학번
-    private Integer student_num;
+//
+//    // 학번
+//    private Integer student_num;
 
     // 이름
     private String name;

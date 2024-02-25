@@ -108,6 +108,8 @@
         <button class="btn btn-danger" onclick="confirmDelete(event)" th:if="${session.user.user.role.toString() == '교직원'}">
             <a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
         <button class="btn btn-outline-secondary" onclick="Url()">목록으로</button>
+
+            <a th:if="${session.user.user.role.toString() == '교직원'}" th:href="@{'/manager/viewEvaluation/'+${lecture.idx}}"><button class="btn btn-facebook">강의평가보기</button></a>
     </div>
 
     <script>
@@ -143,7 +145,7 @@
                     if (data !== undefined) {
                         console.log('업로드 성공');
                         planExist.innerHTML = '';
-                        planExist.innerHTML = '<a href="/download/' + encodeURIComponent(data) + '" download>' + data + '</a>';
+                        planExist.innerHTML = '<a href="/download/' + data + '" download>' + data + '</a>';
                         planExist.innerHTML += '<span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>';
                         planExist.innerHTML += '<input type="hidden" class="lectureIdx" value="' + lectureIdx + '">';
                         planExist.innerHTML += '<input type="file" class="file-input" onchange="handleFileUpload(this)" style="display: none;">';

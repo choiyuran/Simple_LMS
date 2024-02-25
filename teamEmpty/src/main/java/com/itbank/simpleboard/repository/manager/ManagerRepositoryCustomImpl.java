@@ -1,9 +1,8 @@
 package com.itbank.simpleboard.repository.manager;
 
-import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.QManagerDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.itbank.simpleboard.entity.QManager;
 import com.itbank.simpleboard.entity.QUser;
@@ -12,6 +11,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -34,7 +36,7 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     }
 
     @Override
-    public List<ManagerDTO> findBySearchType(HashMap<String, Object> map) {
+    public Page<ManagerDTO> findBySearchType(HashMap<String, Object> map, Pageable pageable) {
         BooleanExpression condition = Expressions.asBoolean(true).isTrue();
         String searchType = (String)map.get("searchType");
         String searchValue = (String)map.get("searchValue");
@@ -56,7 +58,7 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
             condition = condition.and(manager.leave.eq(YesOrNo.valueOf("N")));
         }
 
-        return queryFactory
+        QueryResults<ManagerDTO> results = queryFactory
                 .select(new QManagerDTO(
                         manager.idx,
                         manager.manager_img,
@@ -72,7 +74,12 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                 .innerJoin(user)
                 .on(manager.user.user_id.eq(user.user_id))
                 .where(condition)
-                .fetch();
+                .orderBy(manager.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override
@@ -96,14 +103,14 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     }
 
     @Override
-    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTuitionPaymentDto conditions) {
+    public List<CheckTuitionPaymentDto> findAllCheckTuitionPayments(CheckTutionPaymentConditionDto conditions) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        BooleanExpression studentIdxCondition = conditions.getIdx() != null ?
-                QStudent.student.idx.eq(conditions.getIdx()) : null;
+        BooleanExpression lectureIdxCondition = conditions.getMajor_idx() != null ?
+                QMajor.major.idx.eq(conditions.getMajor_idx()) : null;
 
-        BooleanExpression semesterCondition = conditions.getSemester() != null ?
-                QPayments.payments.semester.eq(conditions.getSemester()) : null;
+        BooleanExpression userNameCondition = conditions.getUsername() != null ?
+                user.user_name.eq(conditions.getUsername()) : null;
 
         List<CheckTuitionPaymentDto> tuitionPayments = queryFactory
                 .select(Projections.constructor(CheckTuitionPaymentDto.class,
@@ -115,13 +122,33 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                         QPayments.payments.flag,
                         QPayments.payments.semester))
                 .from(QStudent.student)
-                .leftJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .innerJoin(QPayments.payments).on(QStudent.student.eq(QPayments.payments.student))
+                .innerJoin(user).on(QStudent.student.user.eq(user))
+                .innerJoin(QMajor.major).on(QStudent.student.major.eq(QMajor.major))
                 .where(
-                        studentIdxCondition,
-                        semesterCondition
+                        lectureIdxCondition,
+                        userNameCondition
                 )
                 .fetch();
-
         return tuitionPayments;
+    }
+
+    @Override
+    public List<EvaluateFormDto> viewEvaluation(Long idx) {
+        return queryFactory
+                .select(new QEvaluateFormDto(
+                        QEvaluation.evaluation.enrollment.idx,
+                        QEvaluation.evaluation.q1,
+                        QEvaluation.evaluation.q2,
+                        QEvaluation.evaluation.q3,
+                        QEvaluation.evaluation.q4,
+                        QEvaluation.evaluation.q5
+                ))
+                .from(QEvaluation.evaluation)
+                .innerJoin(QEnrollment.enrollment).on(QEvaluation.evaluation.enrollment.eq(QEnrollment.enrollment))
+                .where(
+                        QEnrollment.enrollment.lecture.idx.eq(idx)
+                )
+                .fetch();
     }
 }

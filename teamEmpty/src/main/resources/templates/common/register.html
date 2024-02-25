@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/managerHeader :: head">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/header :: head">
 
 <body class="bg-gradient-success">
-    <header th:insert = "layout/managerHeader :: header" ></header>
+    <header th:insert = "layout/header :: header" ></header>
 
     <div class="container">
-        <p th:text="${msg}"></p>
 
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
@@ -18,25 +17,27 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">등록하기</h1>
                             </div>
-                            <form class="userForm" enctype="multipart/form-data" name="userForm">
+                            <form class="userForm" method="post" enctype="multipart/form-data" >
                                 <div class="form-group row">
                                     <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
+<!--                                        <label><input type="radio" name="userType" value="student"-->
+<!--                                                onclick="changeForm('student')" checked> 학생 등록</label>-->
                                         <label><input type="radio" name="userType" value="professor"
-                                                onclick="changeForm('professor')" required> 교수 등록</label>
+                                                onclick="changeForm('professor')"> 교수 등록</label>
                                         <label><input type="radio" name="userType" value="manager"
-                                                onclick="changeForm('manager')" required> 교직원 등록</label>
+                                                onclick="changeForm('manager')"> 교직원 등록</label>
                                     </div>
                                 </div>
                                 <div class="form-group row pb-0">
                                     <div class="col-lg-6">
 
                                         <div class=" form-group text-center">
-                                            <img id="imageContainer" src="/img/idPhoto.png"
+                                            <img id="imageContainer" src="img/idPhoto.png"
                                                  style="max-height: 100px; max-height: 130px; object-fit: contain;">
 
                                         </div>
                                         <div class="form-group">
-                                            <input type="file" class="form-control form-control-user" name="imageFile" id="imageFile" accept="image/*" required>
+                                            <input type="file" class="form-control form-control-user" name="imageFile" id="imageFile" accept="image/*">
                                         </div>
 
                                         <div class="form-group" id="majorSection">
@@ -63,7 +64,7 @@
                                                    id="exampleInputEmail" name="email" placeholder="Email" required>
                                         </div>
                                         <div class="form-group pb-0">
-                                            <label for="hireDate">입사 날짜</label>
+
                                             <input type="date" class="form-control form-control-user"
                                                    id="hireDate" name="hireDate" required>
                                         </div>
@@ -92,7 +93,7 @@
 
                                 <!-- ID field will change based on user type -->
 
-                                <button type="button" class="btn btn-primary btn-user btn-block" id="btn-register">
+                                <button class="btn btn-primary btn-user btn-block" id="btn-register">
                                     등록하기
                                 </button>
                             </form>
@@ -111,7 +112,7 @@
 
     <!-- Core plugin JavaScript-->
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <footer th:insert="layout/managerHeader :: footer"></footer>
+    <footer th:insert="layout/header :: footer"></footer>
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
     <script>
@@ -121,77 +122,43 @@
         function previewImage(event) {
             var input = event.target;
             var imageContainer = document.getElementById('imageContainer');
-            if (input.files && input.files[0]) {
+            // var imageElement = imageContainer.querySelector('img');
+            if(input.files && input.files[0]) {
                 var reader = new FileReader();
 
                 reader.onload = function () {
-                    // 이미지 로딩이 완료되면 이미지 컨테이너의 src를 설정하여 이미지를 미리보기로 표시
                     imageContainer.src = reader.result;
-
-                    // 이미지 크기를 조절하여 이미지 컨테이너에 맞게 표시
-                    imageContainer.onload = function () {
-                        var maxWidth = 130;
-                        var maxHeight = 100;
-                        var width = imageContainer.width;
-                        var height = imageContainer.height;
-                        var ratio = 1;
-
-                        if (width > maxWidth) {
-                            ratio = maxWidth / width;
-                            height *= ratio;
-                            width = maxWidth;
-                        }
-                        if (height > maxHeight) {
-                            ratio = maxHeight / height;
-                            width *= ratio;
-                            height = maxHeight;
-                        }
-
-                        imageContainer.style.width = width + 'px';
-                        imageContainer.style.height = height + 'px';
-                    };
-                };
+                }
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
 
 
-        document.getElementById("frontSecurity").addEventListener("input", function () {
-            var inputVal = this.value;
+
+        $("#frontSecurity, #backSecurity").on("input", function () {    // 주민번호입력확인
+            var inputVal = $(this).val();
             // 숫자가 아닌 문자가 포함되어 있는지 확인
             if (/[^\d]/.test(inputVal)) {
                 alert("숫자만 입력 가능합니다.");
                 // 숫자가 아닌 문자를 모두 제거
-                this.value = inputVal.replace(/[^0-9]/g, "");
+                $(this).val(inputVal.replace(/[^0-9]/g, ""));
             }
 
-            // 앞자리는 6자리로 제한
-            if (this.value.length > 6) {
-                this.value = this.value.slice(0, 6);
+            // 앞자리는 6자리, 뒷자리는 7자리로 제한
+            if (this.id == 'frontSecurity' && $(this).val().length > 6) {
+                $(this).val($(this).val().slice(0, 6));
             }
-        });
-
-        document.getElementById("backSecurity").addEventListener("input", function () {
-            var inputVal = this.value;
-            // 숫자가 아닌 문자가 포함되어 있는지 확인
-            if (/[^\d]/.test(inputVal)) {
-                alert("숫자만 입력 가능합니다.");
-                // 숫자가 아닌 문자를 모두 제거
-                this.value = inputVal.replace(/[^0-9]/g, "");
-            }
-
-            // 뒷자리는 7자리로 제한
-            if (this.value.length > 7) {
-                this.value = this.value.slice(0, 7);
+            if (this.id == 'backSecurity' && $(this).val().length > 7) {
+                $(this).val($(this).val().slice(0, 7));
             }
         });
 
-        document.getElementById("phonenumber").addEventListener("input", function () {
+        $("#phonenumber").on("input", function () { // 휴대폰번호 검증
             // 숫자만 입력되도록 필터링
-            this.value = this.value.replace(/[^0-9]/g, "");
+            $(this).val($(this).val().replace(/[^0-9]/g, ""));
             // 010이 이미 입력되어있는 상태에서 추가적으로 숫자를 입력받아 '-'를 붙이는 과정
-            var inputVal = this.value;
+            var inputVal = $(this).val();
             var formatted = inputVal;
             if (inputVal.length > 3) {
                 var front = inputVal.substr(0, 3);
@@ -205,7 +172,7 @@
                     formatted += "-" + back;
                 }
             }
-            this.value = formatted;
+            $(this).val(formatted);
         });
 
 
@@ -216,9 +183,6 @@
             const majorSection = document.getElementById("majorSection");
             const backSecurityInput = document.getElementById('backSecurity');
             // var selectedOption = document.getElementById("major");
-
-            // 이 부분에서 form의 method를 "POST"로 설정합니다.
-            form.method = "POST";
 
             if (userType === 'professor') {
                 form.action = "/manager/addProfessor";
@@ -237,96 +201,73 @@
 
         }
 
-
-
         var btnRegister = document.getElementById('btn-register');
         btnRegister.addEventListener('click', submitForm);
+
         function submitForm() {
-            // 필수 입력 필드들의 값을 확인하여 모두 작성되었는지 검사
-            if (!validateForm()) {
-                return; // 필수 입력 필드 중 하나라도 작성되지 않은 경우 함수 종료
-            }
-            const form = $(".userForm")[0];
+            const form = document.querySelector(".userForm");
             const formData = new FormData(form);
-            const userType = $('input[name="userType"]:checked').val();
-            const major = $("#major").val();
-            var imageFile = $("#imageFile")[0].files[0];
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            var imageFile = document.getElementById("imageFile").files[0];
+            const major = document.getElementById("major").value;
 
 
+            // 폼 데이터 생성
             formData.set("userType", userType);
-            formData.set("major", major);
-            formData.set("imageFile", imageFile);
+            if (imageFile === undefined) {
+                imageFile = null;
+            }
+            formData.append("imageFile", imageFile);
+            formData.append("firstName", document.getElementById("exampleFirstName").value);
+            formData.append("lastName", document.getElementById("exampleLastName").value);
+            formData.append("email", document.getElementById("exampleInputEmail").value);
+            formData.append("address", document.getElementById("exampleInputUserid").value);
+            formData.append("frontSecurity", document.getElementById("frontSecurity").value);
+            formData.append("backSecurity", document.getElementById("backSecurity").value);
+            formData.append("pnum", document.getElementById("phonenumber").value);
+            formData.append("hireDate", document.getElementById("hireDate").value);
+            formData.append("major", major);
 
-            console.log("name:", $("#exampleFirstName").val());
+
+            // form 내용 확인을 위한 콘솔 코드 추가
+            console.log("폼 내용 확인:");
+            console.log("name:",document.getElementById("exampleFirstName").value);
             console.log("userType:", userType);
             console.log("imageFile:", imageFile);
             console.log("major:", major);
 
-            $.ajax({
-                url: form.action,
-                type: 'POST',
-                data: formData,
-                processData: false, // 데이터 처리 방식을 설정합니다. FormData를 사용하므로 false로 설정합니다.
-                contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
-                success: function(message) {
-                    console.log('등록 메시지:', message);
-                    if (message.success) { // success가 true인 경우에만 실행
-                        var additionalRegistration = confirm('추가로 등록하시겠습니까?');
-                        if (additionalRegistration === true) {
-                            console.log("추가 등록을 진행합니다.");
-                            window.location.href = '/manager/register';
-                        } else {
-                            console.log("추가 등록을 취소합니다.");
-                            if(userType === 'manager'){
-                                window.location.href = '/manager/managerList';
-                            }
-                            if(userType === 'professor'){
-                                window.location.href = '/manager/professorList';
-                            }
-                        }
-                    } else {
-                        alert("폼 등록이 실패하였습니다. 오류 메시지: " + message.message);
-                    }
+
+            // fetch API를 사용하여 Ajax 요청을 보냄
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 },
-                error: function(xhr, status, error) {
-                    console.error('폼 등록이 실패하였습니다:', error);
-                }
-            });
-        }
-
-        function validateForm() {
-            // 필수 입력 필드의 값들을 확인하여 모두 작성되었는지 검사
-            const userType = $('input[name="userType"]:checked').val();
-            if(!userType){
-                alert('등록할 사용자의 타입을 체크해주세요.');
-                return false;
-            }
-
-            if (userType === 'professor') {
-                const major = $("#major").val();
-                if (major === '') {
-                    alert('학과를 선택해주세요.'); // professor인 경우에는 학과를 선택해야 함
-                    return false; // 작성되지 않은 경우 false 반환
-                }
-            }
-
-            // 나머지 필수 입력 필드들의 검사를 진행
-            const firstName = $("#exampleFirstName").val();
-            const lastName = $("#exampleLastName").val();
-            const email = $("#exampleInputEmail").val();
-            const hireDate = $("#hireDate").val();
-            const address = $("#exampleInputUserid").val();
-            const frontSecurity = $("#frontSecurity").val();
-            const backSecurity = $("#backSecurity").val();
-            const phonenumber = $("#phonenumber").val();
-            const imageFile = $("#imageFile").val();
-
-            if (!firstName || !lastName || !email || !hireDate || !address || !frontSecurity || !backSecurity || !phonenumber || !imageFile) {
-                alert('모든 입력 항목을 작성해주세요.');
-                return false; // 하나라도 작성되지 않은 경우 false 반환
-            }
-
-            return true; // 모든 필수 입력 항목이 작성된 경우 true 반환
+                // body: JSON.stringify(Object.fromEntries(formData))
+                body: formData
+            })
+                .then(response => {
+                    console.log("1차 then")
+                    return response.json(); // 응답을 JSON 형식으로 파싱하여 반환
+                })
+                .then(data => {
+                    console.log('name : ' + data.name)
+                    alert(data.name + '님이 ' + data.type + '으로 등록 되었습니다');
+                    // form.reset();
+                    const additionalRegistration = confirm('추가로 등록하시겠습니까?');
+                    if (additionalRegistration) {
+                        console.log("추가 등록을 진행합니다.");
+                        window.location.href = '/register'; // 등록 화면으로 이동
+                    } else {
+                        console.log("추가 등록을 취소합니다.");
+                        window.location.href = '/home'; // 홈 화면으로 이동
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("폼 등록이 실패하였습니다. 오류 메시지: " + error.message);
+                    window.location.href = '/register';
+                });
         }
     </script>
 

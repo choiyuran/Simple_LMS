@@ -35,7 +35,7 @@
                 <nav class="navbar navbar-expand-sm bg-gradient-success topbar mb-4 static-top shadow navbar-dark  py-3">
                     <div class="container">
                         <div class="container">
-                            <a class="navbar-brand" th:href="${'/'+session.user.user.role.toString()+'/home'}">
+                            <a class="navbar-brand" th:href="${'/manager/home'}">
                                 <div class="sidebar-brand-icon rotate-n-15">
                                     <i class="fas fa-laugh-wink"></i>
                                 </div>
@@ -47,7 +47,7 @@
                             <div class="collapse navbar-collapse" id="collapsibleNavbar">
                                 <ul class="navbar-nav d-flex justify-content-between w-100">
                                     <li class="nav-item">
-                                        <a class="nav-link" th:href="${'/'+session.user.user.role.toString()+'/home'}">홈</a>
+                                        <a class="nav-link" th:href="${'/manager/home'}">홈</a>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
@@ -91,7 +91,7 @@
                                         <!-- Dropdown - User Information -->
                                         <div aria-labelledby="userDropdown"
                                              class="dropdown-menu dropdown-menu-right shadow animated--grow-in">
-                                            <a class="dropdown-item" href="/manager/managerModify">
+                                            <a class="dropdown-item" href="/manager/modifyCheck">
                                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                                 내 정보 보기
                                             </a>
