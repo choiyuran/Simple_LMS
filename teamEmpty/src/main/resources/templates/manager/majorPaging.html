@@ -23,8 +23,7 @@
     </table>
 
     <nav style="text-align: center;">
-        <ul class="pagination"
-            th:with="start=${(list.number/maxPage)*maxPage + 1}, end=(${(list.totalPages == 0) ? 1 : (start + (maxPage - 1) < list.totalPages ? start + (maxPage - 1) : list.totalPages)})">
+        <ul class="pagination">
             <li th:if="${start > 1}">
                 <a th:href="@{/manager/pagingTest(page=0)}" th:text="'<<'"></a>
             </li>

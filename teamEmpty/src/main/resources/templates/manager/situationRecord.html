@@ -8,15 +8,6 @@
 <div class="container mt-3">
     <h2>상태 기록</h2>
     <hr>
-<!--    <form th:action="@{/manager/studentSituation}">-->
-<!--        &lt;!&ndash; 학생의 상태로 검색할 수 있는 검색창 추가 &ndash;&gt;-->
-<!--        <div class="form-group mr-2">-->
-<!--            <label for="status">상태 검색</label>-->
-<!--            <input type="text" class="form-control" id="status" name="status" placeholder="상태를 입력하세요.">-->
-<!--        </div>-->
-
-<!--        <button class="btn btn-primary">검색</button>-->
-<!--    </form>-->
     <br>
     <table class="table table-bordered">
         <tr>
@@ -32,7 +23,7 @@
         </tr>
 
     </table>
-    <button class="btn btn-primary"><a href="/manager/studentSituation">목록으로</a></button>
+    <a href="/manager/studentSituation"><button class="btn btn-primary">목록으로</button></a>
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
 

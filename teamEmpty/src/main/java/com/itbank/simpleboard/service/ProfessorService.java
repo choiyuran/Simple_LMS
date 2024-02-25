@@ -5,6 +5,8 @@ import com.itbank.simpleboard.entity.Professor;
 import com.itbank.simpleboard.repository.professor.ProfessorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +21,8 @@ import java.util.stream.Stream;
 public class ProfessorService {
     private final ProfessorRepository professorRepository;
 
-    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
-        return professorRepository.getLectureDtoList(condition);
+    public Page<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition, Pageable pageable) {
+        return professorRepository.getLectureDtoList(condition, pageable);
     }
 
     public ProfessorLectureDto getLectureDto(Long idx) {
@@ -82,5 +84,6 @@ public class ProfessorService {
         log.info(professors.toString());
         return professors;
     }
+
 
 }

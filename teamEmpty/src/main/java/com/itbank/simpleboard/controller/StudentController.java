@@ -1,11 +1,15 @@
 package com.itbank.simpleboard.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +45,11 @@ public class StudentController {
     private final ProfessorService professorService;
     private final ScholarShipService scholarShipService;
     private final SituationRecordService situationRecordService;
+    private final PagingComponent pagingComponent;
 
     @GetMapping("/enroll")
-    public ModelAndView enrollList(HttpSession session, String searchType, String keyword) {
+    public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
+                                   @PageableDefault(size = 2)Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
         ModelAndView mav = new ModelAndView("student/home");
@@ -53,12 +59,23 @@ public class StudentController {
             mav.setViewName("index");
             return mav;
         }
-
+        Page<LectureDto> list;
         if (searchType == null || keyword == null) {
-            mav.addObject("list", lectureService.selectAll());
+            list = lectureService.selectAll(pageable);
+            mav.addObject("list", list);
         } else {
-            mav.addObject("list", lectureService.selectAll(searchType, keyword));
+            list = lectureService.selectAll(searchType, keyword, pageable);
+            mav.addObject("list", list);
         }
+
+        int start = pagingComponent.calculateStart(list.getNumber());
+        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
+        mav.addObject("searchType", searchType);
+        mav.addObject("keyword", keyword);
 
         List<Enrollment> enrollmentList = enrollmentService.findByStudent(student.getIdx());
         List<LectureDto> lectureList = new ArrayList<>();

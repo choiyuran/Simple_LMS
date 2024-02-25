@@ -31,17 +31,64 @@
             <td><a th:text="${row.name}" th:href="@{'/manager/situationRecord/' + ${row.student_idx}}"></a></td>
             <td th:text="${row.major}"></td>
             <td th:text="${row.status}"></td>
-            <td><button class="btn btn-warning"><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}">수정</a></button></td>
+            <td><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}"><button class="btn btn-warning">수정</button></a></td>
         </tr>
 
         <!-- 검색 결과가 없는 경우 메시지 표시 -->
-        <tr th:unless="${studentList.size() > 0}">
+        <tr th:if="${studentList == null || studentList.isEmpty()}">
             <td colspan="4" style="text-align: center;">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <button class="btn btn-primary" th:if="${!#strings.isEmpty(status)}"><a href="/manager/studentSituation">목록으로</a></button>
+    <a href="/manager/studentSituation"><button class="btn btn-primary" th:if="${!#strings.isEmpty(status)}">목록으로</button></a>
+
+    <div class="d-flex justify-content-center">
+        <nav style="text-align: center;" th:if="${studentList != null && !studentList.isEmpty()}">
+            <ul class="pagination">
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/studentSituation(page=0)}" th:text="'<<'"></a>
+                </li>
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/studentSituation(page=${start - maxPage})}" th:text="'<'"></a>
+                </li>
+
+                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a th:text="${page}"
+                       th:if="${num != page}"
+                       th:href="@{/manager/studentSituation(page=${page - 1})}"></a>
+                    <a th:text="${page}"
+                       th:if="${num == page}" disabled="true"></a>
+                </li>
+
+                <li class="mx-2" th:if="${end < studentList.totalPages}">
+                    <a th:href="@{/manager/studentSituation(page=${start + maxPage})}" th:text="'>'"></a>
+                </li>
+                <li class="mx-2" th:if="${end < studentList.totalPages}">
+                    <a th:href="@{/manager/studentSituation(page=${studentList.totalPages - 1})}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let status = /*[[${status}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+
+            let href = $(this).attr('href');
+
+            if (status !== null) {
+                href += '&status=' + encodeURIComponent(status);
+            }
+            location.href = href;
+        });
+    });
+    /*]]>*/
+</script>
 
 </body>
 </html>

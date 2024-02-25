@@ -78,10 +78,65 @@
                 </form>
             </tr>
         </table>
+
+        <div class="d-flex justify-content-center" th:if="${list != null && !list.isEmpty()}">
+            <nav style="text-align: center;">
+                <ul class="pagination">
+                    <li class="mx-2" th:if="${start > 1}">
+                        <a th:href="@{/student/enroll(page=0)}" th:text="'<<'"></a>
+                    </li>
+                    <li class="mx-2" th:if="${start > 1}">
+                        <a th:href="@{/student/enroll(page=${start - maxPage})}" th:text="'<'"></a>
+                    </li>
+
+                    <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                        <a th:text="${page}"
+                           th:if="${num != page}"
+                           th:href="@{/student/enroll(page=${page - 1})}"></a>
+                        <a th:text="${page}"
+                           th:if="${num == page}" disabled="true"></a>
+                    </li>
+
+                    <li class="mx-2" th:if="${end < list.totalPages}">
+                        <a th:href="@{/student/enroll(page=${start + maxPage})}" th:text="'>'"></a>
+                    </li>
+                    <li class="mx-2" th:if="${end < list.totalPages}">
+                        <a th:href="@{/student/enroll(page=${list.totalPages - 1})}" th:text="'>>'"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
     </div>
 </main>
 
 
 <footer th:insert="layout/studentHeader :: footer"></footer>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let searchType = /*[[${searchType}]]*/ null;
+        let keyword = /*[[${keyword}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+
+            let href = $(this).attr('href');
+
+            if (searchType !== null) {
+                href += '&searchType=' + encodeURIComponent(searchType);
+            }
+            if (keyword !== null) {
+                href += '&keyword=' + encodeURIComponent(keyword);
+            }
+
+            location.href = href;
+        });
+    });
+    /*]]>*/
+</script>
+
+
 </body>
 </html>

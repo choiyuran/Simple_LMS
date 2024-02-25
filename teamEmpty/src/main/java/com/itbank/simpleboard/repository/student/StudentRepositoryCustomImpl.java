@@ -3,6 +3,7 @@ package com.itbank.simpleboard.repository.student;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -12,6 +13,9 @@ import jdk.jfr.Registered;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -92,7 +96,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     }
 
     @Override
-    public List<StudentListDto> selectAllStudent(HashMap<String, Object> map) {
+    public Page<StudentListDto> selectAllStudent(HashMap<String, Object> map, Pageable pageable) {
         Long majorIdx = (Long) map.get("major_idx");
         String name = (String) map.get("name");
 
@@ -103,7 +107,8 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         if (name != null && !name.isEmpty()) {
             builder.and(QUser.user.user_name.contains(name));
         }
-        return queryFactory
+
+        QueryResults<StudentListDto> results = queryFactory
                 .select(new QStudentListDto(
                         QStudent.student.idx,
                         QStudent.student.student_num,
@@ -119,7 +124,12 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                 .join(QStudent.student.user, QUser.user)
                 .join(QStudent.student.major, QMajor.major)
                 .where(builder)
-                .fetch();
+                .orderBy(QStudent.student.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override

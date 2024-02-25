@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,8 +58,8 @@ public class ManagerService {
     private final SituationRepository situationRepository;
     private final SituationRecordRepository situationRecordRepository;
 
-    public List<ManagerDTO> findAllManager() {
-        List<Manager> managerList = managerRepository.findAll();
+    public Page<ManagerDTO> findAllManager(Pageable pageable) {
+        Page<Manager> managerList = managerRepository.findAll(pageable);
         List<ManagerDTO> managerDTOList = new ArrayList<>();
 
         for(Manager m : managerList){
@@ -75,11 +76,11 @@ public class ManagerService {
             managerDTOList.add(dto);
         }
 
-        return managerDTOList;
+        return new PageImpl<>(managerDTOList, pageable, managerList.getTotalElements());
     }
 
-    public List<ManagerDTO> searchManager(HashMap<String, Object> map) {
-        List<ManagerDTO> searchManagerList = managerRepository.findBySearchType(map);
+    public Page<ManagerDTO> searchManager(HashMap<String, Object> map, Pageable pageable) {
+        Page<ManagerDTO> searchManagerList = managerRepository.findBySearchType(map, pageable);
         return searchManagerList;
     }
 
@@ -226,14 +227,14 @@ public class ManagerService {
     }
 
 
-    public List<Major> searchByCollege(Long collegeIdx) {
+    public Page<Major> searchByCollege(Long collegeIdx, Pageable pageable) {
         College college = collegeRepository.findById(collegeIdx).get();
-        return majorRepository.findByCollege(college);
+        return majorRepository.findByCollege(college, pageable);
     }
 
-    public List<Major> searchByCollegeAndMajor(Long collegeIdx, String majorName) {
+    public Page<Major> searchByCollegeAndMajor(Long collegeIdx, String majorName, Pageable pageable) {
         College college = collegeRepository.findById(collegeIdx).get();
-        return majorRepository.searchByCollegeAndNameContaining(college, majorName);
+        return majorRepository.searchByCollegeAndNameContaining(college, majorName, pageable);
     }
 
     public List<Major> searchByMajor(String majorName) {
@@ -643,8 +644,8 @@ public class ManagerService {
         log.info("majorList. : " + majorList);
         return majorList;
     }
-    public List<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map) {
-        return professorRepository.searchByMajorAndProfessorAndLeave(map);
+    public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
+        return professorRepository.searchByMajorAndProfessorAndLeave(map, pageable);
     }
 
 
@@ -674,8 +675,8 @@ public class ManagerService {
         return professor;
     }
 
-    public List<StudentListDto> selectAllStudent(HashMap<String, Object> map) {
-        return studentRepository.selectAllStudent(map);
+    public Page<StudentListDto> selectAllStudent(HashMap<String, Object> map, Pageable pageable) {
+        return studentRepository.selectAllStudent(map, pageable);
     }
 
     public StudentListDto selectOneStudent(Long idx) {
@@ -756,6 +757,14 @@ public class ManagerService {
      */
     public Page<Major> majorListPaging(Pageable pageable) {
         return majorRepository.findAll(pageable);
+    }
+
+    public Page<Major> selectAllMajorPaging(Pageable pageable) {
+        return majorRepository.findByAbolition(pageable, YesOrNo.N);
+    }
+
+    public Page<Major> searchByMajorPaging(String majorName, Pageable pageable) {
+        return majorRepository.findByNameContaining(majorName, pageable);
     }
 }
 

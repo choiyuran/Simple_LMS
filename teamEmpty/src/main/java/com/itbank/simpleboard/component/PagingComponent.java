@@ -12,6 +12,6 @@ public class PagingComponent {
     }
 
     public int calculateEnd(int totalPages, int start) {
-        return (totalPages == 0) ? 1 : (start + (MAX_PAGE - 1) < totalPages ? start + (MAX_PAGE - 1) : totalPages);
+        return (totalPages == 0) ? 1 : (Math.min(start + (MAX_PAGE - 1), totalPages));
     }
 }

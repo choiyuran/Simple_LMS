@@ -34,6 +34,35 @@
         </tr>
     </table>
     <a href="/manager/noticeAdd"><button class="btn btn-primary" th:if="${session.user.user.role.toString() == '교직원'}">등록</button></a>
+
+    <div class="d-flex justify-content-center" th:if="${noticeList != null && !noticeList.isEmpty()}">
+        <nav style="text-align: center;">
+            <ul class="pagination">
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/noticeList(page=0)}" th:text="'<<'"></a>
+                </li>
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/manager/noticeList(page=${start - maxPage})}" th:text="'<'"></a>
+                </li>
+
+                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a th:text="${page}"
+                       th:if="${num != page}"
+                       th:href="@{/manager/noticeList(page=${page - 1})}"></a>
+                    <a th:text="${page}"
+                       th:if="${num == page}" disabled="true"></a>
+                </li>
+
+                <li class="mx-2" th:if="${end < noticeList.totalPages}">
+                    <a th:href="@{/manager/noticeList(page=${start + maxPage})}" th:text="'>'"></a>
+                </li>
+                <li class="mx-2" th:if="${end < noticeList.totalPages}">
+                    <a th:href="@{/manager/noticeList(page=${noticeList.totalPages - 1})}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
 </div>
 <footer th:insert="layout/header :: footer"></footer>
 

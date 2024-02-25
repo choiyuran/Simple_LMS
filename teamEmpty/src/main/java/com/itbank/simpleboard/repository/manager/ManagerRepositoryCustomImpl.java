@@ -4,6 +4,7 @@ import com.itbank.simpleboard.dto.CheckTuitionPaymentDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.QManagerDTO;
 import com.itbank.simpleboard.entity.*;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.itbank.simpleboard.entity.QManager;
 import com.itbank.simpleboard.entity.QUser;
@@ -12,6 +13,9 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -34,7 +38,7 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
     }
 
     @Override
-    public List<ManagerDTO> findBySearchType(HashMap<String, Object> map) {
+    public Page<ManagerDTO> findBySearchType(HashMap<String, Object> map, Pageable pageable) {
         BooleanExpression condition = Expressions.asBoolean(true).isTrue();
         String searchType = (String)map.get("searchType");
         String searchValue = (String)map.get("searchValue");
@@ -56,7 +60,7 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
             condition = condition.and(manager.leave.eq(YesOrNo.valueOf("N")));
         }
 
-        return queryFactory
+        QueryResults<ManagerDTO> results = queryFactory
                 .select(new QManagerDTO(
                         manager.idx,
                         manager.manager_img,
@@ -72,7 +76,12 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                 .innerJoin(user)
                 .on(manager.user.user_id.eq(user.user_id))
                 .where(condition)
-                .fetch();
+                .orderBy(manager.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
     @Override

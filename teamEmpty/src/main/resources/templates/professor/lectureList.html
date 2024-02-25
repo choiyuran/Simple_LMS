@@ -141,127 +141,346 @@
                 </div>
             </td>
         </tr>
+
+        <tr th:if="${LectureList == null || LectureList.isEmpty()}">
+            <td>검색 결과가 없습니다.</td>
+        </tr>
         </tbody>
     </table>
 
     <button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>
 
-    <script>
-        function handleKeyDown(event) {
-            // 엔터 키의 keyCode는 13입니다.
-            if (event.keyCode === 13) {
-                event.preventDefault(); // 엔터 키의 기본 동작을 막습니다.
-                searchLectures();
-            }
-        }
-        document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
+    <div class="d-flex justify-content-center">
+        <nav style="text-align: center;" th:if="${LectureList != null && !LectureList.isEmpty()}">
+            <ul class="pagination">
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/professor/lectureList(page=0)}" th:text="'<<'"></a>
+                </li>
+                <li class="mx-2" th:if="${start > 1}">
+                    <a th:href="@{/professor/lectureList(page=${start - maxPage})}" th:text="'<'"></a>
+                </li>
 
-        function searchLectures() {
-            var form = document.getElementById("LectureSearchForm");
+                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
+                    <a th:text="${page}"
+                       th:if="${num != page}"
+                       th:href="@{/professor/lectureList(page=${page - 1})}"
+                        class="pageNum"></a>
+                    <a th:text="${page}"
+                       th:if="${num == page}" disabled="true"></a>
+                </li>
 
-            // form 엘리먼트가 올바르게 식별되었는지 확인
-            if (!form) {
-                console.error('Form 엘리먼트를 찾을 수 없습니다.');
-                return;
-            }
+                <li class="mx-2" th:if="${end < LectureList.totalPages}">
+                    <a th:href="@{/professor/lectureList(page=${start + maxPage})}" th:text="'>'"></a>
+                </li>
+                <li class="mx-2" th:if="${end < LectureList.totalPages}">
+                    <a th:href="@{/professor/lectureList(page=${LectureList.totalPages - 1})}" th:text="'>>'"></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
 
-            var formData = new FormData(form);
-
-            fetch('/professor/lectureList/data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(Object.fromEntries(formData))
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('네트워크 응답이 정상이 아닙니다');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // 서버 응답을 받은 후에 테이블 업데이트
-                    updateTableBody(data);
-                })
-                .catch(error => {
-                    console.error('에러:', error);
-                });
-        }
-
-        function updateTableBody(data) {
-            var tbody = document.getElementById("LectureTableBody");
-
-            // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
-            tbody.innerHTML = "";
-
-            if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
-            } else {
-                // 서버 응답을 이용하여 여러 행 추가
-                data.forEach(item => {
-                    var tr = document.createElement("tr");
-
-                    // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);
-                    appendTd(tr, item.professor_name);
-                    appendTd(tr, item.major);
-                    appendTd(tr, item.type);
-                    appendTd(tr, item.credit);
-                    appendTd(tr, item.day);
-                    appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                    appendTd(tr, item.semester);
-                    appendTd(tr, `${item.grade}학년`);
-                    appendTd(tr, `${item.location} ${item.lectureRoom}`);
-
-                    tbody.appendChild(tr);
-                });
-            }
-        }
-
-        // 특정 데이터를 <td>에 추가하는 함수
-        function appendTd(parent, text, isLink = false, linkHref = "") {
-            var td = document.createElement("td");
-            var div = document.createElement("div");
-            var span = document.createElement("span");
-
-            if (isLink) {
-                var a = document.createElement("a");
-                a.href = linkHref;
-                a.appendChild(span);
-                div.appendChild(a);
-
-                let split = text.split('_');
-                if (split[1] == 'N') {
-                    span.textContent = split[0];
-                } else {
-                    span.textContent = split[0] + '(폐강)';
-                }
-            } else {
-                div.appendChild(span);
-                span.textContent = text;
-            }
-
-            td.appendChild(div);
-            parent.appendChild(td);
-        }
-
-        function resetAndSearch() {
-            document.getElementById("LectureSearchForm").reset();
-            searchLectures();
-        }
-
-        document.getElementById('viewAbolition').addEventListener('change', searchLectures);
-
-        function onPageChange() {
-            window.localStorage.setItem("previousUrl", window.location.href);
-        }
-        window.onload = function () {
-            onPageChange();
-        }
-
-    </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>
+
+<script>
+    function handleKeyDown(event) {
+        // 엔터 키의 keyCode는 13입니다.
+        if (event.keyCode === 13) {
+            event.preventDefault(); // 엔터 키의 기본 동작을 막습니다.
+            searchLectures();
+        }
+    }
+    document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
+
+    var currentPage = 0;
+    function searchLectures() {
+        var form = document.getElementById("LectureSearchForm");
+
+        if (!form) {
+            console.error('Form 엘리먼트를 찾을 수 없습니다.');
+            return;
+        }
+
+        var formData = new FormData(form);
+
+        formData.append('page', currentPage);
+
+        fetch('/professor/lectureList/data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(Object.fromEntries(formData))
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 정상이 아닙니다');
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateTableBody(data);
+            })
+            .catch(error => {
+                console.error('에러:', error);
+            });
+    }
+
+    function updateTableBody(data) {
+        var tbody = document.getElementById("LectureTableBody");
+
+        // 기존 행 삭제
+        tbody.innerHTML = "";
+
+        // 이제 data는 ResponseDto 객체이므로, 이를 사용하여 테이블을 업데이트합니다.
+        // 엘리먼트를 추가하는 데 필요한 lectureDtoList를 가져옵니다.
+        var lectureDtoList = data.lectureDtoList.content;
+
+        if (!lectureDtoList || lectureDtoList.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
+        } else {
+            // 서버 응답을 이용하여 여러 행 추가
+            lectureDtoList.forEach(item => {
+                var tr = document.createElement("tr");
+
+                // 각 열에 대한 데이터 추가
+                appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);
+                appendTd(tr, item.professor_name);
+                appendTd(tr, item.major);
+                appendTd(tr, item.type);
+                appendTd(tr, item.credit);
+                appendTd(tr, item.day);
+                appendTd(tr, `${item.currentCount}/${item.maxCount}`);
+                appendTd(tr, item.semester);
+                appendTd(tr, `${item.grade}학년`);
+                appendTd(tr, `${item.location} ${item.lectureRoom}`);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 페이지네이션 엘리먼트 업데이트
+        var pagination = document.querySelector(".pagination");
+        pagination.innerHTML = "";
+
+        for (var i = data.start; i <= data.end; i++) {
+            var li = document.createElement("li");
+            li.className = "mx-2";
+
+            var a = document.createElement("a");
+            a.textContent = i;
+            a.href = "/professor/lectureList?page=" + (i - 1);
+
+            if (i === data.num) {
+                a.disabled = true;
+            }
+
+            a.addEventListener('click', function(event) {
+                event.preventDefault();
+                var page = parseInt(event.target.textContent, 10);
+                searchLectures(page);
+            });
+
+            li.appendChild(a);
+            pagination.appendChild(li);
+        }
+    }
+
+    // 특정 데이터를 <td>에 추가하는 함수
+    function appendTd(parent, text, isLink = false, linkHref = "") {
+        var td = document.createElement("td");
+        var div = document.createElement("div");
+        var span = document.createElement("span");
+
+        if (isLink) {
+            var a = document.createElement("a");
+            a.href = linkHref;
+            a.appendChild(span);
+            div.appendChild(a);
+
+            let split = text.split('_');
+            if (split[1] == 'N') {
+                span.textContent = split[0];
+            } else {
+                span.textContent = split[0] + '(폐강)';
+            }
+        } else {
+            div.appendChild(span);
+            span.textContent = text;
+        }
+
+        td.appendChild(div);
+        parent.appendChild(td);
+    }
+
+    function resetAndSearch() {
+        document.getElementById("LectureSearchForm").reset();
+        currentPage = 0;
+        searchLectures();
+    }
+
+    document.getElementById('viewAbolition').addEventListener('change', searchLectures);
+
+    function onPageChange() {
+        window.localStorage.setItem("previousUrl", window.location.href);
+    }
+    window.onload = function () {
+        onPageChange();
+    }
+</script>
+
+<!--<script>-->
+<!--    function handleKeyDown(event) {-->
+<!--        // 엔터 키의 keyCode는 13입니다.-->
+<!--        if (event.keyCode === 13) {-->
+<!--            event.preventDefault(); // 엔터 키의 기본 동작을 막습니다.-->
+<!--            searchLectures();-->
+<!--        }-->
+<!--    }-->
+<!--    document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);-->
+
+<!--    function searchLectures() {-->
+<!--        var form = document.getElementById("LectureSearchForm");-->
+
+<!--        // form 엘리먼트가 올바르게 식별되었는지 확인-->
+<!--        if (!form) {-->
+<!--            console.error('Form 엘리먼트를 찾을 수 없습니다.');-->
+<!--            return;-->
+<!--        }-->
+
+<!--        var formData = new FormData(form);-->
+
+<!--        fetch('/professor/lectureList/data', {-->
+<!--            method: 'POST',-->
+<!--            headers: {-->
+<!--                'Content-Type': 'application/json'-->
+<!--            },-->
+<!--            body: JSON.stringify(Object.fromEntries(formData))-->
+<!--        })-->
+<!--            .then(response => {-->
+<!--                if (!response.ok) {-->
+<!--                    throw new Error('네트워크 응답이 정상이 아닙니다');-->
+<!--                }-->
+<!--                return response.json();-->
+<!--            })-->
+<!--            .then(data => {-->
+<!--                // 서버 응답을 받은 후에 테이블 업데이트-->
+<!--                updateTableBody(data);-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('에러:', error);-->
+<!--            });-->
+<!--    }-->
+
+<!--    function updateTableBody(data) {-->
+<!--        var tbody = document.getElementById("LectureTableBody");-->
+
+<!--        // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)-->
+<!--        tbody.innerHTML = "";-->
+
+<!--        if (!data || data.length === 0) {-->
+<!--            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';-->
+<!--        } else {-->
+<!--            // 서버 응답을 이용하여 여러 행 추가-->
+<!--            data.forEach(item => {-->
+<!--                var tr = document.createElement("tr");-->
+
+<!--                // 각 열에 대한 데이터 추가-->
+<!--                appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);-->
+<!--                appendTd(tr, item.professor_name);-->
+<!--                appendTd(tr, item.major);-->
+<!--                appendTd(tr, item.type);-->
+<!--                appendTd(tr, item.credit);-->
+<!--                appendTd(tr, item.day);-->
+<!--                appendTd(tr, `${item.currentCount}/${item.maxCount}`);-->
+<!--                appendTd(tr, item.semester);-->
+<!--                appendTd(tr, `${item.grade}학년`);-->
+<!--                appendTd(tr, `${item.location} ${item.lectureRoom}`);-->
+
+<!--                tbody.appendChild(tr);-->
+<!--            });-->
+<!--        }-->
+<!--    }-->
+
+<!--    // 특정 데이터를 <td>에 추가하는 함수-->
+<!--    function appendTd(parent, text, isLink = false, linkHref = "") {-->
+<!--        var td = document.createElement("td");-->
+<!--        var div = document.createElement("div");-->
+<!--        var span = document.createElement("span");-->
+
+<!--        if (isLink) {-->
+<!--            var a = document.createElement("a");-->
+<!--            a.href = linkHref;-->
+<!--            a.appendChild(span);-->
+<!--            div.appendChild(a);-->
+
+<!--            let split = text.split('_');-->
+<!--            if (split[1] == 'N') {-->
+<!--                span.textContent = split[0];-->
+<!--            } else {-->
+<!--                span.textContent = split[0] + '(폐강)';-->
+<!--            }-->
+<!--        } else {-->
+<!--            div.appendChild(span);-->
+<!--            span.textContent = text;-->
+<!--        }-->
+
+<!--        td.appendChild(div);-->
+<!--        parent.appendChild(td);-->
+<!--    }-->
+
+<!--    function resetAndSearch() {-->
+<!--        document.getElementById("LectureSearchForm").reset();-->
+<!--        searchLectures();-->
+<!--    }-->
+
+<!--    document.getElementById('viewAbolition').addEventListener('change', searchLectures);-->
+
+<!--    function onPageChange() {-->
+<!--        window.localStorage.setItem("previousUrl", window.location.href);-->
+<!--    }-->
+<!--    window.onload = function () {-->
+<!--        onPageChange();-->
+<!--    }-->
+<!--</script>-->
+
+
+<!--<script th:inline="javascript">-->
+<!--    /*<![CDATA[*/-->
+<!--    $(document).ready(function () {-->
+<!--        let major = /*[[${condition.major}]]*/ null;-->
+<!--        let type = /*[[${condition.type}]]*/ null;-->
+<!--        let year = /*[[${condition.year}]]*/ null;-->
+<!--        let semester = /*[[${condition.semester}]]*/ null;-->
+<!--        let grade = /*[[${condition.grade}]]*/ null;-->
+
+<!--        $('.pagination a').on('click', function (event) {-->
+<!--            event.preventDefault();-->
+
+<!--            let href = $(this).attr('href');-->
+
+<!--            if (major !== null) {-->
+<!--                href += '&major=' + encodeURIComponent(major);-->
+<!--            }-->
+<!--            if (type !== null) {-->
+<!--                href += '&type=' + encodeURIComponent(type);-->
+<!--            }-->
+<!--            if (year !== null) {-->
+<!--                href += '&year=' + encodeURIComponent(year);-->
+<!--            }-->
+<!--            if (semester !== null) {-->
+<!--                href += '&semester=' + encodeURIComponent(semester);-->
+<!--            }-->
+<!--            if (grade !== null) {-->
+<!--                href += '&grade=' + encodeURIComponent(grade);-->
+<!--            }-->
+<!--            location.href = href;-->
+<!--        });-->
+<!--    });-->
+<!--    /*]]>*/-->
+<!--</script>-->
+
+
+
 </body>
 </html>
