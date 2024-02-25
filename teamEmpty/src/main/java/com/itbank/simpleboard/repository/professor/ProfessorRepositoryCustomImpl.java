@@ -123,6 +123,18 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 //                .fetch();
 //    }
 
+    @Override
+    public List<String> getMajorNameList(LectureSearchConditionDto condition) {
+        return queryFactory
+                .select(lecture.major.name)
+                .from(lecture)
+                .where(
+                        professor_idxEq(condition.getProfessor_idx())
+                )
+                .distinct()
+                .fetch();
+    }
+
     private BooleanExpression isAbolition(String isAbolition) {
         return StringUtils.hasText(isAbolition) ? null : lecture.abolition.eq(YesOrNo.valueOf("N"));
     }

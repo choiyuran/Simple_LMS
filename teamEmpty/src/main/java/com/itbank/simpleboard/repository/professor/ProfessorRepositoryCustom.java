@@ -12,6 +12,8 @@ import java.util.List;
 public interface ProfessorRepositoryCustom {
     Page<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition, Pageable pageable);
 
+    List<String> getMajorNameList(LectureSearchConditionDto condition);
+
     ProfessorLectureDto getLectureDto(Long idx);
 
     List<ProfessorUserDto> getProfessorNamesByMajor(Long majorIdx);

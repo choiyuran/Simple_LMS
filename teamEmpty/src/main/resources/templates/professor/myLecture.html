@@ -52,44 +52,44 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <td>
-                <div th:text="강의명">제목열1</div>
-            </td>
-            <td>
-                <div th:text="전공">제목열2</div>
-            </td>
-            <td>
-                <div th:text="'강의 타입'">제목열3</div>
-            </td>
-            <td>
-                <div th:text="'수강 학점'">제목열4</div>
-            </td>
-            <td>
-                <div th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</div>
-            </td>
-            <td>
-                <div th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</div>
-            </td>
-            <td>
-                <div th:text="'강의 학기'">xxxx년 x학기</div>
-            </td>
-            <td>
-                <div th:text="학년">제목열8</div>
-            </td>
-            <td>
-                <div th:text="강의실">제목열9</div>
-            </td>
-            <td>
+            <th order="1" class="lecture">
+                강의명<span class="order"></span>
+            </th>
+            <th order="1" class="major">
+                전공<span class="order"></span>
+            </th>
+            <th order="1" class="type">
+                강의 타입<span class="order"></span>
+            </th>
+            <th order="1" class="credit">
+                수강 학점<span class="order"></span>
+            </th>
+            <th order="1" class="time">
+                강의 시간<span class="order"></span>
+            </th>
+            <th order="1" class="current">
+                수강 인원<span class="order"></span>
+            </th>
+            <th order="1" class="semester">
+                강의 학기<span class="order"></span>
+            </th>
+            <th order="1" class="grade">
+                학년<span class="order"></span>
+            </th>
+            <th order="1" class="location">
+                강의실<span class="order"></span>
+            </th>
+            <th>
                 <div th:text="'강의 평가 보기'">현재 시간 이전만 평가가 완료된 거니까 현재 년도 분기 이전만 버튼 만들기</div>
-            </td>
-            <td>
+            </th>
+            <th>
                 <div th:text="'성적 입력'">제목열11</div>
-            </td>
+            </th>
         </tr>
         </thead>
         <tbody id="MyLectureTableBody">
         <tr th:each="row : ${MyList}">
-            <td>
+            <td class="lecture">
                 <div>
                     <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
                         <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
@@ -97,42 +97,42 @@
                     <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
                 </div>
             </td>
-            <td>
+            <td class="major">
                 <div>
                     <span th:text="${row.major}"></span>
                 </div>
             </td>
-            <td>
+            <td class="type">
                 <div>
                     <span th:text="${row.type}"></span>
                 </div>
             </td>
-            <td>
+            <td class="credit">
                 <div>
                     <span th:text="${row.credit}"></span>
                 </div>
             </td>
-            <td>
+            <td class="time">
                 <div>
-                    <span th:text="${row.day}"></span>
+                    <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}" ></span>
                 </div>
             </td>
-            <td>
+            <td class="current">
                 <div>
                     <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
                 </div>
             </td>
-            <td>
+            <td class="semester">
                 <div>
                     <span th:text="${row.semester}" class="semesterValue"></span>
                 </div>
             </td>
-            <td>
+            <td class="grade">
                 <div>
                     <span th:text="${row.grade} + '학년'"></span>
                 </div>
             </td>
-            <td>
+            <td class="location">
                 <div>
                     <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
                 </div>
@@ -211,17 +211,17 @@
                     var tr = document.createElement("tr");
 
                     // 각 열에 대한 데이터 추가
-                    appendTd(tr, item.name + '_' + item.abolition, 1, `/professor/viewLecture/${item.idx}`);
-                    appendTd(tr, item.major);
-                    appendTd(tr, item.type);
-                    appendTd(tr, item.credit);
-                    appendTd(tr, item.day);
-                    appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                    appendTd(tr, item.semester, 2, 'semesterValue');
-                    appendTd(tr, `${item.grade}학년`);
-                    appendTd(tr, `${item.location} ${item.lectureRoom}`);
-                    appendTd(tr, item.idx + '_' + item.professor_idx, 3, 'viewEvaluationBtnTd');
-                    appendTd(tr, item.idx, 4);
+                    appendTd(tr, item.name + '_' + item.abolition, "lecture", 1, `/professor/viewLecture/${item.idx}`);
+                    appendTd(tr, item.major, "major");
+                    appendTd(tr, item.type, "type");
+                    appendTd(tr, item.credit, "credit");
+                    appendTd(tr, `${item.day}<br>${item.start}<br>${item.end}`, "time");
+                    appendTd(tr, `${item.currentCount}/${item.maxCount}`, "current");
+                    appendTd(tr, item.semester, "semester", 2, 'semesterValue');
+                    appendTd(tr, `${item.grade}학년`, "grade");
+                    appendTd(tr, `${item.location} ${item.lectureRoom}`, "location");
+                    appendTd(tr, item.idx + '_' + item.professor_idx, "", 3, 'viewEvaluationBtnTd');
+                    appendTd(tr, item.idx, "", 4);
 
                     tbody.appendChild(tr);
                     addEvaluationBtn();
@@ -230,10 +230,16 @@
         }
 
         // 특정 데이터를 <td>에 추가하는 함수
-        function appendTd(parent, text, checked = 0, checkValue = "") {
+        function appendTd(parent, text, customClass="", checked = 0, checkValue = "") {
             var td = document.createElement("td");
             var div = document.createElement("div");
             var span = document.createElement("span");
+
+            if (customClass) {
+                td.classList.add(customClass);
+            } else {
+                td.classList.add("defaultClass");
+            }
 
             switch (checked) {
                 case 1:
@@ -278,7 +284,7 @@
                     break;
                 default:
                     div.appendChild(span);
-                    span.textContent = text;
+                    span.innerHTML = text;
                     td.appendChild(div);
             }
             parent.appendChild(td);
@@ -489,6 +495,43 @@
         window.onload = function () {
             onPageChange();
         }
+
+        function isNumeric(str) {
+            return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
+        }
+
+        const tbody = document.querySelector('tbody')
+        // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
+        const thList = document.querySelectorAll('th')
+        function sortHandler(event) {
+            // 클릭당한 th의 className을 불러온다
+            const className = event.target.className
+
+            // 클릭당한 th의 order 속성값을 정수로 불러온다
+            const order = +event.target.getAttribute('order')
+            // alert(order)
+
+            // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
+            document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
+            const span = event.target.querySelector('span.order')
+            span.innerText = order > 0 ? ' ▲' : ' ▼'
+
+            const trArray = Array.from(document.querySelectorAll('tbody > tr'))
+
+            trArray.sort((a, b) => {
+                let valueA = a.querySelector('.' + className).innerText
+                let valueB = b.querySelector('.' + className).innerText
+                if(isNumeric(valueA) && isNumeric(valueB)) {
+                    valueA = +valueA
+                    valueB = +valueB
+                }
+                let result = valueA > valueB ? 1 : -1
+                event.target.setAttribute('order', order * -1)
+                return result * order
+            })
+            trArray.forEach(tr => tbody.appendChild(tr))
+        }
+        thList.forEach(th => th.onclick = sortHandler)
     </script>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>

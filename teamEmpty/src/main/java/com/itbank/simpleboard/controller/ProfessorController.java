@@ -89,10 +89,7 @@ public class ProfessorController {
         model.addAttribute("LectureList", lectureDtoList);
 
         // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-        model.addAttribute("MajorList", lectureDtoList.stream()
-                .map(ProfessorLectureDto::getMajor)
-                .distinct()
-                .collect(Collectors.toList()));
+        model.addAttribute("MajorList", professorService.getMajorNameList(condition));
 
         model.addAttribute("GradeList", lectureDtoList.stream()
                 .map(ProfessorLectureDto::getGrade)
@@ -157,11 +154,7 @@ public class ProfessorController {
             Page<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition, pageable);
             model.addAttribute("MyList", myLectureDtoList);
 
-            // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-            model.addAttribute("MajorList", myLectureDtoList.stream()
-                    .map(ProfessorLectureDto::getMajor)
-                    .distinct()
-                    .collect(Collectors.toList()));
+            model.addAttribute("MajorList", professorService.getMajorNameList(condition));
 
             model.addAttribute("GradeList", myLectureDtoList.stream()
                     .map(ProfessorLectureDto::getGrade)

@@ -53,41 +53,41 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <td>
-                <div th:text="강의명">제목열1</div>
-            </td>
-            <td>
-                <div th:text="'교수'">제목열2</div>
-            </td>
-            <td>
-                <div th:text="전공">제목열4</div>
-            </td>
-            <td>
-                <div th:text="'강의 타입'">제목열5</div>
-            </td>
-            <td>
-                <div th:text="'수강 학점'">제목열6</div>
-            </td>
-            <td>
-                <div th:text="'강의 시간'">x요일 xx:xx ~ xx:xx, x요일 xx:xx ~ xx:xx</div>
-            </td>
-            <td>
-                <div th:text="'수강 인원'">현재 수강자 수 / 최대 인원 수</div>
-            </td>
-            <td>
-                <div th:text="'강의 학기'">xxxx년 x학기</div>
-            </td>
-            <td>
-                <div th:text="학년">제목열1</div>
-            </td>
-            <td>
-                <div th:text="강의실">제목열1</div>
-            </td>
+            <th order="1" class="lecture">
+                강의명<span class="order"></span>
+            </th>
+            <th order="1" class="professor">
+                교수<span class="order"></span>
+            </th>
+            <th order="1" class="major">
+                전공<span class="order"></span>
+            </th>
+            <th order="1" class="type">
+                강의 타입<span class="order"></span>
+            </th>
+            <th order="1" class="credit">
+                수강 학점<span class="order"></span>
+            </th>
+            <th order="1" class="time">
+                강의 시간<span class="order"></span>
+            </th>
+            <th order="1" class="current">
+                수강 인원<span class="order"></span>
+            </th>
+            <th order="1" class="semester">
+                강의 학기<span class="order"></span>
+            </th>
+            <th order="1" class="grade">
+                학년<span class="order"></span>
+            </th>
+            <th order="1" class="location">
+                강의실<span class="order"></span>
+            </th>
         </tr>
         </thead>
         <tbody id="LectureTableBody">
         <tr th:each="row : ${LectureList}">
-            <td>
+            <td class="lecture">
                 <div>
                     <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
                         <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
@@ -95,47 +95,47 @@
                     <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
                 </div>
             </td>
-            <td>
+            <td class="professor">
                 <div>
                     <span th:text="${row.professor_name}"></span>
                 </div>
             </td>
-            <td>
+            <td class="major">
                 <div>
                     <span th:text="${row.major}"></span>
                 </div>
             </td>
-            <td>
+            <td class="type">
                 <div>
                     <span th:text="${row.type}"></span>
                 </div>
             </td>
-            <td>
+            <td class="credit">
                 <div>
                     <span th:text="${row.credit}"></span>
                 </div>
             </td>
-            <td>
+            <td class="time">
                 <div>
-                    <span th:text="${row.day}"></span>
+                    <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
                 </div>
             </td>
-            <td>
+            <td class="current">
                 <div>
                     <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
                 </div>
             </td>
-            <td>
+            <td class="semester">
                 <div>
                     <span th:text="${row.semester}"></span>
                 </div>
             </td>
-            <td>
+            <td class="grade">
                 <div>
                     <span th:text="${row.grade} + '학년'"></span>
                 </div>
             </td>
-            <td>
+            <td class="location">
                 <div>
                     <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
                 </div>
@@ -148,7 +148,9 @@
         </tbody>
     </table>
 
-    <button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a></button>
+    <button class="btn btn-outline-secondary"
+            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a>
+    </button>
 
     <div class="d-flex justify-content-center">
         <nav style="text-align: center;" th:if="${LectureList != null && !LectureList.isEmpty()}">
@@ -164,7 +166,7 @@
                     <a th:text="${page}"
                        th:if="${num != page}"
                        th:href="@{/professor/lectureList(page=${page - 1})}"
-                        class="pageNum"></a>
+                       class="pageNum"></a>
                     <a th:text="${page}"
                        th:if="${num == page}" disabled="true"></a>
                 </li>
@@ -190,9 +192,11 @@
             searchLectures();
         }
     }
+
     document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
 
     var currentPage = 0;
+
     function searchLectures() {
         var form = document.getElementById("LectureSearchForm");
 
@@ -234,26 +238,25 @@
 
         // 이제 data는 ResponseDto 객체이므로, 이를 사용하여 테이블을 업데이트합니다.
         // 엘리먼트를 추가하는 데 필요한 lectureDtoList를 가져옵니다.
-        var lectureDtoList = data.lectureDtoList.content;
 
-        if (!lectureDtoList || lectureDtoList.length === 0) {
+        if (!data || data.length === 0) {
             tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
         } else {
             // 서버 응답을 이용하여 여러 행 추가
-            lectureDtoList.forEach(item => {
+            data.forEach(item => {
                 var tr = document.createElement("tr");
 
                 // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);
-                appendTd(tr, item.professor_name);
-                appendTd(tr, item.major);
-                appendTd(tr, item.type);
-                appendTd(tr, item.credit);
-                appendTd(tr, item.day);
-                appendTd(tr, `${item.currentCount}/${item.maxCount}`);
-                appendTd(tr, item.semester);
-                appendTd(tr, `${item.grade}학년`);
-                appendTd(tr, `${item.location} ${item.lectureRoom}`);
+                appendTd(tr, item.name + '_' + item.abolition, "name", true, `/professor/viewLecture/${item.idx}`);
+                appendTd(tr, item.professor_name, "professor");
+                appendTd(tr, item.major, "major");
+                appendTd(tr, item.type, "type");
+                appendTd(tr, item.credit, "credit");
+                appendTd(tr, `${item.day}<br>${item.start}<br>${item.end}`, "time");
+                appendTd(tr, `${item.currentCount}/${item.maxCount}`, "current");
+                appendTd(tr, item.semester, "semester");
+                appendTd(tr, `${item.grade}학년`, "grade");
+                appendTd(tr, `${item.location} ${item.lectureRoom}`, "location");
 
                 tbody.appendChild(tr);
             });
@@ -275,7 +278,7 @@
                 a.disabled = true;
             }
 
-            a.addEventListener('click', function(event) {
+            a.addEventListener('click', function (event) {
                 event.preventDefault();
                 var page = parseInt(event.target.textContent, 10);
                 searchLectures(page);
@@ -287,10 +290,12 @@
     }
 
     // 특정 데이터를 <td>에 추가하는 함수
-    function appendTd(parent, text, isLink = false, linkHref = "") {
+    function appendTd(parent, text, customClass, isLink = false, linkHref = "") {
         var td = document.createElement("td");
         var div = document.createElement("div");
         var span = document.createElement("span");
+
+        td.classList.add(customClass);
 
         if (isLink) {
             var a = document.createElement("a");
@@ -306,7 +311,7 @@
             }
         } else {
             div.appendChild(span);
-            span.textContent = text;
+            span.innerHTML = text;
         }
 
         td.appendChild(div);
@@ -324,11 +329,50 @@
     function onPageChange() {
         window.localStorage.setItem("previousUrl", window.location.href);
     }
+
     window.onload = function () {
         onPageChange();
     }
-</script>
 
+    function isNumeric(str) {
+        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
+    }
+
+    const tbody = document.querySelector('tbody')
+    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
+    const thList = document.querySelectorAll('th')
+
+    function sortHandler(event) {
+        // 클릭당한 th의 className을 불러온다
+        const className = event.target.className
+
+        // 클릭당한 th의 order 속성값을 정수로 불러온다
+        const order = +event.target.getAttribute('order')
+        // alert(order)
+
+        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
+        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
+        const span = event.target.querySelector('span.order')
+        span.innerText = order > 0 ? ' ▲' : ' ▼'
+
+        const trArray = Array.from(document.querySelectorAll('tbody > tr'))
+
+        trArray.sort((a, b) => {
+            let valueA = a.querySelector('.' + className).innerText
+            let valueB = b.querySelector('.' + className).innerText
+            if (isNumeric(valueA) && isNumeric(valueB)) {
+                valueA = +valueA
+                valueB = +valueB
+            }
+            let result = valueA > valueB ? 1 : -1
+            event.target.setAttribute('order', order * -1)
+            return result * order
+        })
+        trArray.forEach(tr => tbody.appendChild(tr))
+    }
+
+    thList.forEach(th => th.onclick = sortHandler)
+</script>
 <!--<script>-->
 <!--    function handleKeyDown(event) {-->
 <!--        // 엔터 키의 keyCode는 13입니다.-->
@@ -479,8 +523,6 @@
 <!--    });-->
 <!--    /*]]>*/-->
 <!--</script>-->
-
-
-
+<footer th:insert="layout/professorHeader :: footer"></footer>
 </body>
 </html>
