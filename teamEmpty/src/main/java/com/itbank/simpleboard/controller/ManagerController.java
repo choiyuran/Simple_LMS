@@ -549,11 +549,15 @@ public class ManagerController {
     @GetMapping("/studentList")         // 학생 목록 조회(검색어 있는 경우와 없는 경우)
     public ModelAndView studentList(@RequestParam(value = "major_idx", required = false) Long major_idx,
                                     @RequestParam(value = "name", required = false) String name,
-                                    @PageableDefault(size = 2) Pageable pageable) {
+                                    @RequestParam(value = "todayRegistered",required = false) boolean todayRegistered,
+                                    @PageableDefault(size = 15) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
+        log.info("todayRegistered : {}", todayRegistered);
+        map.put("todayRegistered",todayRegistered);
+
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
         int start = pagingComponent.calculateStart(studentList.getNumber());

@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
@@ -99,6 +101,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     public Page<StudentListDto> selectAllStudent(HashMap<String, Object> map, Pageable pageable) {
         Long majorIdx = (Long) map.get("major_idx");
         String name = (String) map.get("name");
+        boolean todayRegistered = (boolean) map.get("todayRegistered");
 
         BooleanBuilder builder = new BooleanBuilder();
         if (majorIdx != null) {
@@ -106,6 +109,13 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
         }
         if (name != null && !name.isEmpty()) {
             builder.and(QUser.user.user_name.contains(name));
+        }
+        if(todayRegistered){
+            LocalDate today = LocalDate.now();
+            // SQL Date 형식으로 변환
+            Date sqlDate = java.sql.Date.valueOf(today);
+            // 오늘 등록된 학생들만 필터링
+            builder.and(QUser.user.createdAt.eq(sqlDate));
         }
 
         QueryResults<StudentListDto> results = queryFactory

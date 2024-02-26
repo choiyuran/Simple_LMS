@@ -3,6 +3,8 @@ package com.itbank.simpleboard.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity @Data
@@ -46,6 +48,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private YesOrNo authority;  // 계정 권한
 
+    @Column(name = "createdAt")
+    private Date createdAt;
+
+
 
     public User(String user_pw,String salt, String user_name, String security, String address, String pnum, String email, User_role role) {
         this.user_id = email;
@@ -58,6 +64,21 @@ public class User {
         this.email = email;
         this.role = role;
         this.authority =  YesOrNo.Y;
+        this.createdAt = Date.valueOf(LocalDate.now());
+    }
+
+    public User(String user_pw,String salt, String user_name, String security, String address, String pnum, String email, User_role role,Date createdAt) {
+        this.user_id = email;
+        this.user_pw = user_pw;
+        this.salt = salt;
+        this.user_name = user_name;
+        this.security = security;
+        this.address = address;
+        this.pnum = pnum;
+        this.email = email;
+        this.role = role;
+        this.authority =  YesOrNo.Y;
+        this.createdAt = createdAt;
     }
 
 
