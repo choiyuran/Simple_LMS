@@ -86,7 +86,7 @@
         </tr>
         </thead>
         <tbody id="LectureTableBody">
-        <tr th:each="row : ${LectureList}">
+        <tr th:each="row : ${LectureList.content}">
             <td class="lecture">
                 <div>
                     <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
@@ -149,42 +149,32 @@
     </table>
 
     <button class="btn btn-outline-secondary"
-            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a>
+            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a
+            href="/manager/lectureAdd">등록</a>
     </button>
 
-    <div class="d-flex justify-content-center">
-        <nav style="text-align: center;" th:if="${LectureList != null && !LectureList.isEmpty()}">
-            <ul class="pagination">
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/professor/lectureList(page=0)}" th:text="'<<'"></a>
-                </li>
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/professor/lectureList(page=${start - maxPage})}" th:text="'<'"></a>
-                </li>
+    <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
+        <ul class="pagination">
+            <!-- 이전 페이지로 이동 -->
+            <li class="page-item" th:if="${LectureList.hasPrevious}">
+                <button class="page-link" data-page="${LectureList.number - 1}" type="button">이전</button>
+            </li>
 
-                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                    <a th:text="${page}"
-                       th:if="${num != page}"
-                       th:href="@{/professor/lectureList(page=${page - 1})}"
-                       class="pageNum"></a>
-                    <a th:text="${page}"
-                       th:if="${num == page}" disabled="true"></a>
-                </li>
+            <!-- 페이지 번호 표시 -->
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}">
+                <button class="page-link" th:data-page="${i}" th:text="${i + 1}" type="button"></button>
+            </li>
 
-                <li class="mx-2" th:if="${end < LectureList.totalPages}">
-                    <a th:href="@{/professor/lectureList(page=${start + maxPage})}" th:text="'>'"></a>
-                </li>
-                <li class="mx-2" th:if="${end < LectureList.totalPages}">
-                    <a th:href="@{/professor/lectureList(page=${LectureList.totalPages - 1})}" th:text="'>>'"></a>
-                </li>
-            </ul>
-        </nav>
+            <!-- 다음 페이지로 이동 -->
+            <li class="page-item" th:if="${LectureList.hasNext}">
+                <button class="page-link" data-page="${LectureList.number + 1}" type="button">다음</button>
+            </li>
+        </ul>
     </div>
-
 </main>
-<footer th:insert="layout/professorHeader :: footer"></footer>
 
-<script>
+
+<script th:inline="javascript">
     function handleKeyDown(event) {
         // 엔터 키의 keyCode는 13입니다.
         if (event.keyCode === 13) {
@@ -195,19 +185,27 @@
 
     document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
 
-    var currentPage = 0;
+    let currentPage = 0;
+
+    // 페이지 번호 클릭 이벤트 리스너 등록
+    document.querySelectorAll('.page-link').forEach(button => {
+        button.addEventListener('click', function () {
+            currentPage = parseInt(this.getAttribute('data-page'), 10);
+            searchLectures();
+        });
+    });
 
     function searchLectures() {
         var form = document.getElementById("LectureSearchForm");
 
+        // form 엘리먼트가 올바르게 식별되었는지 확인
         if (!form) {
             console.error('Form 엘리먼트를 찾을 수 없습니다.');
             return;
         }
 
         var formData = new FormData(form);
-
-        formData.append('page', currentPage);
+        formData.append("page", currentPage.toString());
 
         fetch('/professor/lectureList/data', {
             method: 'POST',
@@ -223,7 +221,12 @@
                 return response.json();
             })
             .then(data => {
+                console.log(data);
+                // 서버 응답을 받은 후에 테이블 업데이트
                 updateTableBody(data);
+
+                // 추가: 페이지 버튼 업데이트
+                updatePaginationButtons(currentPage, data.lectureDtoList.totalPages);
             })
             .catch(error => {
                 console.error('에러:', error);
@@ -233,69 +236,38 @@
     function updateTableBody(data) {
         var tbody = document.getElementById("LectureTableBody");
 
-        // 기존 행 삭제
+        // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
         tbody.innerHTML = "";
 
-        // 이제 data는 ResponseDto 객체이므로, 이를 사용하여 테이블을 업데이트합니다.
-        // 엘리먼트를 추가하는 데 필요한 lectureDtoList를 가져옵니다.
-
-        if (!data || data.length === 0) {
+        if (!data || !data.lectureDtoList || data.lectureDtoList.content.length === 0) {
             tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
         } else {
             // 서버 응답을 이용하여 여러 행 추가
-            data.forEach(item => {
+            data.lectureDtoList.content.forEach(item => {
                 var tr = document.createElement("tr");
 
                 // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name + '_' + item.abolition, "name", true, `/professor/viewLecture/${item.idx}`);
-                appendTd(tr, item.professor_name, "professor");
-                appendTd(tr, item.major, "major");
-                appendTd(tr, item.type, "type");
-                appendTd(tr, item.credit, "credit");
-                appendTd(tr, `${item.day}<br>${item.start}<br>${item.end}`, "time");
-                appendTd(tr, `${item.currentCount}/${item.maxCount}`, "current");
-                appendTd(tr, item.semester, "semester");
-                appendTd(tr, `${item.grade}학년`, "grade");
-                appendTd(tr, `${item.location} ${item.lectureRoom}`, "location");
+                appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);
+                appendTd(tr, item.professor_name);
+                appendTd(tr, item.major);
+                appendTd(tr, item.type);
+                appendTd(tr, item.credit);
+                appendTd(tr, item.day);
+                appendTd(tr, `${item.currentCount}/${item.maxCount}`);
+                appendTd(tr, item.semester);
+                appendTd(tr, `${item.grade}학년`);
+                appendTd(tr, `${item.location} ${item.lectureRoom}`);
 
                 tbody.appendChild(tr);
             });
         }
-
-        // 페이지네이션 엘리먼트 업데이트
-        var pagination = document.querySelector(".pagination");
-        pagination.innerHTML = "";
-
-        for (var i = data.start; i <= data.end; i++) {
-            var li = document.createElement("li");
-            li.className = "mx-2";
-
-            var a = document.createElement("a");
-            a.textContent = i;
-            a.href = "/professor/lectureList?page=" + (i - 1);
-
-            if (i === data.num) {
-                a.disabled = true;
-            }
-
-            a.addEventListener('click', function (event) {
-                event.preventDefault();
-                var page = parseInt(event.target.textContent, 10);
-                searchLectures(page);
-            });
-
-            li.appendChild(a);
-            pagination.appendChild(li);
-        }
     }
 
     // 특정 데이터를 <td>에 추가하는 함수
-    function appendTd(parent, text, customClass, isLink = false, linkHref = "") {
+    function appendTd(parent, text, isLink = false, linkHref = "") {
         var td = document.createElement("td");
         var div = document.createElement("div");
         var span = document.createElement("span");
-
-        td.classList.add(customClass);
 
         if (isLink) {
             var a = document.createElement("a");
@@ -311,12 +283,32 @@
             }
         } else {
             div.appendChild(span);
-            span.innerHTML = text;
+            span.textContent = text;
         }
 
         td.appendChild(div);
         parent.appendChild(td);
     }
+
+    // 페이지 버튼 업데이트 함수
+    function updatePaginationButtons(currentPage, totalPages) {
+        var paginationButtons = document.querySelectorAll('.pagination .page-link');
+
+        paginationButtons.forEach(function(button, index) {
+            var newPage = 0;
+
+            if (index === 0 && currentPage > 0) {
+                newPage = currentPage - 1;
+            } else if (index === paginationButtons.length - 1 && currentPage < totalPages - 1) {
+                newPage = currentPage + 1;
+            } else {
+                newPage = index;
+            }
+
+            button.setAttribute('data-page', newPage);
+        });
+    }
+
 
     function resetAndSearch() {
         document.getElementById("LectureSearchForm").reset();
@@ -324,7 +316,10 @@
         searchLectures();
     }
 
-    document.getElementById('viewAbolition').addEventListener('change', searchLectures);
+    document.getElementById('viewAbolition').addEventListener('change', function () {
+        currentPage = 0;
+        searchLectures();
+    })
 
     function onPageChange() {
         window.localStorage.setItem("previousUrl", window.location.href);
@@ -333,45 +328,6 @@
     window.onload = function () {
         onPageChange();
     }
-
-    function isNumeric(str) {
-        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
-    }
-
-    const tbody = document.querySelector('tbody')
-    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
-    const thList = document.querySelectorAll('th')
-
-    function sortHandler(event) {
-        // 클릭당한 th의 className을 불러온다
-        const className = event.target.className
-
-        // 클릭당한 th의 order 속성값을 정수로 불러온다
-        const order = +event.target.getAttribute('order')
-        // alert(order)
-
-        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
-        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
-        const span = event.target.querySelector('span.order')
-        span.innerText = order > 0 ? ' ▲' : ' ▼'
-
-        const trArray = Array.from(document.querySelectorAll('tbody > tr'))
-
-        trArray.sort((a, b) => {
-            let valueA = a.querySelector('.' + className).innerText
-            let valueB = b.querySelector('.' + className).innerText
-            if (isNumeric(valueA) && isNumeric(valueB)) {
-                valueA = +valueA
-                valueB = +valueB
-            }
-            let result = valueA > valueB ? 1 : -1
-            event.target.setAttribute('order', order * -1)
-            return result * order
-        })
-        trArray.forEach(tr => tbody.appendChild(tr))
-    }
-
-    thList.forEach(th => th.onclick = sortHandler)
 </script>
 <!--<script>-->
 <!--    function handleKeyDown(event) {-->
@@ -381,18 +337,22 @@
 <!--            searchLectures();-->
 <!--        }-->
 <!--    }-->
+
 <!--    document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);-->
+
+<!--    var currentPage = 0;-->
 
 <!--    function searchLectures() {-->
 <!--        var form = document.getElementById("LectureSearchForm");-->
 
-<!--        // form 엘리먼트가 올바르게 식별되었는지 확인-->
 <!--        if (!form) {-->
 <!--            console.error('Form 엘리먼트를 찾을 수 없습니다.');-->
 <!--            return;-->
 <!--        }-->
 
 <!--        var formData = new FormData(form);-->
+
+<!--        formData.append('page', currentPage);-->
 
 <!--        fetch('/professor/lectureList/data', {-->
 <!--            method: 'POST',-->
@@ -408,7 +368,6 @@
 <!--                return response.json();-->
 <!--            })-->
 <!--            .then(data => {-->
-<!--                // 서버 응답을 받은 후에 테이블 업데이트-->
 <!--                updateTableBody(data);-->
 <!--            })-->
 <!--            .catch(error => {-->
@@ -419,8 +378,11 @@
 <!--    function updateTableBody(data) {-->
 <!--        var tbody = document.getElementById("LectureTableBody");-->
 
-<!--        // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)-->
+<!--        // 기존 행 삭제-->
 <!--        tbody.innerHTML = "";-->
+
+<!--        // 이제 data는 ResponseDto 객체이므로, 이를 사용하여 테이블을 업데이트합니다.-->
+<!--        // 엘리먼트를 추가하는 데 필요한 lectureDtoList를 가져옵니다.-->
 
 <!--        if (!data || data.length === 0) {-->
 <!--            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';-->
@@ -430,27 +392,55 @@
 <!--                var tr = document.createElement("tr");-->
 
 <!--                // 각 열에 대한 데이터 추가-->
-<!--                appendTd(tr, item.name + '_' + item.abolition, true, `/professor/viewLecture/${item.idx}`);-->
-<!--                appendTd(tr, item.professor_name);-->
-<!--                appendTd(tr, item.major);-->
-<!--                appendTd(tr, item.type);-->
-<!--                appendTd(tr, item.credit);-->
-<!--                appendTd(tr, item.day);-->
-<!--                appendTd(tr, `${item.currentCount}/${item.maxCount}`);-->
-<!--                appendTd(tr, item.semester);-->
-<!--                appendTd(tr, `${item.grade}학년`);-->
-<!--                appendTd(tr, `${item.location} ${item.lectureRoom}`);-->
+<!--                appendTd(tr, item.name + '_' + item.abolition, "name", true, `/professor/viewLecture/${item.idx}`);-->
+<!--                appendTd(tr, item.professor_name, "professor");-->
+<!--                appendTd(tr, item.major, "major");-->
+<!--                appendTd(tr, item.type, "type");-->
+<!--                appendTd(tr, item.credit, "credit");-->
+<!--                appendTd(tr, `${item.day}<br>${item.start}<br>${item.end}`, "time");-->
+<!--                appendTd(tr, `${item.currentCount}/${item.maxCount}`, "current");-->
+<!--                appendTd(tr, item.semester, "semester");-->
+<!--                appendTd(tr, `${item.grade}학년`, "grade");-->
+<!--                appendTd(tr, `${item.location} ${item.lectureRoom}`, "location");-->
 
 <!--                tbody.appendChild(tr);-->
 <!--            });-->
 <!--        }-->
+
+<!--        // 페이지네이션 엘리먼트 업데이트-->
+<!--        var pagination = document.querySelector(".pagination");-->
+<!--        pagination.innerHTML = "";-->
+
+<!--        for (var i = data.start; i <= data.end; i++) {-->
+<!--            var li = document.createElement("li");-->
+<!--            li.className = "mx-2";-->
+
+<!--            var a = document.createElement("a");-->
+<!--            a.textContent = i;-->
+<!--            a.href = "/professor/lectureList?page=" + (i - 1);-->
+
+<!--            if (i === data.num) {-->
+<!--                a.disabled = true;-->
+<!--            }-->
+
+<!--            a.addEventListener('click', function (event) {-->
+<!--                event.preventDefault();-->
+<!--                var page = parseInt(event.target.textContent, 10);-->
+<!--                searchLectures(page);-->
+<!--            });-->
+
+<!--            li.appendChild(a);-->
+<!--            pagination.appendChild(li);-->
+<!--        }-->
 <!--    }-->
 
 <!--    // 특정 데이터를 <td>에 추가하는 함수-->
-<!--    function appendTd(parent, text, isLink = false, linkHref = "") {-->
+<!--    function appendTd(parent, text, customClass, isLink = false, linkHref = "") {-->
 <!--        var td = document.createElement("td");-->
 <!--        var div = document.createElement("div");-->
 <!--        var span = document.createElement("span");-->
+
+<!--        td.classList.add(customClass);-->
 
 <!--        if (isLink) {-->
 <!--            var a = document.createElement("a");-->
@@ -466,7 +456,7 @@
 <!--            }-->
 <!--        } else {-->
 <!--            div.appendChild(span);-->
-<!--            span.textContent = text;-->
+<!--            span.innerHTML = text;-->
 <!--        }-->
 
 <!--        td.appendChild(div);-->
@@ -475,6 +465,7 @@
 
 <!--    function resetAndSearch() {-->
 <!--        document.getElementById("LectureSearchForm").reset();-->
+<!--        currentPage = 0;-->
 <!--        searchLectures();-->
 <!--    }-->
 
@@ -483,45 +474,49 @@
 <!--    function onPageChange() {-->
 <!--        window.localStorage.setItem("previousUrl", window.location.href);-->
 <!--    }-->
+
 <!--    window.onload = function () {-->
 <!--        onPageChange();-->
 <!--    }-->
-<!--</script>-->
 
+<!--    function isNumeric(str) {-->
+<!--        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다-->
+<!--    }-->
 
-<!--<script th:inline="javascript">-->
-<!--    /*<![CDATA[*/-->
-<!--    $(document).ready(function () {-->
-<!--        let major = /*[[${condition.major}]]*/ null;-->
-<!--        let type = /*[[${condition.type}]]*/ null;-->
-<!--        let year = /*[[${condition.year}]]*/ null;-->
-<!--        let semester = /*[[${condition.semester}]]*/ null;-->
-<!--        let grade = /*[[${condition.grade}]]*/ null;-->
+<!--    const tbody = document.querySelector('tbody')-->
+<!--    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기-->
+<!--    const thList = document.querySelectorAll('th')-->
 
-<!--        $('.pagination a').on('click', function (event) {-->
-<!--            event.preventDefault();-->
+<!--    function sortHandler(event) {-->
+<!--        // 클릭당한 th의 className을 불러온다-->
+<!--        const className = event.target.className-->
 
-<!--            let href = $(this).attr('href');-->
+<!--        // 클릭당한 th의 order 속성값을 정수로 불러온다-->
+<!--        const order = +event.target.getAttribute('order')-->
+<!--        // alert(order)-->
 
-<!--            if (major !== null) {-->
-<!--                href += '&major=' + encodeURIComponent(major);-->
+<!--        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)-->
+<!--        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')-->
+<!--        const span = event.target.querySelector('span.order')-->
+<!--        span.innerText = order > 0 ? ' ▲' : ' ▼'-->
+
+<!--        const trArray = Array.from(document.querySelectorAll('tbody > tr'))-->
+
+<!--        trArray.sort((a, b) => {-->
+<!--            let valueA = a.querySelector('.' + className).innerText-->
+<!--            let valueB = b.querySelector('.' + className).innerText-->
+<!--            if (isNumeric(valueA) && isNumeric(valueB)) {-->
+<!--                valueA = +valueA-->
+<!--                valueB = +valueB-->
 <!--            }-->
-<!--            if (type !== null) {-->
-<!--                href += '&type=' + encodeURIComponent(type);-->
-<!--            }-->
-<!--            if (year !== null) {-->
-<!--                href += '&year=' + encodeURIComponent(year);-->
-<!--            }-->
-<!--            if (semester !== null) {-->
-<!--                href += '&semester=' + encodeURIComponent(semester);-->
-<!--            }-->
-<!--            if (grade !== null) {-->
-<!--                href += '&grade=' + encodeURIComponent(grade);-->
-<!--            }-->
-<!--            location.href = href;-->
-<!--        });-->
-<!--    });-->
-<!--    /*]]>*/-->
+<!--            let result = valueA > valueB ? 1 : -1-->
+<!--            event.target.setAttribute('order', order * -1)-->
+<!--            return result * order-->
+<!--        })-->
+<!--        trArray.forEach(tr => tbody.appendChild(tr))-->
+<!--    }-->
+
+<!--    thList.forEach(th => th.onclick = sortHandler)-->
 <!--</script>-->
 <footer th:insert="layout/professorHeader :: footer"></footer>
 </body>
