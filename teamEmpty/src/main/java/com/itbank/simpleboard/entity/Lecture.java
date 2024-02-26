@@ -83,7 +83,7 @@ public class Lecture {
     @JoinColumn(name = "lecture_room")
     private LectureRoom lectureRoom;
 
-    // 수강 평가 열람 상태
+    // 강의 평가 가능 여부
     @Column(name = "evaluation_visible")
     @Enumerated(EnumType.STRING)
     private YesOrNo visible;
