@@ -57,10 +57,8 @@ public class User {
         this.pnum = pnum;
         this.email = email;
         this.role = role;
-        this.authority =  YesOrNo.Y;;
+        this.authority =  YesOrNo.Y;
     }
-
-
 
     private String randomId() {
         UUID uuid = UUID.randomUUID();

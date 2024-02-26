@@ -30,12 +30,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -735,6 +737,31 @@ public class ManagerService {
 
     public Page<Major> searchByMajorPaging(String majorName, Pageable pageable) {
         return majorRepository.findByNameContaining(majorName, pageable);
+    }
+
+    @Transactional
+    public String lectureEvaluation() {
+        List<Lecture> lectureList = lectureRepository.findAll()
+                .stream()
+                .filter(lecture -> lecture.getAbolition().equals(YesOrNo.N))
+                .collect(Collectors.toList());
+
+        String evaluationStatus = null;
+        for(Lecture one : lectureList)  {
+            log.info("강의 평가 여부[변경 전] : " + one.getVisible().toString() + "\\");
+
+            if(one.getVisible().equals(YesOrNo.Y)) {
+                one.setVisible(YesOrNo.N);
+                log.info("변경된 평가 여부[DB-N] : " + one.getVisible().toString() + "\\");
+                evaluationStatus = "N";
+            } else {
+                one.setVisible(YesOrNo.Y);
+                log.info("변경된 평가 여부[DB-Y] : " + one.getVisible().toString() + "\\");
+                evaluationStatus = "Y";
+            }
+        }
+        log.info(evaluationStatus);
+        return evaluationStatus;
     }
 }
 
