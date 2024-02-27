@@ -8,7 +8,7 @@
 <div class="container mt-3">
     <h2>학생 명단</h2>
     <hr>
-    <form th:action="@{/manager/studentList}" class="form-inline">
+    <form id="searchForm" th:action="@{/manager/studentList}" class="form-inline">
         <div class="form-group">
             <label>학과명</label>
             <select class="form-control" id="major_idx" name="major_idx">
@@ -25,7 +25,18 @@
             <label>이름</label>
             <input type="text" class="form-control" id="name" name="name" placeholder="학생 이름을 입력하세요">
         </div>
+
+
+        <div class="form-check form-check-inline">
+            <input type="hidden" id="todayRegistered" name="todayRegistered" value="false">
+            <input class="form-check-input" type="checkbox" id="todayRegisteredCheckbox"
+                   th:checked="${map['todayRegistered']}">
+            <label class="form-check-label" for="todayRegisteredCheckbox">오늘 등록한 학생 보기 </label>
+        </div>
+        
         <button class="btn btn-primary">검색</button>
+
+
     </form>
     <br>
     <table class="table table-bordered">
@@ -81,11 +92,72 @@
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
 
+
+
+<script>
+    var form = $('#searchForm');
+    var isInitialLoad = true;
+
+    // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
+    var previousMajorIdx = localStorage.getItem('previousMajorIdx');
+    var previousName = localStorage.getItem('previousName');
+    var previousTodayRegistered = localStorage.getItem('previousTodayRegisteredCheckbox');
+    if (previousMajorIdx && previousMajorIdx !== 'null') {
+        $('#major_idx').val(previousMajorIdx);
+    }
+    if (previousName && previousName !== 'null') {
+        $('#name').val(previousName);
+    }
+    if (previousTodayRegistered && previousTodayRegistered !== 'null') {
+        $('#todayRegisteredCheckbox').prop('checked', previousLeave === 'true');
+    }
+
+    form.submit(function(e) {
+        e.preventDefault();
+
+        // 검색어 저장
+        var majorIdx = $('#major_idx').val();
+        var name = $('#name').val();
+        localStorage.setItem('previousMajorIdx', majorIdx);
+        localStorage.setItem('previousName', name);
+
+        // 체크박스 상태 저장
+        var todayRegisteredValue = $('#todayRegisteredCheckbox').is(':checked') ? 'true' : 'false';
+        $('#todayRegistered').val(todayRegisteredValue); // leave input의 값을 변경
+
+        // 검색 실행
+        this.submit();
+    });
+
+    function resetSearchConditions() {
+        localStorage.removeItem('previousMajorIdx');
+        localStorage.removeItem('previousName');
+        localStorage.removeItem('previousTodayRegistered');
+    }
+
+    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
+    if (isInitialLoad || form.data('fromList')) {
+        resetSearchConditions();
+    }
+    isInitialLoad = false;
+
+    // 검색 결과 페이지에서 체크박스 상태 반영
+    var resultTodayRegistered = localStorage.getItem('previousTodayRegistered');
+    if (resultTodayRegistered && resultTodayRegistered !== 'null') {
+        $('#todayRegisteredCheckbox').prop('checked', resultTodayRegistered === 'true');
+    }
+</script>
+
+
+
+
+
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
         let major_idx = /*[[${map['major_idx']}]]*/ null;
         let name = /*[[${map['name']}]]*/ null;
+        let todayRegistered = /*[[${map['todayRegistered']}]]*/ null;
 
         $('.pagination a').on('click', function (event) {
             event.preventDefault();
@@ -97,6 +169,9 @@
             }
             if (name !== null) {
                 href += '&name=' + encodeURIComponent(name);
+            }
+            if(todayRegistered !== null){
+                href += '&todayRegistered=' + todayRegistered;
             }
             location.href = href;
         });
