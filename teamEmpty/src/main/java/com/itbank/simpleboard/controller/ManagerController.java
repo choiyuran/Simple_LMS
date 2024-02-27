@@ -22,16 +22,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -741,11 +740,30 @@ public class ManagerController {
         return "manager/checkTuitionPayments";
     }
 
-    @ResponseBody
-    @GetMapping("/lectureEvaluation")
-    public ResponseEntity<String> lectureEvaluation() {
+    @GetMapping("/lectureEvaluation")               // 강의 평가 여부 설정
+    public ModelAndView lectureEvaluation(LectureSearchConditionDto condition,
+                                          @PageableDefault(size = 3) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("professor/lectureList");
         String evaluationStatus = managerService.lectureEvaluation();
-        return new ResponseEntity<>(evaluationStatus, HttpStatus.OK);
+        Page<ProfessorLectureDto> LectureList = professorService.getLectureDtoList(condition, pageable);
+
+        int start = pagingComponent.calculateStart(LectureList.getNumber());
+        int end = pagingComponent.calculateEnd(LectureList.getTotalPages(), start);
+
+        int currentYear = LocalDate.now().getYear();
+        List<Integer> yearList = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            int year = currentYear - i;
+            yearList.add(year);
+        }
+        mav.addObject("YearList", yearList);
+        mav.addObject("start", start);
+        mav.addObject("end", end);
+        mav.addObject("num", pageable.getPageNumber() + 1);
+        mav.addObject("maxPage", 5);
+        mav.addObject("LectureList", LectureList);
+        mav.addObject("evaluationStatus", evaluationStatus);
+        return mav;
     }
 
     @GetMapping("/pagingTest")          // 페이징 테스트
