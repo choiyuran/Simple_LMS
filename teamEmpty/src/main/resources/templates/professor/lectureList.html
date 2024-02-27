@@ -6,171 +6,199 @@
 <body>
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
-    <div>
-        <form id="LectureSearchForm" method="POST">
+    <form id="LectureSearchForm" method="POST">
+        <input type="hidden" id="page" name="page" value="0">
+        <div>
             <label>학과 선택 :
-                <select name="major">
-                    <option th:text="'전공 선택'" value="">전공 선택</option>
-                    <option th:each="major : ${MajorList}" th:value="${major}" th:text="${major}"></option>
+                <select name="major" id="major">
+                    <option th:text="'전공 선택'" value=""></option>
+                    <option th:each="major : ${MajorList}"
+                            th:value="${major}"
+                            th:selected="${condition != null && condition.major != null && major == condition.major}">
+                    </option>
                 </select>
             </label>
             <label>강의 타입 :
-                <select name="type" th:default="'강의 형태'">
+                <select name="type" id="type">
                     <option th:text="'강의 형태'" value=""></option>
-                    <option th:text="'전공 필수'" th:value="전공필수"></option>
-                    <option th:text="'전공 선택'" th:value="전공선택"></option>
-                    <option th:text="'필수 교양'" th:value="필수교양"></option>
-                    <option th:text="'선택 교양'" th:value="선택교양"></option>
+                    <option th:text="'전공 필수'" th:value="전공필수"
+                            th:selected="${condition != null && condition.type != null && condition.type == '전공필수'}"></option>
+                    <option th:text="'전공 선택'" th:value="전공선택"
+                            th:selected="${condition != null && condition.type != null && condition.type == '전공선택'}"></option>
+                    <option th:text="'필수 교양'" th:value="필수교양"
+                            th:selected="${condition != null && condition.type != null && condition.type == '필수교양'}"></option>
+                    <option th:text="'선택 교양'" th:value="선택교양"
+                            th:selected="${condition != null && condition.type != null && condition.type == '선택교양'}"></option>
                 </select>
             </label>
             <label>기간 :
-                <select name="year">
+                <select name="year" id="year">
                     <option th:text="년도" value=""></option>
-                    <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"></option>
+                    <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"
+                            th:selected="${condition != null && condition.year != null && condition.year == year}"></option>
                 </select>
-                <select name="semester">
+                <select name="semester" id="semester">
                     <option th:text="학기" value=""></option>
-                    <option th:text="1학기" th:value="1"></option>
-                    <option th:text="2학기" th:value="2"></option>
+                    <option th:text="1학기" th:value="1"
+                            th:selected="${condition != null && condition.semester != null && condition.semester == '1'}"></option>
+                    <option th:text="2학기" th:value="2"
+                            th:selected="${condition != null && condition.semester != null && condition.semester == '2'}"></option>
                 </select>
             </label>
             <label>학년 :
-                <select name="grade">
+                <select name="grade" id="grade">
                     <option th:text="학년" value=""></option>
-                    <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"></option>
+                    <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"
+                            th:selected="${condition != null && condition.grade != null && condition.grade == grade}"></option>
                 </select>
             </label>
             <label>검색어 :
-                <input id="searchInput" name="name" type="text">
+                <input id="searchInput" name="name" type="text"
+                       th:selected="${condition != null && condition.name != null && condition.name == name}">
             </label>
-            <button type="button" onclick="searchLectures()">검색</button>
-            <input type="reset" value="초기화" onclick="resetAndSearch()">
+            <input type="submit" value="검색">
+            <input type="submit" value="초기화" onclick="resetAndSearch(event)">
             <label>폐강된 강의 보기
                 <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition">
             </label>
-        </form>
-    </div>
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th order="1" class="lecture">
-                강의명<span class="order"></span>
-            </th>
-            <th order="1" class="professor">
-                교수<span class="order"></span>
-            </th>
-            <th order="1" class="major">
-                전공<span class="order"></span>
-            </th>
-            <th order="1" class="type">
-                강의 타입<span class="order"></span>
-            </th>
-            <th order="1" class="credit">
-                수강 학점<span class="order"></span>
-            </th>
-            <th order="1" class="time">
-                강의 시간<span class="order"></span>
-            </th>
-            <th order="1" class="current">
-                수강 인원<span class="order"></span>
-            </th>
-            <th order="1" class="semester">
-                강의 학기<span class="order"></span>
-            </th>
-            <th order="1" class="grade">
-                학년<span class="order"></span>
-            </th>
-            <th order="1" class="location">
-                강의실<span class="order"></span>
-            </th>
-        </tr>
-        </thead>
-        <tbody id="LectureTableBody">
-        <tr th:each="row : ${LectureList.content}">
-            <td class="lecture">
-                <div>
-                    <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
-                        <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
-                    </a>
-                    <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
-                </div>
-            </td>
-            <td class="professor">
-                <div>
-                    <span th:text="${row.professor_name}"></span>
-                </div>
-            </td>
-            <td class="major">
-                <div>
-                    <span th:text="${row.major}"></span>
-                </div>
-            </td>
-            <td class="type">
-                <div>
-                    <span th:text="${row.type}"></span>
-                </div>
-            </td>
-            <td class="credit">
-                <div>
-                    <span th:text="${row.credit}"></span>
-                </div>
-            </td>
-            <td class="time">
-                <div>
-                    <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
-                </div>
-            </td>
-            <td class="current">
-                <div>
-                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
-                </div>
-            </td>
-            <td class="semester">
-                <div>
-                    <span th:text="${row.semester}"></span>
-                </div>
-            </td>
-            <td class="grade">
-                <div>
-                    <span th:text="${row.grade} + '학년'"></span>
-                </div>
-            </td>
-            <td class="location">
-                <div>
-                    <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
-                </div>
-            </td>
-        </tr>
 
-        <tr th:if="${LectureList == null || LectureList.isEmpty()}">
-            <td>검색 결과가 없습니다.</td>
-        </tr>
-        </tbody>
-    </table>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th order="1" class="lecture">
+                    강의명<span class="order"></span>
+                </th>
+                <th order="1" class="professor">
+                    교수<span class="order"></span>
+                </th>
+                <th order="1" class="major">
+                    전공<span class="order"></span>
+                </th>
+                <th order="1" class="type">
+                    강의 타입<span class="order"></span>
+                </th>
+                <th order="1" class="credit">
+                    수강 학점<span class="order"></span>
+                </th>
+                <th order="1" class="time">
+                    강의 시간<span class="order"></span>
+                </th>
+                <th order="1" class="current">
+                    수강 인원<span class="order"></span>
+                </th>
+                <th order="1" class="semester">
+                    강의 학기<span class="order"></span>
+                </th>
+                <th order="1" class="grade">
+                    학년<span class="order"></span>
+                </th>
+                <th order="1" class="location">
+                    강의실<span class="order"></span>
+                </th>
+            </tr>
+            </thead>
+            <tbody id="LectureTableBody">
+            <tr th:each="row : ${LectureList.content}">
+                <td class="lecture">
+                    <div>
+                        <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
+                            <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
+                        </a>
+                        <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
+                    </div>
+                </td>
+                <td class="professor">
+                    <div>
+                        <span th:text="${row.professor_name}"></span>
+                    </div>
+                </td>
+                <td class="major">
+                    <div>
+                        <span th:text="${row.major}"></span>
+                    </div>
+                </td>
+                <td class="type">
+                    <div>
+                        <span th:text="${row.type}"></span>
+                    </div>
+                </td>
+                <td class="credit">
+                    <div>
+                        <span th:text="${row.credit}"></span>
+                    </div>
+                </td>
+                <td class="time">
+                    <div>
+                        <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
+                    </div>
+                </td>
+                <td class="current">
+                    <div>
+                        <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                    </div>
+                </td>
+                <td class="semester">
+                    <div>
+                        <span th:text="${row.semester}"></span>
+                    </div>
+                </td>
+                <td class="grade">
+                    <div>
+                        <span th:text="${row.grade} + '학년'"></span>
+                    </div>
+                </td>
+                <td class="location">
+                    <div>
+                        <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                    </div>
+                </td>
+            </tr>
 
-    <a href="/manager/lectureAdd"><button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록</button></a>
-    <a href="/manager/lectureEvaluation">
-        <button id="evaluation-button" th:class="${evaluationStatus == 'Y' ? 'btn btn-warning' : 'btn btn-outline-secondary'}" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간</button></a>
+            <tr th:if="${LectureList == null || LectureList.isEmpty()}">
+                <td>검색 결과가 없습니다.</td>
+            </tr>
+            </tbody>
+        </table>
 
-    <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
-        <ul class="pagination">
-            <!-- 이전 페이지로 이동 -->
-            <li class="page-item" th:if="${LectureList.hasPrevious}">
-                <button class="page-link" th:data-page="${LectureList.number - 1}" type="button">이전</button>
-            </li>
+        <a href="/manager/lectureAdd">
+            <button class="btn btn-outline-secondary"
+                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
+            </button>
+        </a>
+        <a href="/manager/lectureEvaluation">
+            <button id="evaluation-button" class="btn btn-outline-secondary"
+                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
+            </button>
+        </a>
 
-            <!-- 페이지 번호 표시 -->
-            <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}">
-                <button class="page-link" th:data-page="${i}" th:text="${i + 1}" type="button"></button>
-            </li>
+        <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
+            <ul class="pagination">
+                <!-- 이전 페이지로 이동 -->
+                <li class="page-item" th:if="${LectureList.hasPrevious}">
+                    <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
+                    <button type="button" class="page-link" th:onclick="|setPageAndSubmit(${LectureList.number - 1})|"
+                            th:text="이전"></button>
+                </li>
 
-            <!-- 다음 페이지로 이동 -->
-            <li class="page-item" th:if="${LectureList.hasNext}">
-                <button class="page-link" th:data-page="${LectureList.number + 1}" type="button">다음</button>
-            </li>
-        </ul>
-    </div>
+                <!-- 페이지 번호 표시 -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}">
+                    <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
+                    <button type="button" class="page-link" th:onclick="|setPageAndSubmit(${i})|"
+                            th:text="${i + 1}"></button>
+                </li>
 
+                <!-- 다음 페이지로 이동 -->
+                <li class="page-item" th:if="${LectureList.hasNext}">
+                    <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
+                    <button type="button" class="page-link" th:onclick="|setPageAndSubmit(${LectureList.number + 1})|"
+                            th:text="다음"></button>
+                </li>
+            </ul>
+        </div>
+
+
+    </form>
 </main>
 <footer th:insert="layout/professorHeader :: footer"></footer>
 
@@ -186,139 +214,30 @@
 
     document.getElementById("searchInput").addEventListener("keydown", handleKeyDown);
 
-    let currentPage = 0;
-
-    // 페이지 번호 클릭 이벤트 리스너 등록
-    document.querySelectorAll('.page-link').forEach(button => {
-        button.addEventListener('click', function () {
-            currentPage = parseInt(this.getAttribute('data-page'), 10);
-            searchLectures();
-        });
-    });
-
-    function searchLectures() {
-        var form = document.getElementById("LectureSearchForm");
-
-        if (!form) {
-            console.error('Form 엘리먼트를 찾을 수 없습니다.');
-            return;
-        }
-
-        var formData = new FormData(form);
-        formData.append("page", currentPage.toString());
-
-        fetch('/professor/lectureList/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(Object.fromEntries(formData))
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('네트워크 응답이 정상이 아닙니다');
-                }
-                return response.json();
-            })
-            .then(data => {
-                updateTableBody(data);
-
-                // 추가: 페이지 버튼 업데이트
-                updatePaginationButtons(currentPage, data.lectureDtoList.totalPages);
-            })
-            .catch(error => {
-                console.error('에러:', error);
-            });
+    function setPageAndSubmit(newPage) {
+        // 페이지 값을 변경합니다.
+        document.getElementById('page').value = newPage;
+        // 폼을 제출합니다.
+        document.getElementById('LectureSearchForm').submit();
     }
 
-    function updateTableBody(data) {
-        var tbody = document.getElementById("LectureTableBody");
-
-        // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
-        tbody.innerHTML = "";
-
-        if (!data || !data.lectureDtoList || data.lectureDtoList.content.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
-        } else {
-            // 서버 응답을 이용하여 여러 행 추가
-            data.lectureDtoList.content.forEach(item => {
-                var tr = document.createElement("tr");
-
-                // 각 열에 대한 데이터 추가
-                appendTd(tr, item.name + '_' + item.abolition, "name", true, `/professor/viewLecture/${item.idx}`);
-                appendTd(tr, item.professor_name, "professor");
-                appendTd(tr, item.major, "major");
-                appendTd(tr, item.type, "type");
-                appendTd(tr, item.credit, "credit");
-                appendTd(tr, `${item.day}<br>${item.start}<br>${item.end}`, "time");
-                appendTd(tr, `${item.currentCount}/${item.maxCount}`, "current");
-                appendTd(tr, item.semester, "semester");
-                appendTd(tr, `${item.grade}학년`, "grade");
-                appendTd(tr, `${item.location} ${item.lectureRoom}`, "location");
-
-                tbody.appendChild(tr);
-            });
-        }
+    function resetAndSearch(e) {
+        e.preventDefault()
+        let LectureSearchForm = document.getElementById('LectureSearchForm');
+        document.getElementById('major').value = "";
+        document.getElementById('type').value = "";
+        document.getElementById('year').value = "";
+        document.getElementById('semester').value = "";
+        document.getElementById('grade').value = "";
+        document.getElementById('searchInput').value = "";
+        document.getElementById('viewAbolition').checked = false;
+        LectureSearchForm.submit();
     }
 
-    // 특정 데이터를 <td>에 추가하는 함수
-    function appendTd(parent, text, customClass, isLink = false, linkHref = "") {
-        var td = document.createElement("td");
-        var div = document.createElement("div");
-        var span = document.createElement("span");
-
-        td.classList.add(customClass);
-
-        if (isLink) {
-            var a = document.createElement("a");
-            a.href = linkHref;
-            a.appendChild(span);
-            div.appendChild(a);
-
-            let split = text.split('_');
-            if (split[1] == 'N') {
-                span.textContent = split[0];
-            } else {
-                span.textContent = split[0] + '(폐강)';
-            }
-        } else {
-            div.appendChild(span);
-            span.innerHTML = text;
-        }
-
-        td.appendChild(div);
-        parent.appendChild(td);
-    }
-
-    // 페이지 버튼 업데이트 함수
-    function updatePaginationButtons(currentPage, totalPages) {
-        var paginationButtons = document.querySelectorAll('.pagination .page-link');
-
-        paginationButtons.forEach(function(button, index) {
-            var newPage = 0;
-
-            if (index === 0 && currentPage > 0) {
-                newPage = currentPage - 1;
-            } else if (index === paginationButtons.length - 1 && currentPage < totalPages - 1) {
-                newPage = currentPage + 1;
-            } else {
-                newPage = index;
-            }
-
-            button.setAttribute('data-page', newPage);
-        });
-    }
-
-
-    function resetAndSearch() {
-        document.getElementById("LectureSearchForm").reset();
-        currentPage = 0;
-        searchLectures();
-    }
-
-    document.getElementById('viewAbolition').addEventListener('change', function () {
-        currentPage = 0;
-        searchLectures();
+    document.getElementById('viewAbolition').addEventListener('change', function (e) {
+        e.preventDefault();
+        document.getElementById('page').value = 0;
+        document.getElementById('LectureSearchForm').submit();
     })
 
     function onPageChange() {
@@ -368,21 +287,21 @@
 
     thList.forEach(th => th.onclick = sortHandler)
 
-    $(document).ready(function(){
-        $("#evaluation-button").click(function(){
+    $(document).ready(function () {
+        $("#evaluation-button").click(function () {
             $.ajax({
                 url: "/manager/lectureEvaluation",
                 type: "GET",
-                success: function(response) {
+                success: function (response) {
                     console.log(response)
-                    if(response === 'Y') {
+                    if (response === 'Y') {
                         alert('평가 기간이 시작되었습니다.');
                     } else {
                         alert('평가 기간이 종료되었습니다.');
                     }
                     location.reload(); // 요청 성공 후 페이지 이동
                 },
-                error: function(error) {
+                error: function (error) {
                     console.log(error);
                 }
             });
