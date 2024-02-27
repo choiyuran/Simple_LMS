@@ -148,9 +148,8 @@
         </tbody>
     </table>
 
-    <button class="btn btn-outline-secondary"
-            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}"><a href="/manager/lectureAdd">등록</a>
-    </button>
+    <a href="/manager/lectureAdd"><button class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록</button></a>
+    <a href="/manager/lectureEvaluation"><button id="evaluation-button" class="btn btn-outline-secondary" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간</button></a>
 
     <div class="d-flex justify-content-center">
         <nav style="text-align: center;" th:if="${LectureList != null && !LectureList.isEmpty()}">
@@ -372,7 +371,29 @@
     }
 
     thList.forEach(th => th.onclick = sortHandler)
+
+    $(document).ready(function(){
+        $("#evaluation-button").click(function(){
+            $.ajax({
+                url: "/manager/lectureEvaluation",
+                type: "GET",
+                success: function(response) {
+                    console.log(response)
+                    if(response === 'Y') {
+                        alert('평가 기간이 시작되었습니다.');
+                    } else {
+                        alert('평가 기간이 종료되었습니다.');
+                    }
+                    location.reload(); // 요청 성공 후 페이지 이동
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
 </script>
+
 <!--<script>-->
 <!--    function handleKeyDown(event) {-->
 <!--        // 엔터 키의 keyCode는 13입니다.-->
@@ -523,6 +544,5 @@
 <!--    });-->
 <!--    /*]]>*/-->
 <!--</script>-->
-<footer th:insert="layout/professorHeader :: footer"></footer>
 </body>
 </html>

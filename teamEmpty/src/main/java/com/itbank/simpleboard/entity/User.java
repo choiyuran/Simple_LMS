@@ -60,5 +60,9 @@ public class User {
         this.authority =  YesOrNo.Y;
     }
 
+    private String randomId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString().substring(0,8);
+    }
 
 }
