@@ -15,7 +15,7 @@
 <img class="wave2" src="/img/index-img.png">
 <div class="index_container">
     <div class="img">
-        <img src="/img/index-logo-img.png">
+        <img src="/img/centum_universitySmall.png">
     </div>
     <div class="login-content">
         <form action="/login" method="post">
@@ -25,7 +25,7 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="div">
-                    <h5>학번/아이디</h5>
+                    <h5 id="userIdText">학번/아이디</h5>
                     <!-- 인풋 Id 창-->
                     <input type="text" class="input" name="user_id" id="user_id">
                 </div>
@@ -120,6 +120,7 @@
         if (user_id) {
             document.getElementById("user_id").value = user_id;
             document.getElementById("rememberMe").checked = true;
+            document.getElementById("userIdText").style.display = "none";
         }
     });
 
