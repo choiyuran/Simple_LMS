@@ -745,6 +745,13 @@ public class ManagerController {
         return "manager/checkTuitionPayments";
     }
 
+    @ResponseBody
+    @GetMapping("/lectureEvaluation")
+    public ResponseEntity<String> lectureEvaluation() {
+        String evaluationStatus = managerService.lectureEvaluation();
+        return new ResponseEntity<>(evaluationStatus, HttpStatus.OK);
+    }
+
     @GetMapping("/pagingTest")          // 페이징 테스트
     public ModelAndView pagingTest(@PageableDefault(size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
         ModelAndView mav = new ModelAndView("/manager/majorPaging");

@@ -30,12 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,8 +44,8 @@ public class ManagerService {
     private final UserRepository userRepository;
     private final ManagerRepository managerRepository;
     private final CollegeRepository collegeRepository;
-    private final AcademicCalendarRepository academicCalendarRepository;
     private final MajorRepository majorRepository;
+    private final AcademicCalendarRepository academicCalendarRepository;
     private final ProfessorRepository professorRepository;
     private final LectureRoomRepository lectureRoomRepository;
     private final LectureRepository lectureRepository;
@@ -246,7 +241,7 @@ public class ManagerService {
     @Transactional
     public Professor addProfessor(UserFormDTO dto, MultipartFile imageFile) {
         log.info("addProfessor service"+ dto.toString());
-        
+
         String salt = hashComponent.getRandomSalt();
         String source = dto.getBackSecurity();
         String pw = hashComponent.getHash(source,salt);
@@ -290,14 +285,13 @@ public class ManagerService {
         String pw = hashComponent.getHash(source,salt);
         String userName = dto.getFirstName()+dto.getLastName();
         String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
-        
+
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
         String manager_img = fileComponent.uploadIdPhoto(imageFile, "idPhoto_manager",newFileName);
         System.err.println("manager_img : " + manager_img);
         System.err.println("newFileName : " + newFileName);
-//        System.err.println("imageFile : " + dto.getImageFile().getOriginalFilename());
         System.err.println("imageFile : " + imageFile.getOriginalFilename());
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
@@ -441,13 +435,6 @@ public class ManagerService {
 
         return index + "명의 학생 등록에 성공하였습니다.";
     }
-
-
-
-
-
-
-
 
 
     public List<MajorDto> getMajorList(String collegeName) {
@@ -619,6 +606,31 @@ public class ManagerService {
         result.put("q3", q3);
 
         return result;
+    }
+
+    @Transactional
+    public String lectureEvaluation() {
+        List<Lecture> lectureList = lectureRepository.findAll()
+                .stream()
+                .filter(lecture -> lecture.getAbolition().equals(YesOrNo.N))
+                .collect(Collectors.toList());
+
+        String evaluationStatus = null;
+        for(Lecture one : lectureList)  {
+            log.info("강의 평가 여부[변경 전] : " + one.getVisible().toString() + "\\");
+
+            if(one.getVisible().equals(YesOrNo.Y)) {
+                one.setVisible(YesOrNo.N);
+                log.info("변경된 평가 여부[DB-N] : " + one.getVisible().toString() + "\\");
+                evaluationStatus = "N";
+            } else {
+                one.setVisible(YesOrNo.Y);
+                log.info("변경된 평가 여부[DB-Y] : " + one.getVisible().toString() + "\\");
+                evaluationStatus = "Y";
+            }
+        }
+        log.info(evaluationStatus);
+        return evaluationStatus;
     }
 }
 

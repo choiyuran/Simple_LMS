@@ -81,5 +81,9 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    private String randomId() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString().substring(0,8);
+    }
 
 }
