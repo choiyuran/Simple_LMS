@@ -4,6 +4,7 @@ import com.itbank.simpleboard.entity.Major;
 import com.itbank.simpleboard.entity.YesOrNo;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -11,6 +12,8 @@ import java.util.Date;
 public class ProfessorListDto {
     private Long idx;           // 교수 idx
     private String img;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date hireDate;
     private String name;
     private String userid;
@@ -19,6 +22,8 @@ public class ProfessorListDto {
     private String email;
     private Long major_idx;
     private String major_name;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date leaveDate;
 
     @QueryProjection

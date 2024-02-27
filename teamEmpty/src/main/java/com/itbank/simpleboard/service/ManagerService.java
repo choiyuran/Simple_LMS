@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -469,14 +470,26 @@ public class ManagerService {
     }
 
     @Transactional
-    public Professor updateProfessorByManager(HashMap<String, Object> map) {
-        Long idx = (Long)map.get("idx");
-        java.util.Date hireDate = (java.util.Date) map.get("hireDate");
-        java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
-        Professor professor = professorRepository.findById(idx).get();
-        professor.setHireDate(new Date(hireDate.getTime()));
-        professor.setLeaveDate(new Date(leaveDate.getTime()));
+    public Professor updateProfessorByManager(ProfessorListDto param) {
+        Professor professor = professorRepository.findById(param.getIdx()).get();
+        Major major = majorRepository.findById(param.getMajor_idx()).get();
+        User user = userRepository.findById(professor.getUser().getIdx()).get();
+        java.util.Date hire = param.getHireDate();
+        Date hireDate = new Date(hire.getTime());
 
+        professor.setMajor(major);
+        professor.setHireDate(hireDate);
+        if(param.getLeaveDate() != null) {
+            java.util.Date leave = param.getLeaveDate();
+            Date leaveDate = new Date(leave.getTime());
+            professor.setLeave(YesOrNo.Y);
+            professor.setLeaveDate(leaveDate);
+        }
+        user.setUser_name(param.getName());
+        user.setUser_id(param.getUserid());
+        user.setEmail(param.getEmail());
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getPnum());
         return professor;
     }
 
@@ -499,10 +512,21 @@ public class ManagerService {
     }
 
     @Transactional
-    public Student studentUpdateByManager(Long idx, java.util.Date entranceDate) {
-        Student student = studentRepository.findById(idx).get();
-        Date date = new Date(entranceDate.getTime());
-        student.setEnteranceDate(date);
+    public Student studentUpdateByManager(StudentListDto param) {
+        Student student = studentRepository.findById(param.getIdx()).get();
+        User user = userRepository.findById(student.getUser().getIdx()).get();
+        Major major = majorRepository.findById(param.getMajor_idx()).get();
+        java.util.Date entrance = param.getEntranceDate();
+        Date entranceDate = new Date(entrance.getTime());
+
+        user.setUser_name(param.getName());
+        student.setStudent_num(param.getStudent_num());
+        user.setUser_id(param.getUserid());
+        student.setMajor(major);
+        student.setEnteranceDate(entranceDate);
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getPnum());
+        user.setEmail(param.getEmail());
         return student;
     }
 
@@ -511,18 +535,23 @@ public class ManagerService {
     }
 
     @Transactional
-    public Manager updateManagerByManager(HashMap<String, Object> map) {
-        Long idx = (Long)map.get("idx");
-        Manager manager = managerRepository.findById(idx).get();
-        java.util.Date hireDate = (java.util.Date)map.get("hireDate");
-        Date date = new Date(hireDate.getTime());
-        manager.setHireDate(date);
-
-        if(map.get("leaveDate") != null) {
-            java.util.Date leaveDate = (java.util.Date)map.get("leaveDate");
-            Date date2 = new Date(leaveDate.getTime());
-            manager.setLeaveDate(date2);
+    public Manager updateManagerByManager(ManagerDTO param) {
+        Manager manager = managerRepository.findById(param.getIdx()).get();
+        User user = userRepository.findById(manager.getUser().getIdx()).get();
+        java.util.Date hire = param.getManagerHireDate();
+        Date hireDate = new Date(hire.getTime());
+        manager.setHireDate(hireDate);
+        if(param.getLeaveDate() != null) {
+            java.util.Date leave = param.getLeaveDate();
+            Date leaveDate = new Date(leave.getTime());
+            manager.setLeave(YesOrNo.Y);
+            manager.setLeaveDate(leaveDate);
         }
+        user.setUser_name(param.getManagerName());
+        user.setEmail(param.getManagerEmail());
+        user.setUser_id(param.getManagerId());
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getManagerPnum());
         return manager;
     }
 

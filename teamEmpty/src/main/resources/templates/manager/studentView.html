@@ -15,19 +15,27 @@
                 <table class="table table-bordered">
                     <tr>
                         <th>이름</th>
-                        <td th:text="${student.name}"></td>
+                        <td><input th:value="${student.name}" type="text" name="name"></td>
                     </tr>
                     <tr>
                         <th>학번</th>
-                        <td th:text="${student.student_num}"></td>
+                        <td><input th:value="${student.student_num}" type="number" name="student_num"></td>
                     </tr>
                     <tr>
                         <th>아이디</th>
-                        <td th:text="${student.userid}"></td>
+                        <td><input th:value="${student.userid}" type="text" name="userid"></td>
                     </tr>
                     <tr>
                         <th>학과</th>
-                        <td th:text="${student.major_name}"></td>
+                        <td>
+                            <select class="form-control" id="major_idx" name="major_idx">
+                                <option th:text="${student.major_name}" th:value="${student.major_idx}"></option>
+                                <option th:each="row : ${majorList}"
+                                        th:text="${row.name}"
+                                        th:value="${row.idx}">
+                                </option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <th>입학일</th>
@@ -35,15 +43,15 @@
                     </tr>
                     <tr>
                         <th>주소</th>
-                        <td th:text="${student.address}"></td>
+                        <td><input th:value="${student.address}" type="text" name="address"></td>
                     </tr>
                     <tr>
                         <th>연락처</th>
-                        <td th:text="${student.pnum}"></td>
+                        <td><input th:value="${student.pnum}" type="text" name="pnum"></td>
                     </tr>
                     <tr>
                         <th>이메일</th>
-                        <td th:text="${student.email}"></td>
+                        <td><input th:value="${student.email}" type="text" name="email"></td>
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>

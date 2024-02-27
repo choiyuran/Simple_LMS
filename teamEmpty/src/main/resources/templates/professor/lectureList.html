@@ -130,7 +130,7 @@
                 </td>
                 <td class="time">
                     <div>
-                        <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
+                        <span th:utext="${row.day}"></span>
                     </div>
                 </td>
                 <td class="current">
@@ -167,7 +167,8 @@
             </button>
         </a>
         <a href="/manager/lectureEvaluation">
-            <button id="evaluation-button" class="btn btn-outline-secondary"
+            <button id="evaluation-button"
+                    th:class="${evaluationStatus == 'Y' ? 'btn btn-warning' : 'btn btn-outline-secondary'}"
                     th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
             </button>
         </a>

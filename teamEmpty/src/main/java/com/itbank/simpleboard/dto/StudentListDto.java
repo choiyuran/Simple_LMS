@@ -3,6 +3,7 @@ package com.itbank.simpleboard.dto;
 import com.itbank.simpleboard.entity.Status_type;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -15,6 +16,8 @@ public class StudentListDto {
     public String major_name;
     public String pnum;
     public String userid;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     public Date entranceDate;
     public String address;
     public String email;

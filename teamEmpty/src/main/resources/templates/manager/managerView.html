@@ -11,40 +11,50 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form method="post" id="managerForm" th:action="@{'/manager/managerUpdateByManager/' + ${manager.idx}}">
+            <form method="post" th:action="@{'/manager/managerUpdateByManager/' + ${manager.idx}}">
                 <table class="table table-bordered">
                     <tr>
                         <th rowspan="4">
                             <img th:src="${manager.managerImg}" alt="Professor Image" class="img-fluid">
                         </th>
-                        <td th:text="${manager.managerName}" th:colspan="2">
-                            <span th:if="${manager.leaveDate != null}">(퇴사)</span>
+
+                    </tr>
+                    <tr>
+                        <td th:colspan="2">
+                            <input th:value="${manager.managerName}" type="text" name="managerName">
                         </td>
                     </tr>
                     <tr>
-                        <td th:text="${manager.managerId}" th:colspan="2"></td>
+                        <td th:colspan="2">
+                            <input th:value="${manager.managerPnum}" type="text" name="managerPnum">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td th:colspan="2">
+                            <input th:value="${manager.address}" type="text" name="address">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>아이디</th>
+                        <td th:colspan="2"><input th:value="${manager.managerId}" type="text" name="managerId"></td>
                     </tr>
                     <tr>
-                        <td th:text="${manager.managerEmail}" th:colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <td th:text="${manager.managerPnum}" th:colspan="2"></td>
-                    </tr>
-                    <tr>
-                        <th>주소</th>
-                        <td th:text="${manager.address}" th:colspan="2"></td>
+                        <th>이메일</th>
+                        <td th:colspan="2"><input th:value="${manager.managerEmail}" type="text" name="managerEmail"></td>
                     </tr>
                     <tr>
                         <th>입사일</th>
-                        <td><input th:value="${manager.managerHireDate}" type="date" name="hireDate" th:colspan="2"></td>
+                        <td th:colspan="2"><input th:value="${manager.managerHireDate}" type="date" name="managerHireDate"></td>
                     </tr>
                     <tr th:if="${manager.leaveDate != null}">
                         <th>퇴사일</th>
-                        <td><input th:value="${manager.leaveDate}" type="date" name="leaveDate" th:colspan="2"></td>
+                        <td  th:colspan="2"><input th:value="${manager.leaveDate}" type="date" name="leaveDate"></td>
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>
-                <a th:href="@{/manager/managerList}"><button class="btn btn-danger">취소</button></a>
+                <a href="/manager/managerList"><button type="button" class="btn btn-danger">취소</button></a>
 
                 <button th:if="${manager.leaveDate == null}" type="button" class="btn btn-danger" onclick="handleLeave(this)"
                         th:data-manager-idx="${manager.idx}">퇴사 처리</button>

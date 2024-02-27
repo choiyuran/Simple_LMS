@@ -129,7 +129,7 @@ public class ManagerController {
     @GetMapping("/managerListKeyword")    // 교직원 명단 검색 조회
     public ModelAndView searchList(@RequestParam("searchType") String searchType, @RequestParam("searchValue") String searchValue,
                                    @RequestParam(value = "leave", required = false) Boolean leave,
-                                   @PageableDefault(size = 2) Pageable pageable){
+                                   @PageableDefault(size = 10) Pageable pageable){
         ModelAndView mav = new ModelAndView("manager/managerList");
         HashMap<String, Object> map = new HashMap<>();
         if(searchType != null) {
@@ -507,29 +507,26 @@ public class ManagerController {
         mav.addObject("num", pageable.getPageNumber() + 1);
         mav.addObject("maxPage", 5);
         return mav;
+
     }
 
     @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
     public ModelAndView professorView(@PathVariable("idx")Long idx) {
         ModelAndView mav = new ModelAndView("redirect:/manager/professorList");
         ProfessorListDto professor = managerService.selectOneProfessor(idx);
+        List<Major> majorList = managerService.selectAllMajor();
         if(professor != null) {
             mav.addObject("professor", professor);
+            mav.addObject("majorList", majorList);
             mav.setViewName("manager/professorView");
         }
         return mav;
     }
 
-    @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정 - 입사일
-    public String professorUpdateByManager(@PathVariable("idx") Long idx,
-                                           @RequestParam("hireDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date hireDate,
-                                           @RequestParam("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd")Date leaveDate) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("idx", idx);
-        map.put("hireDate", hireDate);
-        map.put("leaveDate", leaveDate);
-
-        Professor professor = managerService.updateProfessorByManager(map);
+    @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정
+    public String professorUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ProfessorListDto param) {
+        param.setIdx(idx);
+        Professor professor = managerService.updateProfessorByManager(param);
         return "redirect:/manager/professorList";
     }
 
@@ -576,17 +573,19 @@ public class ManagerController {
     public ModelAndView studentView(@PathVariable("idx")Long idx) {
         ModelAndView mav = new ModelAndView("redirect:/manager/studentList");
         StudentListDto student = managerService.selectOneStudent(idx);
+        List<Major> majorList = managerService.selectAllMajor();
         if(student != null) {
             mav.addObject("student", student);
+            mav.addObject("majorList", majorList);
             mav.setViewName("manager/studentView");
         }
         return mav;
     }
 
-    @PostMapping("/studentUpdateByManager/{idx}")               // 학생 정보 수정(교직원이 입학일만 수정)
-    public String studentUpdateByManager(@PathVariable("idx")Long idx,
-                                         @RequestParam("entranceDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date entranceDate) {
-        Student student = managerService.studentUpdateByManager(idx, entranceDate);
+    @PostMapping("/studentUpdateByManager/{idx}")               // 학생 정보 수정
+    public String studentUpdateByManager(@PathVariable("idx")Long idx, @ModelAttribute StudentListDto param) {
+        param.setIdx(idx);
+        Student student = managerService.studentUpdateByManager(param);
         return "redirect:/manager/studentList";
     }
 
@@ -601,18 +600,10 @@ public class ManagerController {
         return mav;
     }
 
-    @PostMapping("/managerUpdateByManager/{idx}")         // 교직원 정보 수정(교직원이 하는 수정)
-    public String managerUpdateByManager(@PathVariable("idx") Long idx,
-                                         @RequestParam("hireDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date hireDate,
-                                         @RequestParam("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd")Date leaveDate) {
-        Manager manager;
-        HashMap<String, Object> map = new HashMap<>();
-        if(leaveDate != null) {
-            map.put("leaveDate", leaveDate);
-        }
-        map.put("idx", idx);
-        map.put("hireDate", hireDate);
-        manager = managerService.updateManagerByManager(map);
+    @PostMapping("/managerUpdateByManager/{idx}")         // 교직원 정보 수정
+    public String managerUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ManagerDTO param) {
+        param.setIdx(idx);
+        Manager manager = managerService.updateManagerByManager(param);
         return "redirect:/manager/managerList";
     }
 

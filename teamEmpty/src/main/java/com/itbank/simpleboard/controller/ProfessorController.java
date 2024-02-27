@@ -33,13 +33,14 @@ public class ProfessorController {
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
     private final UserService userService;
+    private final ManagerService managerService;
 
     @RequestMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         long startTime = System.currentTimeMillis();
         
         Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-
+        String evaluationStatus = managerService.selectEvaluationStatus();
         // LectureDtoList를 Model에 추가
         model.addAttribute("LectureList", lectureDtoList);
 
@@ -60,6 +61,7 @@ public class ProfessorController {
         }
         model.addAttribute("YearList", yearList);
         model.addAttribute("condition", condition);
+        model.addAttribute("evaluationStatus", evaluationStatus);
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/lectureList";
