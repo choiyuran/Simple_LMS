@@ -81,52 +81,22 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
-//    @Override
-//    public List<ProfessorLectureDto> getLectureDtoList(LectureSearchConditionDto condition) {
-//        return queryFactory
-//                .select(new QProfessorLectureDto(
-//                        lecture.idx,
-//                        lecture.name,
-//                        lecture.credit,
-//                        lecture.day,
-//                        lecture.start,
-//                        lecture.end,
-//                        lecture.type.stringValue(),
-//                        lecture.maxCount,
-//                        lecture.currentCount,
-//                        lecture.semester,
-//                        lecture.grade,
-//                        lecture.abolition.stringValue(),
-//                        lecture.professor.professor_idx,
-//                        QUser.user.user_name.as("professor_name"),
-//                        lecture.plan,
-//                        major.name,
-//                        QCollege.college.location,
-//                        QLectureRoom.lectureRoom.room
-//                ))
-//                .from(lecture)
-//                .innerJoin(professor).on(lecture.professor.eq(professor))
-//                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
-//                .innerJoin(lecture.major, major)
-//                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
-//                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
-//                .where(
-//                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
-//                        typeEq(condition.getType()),
-//                        yearEq(condition.getYear()),
-//                        semesterEq(condition.getSemester()),
-//                        gradeEq(condition.getGrade()),
-//                        majorEq(condition.getMajor()),
-//                        professor_idxEq(condition.getProfessor_idx()),
-//                        isAbolition(condition.getIsAbolition())
-//                )
-//                .fetch();
-//    }
-
     @Override
     public List<String> getMajorNameList(LectureSearchConditionDto condition) {
         return queryFactory
                 .select(lecture.major.name)
+                .from(lecture)
+                .where(
+                        professor_idxEq(condition.getProfessor_idx())
+                )
+                .distinct()
+                .fetch();
+    }
+
+    @Override
+    public List<Integer> getGradeList(LectureSearchConditionDto condition) {
+        return queryFactory
+                .select(lecture.grade)
                 .from(lecture)
                 .where(
                         professor_idxEq(condition.getProfessor_idx())
