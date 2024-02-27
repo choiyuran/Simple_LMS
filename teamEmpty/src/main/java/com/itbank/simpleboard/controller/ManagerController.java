@@ -29,10 +29,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -756,6 +754,13 @@ public class ManagerController {
         int start = pagingComponent.calculateStart(LectureList.getNumber());
         int end = pagingComponent.calculateEnd(LectureList.getTotalPages(), start);
 
+        int currentYear = LocalDate.now().getYear();
+        List<Integer> yearList = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            int year = currentYear - i;
+            yearList.add(year);
+        }
+        mav.addObject("YearList", yearList);
         mav.addObject("start", start);
         mav.addObject("end", end);
         mav.addObject("num", pageable.getPageNumber() + 1);
@@ -764,13 +769,6 @@ public class ManagerController {
         mav.addObject("evaluationStatus", evaluationStatus);
         return mav;
     }
-
-//    @ResponseBody
-//    @GetMapping("/lectureEvaluation")
-//    public ResponseEntity<String> lectureEvaluation() {
-//        String evaluationStatus = managerService.lectureEvaluation();
-//        return new ResponseEntity<>(evaluationStatus, HttpStatus.OK);
-//    }
 
     @GetMapping("/pagingTest")          // 페이징 테스트
     public ModelAndView pagingTest(@PageableDefault(size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {

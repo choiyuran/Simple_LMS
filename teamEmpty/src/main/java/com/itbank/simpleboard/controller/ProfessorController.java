@@ -34,6 +34,7 @@ public class ProfessorController {
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
     private final PagingComponent pagingComponent;
+    private final ManagerService managerService;
 
 //    @GetMapping("/lectureList") // 강의 목록
 //    public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -108,12 +109,13 @@ public class ProfessorController {
         model.addAttribute("YearList", yearList);
         int start = pagingComponent.calculateStart(lectureDtoList.getNumber());
         int end = pagingComponent.calculateEnd(lectureDtoList.getTotalPages(), start);
+        String evaluationStatus = managerService.selectEvaluationStatus();
         model.addAttribute("start", start);
         model.addAttribute("end", end);
         model.addAttribute("num", pageable.getPageNumber() + 1);
         model.addAttribute("maxPage", 5);
         model.addAttribute("condition", condition);
-
+        model.addAttribute("evaluationStatus", evaluationStatus);
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/lectureList";
@@ -129,7 +131,7 @@ public class ProfessorController {
 
         int start = pagingComponent.calculateStart(lectureDtoList.getNumber());
         int end = pagingComponent.calculateEnd(lectureDtoList.getTotalPages(), start);
-
+        String evaluationStatus = managerService.selectEvaluationStatus();
         ResponseDto responseDto = new ResponseDto();
         responseDto.setLectureDtoList(lectureDtoList);
         responseDto.setCondition(condition);
@@ -137,7 +139,7 @@ public class ProfessorController {
         responseDto.setEnd(end);
         responseDto.setMaxPage(5);
         responseDto.setNum(pageable.getPageNumber() + 1);
-
+        responseDto.setEvaluationStatus(evaluationStatus);
         return ResponseEntity.ok()
                 .header("Content-Type", "application/json")
                 .body(responseDto);

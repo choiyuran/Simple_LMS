@@ -763,5 +763,25 @@ public class ManagerService {
         log.info(evaluationStatus);
         return evaluationStatus;
     }
+
+    public String selectEvaluationStatus() {
+        List<Lecture> lectureList = lectureRepository.findAll()
+                .stream()
+                .filter(lecture -> lecture.getAbolition().equals(YesOrNo.N))
+                .collect(Collectors.toList());
+
+        boolean allVisible = lectureList.stream().allMatch(lecture -> lecture.getVisible().equals(YesOrNo.Y));
+        boolean noneVisible = lectureList.stream().allMatch(lecture -> lecture.getVisible().equals(YesOrNo.N));
+
+        String evaluationStatus = null;
+        if(allVisible) {
+            evaluationStatus = "Y";
+        }
+        else if(noneVisible) {
+            evaluationStatus = "N";
+        }
+
+        return evaluationStatus;
+    }
 }
 
