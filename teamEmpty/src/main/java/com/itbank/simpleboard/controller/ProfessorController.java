@@ -7,7 +7,6 @@ import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +34,7 @@ public class ProfessorController {
     private final GradeService gradeService;
     private final PagingComponent pagingComponent;
     private final ManagerService managerService;
+    private final UserService userService;
 
 //    @GetMapping("/lectureList") // 강의 목록
 //    public String lectureList(Model model, LectureSearchConditionDto condition) {
@@ -79,13 +79,12 @@ public class ProfessorController {
 //                .header("Content-Type", "application/json")
 //                .body(lectureDtoList);
 //    }
-    private final UserService userService;
 
     @GetMapping("/lectureList") // 강의 목록
-    public String lectureList(Model model, LectureSearchConditionDto condition,
-                              @PageableDefault(size = 3) Pageable pageable) {
+    public String lectureList(Model model, LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         long startTime = System.currentTimeMillis();
         Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
+
         // LectureDtoList를 Model에 추가
         model.addAttribute("LectureList", lectureDtoList);
 
@@ -114,6 +113,7 @@ public class ProfessorController {
         model.addAttribute("maxPage", 5);
         model.addAttribute("condition", condition);
         model.addAttribute("evaluationStatus", evaluationStatus);
+
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/lectureList";
