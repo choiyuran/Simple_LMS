@@ -9,12 +9,12 @@ name: Simple_LMS CI/CD Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 env:
-  S3_BUCKET_NAME: cointalk-deploy
-  
+  S3_BUCKET_NAME: simplelms-deploy
+
 jobs:
   build:
 
@@ -23,16 +23,70 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x ./teamEmpty/gradlew
-    
-    - name: Build with Gradle
-      run: ./gradlew clean build
-      working-directory: ./teamEmpty
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./teamEmpty/gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+        working-directory: ./teamEmpty
+
+      # 디렉토리 생성
+      - name: Make Directory
+        run: mkdir -p deploy
+        working-directory: ./teamEmpty
+
+      # Jar 파일 복사
+      - name: Copy Jar
+        run: cp ./build/libs/*SNAPSHOT.jar ./deploy
+        working-directory: ./teamEmpty
+
+      # appspec.yml 파일 복사
+      - name: Copy appspec.yml
+        run: cp appspec.yml ./deploy
+        working-directory: ./teamEmpty
+
+      # script file 실행 권한 부여
+      - name: Give Authorization
+        run: chmod +x ./scripts/*.sh
+        working-directory: ./teamEmpty
+
+      # script files 복사
+      - name: Copy script
+        run: cp -p ./scripts/*.sh ./deploy
+        working-directory: ./teamEmpty
+
+      - name: Make zip file
+        run: zip -r ./simpleLMS.zip ./deploy
+        working-directory: ./teamEmpty
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Upload to S3
+        run: aws s3 cp --region us-east-2 ./simpleLMS.zip s3://simplelms-deploy/
+        working-directory: ./teamEmpty
+
+      # Deploy
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws deploy create-deployment \
+          --application-name simpleLMS \
+          --deployment-group-name lms-group \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=simplelms-deploy,bundleType=zip,key=simpleLMS.zip \
+          --region us-east-2
