@@ -66,14 +66,14 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
+                    <th order="1" class="major">
+                        전공<span class="order"></span>
+                    </th>
                     <th order="1" class="lecture">
                         강의명<span class="order"></span>
                     </th>
                     <th order="1" class="professor">
                         교수<span class="order"></span>
-                    </th>
-                    <th order="1" class="major">
-                        전공<span class="order"></span>
                     </th>
                     <th order="1" class="type">
                         강의 타입<span class="order"></span>
@@ -84,25 +84,24 @@
                     <th order="1" class="time">
                         강의 시간<span class="order"></span>
                     </th>
-                    <th order="1" class="current">
-                        수강 인원<span class="order"></span>
-                    </th>
                     <th order="1" class="semester">
                         강의 학기<span class="order"></span>
                     </th>
                     <th order="1" class="grade">
                         학년<span class="order"></span>
                     </th>
-                    <th order="1" class="location">
-                        강의실<span class="order"></span>
-                    </th>
                 </tr>
                 </thead>
                 <tbody id="LectureTableBody">
                 <tr th:each="row : ${LectureList.content}">
+                    <td class="major">
+                        <div>
+                            <span th:text="${row.major}"></span>
+                        </div>
+                    </td>
                     <td class="lecture">
                         <div>
-                            <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
+                            <a th:href="@{'/viewLecture/' + ${row.idx}}">
                                 <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
                             </a>
                             <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
@@ -111,11 +110,6 @@
                     <td class="professor">
                         <div>
                             <span th:text="${row.professor_name}"></span>
-                        </div>
-                    </td>
-                    <td class="major">
-                        <div>
-                            <span th:text="${row.major}"></span>
                         </div>
                     </td>
                     <td class="type">
@@ -130,12 +124,7 @@
                     </td>
                     <td class="time">
                         <div>
-                            <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
-                        </div>
-                    </td>
-                    <td class="current">
-                        <div>
-                            <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                            <span th:utext="${row.day}"></span>
                         </div>
                     </td>
                     <td class="semester">
@@ -148,15 +137,9 @@
                             <span th:text="${row.grade} + '학년'"></span>
                         </div>
                     </td>
-                    <td class="location">
-                        <div>
-                            <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
-                        </div>
-                    </td>
                 </tr>
-
                 <tr th:if="${LectureList == null || LectureList.isEmpty()}">
-                    <td colspan="10">검색 결과가 없습니다.</td>
+                    <td colspan="8">검색 결과가 없습니다.</td>
                 </tr>
                 </tbody>
             </table>

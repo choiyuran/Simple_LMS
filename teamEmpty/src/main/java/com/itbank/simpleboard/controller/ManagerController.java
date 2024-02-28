@@ -388,7 +388,7 @@ public class ManagerController {
         if(lecture == null) {
             return "redirect:/manager/lectureUpdate" + idx;
         }
-        return "redirect:/professor/viewLecture/" + idx;
+        return "redirect:/viewLecture/" + idx;
     }
 
     @GetMapping("/lectureDelete/{idx}")             // 강의 삭제

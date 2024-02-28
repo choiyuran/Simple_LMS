@@ -6,12 +6,14 @@ import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.NoticeService;
+import com.itbank.simpleboard.service.ProfessorService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -27,6 +29,7 @@ import java.util.Map;
 @Slf4j
 public class HomeController {
     private final UserService userService;
+    private final ProfessorService professorService;
     private final AcademicCalendarService academicCalendarService;
     private final NoticeService noticeService;
 
@@ -235,4 +238,9 @@ public class HomeController {
         return url;
     }
 
+    @GetMapping("/viewLecture/{idx}")   // 강의 상세보기
+    public String viewLecture(@PathVariable("idx") Long idx, Model model) {
+        model.addAttribute("lecture", professorService.getLectureDto(idx));
+        return "common/viewLecture";
+    }
 }

@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-
-<head th:insert="layout/professorHeader :: head">
-</head>
-<body>
-<header th:insert="layout/professorHeader :: header"></header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <main>
     <div class="container mt-3">
         <table class="table table-bordered">
@@ -30,7 +47,8 @@
                     </th:block>
                 </td>
                 <td th:if="${lecture.plan != null}" class="planExist">
-                    <a download th:href="@{'/download/' + ${lecture.plan} + '?saveDir=syllabus'}" th:text="${lecture.plan}"></a>
+                    <a download th:href="@{'/download/' + ${lecture.plan} + '?saveDir=syllabus'}"
+                       th:text="${lecture.plan}"></a>
                     <th:block
                             th:if="${session.user != null && session.user.user.role.toString().equals('교수') && session.user.professor_idx == lecture.professor_idx}">
                         <span class="upload-btn" onclick="openFileUploadDialog(this)">수정</span>
@@ -104,12 +122,16 @@
 
         </table>
 
-        <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
-        <button class="btn btn-danger" onclick="confirmDelete(event)" th:if="${session.user.user.role.toString() == '교직원'}">
+        <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a
+                th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+        <button class="btn btn-danger" onclick="confirmDelete(event)"
+                th:if="${session.user.user.role.toString() == '교직원'}">
             <a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
         <button class="btn btn-outline-secondary" onclick="Url()">목록으로</button>
 
-            <a th:if="${session.user.user.role.toString() == '교직원'}" th:href="@{'/manager/viewEvaluation/'+${lecture.idx}}"><button class="btn btn-facebook">강의평가보기</button></a>
+        <a th:if="${session.user.user.role.toString() == '교직원'}" th:href="@{'/manager/viewEvaluation/'+${lecture.idx}}">
+            <button class="btn btn-facebook">강의평가보기</button>
+        </a>
     </div>
 
     <script>
@@ -171,16 +193,25 @@
         function Url() {
             var previousUrl = window.localStorage.getItem("previousUrl");
 
-            if(previousUrl) {
+            if (previousUrl) {
                 window.location.href = previousUrl;
-            }
-            else {
+            } else {
                 alert('잘못된 주소!');
             }
         }
     </script>
 
 </main>
-<footer th:insert="layout/professorHeader :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 </body>
 </html>

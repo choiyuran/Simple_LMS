@@ -54,7 +54,7 @@
                     </select>
                 </label>
                 <label>검색어 :
-                    <input id="searchInput" name="name" type="text"
+                    <input id="MySearchInput" name="name" type="text"
                            th:selected="${condition != null && condition.name != null && condition.name == name}">
                 </label>
                 <input type="submit" value="검색">
@@ -66,11 +66,11 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th order="1" class="lecture">
-                        강의명<span class="order"></span>
-                    </th>
                     <th order="1" class="major">
                         전공<span class="order"></span>
+                    </th>
+                    <th order="1" class="lecture">
+                        강의명<span class="order"></span>
                     </th>
                     <th order="1" class="type">
                         강의 타입<span class="order"></span>
@@ -80,9 +80,6 @@
                     </th>
                     <th order="1" class="time">
                         강의 시간<span class="order"></span>
-                    </th>
-                    <th order="1" class="current">
-                        수강 인원<span class="order"></span>
                     </th>
                     <th order="1" class="semester">
                         강의 학기<span class="order"></span>
@@ -103,17 +100,17 @@
                 </thead>
                 <tbody id="MyLectureTableBody">
                 <tr th:each="row : ${MyList.content}">
+                    <td class="major">
+                        <div>
+                            <span th:text="${row.major}"></span>
+                        </div>
+                    </td>
                     <td class="lecture">
                         <div>
                             <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
                                 <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
                             </a>
                             <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
-                        </div>
-                    </td>
-                    <td class="major">
-                        <div>
-                            <span th:text="${row.major}"></span>
                         </div>
                     </td>
                     <td class="type">
@@ -128,12 +125,7 @@
                     </td>
                     <td class="time">
                         <div>
-                            <span th:utext="${row.day + '<br/>' + row.start + '<br/>' + row.end}"></span>
-                        </div>
-                    </td>
-                    <td class="current">
-                        <div>
-                            <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
+                            <span th:utext="${row.day}"></span>
                         </div>
                     </td>
                     <td class="semester">
@@ -161,7 +153,7 @@
                     </td>
                 </tr>
                 <tr th:if="${MyList == null or MyList.isEmpty()}">
-                    <td colspan="11">검색 결과가 없습니다.</td>
+                    <td colspan="10">검색 결과가 없습니다.</td>
                 </tr>
                 </tbody>
             </table>
@@ -179,7 +171,7 @@
                     <!-- 페이지 번호 표시 -->
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, MyList.totalPages - 1)}">
                         <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
-                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)" th:if="${MyList>.number == i}"
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)" th:if="${MyList.number == i}"
                                 th:onclick="|setPageAndSubmit(${i})|" th:text="${i + 1}" type="button"></button>
                         <button class="page-link" th:onclick="|setPageAndSubmit(${i})|" th:unless="${MyList.number == i}" type="button"
                                 th:text="${i + 1}"></button>
@@ -297,7 +289,7 @@
         currentOpenButton = button;
 
         let modalBody = document.querySelector('#enrollmentStuList .modal-body');
-        modalBody.innerHTML = '<img src="/img/loading.gif" alt="로딩" style="width: 100%;0">'; // 기존 내용을 지우고 새로운 내용으로 업데이트
+        modalBody.innerHTML = '<img src="/img/loading.gif" alt="로딩" style="width: 100%;">'; // 기존 내용을 지우고 새로운 내용으로 업데이트
 
         // 클릭된 버튼에서 data-row-idx 속성값 가져오기
         var lectureIdx = button.getAttribute('data-lecture-idx');
