@@ -38,20 +38,13 @@ public class ProfessorController {
     @RequestMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         long startTime = System.currentTimeMillis();
-        
+
         Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
         String evaluationStatus = managerService.selectEvaluationStatus();
         // LectureDtoList를 Model에 추가
         model.addAttribute("LectureList", lectureDtoList);
-
-        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
         model.addAttribute("MajorList", professorService.getMajorNameList(condition));
-
-        model.addAttribute("GradeList", lectureDtoList.stream()
-                .map(ProfessorLectureDto::getGrade)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList()));
+        model.addAttribute("GradeList", professorService.getGradeList(condition));
 
         int currentYear = LocalDate.now().getYear();
         List<Integer> yearList = new ArrayList<>();
@@ -67,9 +60,8 @@ public class ProfessorController {
         return "professor/lectureList";
     }
 
-    @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
-    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition,
-                            @PageableDefault(size = 3) Pageable pageable) {
+    @RequestMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
+    public String myLecture(HttpSession session, Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         Object user = session.getAttribute("user");
         if (user instanceof ProfessorDto) {
             long startTime = System.currentTimeMillis();
@@ -78,14 +70,8 @@ public class ProfessorController {
             condition.setProfessor_idx(professor.getProfessor_idx());
             Page<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition, pageable);
             model.addAttribute("MyList", myLectureDtoList);
-
             model.addAttribute("MajorList", professorService.getMajorNameList(condition));
-
-            model.addAttribute("GradeList", myLectureDtoList.stream()
-                    .map(ProfessorLectureDto::getGrade)
-                    .distinct()
-                    .sorted()
-                    .collect(Collectors.toList()));
+            model.addAttribute("GradeList", professorService.getGradeList(condition));
 
             int currentYear = LocalDate.now().getYear();
             List<Integer> yearList = new ArrayList<>();
@@ -94,29 +80,13 @@ public class ProfessorController {
                 yearList.add(year);
             }
             model.addAttribute("YearList", yearList);
-
+            model.addAttribute("condition", condition);
             long endTime = System.currentTimeMillis();
             log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
             return "professor/myLecture";
         } else {
             return "redirect:/login";
         }
-    }
-
-    @ResponseBody
-    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
-    public ResponseEntity<Page<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition,
-                                                                       @PageableDefault(size = 3) Pageable pageable) {
-        long startTime = System.currentTimeMillis();
-
-        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("user")).getProfessor_idx());
-        Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body(lectureDtoList);
     }
 
     @ResponseBody

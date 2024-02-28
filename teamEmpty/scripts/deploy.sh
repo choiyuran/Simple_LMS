@@ -29,13 +29,7 @@ chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
 
-export DB_PASSWORD=abcdefg1
-
-export MAIL_PASSWORD=lupjmawhecxojqor
-
-export CLOUD_ACCESSKEY=AKIAU6GD2QCHXN2GMB7J
-
-export CLOUD_SECRETKEY=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
+source $REPOSITORY/.env
 
 nohup java -jar -Duser.timezone=Asia/Seoul $JAR_NAME >> $REPOSITORY/nohup.out 2>&1 &
 
