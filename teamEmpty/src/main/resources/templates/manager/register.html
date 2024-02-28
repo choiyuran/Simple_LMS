@@ -270,6 +270,7 @@
                 contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
                 success: function(message) {
                     console.log('등록 메시지:', message);
+                    alert(message);
                     if (message.success) { // success가 true인 경우에만 실행
                         var additionalRegistration = confirm('추가로 등록하시겠습니까?');
                         if (additionalRegistration === true) {

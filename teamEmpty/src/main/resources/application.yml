@@ -2,8 +2,8 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://database-1.c9qyy8822qo7.us-east-2.rds.amazonaws.com:3306/team
-    username: admin
+    url: jdbc:mysql://database-1.c9qyy8822qo7.us-east-2.rds.amazonaws.com:3306/test6
+    username: team6
     password: ${DB_PASSWORD} 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
