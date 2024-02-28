@@ -15,7 +15,7 @@
                 <table class="table table-bordered">
                     <tr>
                         <th rowspan="4">
-                            <img th:src="${professor.img}" alt="Professor Image" class="img-fluid">
+                            <img th:src="@{'/image/' + ${professor.img}}" alt="Professor Image" class="img-fluid">
                         </th>
                         <td th:colspan="2"><input th:value="${professor.name}" type="text" name="name"></td>
                     </tr>
@@ -35,10 +35,6 @@
                     </tr>
                     <tr>
                         <td th:colspan="2"><input th:value="${professor.address}" type="text" name="address"></td>
-                    </tr>
-                    <tr>
-                        <th colspan="1">아이디</th>
-                        <td><input th:value="${professor.userid}" type="text" name="userid"></td>
                     </tr>
                     <tr>
                         <th colspan="1">이메일</th>

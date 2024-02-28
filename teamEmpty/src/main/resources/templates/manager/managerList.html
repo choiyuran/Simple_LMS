@@ -23,7 +23,7 @@
                     <div class="form-check form-check-inline">
                         <input type="hidden" id="leave" name="leave" value="false">
                         <input class="form-check-input" type="checkbox" id="leaveCheckbox"
-                               th:checked="${map != null and map['leave']}">
+                               th:checked="${leave != null and leave}">
                         <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
                     </div>
                     <button class="btn btn-primary">검색</button>
@@ -55,34 +55,45 @@
             </tbody>
         </table>
         <a href="/manager/register"><button class="btn btn-primary">교직원 등록</button></a>
-        <a th:href="@{/manager/managerList}"><button class="btn btn-primary" th:if="${searchValue != null or searchValue != '' or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
+        <a th:href="@{/manager/managerList}"><button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로</button></a>
 
-        <div class="d-flex justify-content-center">
-            <nav style="text-align: center;" th:if="${managerList != null && !managerList.isEmpty()}">
-                <ul class="pagination">
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/manager/managerList(page=0)}" th:text="'<<'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/manager/managerList(page=${start - maxPage})}" th:text="'<'"></a>
-                    </li>
+        <div class="m-auto mt-3" style="width: fit-content" th:if="${managerList.totalPages > 1}">
+            <ul class="pagination">
+                <li class="page-item" th:if="${managerList.hasPrevious && ((managerList.number / 5) - 1) * 5 >= 0}">
+                    <a th:href="@{/manager/managerList(page=${((managerList.number / 5) - 1) * 5})}">
+                        <button class="page-link" th:text="'<<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                        <a th:text="${page}"
-                           th:if="${num != page}"
-                           th:href="@{/manager/managerList(page=${page - 1})}"></a>
-                        <a th:text="${page}"
-                           th:if="${num == page}" disabled="true"></a>
-                    </li>
+                <li class="page-item" th:if="${managerList.hasPrevious}">
+                    <a th:href="@{/manager/managerList(page=${managerList.number - 1})}">
+                        <button class="page-link" th:text="'<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:if="${end < managerList.totalPages}">
-                        <a th:href="@{/manager/managerList(page=${start + maxPage})}" th:text="'>'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${end < managerList.totalPages}">
-                        <a th:href="@{/manager/managerList(page=${managerList.totalPages - 1})}" th:text="'>>'"></a>
-                    </li>
-                </ul>
-            </nav>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, managerList.totalPages - 1)}"
+                    th:if="${i / 5 == managerList.number / 5}">
+                    <a th:href="@{/manager/managerList(page=${i})}">
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                                th:if="${managerList.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                    <a th:href="@{/manager/managerList(page=${i})}">
+                        <button class="page-link" th:unless="${managerList.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="${managerList.hasNext}">
+                    <a th:href="@{/manager/managerList(page=${managerList.number + 1})}">
+                        <button class="page-link" th:text="'>'"></button>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="${managerList.hasNext && managerList.totalPages - 1 >= ((managerList.number / 5) + 1) * 5}">
+                    <a th:href="@{/manager/managerList(page=${((managerList.number / 5) + 1) * 5})}">
+                        <button class="page-link" th:text="'>>'"></button>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </main>

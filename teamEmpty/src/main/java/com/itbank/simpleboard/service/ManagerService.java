@@ -486,7 +486,7 @@ public class ManagerService {
             professor.setLeaveDate(leaveDate);
         }
         user.setUser_name(param.getName());
-        user.setUser_id(param.getUserid());
+        user.setUser_id(param.getEmail());
         user.setEmail(param.getEmail());
         user.setAddress(param.getAddress());
         user.setPnum(param.getPnum());
@@ -521,7 +521,7 @@ public class ManagerService {
 
         user.setUser_name(param.getName());
         student.setStudent_num(param.getStudent_num());
-        user.setUser_id(param.getUserid());
+        user.setUser_id(String.valueOf(param.getStudent_num()));
         student.setMajor(major);
         student.setEnteranceDate(entranceDate);
         user.setAddress(param.getAddress());
@@ -549,7 +549,7 @@ public class ManagerService {
         }
         user.setUser_name(param.getManagerName());
         user.setEmail(param.getManagerEmail());
-        user.setUser_id(param.getManagerId());
+        user.setUser_id(param.getManagerEmail());
         user.setAddress(param.getAddress());
         user.setPnum(param.getManagerPnum());
         return manager;
@@ -646,19 +646,15 @@ public class ManagerService {
 
         String evaluationStatus = null;
         for(Lecture one : lectureList)  {
-            log.info("강의 평가 여부[변경 전] : " + one.getVisible().toString() + "\\");
 
             if(one.getVisible().equals(YesOrNo.Y)) {
                 one.setVisible(YesOrNo.N);
-                log.info("변경된 평가 여부[DB-N] : " + one.getVisible().toString() + "\\");
                 evaluationStatus = "N";
             } else {
                 one.setVisible(YesOrNo.Y);
-                log.info("변경된 평가 여부[DB-Y] : " + one.getVisible().toString() + "\\");
                 evaluationStatus = "Y";
             }
         }
-        log.info(evaluationStatus);
         return evaluationStatus;
     }
 

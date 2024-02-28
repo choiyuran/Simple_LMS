@@ -82,33 +82,45 @@
             </tr>
         </table>
 
-        <div class="d-flex justify-content-center" th:if="${list != null && !list.isEmpty()}">
-            <nav style="text-align: center;">
-                <ul class="pagination">
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/student/enroll(page=0)}" th:text="'<<'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/student/enroll(page=${start - maxPage})}" th:text="'<'"></a>
-                    </li>
+        <div class="m-auto mt-3" style="width: fit-content" th:if="${list.totalPages > 1}">
+            <ul class="pagination">
+                <li class="page-item" th:if="${list.hasPrevious && ((list.number / 5) - 1) * 5 >= 0}">
+                    <a th:href="@{/student/enroll(page=${((list.number / 5) - 1) * 5})}">
+                        <button class="page-link" th:text="'<<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                        <a th:text="${page}"
-                           th:if="${num != page}"
-                           th:href="@{/student/enroll(page=${page - 1})}"></a>
-                        <a th:text="${page}"
-                           th:if="${num == page}" disabled="true"></a>
-                    </li>
+                <li class="page-item" th:if="${list.hasPrevious}">
+                    <a th:href="@{/student/enroll(page=${list.number - 1})}">
+                        <button class="page-link" th:text="'<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:if="${end < list.totalPages}">
-                        <a th:href="@{/student/enroll(page=${start + maxPage})}" th:text="'>'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${end < list.totalPages}">
-                        <a th:href="@{/student/enroll(page=${list.totalPages - 1})}" th:text="'>>'"></a>
-                    </li>
-                </ul>
-            </nav>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, list.totalPages - 1)}"
+                    th:if="${i / 5 == list.number / 5}">
+                    <a th:href="@{/student/enroll(page=${i})}">
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                                th:if="${list.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                    <a th:href="@{/student/enroll(page=${i})}">
+                        <button class="page-link" th:unless="${list.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="${list.hasNext}">
+                    <a th:href="@{/student/enroll(page=${list.number + 1})}">
+                        <button class="page-link" th:text="'>'"></button>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="${list.hasNext && list.totalPages - 1 >= ((list.number / 5) + 1) * 5}">
+                    <a th:href="@{/student/enroll(page=${((list.number / 5) + 1) * 5})}">
+                        <button class="page-link" th:text="'>>'"></button>
+                    </a>
+                </li>
+            </ul>
         </div>
+
 
     </div>
 </main>

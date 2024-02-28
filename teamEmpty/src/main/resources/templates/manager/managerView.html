@@ -15,7 +15,7 @@
                 <table class="table table-bordered">
                     <tr>
                         <th rowspan="4">
-                            <img th:src="${manager.managerImg}" alt="Professor Image" class="img-fluid">
+                            <img th:src="@{'/image/' + ${manager.managerImg}}" alt="Professor Image" class="img-fluid">
                         </th>
 
                     </tr>
@@ -29,16 +29,10 @@
                             <input th:value="${manager.managerPnum}" type="text" name="managerPnum">
                         </td>
                     </tr>
-
                     <tr>
                         <td th:colspan="2">
                             <input th:value="${manager.address}" type="text" name="address">
                         </td>
-                    </tr>
-
-                    <tr>
-                        <th>아이디</th>
-                        <td th:colspan="2"><input th:value="${manager.managerId}" type="text" name="managerId"></td>
                     </tr>
                     <tr>
                         <th>이메일</th>

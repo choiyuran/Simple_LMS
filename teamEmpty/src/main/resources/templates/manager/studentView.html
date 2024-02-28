@@ -22,10 +22,6 @@
                         <td><input th:value="${student.student_num}" type="number" name="student_num"></td>
                     </tr>
                     <tr>
-                        <th>아이디</th>
-                        <td><input th:value="${student.userid}" type="text" name="userid"></td>
-                    </tr>
-                    <tr>
                         <th>학과</th>
                         <td>
                             <select class="form-control" id="major_idx" name="major_idx">
@@ -38,8 +34,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>입학일</th>
-                        <td><input th:value="${student.entranceDate}" type="date" name="entranceDate"></td>
+                        <th>이메일</th>
+                        <td><input th:value="${student.email}" type="text" name="email"></td>
                     </tr>
                     <tr>
                         <th>주소</th>
@@ -50,8 +46,8 @@
                         <td><input th:value="${student.pnum}" type="text" name="pnum"></td>
                     </tr>
                     <tr>
-                        <th>이메일</th>
-                        <td><input th:value="${student.email}" type="text" name="email"></td>
+                        <th>입학일</th>
+                        <td><input th:value="${student.entranceDate}" type="date" name="entranceDate"></td>
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>

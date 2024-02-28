@@ -1,6 +1,5 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.service.*;

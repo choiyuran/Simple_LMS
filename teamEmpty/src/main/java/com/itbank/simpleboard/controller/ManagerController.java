@@ -1,6 +1,5 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
@@ -49,7 +48,6 @@ public class ManagerController {
     private final SituationService situationService;
     private final NoticeService noticeService;
     private final StudentService studentService;
-    private final PagingComponent pagingComponent;
     private final MajorService majorService;
     private final LectureService lectureService;
 
@@ -112,17 +110,10 @@ public class ManagerController {
     }
 
     @GetMapping("/managerList") // 교직원 명단 조회
-    public ModelAndView list(@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable){
+    public ModelAndView list(@PageableDefault(size = 10, sort="idx", direction = Sort.Direction.DESC) Pageable pageable){
         ModelAndView mav = new ModelAndView("manager/managerList");
         Page<ManagerDTO> managerList = managerService.findAllManager(pageable);
-
-        int start = pagingComponent.calculateStart(managerList.getNumber());
-        int end = pagingComponent.calculateEnd(managerList.getTotalPages(), start);
         mav.addObject("managerList",managerList);
-        mav.addObject("start",start);
-        mav.addObject("end",end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -132,25 +123,15 @@ public class ManagerController {
                                    @PageableDefault(size = 10) Pageable pageable){
         ModelAndView mav = new ModelAndView("manager/managerList");
         HashMap<String, Object> map = new HashMap<>();
-        if(searchType != null) {
-            map.put("searchType", searchType);
-            map.put("searchValue", searchValue);
-            map.put("leave", leave);
-        }
+        map.put("searchType", searchType);
+        map.put("searchValue", searchValue);
+        map.put("leave", leave);
 
         Page<ManagerDTO> managerList = managerService.searchManager(map, pageable);
-        int start = pagingComponent.calculateStart(managerList.getNumber());
-        int end = pagingComponent.calculateEnd(managerList.getTotalPages(), start);
-        mav.addObject("map", map);
         mav.addObject("managerList",managerList);
-        mav.addObject("searchValue", searchValue);
-        mav.addObject("searchType", searchType);
-        mav.addObject("leave", leave);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
-
+        mav.addObject("searchType",searchType);
+        mav.addObject("searchValue",searchValue);
+        mav.addObject("leave",leave);
         return mav;
     }
 
@@ -288,20 +269,9 @@ public class ManagerController {
         if(list == null) {
             list = Page.empty();
         }
-
-        int start = pagingComponent.calculateStart(list.getNumber());
-        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
-
-        log.info("start : " + start);
-        log.info("end : " + end);
         mav.addObject("list", list);
         mav.addObject("majorName", majorName);
         mav.addObject("collegeIdx", collegeIdx);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
-
         return mav;
     }
 
@@ -412,21 +382,14 @@ public class ManagerController {
 
     @GetMapping("/studentSituation")                // 학생 상태 조회
     public ModelAndView studentSituation(@RequestParam(required = false) String status,
-                                         @PageableDefault(size = 2)Pageable pageable) {
+                                         @PageableDefault(size = 10)Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");
 
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
         Page<SituationStuDto> studentList = situationService.selectSituationStu(status, pageable);
-        int start = pagingComponent.calculateStart(studentList.getNumber());
-        int end = pagingComponent.calculateEnd(studentList.getTotalPages(), start);
         mav.addObject("status", status);
         mav.addObject("studentList", studentList);
-        mav.addObject("status", status);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -487,7 +450,7 @@ public class ManagerController {
     public ModelAndView professorList(@RequestParam(value = "major_idx", required = false) Long major_idx,
                                       @RequestParam(value = "name", required = false) String name,
                                       @RequestParam(value = "leave", required = false) Boolean leave,
-                                      @PageableDefault(size = 2)Pageable pageable) {
+                                      @PageableDefault(size = 10)Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/professorList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
@@ -496,18 +459,11 @@ public class ManagerController {
 
         Page<ProfessorListDto> professorList = managerService.searchByMajorAndProfessorAndLeave(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-        int start = pagingComponent.calculateStart(professorList.getNumber());
-        int end = pagingComponent.calculateEnd(professorList.getTotalPages(), start);
 
         mav.addObject("majorList", majorList);
         mav.addObject("professorList", professorList);
         mav.addObject("map", map);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         return mav;
-
     }
 
     @GetMapping("/professorView/{idx}")               // 교수 정보 상세보기
@@ -546,7 +502,7 @@ public class ManagerController {
     public ModelAndView studentList(@RequestParam(value = "major_idx", required = false) Long major_idx,
                                     @RequestParam(value = "name", required = false) String name,
                                     @RequestParam(value = "todayRegistered",required = false) boolean todayRegistered,
-                                    @PageableDefault(size = 15) Pageable pageable) {
+                                    @PageableDefault(size = 5) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
@@ -556,16 +512,10 @@ public class ManagerController {
 
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-        int start = pagingComponent.calculateStart(studentList.getNumber());
-        int end = pagingComponent.calculateEnd(studentList.getTotalPages(), start);
 
         mav.addObject("map", map);
         mav.addObject("majorList", majorList);
         mav.addObject("studentList", studentList);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -620,16 +570,10 @@ public class ManagerController {
     }
 
     @GetMapping("/noticeList")          // 공지 사항 조회
-    public ModelAndView noticeList(@PageableDefault(size = 2) Pageable pageable) {
+    public ModelAndView noticeList(@PageableDefault(size = 1) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/noticeList");
         Page<Notice> noticeList = noticeService.selectAll(pageable);
-        int start = pagingComponent.calculateStart(noticeList.getNumber());
-        int end = pagingComponent.calculateEnd(noticeList.getTotalPages(), start);
         mav.addObject("noticeList", noticeList);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         return mav;
     }
 
@@ -742,41 +686,21 @@ public class ManagerController {
         String evaluationStatus = managerService.lectureEvaluation();
         Page<ProfessorLectureDto> LectureList = professorService.getLectureDtoList(condition, pageable);
 
-        int start = pagingComponent.calculateStart(LectureList.getNumber());
-        int end = pagingComponent.calculateEnd(LectureList.getTotalPages(), start);
-
         int currentYear = LocalDate.now().getYear();
         List<Integer> yearList = new ArrayList<>();
         for (int i = 4; i >= 0; i--) {
             int year = currentYear - i;
             yearList.add(year);
         }
+        mav.addObject("MajorList", professorService.getMajorNameList(condition));
+        mav.addObject("GradeList", professorService.getGradeList(condition));
         mav.addObject("YearList", yearList);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         mav.addObject("LectureList", LectureList);
         mav.addObject("evaluationStatus", evaluationStatus);
         return mav;
     }
 
-    @GetMapping("/pagingTest")          // 페이징 테스트
-    public ModelAndView pagingTest(@PageableDefault(size = 5, sort = "idx",direction = Sort.Direction.DESC) Pageable pageable) {
-        ModelAndView mav = new ModelAndView("/manager/majorPaging");
-        Page<Major> list = managerService.majorListPaging(pageable);
-        int start = pagingComponent.calculateStart(list.getNumber());
-        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
-        mav.addObject("list", list);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("maxPage", 5);
-        return mav;
-    }
-
-    // 교직원 입장에서 강의별 평가보기
-    @GetMapping("/viewEvaluation/{idx}")
+    @GetMapping("/viewEvaluation/{idx}")            // 교직원 입장에서 강의별 평가보기
     public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
         Object login = session.getAttribute("user");
         if (login instanceof ManagerLoginDto) {

@@ -16,7 +16,6 @@ public class ProfessorListDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date hireDate;
     private String name;
-    private String userid;
     private String address;
     private String pnum;
     private String email;
@@ -27,12 +26,11 @@ public class ProfessorListDto {
     private Date leaveDate;
 
     @QueryProjection
-    public ProfessorListDto(Long idx, String img, Date hireDate, String name, String userid, String address, String pnum, String email, Long major_idx, String major_name, Date leaveDate) {
+    public ProfessorListDto(Long idx, String img, Date hireDate, String name, String address, String pnum, String email, Long major_idx, String major_name, Date leaveDate) {
         this.idx = idx;
         this.img = img;
         this.hireDate = hireDate;
         this.name = name;
-        this.userid = userid;
         this.address = address;
         this.pnum = pnum;
         this.email = email;

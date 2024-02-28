@@ -1,7 +1,6 @@
 package com.itbank.simpleboard.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.itbank.simpleboard.component.PagingComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
@@ -45,7 +44,6 @@ public class StudentController {
     private final ProfessorService professorService;
     private final ScholarShipService scholarShipService;
     private final SituationRecordService situationRecordService;
-    private final PagingComponent pagingComponent;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
@@ -69,12 +67,6 @@ public class StudentController {
             mav.addObject("list", list);
         }
 
-        int start = pagingComponent.calculateStart(list.getNumber());
-        int end = pagingComponent.calculateEnd(list.getTotalPages(), start);
-        mav.addObject("start", start);
-        mav.addObject("end", end);
-        mav.addObject("num", pageable.getPageNumber() + 1);
-        mav.addObject("maxPage", 5);
         mav.addObject("searchType", searchType);
         mav.addObject("keyword", keyword);
 
