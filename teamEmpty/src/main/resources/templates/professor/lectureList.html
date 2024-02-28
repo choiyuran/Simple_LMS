@@ -185,7 +185,9 @@
                     <!-- 페이지 번호 표시 -->
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}">
                         <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
-                        <button type="button" class="page-link" th:onclick="|setPageAndSubmit(${i})|"
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)" th:if="${LectureList.number == i}"
+                                th:onclick="|setPageAndSubmit(${i})|" th:text="${i + 1}" type="button"></button>
+                        <button class="page-link" th:onclick="|setPageAndSubmit(${i})|" th:unless="${LectureList.number == i}" type="button"
                                 th:text="${i + 1}"></button>
                     </li>
 
