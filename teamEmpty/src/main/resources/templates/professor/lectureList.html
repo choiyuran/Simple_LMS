@@ -5,63 +5,76 @@
 <body>
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
-    <div class="w-75 m-auto">
+    <div class="w-50 m-auto">
         <form id="LectureSearchForm" method="POST">
             <input type="hidden" id="page" name="page" value="0">
-            <div>
-                <label>학과 선택 :
-                    <select name="major" id="major">
-                        <option th:text="'전공 선택'" value=""></option>
-                        <option th:each="major : ${MajorList}"
-                                th:value="${major}"
-                                th:selected="${condition != null && condition.major != null && major == condition.major}"
-                                th:text="${major}">
-                        </option>
-                    </select>
-                </label>
-                <label>강의 타입 :
-                    <select name="type" id="type">
-                        <option th:text="'강의 형태'" value=""></option>
-                        <option th:text="'전공 필수'" th:value="전공필수"
-                                th:selected="${condition != null && condition.type != null && condition.type == '전공필수'}"></option>
-                        <option th:text="'전공 선택'" th:value="전공선택"
-                                th:selected="${condition != null && condition.type != null && condition.type == '전공선택'}"></option>
-                        <option th:text="'필수 교양'" th:value="필수교양"
-                                th:selected="${condition != null && condition.type != null && condition.type == '필수교양'}"></option>
-                        <option th:text="'선택 교양'" th:value="선택교양"
-                                th:selected="${condition != null && condition.type != null && condition.type == '선택교양'}"></option>
-                    </select>
-                </label>
-                <label>기간 :
-                    <select name="year" id="year">
-                        <option th:text="년도" value=""></option>
-                        <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"
-                                th:selected="${condition != null && condition.year != null && condition.year == year}"></option>
-                    </select>
-                    <select name="semester" id="semester">
-                        <option th:text="학기" value=""></option>
-                        <option th:text="1학기" th:value="1"
-                                th:selected="${condition != null && condition.semester != null && condition.semester == '1'}"></option>
-                        <option th:text="2학기" th:value="2"
-                                th:selected="${condition != null && condition.semester != null && condition.semester == '2'}"></option>
-                    </select>
-                </label>
-                <label>학년 :
-                    <select name="grade" id="grade">
-                        <option th:text="학년" value=""></option>
-                        <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"
-                                th:selected="${condition != null && condition.grade != null && condition.grade == grade}"></option>
-                    </select>
-                </label>
-                <label>검색어 :
-                    <input id="searchInput" name="name" type="text"
-                           th:selected="${condition != null && condition.name != null && condition.name == name}">
-                </label>
-                <input type="submit" value="검색">
-                <input type="submit" value="초기화" onclick="resetAndSearch(event)">
-                <label>폐강된 강의 보기
-                    <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition">
-                </label>
+            <div class="w-100 m-auto">
+                <div class="form-group w-100 flex justify-content-between">
+                    <label class="w-25">학과 선택 :
+                        <select name="major" id="major" class="form-control">
+                            <option th:text="'전공 선택'" value=""></option>
+                            <option th:each="major : ${MajorList}"
+                                    th:value="${major}"
+                                    th:selected="${condition != null && condition.major != null && major == condition.major}"
+                                    th:text="${major}">
+                            </option>
+                        </select>
+                    </label>
+                    <label class="w-25 mx-1">강의 타입 :
+                        <select name="type" id="type" class="form-control">
+                            <option th:text="'강의 형태'" value=""></option>
+                            <option th:text="'전공 필수'" th:value="전공필수"
+                                    th:selected="${condition != null && condition.type != null && condition.type == '전공필수'}"></option>
+                            <option th:text="'전공 선택'" th:value="전공선택"
+                                    th:selected="${condition != null && condition.type != null && condition.type == '전공선택'}"></option>
+                            <option th:text="'필수 교양'" th:value="필수교양"
+                                    th:selected="${condition != null && condition.type != null && condition.type == '필수교양'}"></option>
+                            <option th:text="'선택 교양'" th:value="선택교양"
+                                    th:selected="${condition != null && condition.type != null && condition.type == '선택교양'}"></option>
+                        </select>
+                    </label>
+                    <label class="w-25 mx-1">
+                        기간 :
+                        <div class="d-flex">
+                            <select name="year" id="year" class="form-control">
+                                <option th:text="년도" value=""></option>
+                                <option th:each="year : ${YearList}" th:value="${year}" th:text="${year} + '년'"
+                                        th:selected="${condition != null && condition.year != null && condition.year == year}"></option>
+                            </select>
+                            <select name="semester" id="semester" class="form-control">
+                                <option th:text="학기" value=""></option>
+                                <option th:text="1학기" th:value="1"
+                                        th:selected="${condition != null && condition.semester != null && condition.semester == '1'}"></option>
+                                <option th:text="2학기" th:value="2"
+                                        th:selected="${condition != null && condition.semester != null && condition.semester == '2'}"></option>
+                            </select>
+                        </div>
+                    </label>
+                    <label class="w-25">학년 :
+                        <select name="grade" id="grade" class="form-control">
+                            <option th:text="학년" value=""></option>
+                            <option th:each="grade : ${GradeList}" th:value="${grade}" th:text="${grade} + '학년'"
+                                    th:selected="${condition != null && condition.grade != null && condition.grade == grade}"></option>
+                        </select>
+                    </label>
+                </div>
+                <div class="form-group w-100 flex justify-content-between align-items-center">
+                    <div class="w-50">
+                        <label class="w-100">검색어 :
+                            <input id="searchInput" class="form-text d-inline-block w-50" name="name" type="text"
+                                   th:selected="${condition != null && condition.name != null && condition.name == name}">
+                        </label>
+                    </div>
+                    <div class="align-self-center">
+                        <label>폐강된 강의 보기
+                            <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition"
+                                   class="form-check-inline">
+                        </label>
+                        <input type="submit" value="검색" class="btn btn-outline-secondary mx-1">
+                        <input type="submit" value="초기화" onclick="resetAndSearch(event)"
+                               class="btn btn-outline-secondary mx-1">
+                    </div>
+                </div>
             </div>
             <table class="table table-bordered">
                 <thead>
@@ -157,29 +170,45 @@
 
             <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
                 <ul class="pagination">
+                    <!-- 5페이지 이전으로 이동 -->
+                    <li class="page-item"
+                        th:if="${LectureList.hasPrevious} && ${((LectureList.number / 5) - 1) * 5 >= 0}">
+                        <button type="button" class="page-link"
+                                th:onclick="|setPageAndSubmit(${((LectureList.number / 5) - 1) * 5})|"
+                                th:text="'<<'"></button>
+                    </li>
+
                     <!-- 이전 페이지로 이동 -->
                     <li class="page-item" th:if="${LectureList.hasPrevious}">
-                        <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${LectureList.number - 1})|"
-                                th:text="이전"></button>
+                                th:text="'<'"></button>
                     </li>
 
                     <!-- 페이지 번호 표시 -->
-                    <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}">
-                        <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
-                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)" th:if="${LectureList.number == i}"
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, LectureList.totalPages - 1)}"
+                        th:if="${i / 5 == LectureList.number / 5}">
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                                th:if="${LectureList.number == i}"
                                 th:onclick="|setPageAndSubmit(${i})|" th:text="${i + 1}" type="button"></button>
-                        <button class="page-link" th:onclick="|setPageAndSubmit(${i})|" th:unless="${LectureList.number == i}" type="button"
+                        <button class="page-link" th:onclick="|setPageAndSubmit(${i})|"
+                                th:unless="${LectureList.number == i}" type="button"
                                 th:text="${i + 1}"></button>
                     </li>
 
                     <!-- 다음 페이지로 이동 -->
                     <li class="page-item" th:if="${LectureList.hasNext}">
-                        <!-- input을 button으로 변경하고 onclick 이벤트를 추가합니다. -->
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${LectureList.number + 1})|"
-                                th:text="다음"></button>
+                                th:text="'>'"></button>
+                    </li>
+
+                    <!-- 다음 5 페이지로 이동 -->
+                    <li class="page-item"
+                        th:if="${LectureList.hasNext} && ${LectureList.totalPages - 1 >= ((LectureList.number / 5) + 1) * 5}">
+                        <button type="button" class="page-link"
+                                th:onclick="|setPageAndSubmit(${((LectureList.number / 5) + 1) * 5})|"
+                                th:text="'>>'"></button>
                     </li>
                 </ul>
             </div>
