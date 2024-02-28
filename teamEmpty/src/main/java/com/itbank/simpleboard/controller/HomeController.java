@@ -12,11 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -47,7 +42,7 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String user_id, @RequestParam String user_pw, @RequestParam Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
+    public String login(@RequestParam String user_id, @RequestParam String user_pw, @RequestParam(required = false, defaultValue = "false") Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
         String url = "redirect:/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
             log.info("test1");

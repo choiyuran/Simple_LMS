@@ -90,4 +90,7 @@ public class ProfessorService {
     }
 
 
+    public List<Integer> getGradeList(LectureSearchConditionDto condition) {
+        return professorRepository.getGradeList(condition);
+    }
 }

@@ -7,7 +7,6 @@ import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -33,69 +32,17 @@ public class ProfessorController {
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
-    private final PagingComponent pagingComponent;
-
-//    @GetMapping("/lectureList") // 강의 목록
-//    public String lectureList(Model model, LectureSearchConditionDto condition) {
-//        long startTime = System.currentTimeMillis();
-//        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
-//        // LectureDtoList를 Model에 추가
-//        model.addAttribute("LectureList", lectureDtoList);
-//
-//        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-//        model.addAttribute("MajorList", lectureDtoList.stream()
-//                .map(ProfessorLectureDto::getMajor)
-//                .distinct()
-//                .collect(Collectors.toList()));
-//
-//        model.addAttribute("GradeList", lectureDtoList.stream()
-//                .map(ProfessorLectureDto::getGrade)
-//                .distinct()
-//                .sorted()
-//                .collect(Collectors.toList()));
-//
-//        int currentYear = LocalDate.now().getYear();
-//        List<Integer> yearList = new ArrayList<>();
-//        for (int i = 4; i >= 0; i--) {
-//            int year = currentYear - i;
-//            yearList.add(year);
-//        }
-//        model.addAttribute("YearList", yearList);
-//
-//        long endTime = System.currentTimeMillis();
-//        log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
-//        return "professor/lectureList";
-//    }
-//
-//    @ResponseBody
-//    @PostMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
-//    public ResponseEntity<List<ProfessorLectureDto>> lectureListAjax(@RequestBody LectureSearchConditionDto condition) {
-//        long startTime = System.currentTimeMillis();
-//        List<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition);
-//        long endTime = System.currentTimeMillis();
-//        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-//        return ResponseEntity.ok()
-//                .header("Content-Type", "application/json")
-//                .body(lectureDtoList);
-//    }
     private final UserService userService;
 
-    @GetMapping("/lectureList") // 강의 목록
-    public String lectureList(Model model, LectureSearchConditionDto condition,
-                              @PageableDefault(size = 3) Pageable pageable) {
+    @RequestMapping("/lectureList") // 강의 목록
+    public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         long startTime = System.currentTimeMillis();
+
         Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-        // LectureDtoList를 Model에 추가
+
         model.addAttribute("LectureList", lectureDtoList);
-
-        // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
         model.addAttribute("MajorList", professorService.getMajorNameList(condition));
-
-        model.addAttribute("GradeList", lectureDtoList.stream()
-                .map(ProfessorLectureDto::getGrade)
-                .distinct()
-                .sorted()
-                .collect(Collectors.toList()));
+        model.addAttribute("GradeList", professorService.getGradeList(condition));
 
         int currentYear = LocalDate.now().getYear();
         List<Integer> yearList = new ArrayList<>();
@@ -104,47 +51,14 @@ public class ProfessorController {
             yearList.add(year);
         }
         model.addAttribute("YearList", yearList);
-        int start = pagingComponent.calculateStart(lectureDtoList.getNumber());
-        int end = pagingComponent.calculateEnd(lectureDtoList.getTotalPages(), start);
-        model.addAttribute("start", start);
-        model.addAttribute("end", end);
-        model.addAttribute("num", pageable.getPageNumber() + 1);
-        model.addAttribute("maxPage", 5);
         model.addAttribute("condition", condition);
-
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
         return "professor/lectureList";
     }
 
-    @ResponseBody
-    @PostMapping("/lectureList/data")    // 검색하여 결과를 반환하는 Ajax용 메서드(lectureList.html)
-    public ResponseEntity<ResponseDto> lectureListAjax(@RequestBody LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
-        long startTime = System.currentTimeMillis();
-        Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.lectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-
-        int start = pagingComponent.calculateStart(lectureDtoList.getNumber());
-        int end = pagingComponent.calculateEnd(lectureDtoList.getTotalPages(), start);
-
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setLectureDtoList(lectureDtoList);
-        responseDto.setCondition(condition);
-        responseDto.setStart(start);
-        responseDto.setEnd(end);
-        responseDto.setMaxPage(5);
-        responseDto.setNum(pageable.getPageNumber() + 1);
-
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body(responseDto);
-    }
-
-
-    @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
-    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition,
-                            @PageableDefault(size = 3) Pageable pageable) {
+    @RequestMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
+    public String myLecture(HttpSession session, Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
         Object user = session.getAttribute("user");
         if (user instanceof ProfessorDto) {
             long startTime = System.currentTimeMillis();
@@ -153,14 +67,8 @@ public class ProfessorController {
             condition.setProfessor_idx(professor.getProfessor_idx());
             Page<ProfessorLectureDto> myLectureDtoList = professorService.getLectureDtoList(condition, pageable);
             model.addAttribute("MyList", myLectureDtoList);
-
             model.addAttribute("MajorList", professorService.getMajorNameList(condition));
-
-            model.addAttribute("GradeList", myLectureDtoList.stream()
-                    .map(ProfessorLectureDto::getGrade)
-                    .distinct()
-                    .sorted()
-                    .collect(Collectors.toList()));
+            model.addAttribute("GradeList", professorService.getGradeList(condition));
 
             int currentYear = LocalDate.now().getYear();
             List<Integer> yearList = new ArrayList<>();
@@ -169,29 +77,13 @@ public class ProfessorController {
                 yearList.add(year);
             }
             model.addAttribute("YearList", yearList);
-
+            model.addAttribute("condition", condition);
             long endTime = System.currentTimeMillis();
             log.info("ProfessorController.myLecture(Get) 실행 시간: {} 밀리초", endTime - startTime);
             return "professor/myLecture";
         } else {
             return "redirect:/login";
         }
-    }
-
-    @ResponseBody
-    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
-    public ResponseEntity<Page<ProfessorLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition,
-                                                                       @PageableDefault(size = 3) Pageable pageable) {
-        long startTime = System.currentTimeMillis();
-
-        condition.setProfessor_idx(((ProfessorDto) session.getAttribute("user")).getProfessor_idx());
-        Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
-        return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body(lectureDtoList);
     }
 
     @ResponseBody

@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.dto;
 
+import com.itbank.simpleboard.entity.YesOrNo;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 
@@ -11,4 +12,5 @@ public class ResponseDto {
     private int num;
     private int maxPage;
     private LectureSearchConditionDto condition;
+    private String evaluationStatus;
 }
