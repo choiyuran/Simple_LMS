@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,7 +121,7 @@ public class StudentController {
 
     // 수강 신청프로세스
     @PostMapping("/enroll")
-    public ModelAndView enrollPro(Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
+    public ModelAndView enrollPro(@RequestParam(value = "page", required = false) Integer page, Long stuIdx, Long idx, HttpSession session, RedirectAttributes ra) {
         long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("student/home");
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
@@ -133,7 +135,12 @@ public class StudentController {
             } else {
                 ra.addFlashAttribute("msg", "수강신청에 실패했습니다.");
             }
-            mav.setViewName("redirect:/student/enroll");
+            if(page == null){
+                mav.setViewName("redirect:/student/enroll");
+            }else{
+                mav.setViewName("redirect:/student/enroll?page="+page);
+            }
+
         } else {
             // 로그인이 안되어 있거나 학생이 아니야???
             // 학생이 아닌데 어케 수강신청함???? - 너 돌아가
@@ -498,39 +505,45 @@ public class StudentController {
     }
 
     @ResponseBody
-    @PostMapping("/myLecture/data")  // "교수" 로그인 된 사용자의 검색용 Ajax 메서드(myLecture.html)
-    public ResponseEntity<List<StudentLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition) {
+    @PostMapping("/myLecture/data")
+    public ResponseEntity<Page<StudentLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition,@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
         condition.setStudent_idx(((StudentDto) session.getAttribute("user")).getIdx());
-        List<StudentLectureDto> studentLectureDtoList = studentService.getStudentLectureDtoList(condition);
+        Page<StudentLectureDto> page = studentService.getStudentLectureDtoListPage(condition, pageable);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        headers.add("X-Total-Count", String.valueOf(page.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(page.getTotalPages()));
 
         long endTime = System.currentTimeMillis();
         log.info("StudentController.myLectureListAjax 실행 시간: {} 밀리초", endTime - startTime);
         return ResponseEntity.ok()
-                .header("Content-Type", "application/json")
-                .body(studentLectureDtoList);
+                .headers(headers)
+                .body(page);
     }
 
+    // 검색조건에 따른 /myLecture
     @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
-    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition) {
+    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition,@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
         Object user = session.getAttribute("user");
         if (user instanceof StudentDto) {
             long startTime = System.currentTimeMillis();
 
             StudentDto student = (StudentDto) user;
             condition.setProfessor_idx(student.getIdx());
-            System.err.println("test1");
-            List<StudentLectureDto> myLectureDtoList = studentService.getStudentLectureDtoList(condition);
+            List<StudentLectureDto> totalLectureDtoList = studentService.getStudentLectureDtoList(condition);
+            Page<StudentLectureDto> myLectureDtoList = studentService.getStudentLectureDtoListPage(condition,pageable);
             model.addAttribute("MyList", myLectureDtoList);
 
             // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가
-            model.addAttribute("MajorList", myLectureDtoList.stream()
+            model.addAttribute("MajorList", totalLectureDtoList.stream()
                     .map(StudentLectureDto::getMajor)
                     .distinct()
                     .collect(Collectors.toList()));
 
-            model.addAttribute("GradeList", myLectureDtoList.stream()
+            model.addAttribute("GradeList", totalLectureDtoList.stream()
                     .map(StudentLectureDto::getGrade)
                     .distinct()
                     .sorted()
