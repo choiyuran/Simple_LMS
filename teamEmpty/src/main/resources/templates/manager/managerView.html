@@ -15,7 +15,7 @@
                 <table class="table table-bordered">
                     <tr>
                         <th rowspan="4">
-                            <img th:src="@{'/images/manager/' + ${manager.managerImg}}" alt="Manager Image" class="img-thumbnail mb-3" id="managerImg">
+                            <img alt="Manager Image" class="img-thumbnail mb-3" id="managerImg" th:src="@{'/images/manager/' + ${manager.img}}">
                             <input type="file" name="managerImg" accept="image/*" onchange="previewImage(this)" th:if="${session.user.user.role.toString() == '교직원'}">
                         </th>
 
