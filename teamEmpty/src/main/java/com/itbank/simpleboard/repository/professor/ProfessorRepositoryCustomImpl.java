@@ -96,11 +96,8 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
     @Override
     public List<Integer> getGradeList(LectureSearchConditionDto condition) {
         return queryFactory
-                .select(lecture.grade)
-                .from(lecture)
-                .where(
-                        professor_idxEq(condition.getProfessor_idx())
-                )
+                .select(QStudent.student.student_grade)
+                .from(QStudent.student)
                 .distinct()
                 .fetch();
     }

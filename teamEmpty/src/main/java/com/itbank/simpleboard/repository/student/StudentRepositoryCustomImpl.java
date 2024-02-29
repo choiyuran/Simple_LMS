@@ -228,6 +228,54 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
     }
 
     @Override
+    public Page<StudentLectureDto> getStudentLectureDtoPage(LectureSearchConditionDto condition, Pageable pageable) {
+        QueryResults<StudentLectureDto> results = queryFactory
+                .select(new QStudentLectureDto(
+                        lecture.idx,
+                        lecture.name,
+                        lecture.intro,
+                        lecture.credit,
+                        lecture.day,
+                        lecture.start,
+                        lecture.end,
+                        lecture.type.stringValue(),
+                        lecture.maxCount,
+                        lecture.currentCount,
+                        lecture.semester,
+                        lecture.grade,
+                        lecture.abolition.stringValue(),
+                        lecture.professor.professor_idx,
+                        QUser.user.user_name.as("student_name"),
+                        lecture.plan,
+                        major.name,
+                        QCollege.college.location,
+                        QLectureRoom.lectureRoom.room
+                ))
+                .from(lecture,student)
+                .innerJoin(professor).on(lecture.professor.eq(professor))
+                .innerJoin(QUser.user).on(professor.user.eq(QUser.user))
+                .innerJoin(lecture.major, major)
+                .innerJoin(lecture.lectureRoom, QLectureRoom.lectureRoom)
+                .innerJoin(QCollege.college).on(QLectureRoom.lectureRoom.college.eq(QCollege.college))
+                .innerJoin(enrollment).on(lecture.eq(enrollment.lecture).and(student.eq(enrollment.student)))
+                .where(
+                        nameOrProfessorContain(condition.getName()),  // 수정된 부분
+                        typeEq(condition.getType()),
+                        yearEq(condition.getYear()),
+                        semesterEq(condition.getSemester()),
+                        gradeEq(condition.getGrade()),
+                        majorEq(condition.getMajor()),
+                        student_idxEq(condition.getStudent_idx()),
+                        isAbolition(condition.getIsAbolition())
+                ).orderBy(lecture.idx.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
     public Integer findByEntranceDateAndMajorIdx(int year,Long majorIdx) {
         // 입력된 연도와 동일한 입학년도를 가진 학생들 중에서 가장 최근에 등록된 학생의 학번 전체를 조회하는 쿼리
 

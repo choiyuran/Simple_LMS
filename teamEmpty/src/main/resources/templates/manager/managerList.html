@@ -35,10 +35,10 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th>이름</th>
+                <th class="name" order="1">이름<span class="order"></span></th>
                 <th>아이디</th>
                 <th>연락처</th>
-                <th>입사일</th>
+                <th class="hireDate" order="1">입사일<span class="order"></span></th>
             </tr>
             </thead>
             <tbody>
@@ -48,11 +48,11 @@
                 </td>
             </tr>
             <tr th:unless="${#lists.isEmpty(managerList)}" th:each="row : ${managerList}">
-                <td><a th:text="${row.managerName}" th:href="@{'/manager/managerView/' + ${row.idx}}"></a></td>
+                <td class="name"><a th:text="${row.managerName}" th:href="@{'/manager/managerView/' + ${row.idx}}"></a></td>
                 <td th:text="${row.managerId}"></td>
                 <td th:text="${row.managerPnum}"></td>
-                <td th:text="${row.managerHireDate}"></td>
-            </tr>
+                <td class="hireDate" th:text="${row.managerHireDate}"></td>
+             </tr>
             </tbody>
         </table>
         <a href="/manager/register">
@@ -114,13 +114,49 @@
 
         if (checkbox.checked) {
             hiddenInput.value = 'true';
-            checkbox.checked = true;
         } else {
             hiddenInput.value = 'false';
-            checkbox.checked = false;
         }
     }
 
+    function isNumeric(str) {
+        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
+    }
+
+    const tbody = document.querySelector('tbody')
+    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
+    const thList = document.querySelectorAll('th')
+
+    function sortHandler(event) {
+        // 클릭당한 th의 className을 불러온다
+        const className = event.target.className
+
+        // 클릭당한 th의 order 속성값을 정수로 불러온다
+        const order = +event.target.getAttribute('order')
+        // alert(order)
+
+        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
+        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
+        const span = event.target.querySelector('span.order')
+        span.innerText = order > 0 ? ' ▲' : ' ▼'
+
+        const trArray = Array.from(document.querySelectorAll('tbody > tr'))
+
+        trArray.sort((a, b) => {
+            let valueA = a.querySelector('.' + className).innerText
+            let valueB = b.querySelector('.' + className).innerText
+            if (isNumeric(valueA) && isNumeric(valueB)) {
+                valueA = +valueA
+                valueB = +valueB
+            }
+            let result = valueA > valueB ? 1 : -1
+            event.target.setAttribute('order', order * -1)
+            return result * order
+        })
+        trArray.forEach(tr => tbody.appendChild(tr))
+    }
+
+    thList.forEach(th => th.onclick = sortHandler)
 </script>
 
 <script th:inline="javascript">

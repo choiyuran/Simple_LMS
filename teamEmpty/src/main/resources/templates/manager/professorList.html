@@ -5,7 +5,7 @@
 </head>
 
 <body>
-<header th:insert="layout/managerHeader :: header"> </header>
+<header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-3">
     <h2>교수 명단</h2>
     <hr>
@@ -25,7 +25,7 @@
         <!-- 이름으로 검색할 수 있는 검색창 추가 -->
         <div class="form-group ml-4 mr-2">
             <label>이름</label>
-            <input type="text" class="form-control"name="name" th:value="${map.name}" value="${map.name}" placeholder="교수명을 입력하세요">
+            <input type="text" class="form-control" name="name" th:value="${map.name}" value="${map.name}" placeholder="교수명을 입력하세요">
         </div>
 
         <!-- 퇴사 여부 필터 -->
@@ -39,25 +39,27 @@
 
     <br>
     <table class="table table-bordered">
+        <thead>
         <tr>
-            <th>이름</th>
-            <th>학과</th>
+            <th class="name" order="1">이름<span class="order"></span></th>
+            <th class="major" order="1">학과<span class="order"></span></th>
             <th>연락처</th>
-            <th>입사일</th>
+            <th class="hireDate" order="1">입사일<span class="order"></span></th>
         </tr>
-
+        </thead>
+        <tbody>
         <tr th:each="row : ${professorList}">
-            <td><a th:href="@{'/manager/professorView/' + ${row.idx}}" th:text="${row.name}"></a></td>
-            <td th:text="${row.major_name}"></td>
+            <td class="name"><a th:href="@{'/manager/professorView/' + ${row.idx}}" th:text="${row.name}"></a></td>
+            <td class="major" th:text="${row.major_name}"></td>
             <td th:text="${row.pnum}"></td>
-            <td th:text="${row.hireDate}"></td>
+            <td class="hireDate" th:text="${row.hireDate}"></td>
         </tr>
-
+        </tbody>
         <tr th:if="${professorList == null || professorList.isEmpty()}">
             <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
+    <a href="/manager/register"><button class="btn btn-facebook">교수 등록</button></a>
     <a href="/manager/professorList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${professorList.totalPages > 1}">
@@ -108,12 +110,52 @@
 
         if (checkbox.checked) {
             hiddenInput.value = 'true';
-            checkbox.checked = true;
         } else {
             hiddenInput.value = 'false';
-            checkbox.checked = false;
         }
     }
+
+    function isNumeric(str) {
+        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
+    }
+
+    const tbody = document.querySelector('tbody')
+    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
+    const thList = document.querySelectorAll('th')
+
+    function sortHandler(event) {
+        // 클릭당한 th의 className을 불러온다
+        const className = event.target.className
+
+        // 클릭당한 th의 order 속성값을 정수로 불러온다
+        const order = +event.target.getAttribute('order')
+        // alert(order)
+
+        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
+        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
+        const span = event.target.querySelector('span.order')
+        span.innerText = order > 0 ? ' ▲' : ' ▼'
+
+        const trArray = Array.from(document.querySelectorAll('tbody > tr'))
+
+        trArray.sort((a, b) => {
+            let valueA = a.querySelector('.' + className).innerText
+            let valueB = b.querySelector('.' + className).innerText
+            if (isNumeric(valueA) && isNumeric(valueB)) {
+                valueA = +valueA
+                valueB = +valueB
+            }
+            let result = valueA > valueB ? 1 : -1
+            event.target.setAttribute('order', order * -1)
+            return result * order
+        })
+        trArray.forEach(tr => tbody.appendChild(tr))
+    }
+
+    thList.forEach(th => th.onclick = sortHandler)
+
+
+
 </script>
 
 <script th:inline="javascript">

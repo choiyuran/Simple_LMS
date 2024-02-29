@@ -65,15 +65,15 @@ public class FileController {
         }
     }
 
-    @GetMapping("/images/{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpSession session) {
-        String saveDir = "";
-        Object user = session.getAttribute("user");
-        if (user instanceof ProfessorDto) {
-            saveDir = "idPhoto_professor";
-        }
-        if (user instanceof ManagerLoginDto) {
-            saveDir = "idPhoto_manager";
+    @GetMapping("/images/{saveDir}/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String saveDir, @PathVariable String filename) {
+        switch (saveDir) {
+            case "professor":
+                saveDir = "idPhoto_professor";
+                break;
+            case "manager":
+                saveDir = "idPhoto_manager";
+                break;
         }
 
         Resource file = fileService.loadAsResource(filename, saveDir);

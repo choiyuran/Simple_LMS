@@ -11,6 +11,8 @@ import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.student.StudentRepositoryCustomImpl;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,5 +153,9 @@ public class StudentService {
 
     public List<StudentLectureDto> getStudentLectureDtoList(LectureSearchConditionDto condition) {
         return studentRepository.getStudentLectureDto(condition);
+    }
+
+    public Page<StudentLectureDto> getStudentLectureDtoListPage(LectureSearchConditionDto condition, Pageable pageable) {
+        return studentRepository.getStudentLectureDtoPage(condition,pageable);
     }
 }

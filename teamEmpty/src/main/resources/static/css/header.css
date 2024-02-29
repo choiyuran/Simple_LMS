@@ -21,7 +21,18 @@ select::-ms-expand {
 .selectBox {
     margin: 30px 0;
 }
-
+.stickyContainer{
+    position: sticky;
+    top: 0;
+    background-color: white; /* 고정된 요소가 부모 요소 위로 나타날 때 배경이 깨지지 않도록 설정 */
+    /* 필요에 따라 적절한 패딩을 설정 */
+    padding: 5px 0;
+}
+.stickyRowContainer{
+    top: 75px;
+    border-bottom: 2px solid #767676;
+    padding: 0 0 10px;
+}
 .not-found {
      color:  red !important;
      font-weight: bold;
@@ -29,12 +40,16 @@ select::-ms-expand {
 .listBox {
     flex: 1;
     width: 280px;
-    min-height: 200px;
+    height: 200px;
     border: 1px solid black;
-    margin: 10px 0 10px 10px;
+    margin: 10px 10px 10px 0;
     padding: 5px;
     display: inline-block;
     vertical-align: top;
+    overflow: auto; /* 필요 시 스크롤 표시 */
+}
+.LastListBox{
+    width: 324px;
 }
 .formBtn{
     background: #efefef;
@@ -44,8 +59,49 @@ select::-ms-expand {
     padding: 2px 6px;
 }
 
-
 .hireDateform {
     margin-top: 7px;
     margin-bottom: 7px;
+}
+
+.listBoxLiList {
+    display: flex;
+    flex-wrap: wrap; /* 요소들이 넘칠 때 줄 바꿈 */
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+#majorList li,#collegeList li {
+    width: calc(50%); /* 부모 요소의 1/2 크기로 설정 */
+    padding: 10px;
+    box-sizing: border-box;
+}
+#professorList li {
+    width: calc(100% / 3); /* 부모 요소의 1/3 크기로 설정 */
+    padding: 10px 0 10px 10px;
+    box-sizing: border-box;
+}
+.studentTable th,.studentTable td {
+    vertical-align: middle !important;
+    text-align: center;
+}
+
+.studentTable th:first-child,.studentTable td:first-child,
+.studentTable th:nth-child(8),.studentTable td:nth-child(8)
+{
+    width: 40px;
+}
+.studentTable th:nth-child(2),.studentTable td:nth-child(2),
+.studentTable th:nth-child(3),.studentTable td:nth-child(3){
+    width: 80px;
+}
+.studentTable th:nth-child(7),.studentTable td:nth-child(7),
+.studentTable th:last-child,.studentTable td:last-child{
+    width: 105px;
+}
+.studentTable th:nth-child(5),.studentTable td:nth-child(5){
+    width: 70px;
+}
+.studentTable th:nth-child(9),.studentTable td:nth-child(9){
+    width: 120px;
 }

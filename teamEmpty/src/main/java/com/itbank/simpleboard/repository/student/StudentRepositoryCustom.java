@@ -23,5 +23,7 @@ public interface StudentRepositoryCustom {
 
     List<StudentLectureDto> getStudentLectureDto(LectureSearchConditionDto condition);
 
+    Page<StudentLectureDto> getStudentLectureDtoPage(LectureSearchConditionDto condition,Pageable pageable);
+
     Integer findByEntranceDateAndMajorIdx(int year,Long majorIdx);
 }
