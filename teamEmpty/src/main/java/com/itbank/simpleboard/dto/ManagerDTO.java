@@ -3,6 +3,7 @@ package com.itbank.simpleboard.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
@@ -24,10 +25,12 @@ public class ManagerDTO {
     // 이메일
     private String managerEmail;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     // 입사일
     private Date managerHireDate;
 
     private String address;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date leaveDate;
 
     @QueryProjection

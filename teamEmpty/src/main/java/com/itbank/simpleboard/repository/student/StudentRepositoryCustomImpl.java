@@ -126,7 +126,6 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                         QMajor.major.idx,
                         QMajor.major.name,
                         QUser.user.pnum,
-                        QUser.user.user_id,
                         QStudent.student.enteranceDate,
                         QUser.user.address,
                         QUser.user.email
@@ -152,7 +151,6 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
                         QMajor.major.idx,
                         QMajor.major.name,
                         QUser.user.pnum,
-                        QUser.user.user_id,
                         QStudent.student.enteranceDate,
                         QUser.user.address,
                         QUser.user.email

@@ -18,33 +18,37 @@
                             <img th:src="@{'/images/professor/' + ${professor.img}}" alt="Professor Image" class="img-thumbnail mb-3" id="professorImg">
                             <input type="file" name="professorImg" accept="image/*" onchange="previewImage(this)" th:if="${session.user.user.role.toString() == '교직원'}">
                         </th>
-                        <td th:text="${professor.name}" th:colspan="2"></td>
+                        <td th:colspan="2"><input th:value="${professor.name}" type="text" name="name"></td>
                     </tr>
                     <tr>
-                        <td th:text="${professor.userid}" th:colspan="2"></td>
+                        <td th:colspan="2">
+                            <select class="form-control" id="major_idx" name="major_idx">
+                                <option th:text="${professor.major_name}" th:value="${professor.major_idx}"></option>
+                                <option th:each="row : ${majorList}"
+                                        th:text="${row.name}"
+                                        th:value="${row.idx}">
+                                </option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
-                        <td th:text="${professor.major_name}" th:colspan="2"></td>
+                        <td th:colspan="2"><input th:value="${professor.pnum}" type="text" name="pnum"></td>
                     </tr>
                     <tr>
-                        <td th:text="${professor.email}" th:colspan="2"></td>
+                        <td th:colspan="2"><input th:value="${professor.address}" type="text" name="address"></td>
                     </tr>
                     <tr>
-                        <th colspan="1">주소</th>
-                        <td th:text="${professor.address}"></td>
-                    </tr>
-                    <tr>
-                        <th colspan="1">연락처</th>
-                        <td th:text="${professor.pnum}"></td>
+                        <th colspan="1">이메일</th>
+                        <td><input th:value="${professor.email}" type="text" name="email"></td>
                     </tr>
                     <tr>
                         <th colspan="1">입사일</th>
-                        <td><input th:value="${professor.hireDate}" type="date" name="hireDate" readonly></td>
+                        <td><input th:value="${professor.hireDate}" type="date" name="hireDate"></td>
                     </tr>
 
                     <tr th:if="${professor.leaveDate != null}">
-                        <th>퇴사일</th>
-                        <td><input th:value="${professor.leaveDate}" type="date" name="leaveDate" th:colspan="2"></td>
+                        <th colspan="1">퇴사일</th>
+                        <td><input th:value="${professor.leaveDate}" type="date" name="leaveDate"></td>
                     </tr>
                 </table>
             <button class="btn btn-warning">수정</button>

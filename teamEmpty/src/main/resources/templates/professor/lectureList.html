@@ -178,6 +178,16 @@
             </button>
         </a>
         <a href="/manager/lectureEvaluation">
+            <button type="button" th:class="${evaluationStatus == 'Y' ? 'btn btn-warning' : 'btn btn-outline-secondary'}"
+                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
+            </button>
+        </a>
+        <a href="/manager/lectureAdd">
+            <button class="btn btn-outline-secondary"
+                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
+            </button>
+        </a>
+        <a href="/manager/lectureEvaluation">
             <button id="evaluation-button" class="btn btn-outline-secondary"
                     th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
             </button>
@@ -229,6 +239,7 @@
         </div>
     </div>
 </main>
+<footer th:insert="layout/professorHeader :: footer"></footer>
 
 <script th:inline="javascript">
     function handleKeyDown(event) {
@@ -312,28 +323,8 @@
     }
 
     thList.forEach(th => th.onclick = sortHandler)
-
-    $(document).ready(function () {
-        $("#evaluation-button").click(function () {
-            $.ajax({
-                url: "/manager/lectureEvaluation",
-                type: "GET",
-                success: function (response) {
-                    console.log(response)
-                    if (response === 'Y') {
-                        alert('평가 기간이 시작되었습니다.');
-                    } else {
-                        alert('평가 기간이 종료되었습니다.');
-                    }
-                    location.reload(); // 요청 성공 후 페이지 이동
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
-        });
-    });
 </script>
+
 <th:block th:switch="${session.user.user.role.toString()}">
     <th:block th:case="'교수'">
         <footer th:insert="layout/professorHeader :: footer"></footer>

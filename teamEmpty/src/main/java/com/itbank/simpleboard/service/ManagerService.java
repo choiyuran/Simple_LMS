@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -466,32 +467,27 @@ public class ManagerService {
     }
 
     @Transactional
-    public int updateProfessorByManager(Long idx, HashMap<String, Object> map) {
-        int result = 0;
+    public Professor updateProfessorByManager(ProfessorListDto param) {
+        Professor professor = professorRepository.findById(param.getIdx()).get();
+        Major major = majorRepository.findById(param.getMajor_idx()).get();
+        User user = userRepository.findById(professor.getUser().getIdx()).get();
+        java.util.Date hire = param.getHireDate();
+        Date hireDate = new Date(hire.getTime());
 
-        Optional<Professor> professorOptional = professorRepository.findById(idx);
-        if (professorOptional.isPresent()) {
-            Professor professor = professorOptional.get();
-
-            java.util.Date hireDate = (java.util.Date) map.get("hireDate");
-            professor.setHireDate(new Date(hireDate.getTime()));
-
-            if (map.get("leaveDate") != null) {
-                java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
-                professor.setLeaveDate(new Date(leaveDate.getTime()));
-            }
-            if (map.get("professorImg") != null) {
-                fileService.deleteFile(professor.getProfessor_img(), "idPhoto_professor");
-                MultipartFile professorImg = (MultipartFile) map.get("professorImg");
-                // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
-                String extension = professorImg.getOriginalFilename().substring(professorImg.getOriginalFilename().lastIndexOf('.'));
-                String fileName = professor.getProfessor_img().split("\\.")[0];
-                String newFileName = fileName + extension;
-                fileService.uploadIdPhoto(professorImg, "idPhoto_professor", newFileName);
-            }
-            result = 1;
+        professor.setMajor(major);
+        professor.setHireDate(hireDate);
+        if(param.getLeaveDate() != null) {
+            java.util.Date leave = param.getLeaveDate();
+            Date leaveDate = new Date(leave.getTime());
+            professor.setLeave(YesOrNo.Y);
+            professor.setLeaveDate(leaveDate);
         }
-        return result;
+        user.setUser_name(param.getName());
+        user.setUser_id(param.getEmail());
+        user.setEmail(param.getEmail());
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getPnum());
+        return professor;
     }
 
     @Transactional
@@ -513,10 +509,21 @@ public class ManagerService {
     }
 
     @Transactional
-    public Student studentUpdateByManager(Long idx, java.util.Date entranceDate) {
-        Student student = studentRepository.findById(idx).get();
-        Date date = new Date(entranceDate.getTime());
-        student.setEnteranceDate(date);
+    public Student studentUpdateByManager(StudentListDto param) {
+        Student student = studentRepository.findById(param.getIdx()).get();
+        User user = userRepository.findById(student.getUser().getIdx()).get();
+        Major major = majorRepository.findById(param.getMajor_idx()).get();
+        java.util.Date entrance = param.getEntranceDate();
+        Date entranceDate = new Date(entrance.getTime());
+
+        user.setUser_name(param.getName());
+        student.setStudent_num(param.getStudent_num());
+        user.setUser_id(String.valueOf(param.getStudent_num()));
+        student.setMajor(major);
+        student.setEnteranceDate(entranceDate);
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getPnum());
+        user.setEmail(param.getEmail());
         return student;
     }
 
@@ -525,34 +532,24 @@ public class ManagerService {
     }
 
     @Transactional
-    public int updateManagerByManager(Long idx, HashMap<String, Object> map) {
-        int result = 0;
-
-        Optional<Manager> managerOptional = managerRepository.findById(idx);
-        if (managerOptional.isPresent()) {
-            Manager manager = managerOptional.get();
-
-            java.util.Date hireDate = (java.util.Date) map.get("hireDate");
-            Date date = new Date(hireDate.getTime());
-            manager.setHireDate(date);
-
-            if (map.get("leaveDate") != null) {
-                java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
-                Date date2 = new Date(leaveDate.getTime());
-                manager.setLeaveDate(date2);
-            }
-            if (map.get("managerImg") != null) {
-                fileService.deleteFile(manager.getManager_img(), "idPhoto_manager");
-                MultipartFile managerImg = (MultipartFile) map.get("managerImg");
-                // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
-                String extension = managerImg.getOriginalFilename().substring(managerImg.getOriginalFilename().lastIndexOf('.'));
-                String fileName = manager.getManager_img().split("\\.")[0];
-                String newFileName = fileName + extension;
-                fileService.uploadIdPhoto(managerImg, "idPhoto_manager", newFileName);
-            }
-            result = 1;
+    public Manager updateManagerByManager(ManagerDTO param) {
+        Manager manager = managerRepository.findById(param.getIdx()).get();
+        User user = userRepository.findById(manager.getUser().getIdx()).get();
+        java.util.Date hire = param.getManagerHireDate();
+        Date hireDate = new Date(hire.getTime());
+        manager.setHireDate(hireDate);
+        if(param.getLeaveDate() != null) {
+            java.util.Date leave = param.getLeaveDate();
+            Date leaveDate = new Date(leave.getTime());
+            manager.setLeave(YesOrNo.Y);
+            manager.setLeaveDate(leaveDate);
         }
-        return result;
+        user.setUser_name(param.getManagerName());
+        user.setEmail(param.getManagerEmail());
+        user.setUser_id(param.getManagerEmail());
+        user.setAddress(param.getAddress());
+        user.setPnum(param.getManagerPnum());
+        return manager;
     }
 
     @Transactional
@@ -647,19 +644,14 @@ public class ManagerService {
 
         String evaluationStatus = null;
         for (Lecture one : lectureList) {
-            log.info("강의 평가 여부[변경 전] : " + one.getVisible().toString() + "\\");
-
             if (one.getVisible().equals(YesOrNo.Y)) {
                 one.setVisible(YesOrNo.N);
-                log.info("변경된 평가 여부[DB-N] : " + one.getVisible().toString() + "\\");
                 evaluationStatus = "N";
             } else {
                 one.setVisible(YesOrNo.Y);
-                log.info("변경된 평가 여부[DB-Y] : " + one.getVisible().toString() + "\\");
                 evaluationStatus = "Y";
             }
         }
-        log.info(evaluationStatus);
         return evaluationStatus;
     }
 

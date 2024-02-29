@@ -66,36 +66,48 @@
     </a>
     <a href="/manager/studentList">
         <button class="btn btn-facebook"
-                th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name'])}">목록으로
+                th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['todayRegistered'])}">
+            목록으로
         </button>
     </a>
 
-    <div class="d-flex justify-content-center">
-        <nav style="text-align: center;" th:if="${studentList != null && !studentList.isEmpty()}">
-            <ul class="pagination">
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/manager/studentList(page=0)}" th:text="'<<'"></a>
-                </li>
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/manager/studentList(page=${start - maxPage})}" th:text="'<'"></a>
-                </li>
+    <div class="m-auto mt-3" style="width: fit-content" th:if="${studentList.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:if="${studentList.hasPrevious && ((studentList.number / 5) - 1) * 5 >= 0}">
+                <a th:href="@{/manager/studentList(page=${((studentList.number / 5) - 1) * 5})}">
+                    <button class="page-link" th:text="'<<'"></button>
+                </a>
+            </li>
 
-                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                    <a th:text="${page}"
-                       th:if="${num != page}"
-                       th:href="@{/manager/studentList(page=${page - 1})}"></a>
-                    <a th:text="${page}"
-                       th:if="${num == page}" disabled="true"></a>
-                </li>
+            <li class="page-item" th:if="${studentList.hasPrevious}">
+                <a th:href="@{/manager/studentList(page=${studentList.number - 1})}">
+                    <button class="page-link" th:text="'<'"></button>
+                </a>
+            </li>
 
-                <li class="mx-2" th:if="${end < studentList.totalPages}">
-                    <a th:href="@{/manager/studentList(page=${start + maxPage})}" th:text="'>'"></a>
-                </li>
-                <li class="mx-2" th:if="${end < studentList.totalPages}">
-                    <a th:href="@{/manager/studentList(page=${studentList.totalPages - 1})}" th:text="'>>'"></a>
-                </li>
-            </ul>
-        </nav>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, studentList.totalPages - 1)}"
+                th:if="${i / 5 == studentList.number / 5}">
+                <a th:href="@{/manager/studentList(page=${i})}">
+                    <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                            th:if="${studentList.number == i}" th:text="${i + 1}"></button>
+                </a>
+                <a th:href="@{/manager/studentList(page=${i})}">
+                    <button class="page-link" th:unless="${studentList.number == i}" th:text="${i + 1}"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${studentList.hasNext}">
+                <a th:href="@{/manager/studentList(page=${studentList.number + 1})}">
+                    <button class="page-link" th:text="'>'"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${studentList.hasNext && studentList.totalPages - 1 >= ((studentList.number / 5) + 1) * 5}">
+                <a th:href="@{/manager/studentList(page=${((studentList.number / 5) + 1) * 5})}">
+                    <button class="page-link" th:text="'>>'"></button>
+                </a>
+            </li>
+        </ul>
     </div>
 
 </div>

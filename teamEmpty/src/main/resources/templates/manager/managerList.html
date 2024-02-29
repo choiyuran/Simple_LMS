@@ -3,32 +3,35 @@
 <head th:insert="layout/managerHeader :: head">
 </head>
 <body>
-<header th:insert="layout/managerHeader :: header"> </header>
+<header th:insert="layout/managerHeader :: header"></header>
 
 <main>
     <div class="container mt-3">
         <h2>교직원 명단</h2>
         <hr>
-            <form id="searchForm" action="/manager/managerListKeyword" class="form-inline">
-                <div class="form-group">
-                    <select class="form-control" id="searchType" name="searchType">
-                        <option value="name"> 이름</option>
-                        <option value="phone">연락처</option>
-                    </select>
-                    <div class="form-group ml-4 mr-2">
-                        <input class="form-control" type="text" id="searchValue" name="searchValue" placeholder="검색어 입력">
-                    </div>
-
-<!--                     퇴사 여부 필터-->
-                    <div class="form-check form-check-inline">
-                        <input type="hidden" id="leave" name="leave" value="false">
-                        <input class="form-check-input" type="checkbox" id="leaveCheckbox"
-                               th:checked="${map != null and map['leave']}">
-                        <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
-                    </div>
-                    <button class="btn btn-primary">검색</button>
+        <form id="searchForm" action="/manager/managerListKeyword" class="form-inline">
+            <div class="form-group">
+                <select class="form-control" id="searchType" name="searchType">
+                    <option th:if="${param.searchType == 'name'}" value="name" th:text="이름" selected></option>
+                    <option value="name" th:text="이름"></option>
+                    <option th:if="${param.searchType == 'phone'}" value="phone" selected th:text="연락처"></option>
+                    <option value="phone" th:text="연락처"></option>
+                </select>
+                <div class="form-group ml-4 mr-2">
+                    <input class="form-control" type="text" th:value="${param.searchValue}" id="searchValue"
+                           name="searchValue" placeholder="검색어 입력">
                 </div>
-            </form>
+
+                <!--                     퇴사 여부 필터-->
+                <div class="form-check form-check-inline">
+                    <input type="hidden" id="leave" name="leave" th:value="${param == null or param.leave == 'false' ? false : true}">
+                    <input class="form-check-input" type="checkbox" id="leaveCheckbox"
+                           th:checked="${leave != null and leave}" onclick="updateHiddenInput()">
+                    <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
+                </div>
+                <button class="btn btn-primary">검색</button>
+            </div>
+        </form>
 
         <br>
         <table class="table table-bordered">
@@ -54,35 +57,52 @@
              </tr>
             </tbody>
         </table>
-        <a href="/manager/register"><button class="btn btn-primary">교직원 등록</button></a>
-        <a th:href="@{/manager/managerList}"><button class="btn btn-primary" th:if="${searchValue != null or searchValue != '' or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
+        <a href="/manager/register">
+            <button class="btn btn-primary">교직원 등록</button>
+        </a>
+        <a th:href="@{/manager/managerList}">
+            <button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로
+            </button>
+        </a>
 
-        <div class="d-flex justify-content-center">
-            <nav style="text-align: center;" th:if="${managerList != null && !managerList.isEmpty()}">
-                <ul class="pagination">
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/manager/managerList(page=0)}" th:text="'<<'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${start > 1}">
-                        <a th:href="@{/manager/managerList(page=${start - maxPage})}" th:text="'<'"></a>
-                    </li>
+        <div class="m-auto mt-3" style="width: fit-content" th:if="${managerList.totalPages > 1}">
+            <ul class="pagination">
+                <li class="page-item" th:if="${managerList.hasPrevious && ((managerList.number / 5) - 1) * 5 >= 0}">
+                    <a th:href="@{/manager/managerList(page=${((managerList.number / 5) - 1) * 5})}">
+                        <button class="page-link" th:text="'<<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                        <a th:text="${page}"
-                           th:if="${num != page}"
-                           th:href="@{/manager/managerList(page=${page - 1})}"></a>
-                        <a th:text="${page}"
-                           th:if="${num == page}" disabled="true"></a>
-                    </li>
+                <li class="page-item" th:if="${managerList.hasPrevious}">
+                    <a th:href="@{/manager/managerList(page=${managerList.number - 1})}">
+                        <button class="page-link" th:text="'<'"></button>
+                    </a>
+                </li>
 
-                    <li class="mx-2" th:if="${end < managerList.totalPages}">
-                        <a th:href="@{/manager/managerList(page=${start + maxPage})}" th:text="'>'"></a>
-                    </li>
-                    <li class="mx-2" th:if="${end < managerList.totalPages}">
-                        <a th:href="@{/manager/managerList(page=${managerList.totalPages - 1})}" th:text="'>>'"></a>
-                    </li>
-                </ul>
-            </nav>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, managerList.totalPages - 1)}"
+                    th:if="${i / 5 == managerList.number / 5}">
+                    <a th:href="@{/manager/managerList(page=${i})}">
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                                th:if="${managerList.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                    <a th:href="@{/manager/managerList(page=${i})}">
+                        <button class="page-link" th:unless="${managerList.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                </li>
+
+                <li class="page-item" th:if="${managerList.hasNext}">
+                    <a th:href="@{/manager/managerList(page=${managerList.number + 1})}">
+                        <button class="page-link" th:text="'>'"></button>
+                    </a>
+                </li>
+
+                <li class="page-item"
+                    th:if="${managerList.hasNext && managerList.totalPages - 1 >= ((managerList.number / 5) + 1) * 5}">
+                    <a th:href="@{/manager/managerList(page=${((managerList.number / 5) + 1) * 5})}">
+                        <button class="page-link" th:text="'>>'"></button>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </main>
@@ -90,39 +110,17 @@
 <footer th:insert="layout/managerHeader :: footer"></footer> <!-- footer 부분 수정 -->
 
 <script>
-    var form = $('#searchForm');
-    var isInitialLoad = true;
 
-    // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
-    var previousSearchType = localStorage.getItem('previousSearchType');
-    var previousSearchValue = localStorage.getItem('previousSearchValue');
-    var previousLeave = localStorage.getItem('previousLeave');
-    if (previousSearchType && previousSearchType !== 'null') {
-        $('#searchType').val(previousSearchType);
+    function updateHiddenInput() {
+        var checkbox = document.getElementById('leaveCheckbox');
+        var hiddenInput = document.getElementById('leave');
+
+        if (checkbox.checked) {
+            hiddenInput.value = 'true';
+        } else {
+            hiddenInput.value = 'false';
+        }
     }
-    if (previousSearchValue && previousSearchValue !== 'null') {
-        $('#searchValue').val(previousSearchValue);
-    }
-    if (previousLeave && previousLeave !== 'null') {
-        $('#leaveCheckbox').prop('checked', previousLeave === 'true');
-    }
-
-    form.submit(function(e) {
-        e.preventDefault();
-
-        // 검색어 저장
-        var searchType = $('#searchType').val();
-        var searchValue = $('#searchValue').val();
-        localStorage.setItem('previousSearchType', searchType);
-        localStorage.setItem('previousSearchValue', searchValue);
-
-        // 체크박스 상태 저장
-        var leaveValue = $('#leaveCheckbox').is(':checked') ? 'true' : 'false';
-        $('#leave').val(leaveValue); // leave input의 값을 변경
-
-        // 검색 실행
-        this.submit();
-    });
 
     function resetSearchConditions() {
         localStorage.removeItem('previousSearchType');
@@ -214,6 +212,5 @@
     });
     /*]]>*/
 </script>
-<div th:value="${param == null or param.leave=='false' ? false : true}"></div>
 </body>
 </html>

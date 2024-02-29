@@ -49,8 +49,7 @@ cloud:
   aws:
     s3:
       bucket: simplelmsbucket
-    stack:
-      auto: false
+    stack.auto: false
     region.static: ap-northeast-2
     credentials:
       accessKey: ${CLOUD_ACCESSKEY} 

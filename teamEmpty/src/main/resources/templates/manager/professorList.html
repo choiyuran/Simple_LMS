@@ -13,7 +13,7 @@
         <div class="form-group">
             <label>학과명</label>
             <select class="form-control" id="major_idx" name="major_idx">
-                <option value="">학과를 선택하세요.</option>
+                <option value="" selected>학과를 선택하세요.</option>
                 <option th:each="row : ${majorList}"
                         th:text="${row.name}"
                         th:value="${row.idx}">
@@ -24,7 +24,7 @@
         <!-- 이름으로 검색할 수 있는 검색창 추가 -->
         <div class="form-group ml-4 mr-2">
             <label>이름</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="교수명을 입력하세요">
+            <input type="text" class="form-control" id="name" name="name" value="" placeholder="교수명을 입력하세요">
         </div>
 
         <!-- 퇴사 여부 필터 -->
@@ -64,40 +64,49 @@
             th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">
         <a href="/manager/professorList" onclick="resetSearchConditions()">목록으로</a></button>
 
-    <div class="d-flex justify-content-center">
-        <nav style="text-align: center;" th:if="${professorList != null && !professorList.isEmpty()}">
-            <ul class="pagination">
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/manager/professorList(page=0)}" th:text="'<<'"></a>
-                </li>
-                <li class="mx-2" th:if="${start > 1}">
-                    <a th:href="@{/manager/professorList(page=${start - maxPage})}" th:text="'<'"></a>
-                </li>
+    <div class="m-auto mt-3" style="width: fit-content" th:if="${professorList.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:if="${professorList.hasPrevious && ((professorList.number / 5) - 1) * 5 >= 0}">
+                <a th:href="@{/manager/professorList(page=${((professorList.number / 5) - 1) * 5})}">
+                    <button class="page-link" th:text="'<<'"></button>
+                </a>
+            </li>
 
-                <li class="mx-2" th:each="page: ${#numbers.sequence(start, end)}">
-                    <a th:text="${page}"
-                       th:if="${num != page}"
-                       th:href="@{/manager/professorList(page=${page - 1})}"></a>
-                    <a th:text="${page}"
-                       th:if="${num == page}" disabled="true"></a>
-                </li>
+            <li class="page-item" th:if="${professorList.hasPrevious}">
+                <a th:href="@{/manager/professorList(page=${professorList.number - 1})}">
+                    <button class="page-link" th:text="'<'"></button>
+                </a>
+            </li>
 
-                <li class="mx-2" th:if="${end < professorList.totalPages}">
-                    <a th:href="@{/manager/professorList(page=${start + maxPage})}" th:text="'>'"></a>
-                </li>
-                <li class="mx-2" th:if="${end < professorList.totalPages}">
-                    <a th:href="@{/manager/professorList(page=${professorList.totalPages - 1})}" th:text="'>>'"></a>
-                </li>
-            </ul>
-        </nav>
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, professorList.totalPages - 1)}"
+                th:if="${i / 5 == professorList.number / 5}">
+                <a th:href="@{/manager/professorList(page=${i})}">
+                    <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                            th:if="${professorList.number == i}" th:text="${i + 1}"></button>
+                </a>
+                <a th:href="@{/manager/professorList(page=${i})}">
+                    <button class="page-link" th:unless="${professorList.number == i}" th:text="${i + 1}"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${professorList.hasNext}">
+                <a th:href="@{/manager/professorList(page=${professorList.number + 1})}">
+                    <button class="page-link" th:text="'>'"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${professorList.hasNext && professorList.totalPages - 1 >= ((professorList.number / 5) + 1) * 5}">
+                <a th:href="@{/manager/professorList(page=${((professorList.number / 5) + 1) * 5})}">
+                    <button class="page-link" th:text="'>>'"></button>
+                </a>
+            </li>
+        </ul>
     </div>
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
 
-
 <script>
     var form = $('#searchForm');
-    var isInitialLoad = true;
 
     // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
     var previousMajorIdx = localStorage.getItem('previousMajorIdx');
@@ -136,11 +145,10 @@
         localStorage.removeItem('previousLeave');
     }
 
-    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
-    if (isInitialLoad || form.data('fromList')) {
+    // 목록으로 버튼 클릭 시 검색어 초기화
+    if (form.data('fromList')) {
         resetSearchConditions();
     }
-    isInitialLoad = false;
 
     // 검색 결과 페이지에서 체크박스 상태 반영
     var resultLeaveValue = localStorage.getItem('previousLeave');
@@ -186,6 +194,9 @@
     }
 
     thList.forEach(th => th.onclick = sortHandler)
+
+
+
 </script>
 
 <script th:inline="javascript">
@@ -197,9 +208,7 @@
 
         $('.pagination a').on('click', function (event) {
             event.preventDefault();
-
             let href = $(this).attr('href');
-
             if (major_idx !== null) {
                 href += '&major_idx=' + encodeURIComponent(major_idx);
             }
