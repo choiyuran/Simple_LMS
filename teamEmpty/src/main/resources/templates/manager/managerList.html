@@ -11,25 +11,23 @@
         <hr>
         <form id="searchForm" action="/manager/managerListKeyword" class="form-inline">
             <div class="form-group">
-                <select class="form-control" id="searchType" name="searchType">
+                <select class="form-control" name="searchType">
                     <option th:if="${param.searchType == 'name'}" value="name" th:text="이름" selected></option>
                     <option value="name" th:text="이름"></option>
                     <option th:if="${param.searchType == 'phone'}" value="phone" selected th:text="연락처"></option>
                     <option value="phone" th:text="연락처"></option>
                 </select>
                 <div class="form-group ml-4 mr-2">
-                    <input class="form-control" type="text" th:value="${param.searchValue}" id="searchValue"
-                           name="searchValue" placeholder="검색어 입력">
+                    <input class="form-control" type="text" th:value="${param.searchValue}" name="searchValue" placeholder="검색어 입력">
                 </div>
 
                 <!--                     퇴사 여부 필터-->
                 <div class="form-check form-check-inline">
-                    <input type="hidden" id="leave" name="leave" th:value="${param == null or param.leave == 'false' ? false : true}">
-                    <input class="form-check-input" type="checkbox" id="leaveCheckbox"
-                           th:checked="${leave != null and leave}" onclick="updateHiddenInput()">
+                    <input type="hidden" id="leave" name="leave" value="false">
+                    <input class="form-check-input" type="checkbox" id="leaveCheckbox" th:checked="${leave}">
                     <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
                 </div>
-                <button class="btn btn-primary">검색</button>
+                <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
             </div>
         </form>
 
@@ -60,9 +58,8 @@
         <a href="/manager/register">
             <button class="btn btn-primary">교직원 등록</button>
         </a>
-        <a th:href="@{/manager/managerList}">
-            <button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로
-            </button>
+        <a href="/manager/managerList">
+            <button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로</button>
         </a>
 
         <div class="m-auto mt-3" style="width: fit-content" th:if="${managerList.totalPages > 1}">
@@ -117,22 +114,12 @@
 
         if (checkbox.checked) {
             hiddenInput.value = 'true';
+            checkbox.checked = true;
         } else {
             hiddenInput.value = 'false';
+            checkbox.checked = false;
         }
     }
-
-    function resetSearchConditions() {
-        localStorage.removeItem('previousSearchType');
-        localStorage.removeItem('previousSearchValue');
-        localStorage.removeItem('previousLeave');
-    }
-
-    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
-    if (isInitialLoad || form.data('fromList')) {
-        resetSearchConditions();
-    }
-    isInitialLoad = false;
 
 </script>
 

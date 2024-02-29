@@ -2,7 +2,6 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="layout/managerHeader :: head">
 </head>
-
 <body>
 <header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
@@ -15,7 +14,8 @@
                 <option value="">학과를 선택하세요.</option>
                 <option th:each="row : ${majorList}"
                         th:text="${row.name}"
-                        th:value="${row.idx}">
+                        th:value="${row.idx}"
+                        th:selected="${map.major_idx != null and map.major_idx == row.idx}">
                 </option>
             </select>
         </div>
@@ -23,9 +23,8 @@
         <!-- 이름으로 검색할 수 있는 검색창 추가 -->
         <div class="form-group ml-4 mr-2">
             <label>이름</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="학생 이름을 입력하세요">
+            <input type="text" class="form-control" name="name" placeholder="학생 이름을 입력하세요" th:value="${map.name}">
         </div>
-
 
         <div class="form-check form-check-inline">
             <input type="hidden" id="todayRegistered" name="todayRegistered" value="false">
@@ -33,10 +32,7 @@
                    th:checked="${map['todayRegistered']}">
             <label class="form-check-label" for="todayRegisteredCheckbox">오늘 등록한 학생 보기 </label>
         </div>
-        
-        <button class="btn btn-primary">검색</button>
-
-
+        <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
     </form>
     <br>
     <table class="table table-bordered">
@@ -59,7 +55,7 @@
         </tr>
     </table>
     <a href="/manager/addStudent"><button class="btn btn-facebook">학생 등록</button></a>
-    <a href="/manager/studentList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['todayRegistered'])}">목록으로</button></a>
+    <a href="/manager/studentList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) != null or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['todayRegistered'])}">목록으로</button></a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${studentList.totalPages > 1}">
         <ul class="pagination">
@@ -105,51 +101,18 @@
 
 
 <script>
-    var form = $('#searchForm');
-    var isInitialLoad = true;
+    function updateHiddenInput() {
+        var checkbox = document.getElementById('todayRegisteredCheckbox');
+        var hiddenInput = document.getElementById('todayRegistered');
 
-    // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
-    var previousMajorIdx = localStorage.getItem('previousMajorIdx');
-    var previousName = localStorage.getItem('previousName');
-    var previousTodayRegistered = localStorage.getItem('previousTodayRegisteredCheckbox');
-    if (previousMajorIdx && previousMajorIdx !== 'null') {
-        $('#major_idx').val(previousMajorIdx);
+        if (checkbox.checked) {
+            hiddenInput.value = 'true';
+            checkbox.checked = true;
+        } else {
+            hiddenInput.value = 'false';
+            checkbox.checked = false;
+        }
     }
-    if (previousName && previousName !== 'null') {
-        $('#name').val(previousName);
-    }
-    if (previousTodayRegistered && previousTodayRegistered !== 'null') {
-        $('#todayRegisteredCheckbox').prop('checked', previousLeave === 'true');
-    }
-
-    form.submit(function(e) {
-        e.preventDefault();
-
-        // 검색어 저장
-        var majorIdx = $('#major_idx').val();
-        var name = $('#name').val();
-        localStorage.setItem('previousMajorIdx', majorIdx);
-        localStorage.setItem('previousName', name);
-
-        // 체크박스 상태 저장
-        var todayRegisteredValue = $('#todayRegisteredCheckbox').is(':checked') ? 'true' : 'false';
-        $('#todayRegistered').val(todayRegisteredValue); // leave input의 값을 변경
-
-        // 검색 실행
-        this.submit();
-    });
-
-    function resetSearchConditions() {
-        localStorage.removeItem('previousMajorIdx');
-        localStorage.removeItem('previousName');
-        localStorage.removeItem('previousTodayRegistered');
-    }
-
-    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
-    if (isInitialLoad || form.data('fromList')) {
-        resetSearchConditions();
-    }
-    isInitialLoad = false;
 
     // 검색 결과 페이지에서 체크박스 상태 반영
     var resultTodayRegistered = localStorage.getItem('previousTodayRegistered');

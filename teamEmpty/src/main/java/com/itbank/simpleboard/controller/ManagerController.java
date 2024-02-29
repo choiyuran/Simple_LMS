@@ -98,14 +98,12 @@ public class ManagerController {
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
     public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar){
         academicCalendarService.editCalendar(id, calendar);
-
         return "redirect:/manager/calendar";
     }
 
     @GetMapping("/calendarDelete/{idx}") // 학사일정 삭제
     public String calendarDelete(@PathVariable Long idx){
         academicCalendarService.deleteCalendar(idx);
-
         return "redirect:/manager/calendar";
     }
 
@@ -507,8 +505,8 @@ public class ManagerController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
-        log.info("todayRegistered : {}", todayRegistered);
         map.put("todayRegistered",todayRegistered);
+        log.info("todayRegistered : {}", todayRegistered);
 
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
