@@ -5,7 +5,6 @@ import com.itbank.simpleboard.dto.MajorDto;
 import com.itbank.simpleboard.dto.ManagerDTO;
 import com.itbank.simpleboard.dto.RegisterlectureDto;
 import com.itbank.simpleboard.dto.UserFormDTO;
-import com.itbank.simpleboard.component.FileComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
@@ -21,8 +20,6 @@ import com.itbank.simpleboard.repository.student.StudentRepository;
 import com.itbank.simpleboard.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +46,7 @@ public class ManagerService {
     private final ProfessorRepository professorRepository;
     private final LectureRoomRepository lectureRoomRepository;
     private final LectureRepository lectureRepository;
-    private final FileComponent fileComponent;
+    private final FileService fileService;
     private final StudentRepository studentRepository;
     private final HashComponent hashComponent;
     private final SituationRepository situationRepository;
@@ -251,7 +248,7 @@ public class ManagerService {
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
-        String professor_img = fileComponent.uploadIdPhoto(imageFile, "idPhoto_professor",newFileName);
+        String professor_img = fileService.uploadIdPhoto(imageFile, "idPhoto_professor",newFileName);
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,
@@ -289,7 +286,7 @@ public class ManagerService {
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
-        String manager_img = fileComponent.uploadIdPhoto(imageFile, "idPhoto_manager",newFileName);
+        String manager_img = fileService.uploadIdPhoto(imageFile, "idPhoto_manager",newFileName);
         System.err.println("manager_img : " + manager_img);
         System.err.println("newFileName : " + newFileName);
         System.err.println("imageFile : " + imageFile.getOriginalFilename());
