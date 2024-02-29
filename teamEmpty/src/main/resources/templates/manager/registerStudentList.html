@@ -8,11 +8,16 @@
 <header th:insert="layout/managerHeader :: header"> </header>
 <div class="container mt-3">
     <h2>학생 등록 명단</h2>
-    <p class="text-bg-warning">학과, 교수 입력시 반드시 학과번호와 교수번호까지 함께 입력해주세요 EX)유아교육과(001) 김교수(123)</p>
-    <p class="text-danger">엑셀폼에 입력되어 있는 양식에 맞춰서 작성해주세요</p>
-    <hr>
-    <button id="showMajorAndProfessorBtn"  class="formBtn" type="button" onclick="toggleRow()">학과명 확인</button>
-    <div id="rowContainer" class="flex" style="display: none;">
+    <div class="stickyContainer">
+        <p class="text-bg-warning">
+            학과, 교수 입력시 반드시 학과번호와 교수번호까지 함께 입력해주세요  EX)유아교육과(001) 김교수(123)
+            <button id="showMajorAndProfessorBtn"  class="formBtn" type="button" onclick="toggleRow()">학과명 확인</button>
+        </p>
+        <p class="text-danger">엑셀폼에 입력되어 있는 양식에 맞춰서 작성해주세요</p>
+
+
+    </div>
+    <div id="rowContainer" class="flex stickyContainer stickyRowContainer" style="display: none;">
         <div class="listBox">
             <h3>대학 목록</h3>
             <ul id="collegeList"  class="listBoxLiList">
@@ -34,23 +39,21 @@
             </ul>
         </div>
     </div>
-
-
-    <hr>
+    <hr class="stickyContainer">
     <form method="post" action="/manager/addStudentList">
         <table class="table table-bordered studentTable">
 
                 <tr>
-                    <th>번호</th>
-                    <th>이름</th>
-                    <th>주민번호</th>
-                    <th>주소</th>
-                    <th>연락처</th>
-                    <th>이메일</th>
-                    <th>입학일</th>
-                    <th>학년</th>
-                    <th>학과</th>
-                    <th>지도교수</th>
+                    <th >번호</th>
+                    <th >이름</th>
+                    <th >주민번호</th>
+                    <th >주소</th>
+                    <th >연락처</th>
+                    <th >이메일</th>
+                    <th >입학일</th>
+                    <th >학년</th>
+                    <th >학과</th>
+                    <th >지도교수</th>
                 </tr>
 
                 <tr th:each="student : ${studentList}" style="font-size: 14px">
@@ -58,12 +61,12 @@
                     <td contenteditable="true" data-field="name" th:text="${student.name}"></td>
                     <td contenteditable="true" data-field="security" th:text="${student.security.contains('-') ? student.security : #strings.substring(student.security, 0, 6) + '-' + #strings.substring(student.security, 6)}"></td>
                     <td contenteditable="true" data-field="address" th:text="${student.address}"></td>
-                    <td  contenteditable="true" data-field="pnum" th:text="${student.pnum.contains('-') ? student.pnum : #strings.substring(student.pnum,0,3) + '-' + #strings.substring(student.pnum,3,7) + '-' + #strings.substring(student.pnum,7)}"></td>
-                    <td  contenteditable="true" data-field="email" th:text="${student.email}"></td>
+                    <td contenteditable="true" data-field="pnum" th:text="${student.pnum.contains('-') ? student.pnum : #strings.substring(student.pnum,0,3) + '-' + #strings.substring(student.pnum,3,7) + '-' + #strings.substring(student.pnum,7)}"></td>
+                    <td contenteditable="true" data-field="email" th:text="${student.email}"></td>
                     <td contenteditable="true" data-field="entranceDate" th:text="${student.entranceDate}"></td>
-                    <td  contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
+                    <td contenteditable="true" data-field="student_grade" th:text="${student.student_grade}"></td>
                     <td contenteditable="true" data-field="major" th:text="${student.major}"></td>
-                    <td  contenteditable="true" data-field="professor" th:text="${student.professor}" ></td>
+                    <td contenteditable="true" data-field="professor" th:text="${student.professor}" ></td>
                 </tr>
 
 

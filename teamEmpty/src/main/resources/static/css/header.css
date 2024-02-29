@@ -21,7 +21,18 @@ select::-ms-expand {
 .selectBox {
     margin: 30px 0;
 }
-
+.stickyContainer{
+    position: sticky;
+    top: 0;
+    background-color: white; /* 고정된 요소가 부모 요소 위로 나타날 때 배경이 깨지지 않도록 설정 */
+    /* 필요에 따라 적절한 패딩을 설정 */
+    padding: 5px 0;
+}
+.stickyRowContainer{
+    top: 75px;
+    border-bottom: 2px solid #767676;
+    padding: 0 0 10px;
+}
 .not-found {
      color:  red !important;
      font-weight: bold;
@@ -74,4 +85,24 @@ select::-ms-expand {
 .studentTable th,.studentTable td {
     vertical-align: middle !important;
     text-align: center;
+}
+
+.studentTable th:first-child,.studentTable td:first-child,
+.studentTable th:nth-child(8),.studentTable td:nth-child(8)
+{
+    width: 40px;
+}
+.studentTable th:nth-child(2),.studentTable td:nth-child(2),
+.studentTable th:nth-child(3),.studentTable td:nth-child(3){
+    width: 80px;
+}
+.studentTable th:nth-child(7),.studentTable td:nth-child(7),
+.studentTable th:last-child,.studentTable td:last-child{
+    width: 105px;
+}
+.studentTable th:nth-child(5),.studentTable td:nth-child(5){
+    width: 70px;
+}
+.studentTable th:nth-child(9),.studentTable td:nth-child(9){
+    width: 120px;
 }
