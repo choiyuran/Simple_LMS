@@ -56,7 +56,7 @@ public class ManagerService {
         Page<Manager> managerList = managerRepository.findAll(pageable);
         List<ManagerDTO> managerDTOList = new ArrayList<>();
 
-        for(Manager m : managerList){
+        for (Manager m : managerList) {
             ManagerDTO dto = new ManagerDTO();
             dto.setIdx(m.getIdx());
             dto.setManagerImg(m.getManager_img());
@@ -85,12 +85,12 @@ public class ManagerService {
     @Transactional
     public Major addMajor(MajorDto major) {
         College college = collegeRepository.findById(major.getCollege_idx()).get();
-        Major major1 = new Major(major.getName(),major.getTuition(),college);
+        Major major1 = new Major(major.getName(), major.getTuition(), college);
         return majorRepository.save(major1);
     }
 
     public List<Major> selectAllMajor() {
-        return  majorRepository.findByAbolition(YesOrNo.N);
+        return majorRepository.findByAbolition(YesOrNo.N);
     }
 
     public Major selectOne(Long idx) {
@@ -122,13 +122,13 @@ public class ManagerService {
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
 
-        System.err.println("param : "+ param.toString());
+        System.err.println("param : " + param.toString());
 
-        for(int i = 0; i < param.getDay().length; i++) {
+        for (int i = 0; i < param.getDay().length; i++) {
             day.append(param.getDay()[i]);
             start.append(param.getStart()[i]);
             end.append(param.getEnd()[i]);
-            if(i != param.getDay().length - 1) {
+            if (i != param.getDay().length - 1) {
                 day.append(",");
                 start.append(",");
                 end.append(",");
@@ -138,18 +138,18 @@ public class ManagerService {
         Major major = majorRepository.findById(param.getMajor_idx()).get();
         LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx()).get();
 
-       Lecture lecture = new Lecture(
-               param.getName(),
-               param.getIntro(),
-               param.getCredit(),
-               param.getType(),
-               professor,
-               param.getMax_count(),
-               param.getSemester(),
-               param.getGrade(),
-               major,
-               lectureRoom
-       );
+        Lecture lecture = new Lecture(
+                param.getName(),
+                param.getIntro(),
+                param.getCredit(),
+                param.getType(),
+                professor,
+                param.getMax_count(),
+                param.getSemester(),
+                param.getGrade(),
+                major,
+                lectureRoom
+        );
         lecture.setDay(day.toString());
         lecture.setStart(start.toString());
         lecture.setEnd(end.toString());
@@ -169,17 +169,17 @@ public class ManagerService {
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
 
-        for(int i = 0; i < param.getDay().length; i++) {
+        for (int i = 0; i < param.getDay().length; i++) {
             day.append(param.getDay()[i]);
             if (i != param.getDay().length - 1) {
                 day.append(",");
             }
         }
 
-        for(int i = 0; i < param.getStart().length; i++) {
+        for (int i = 0; i < param.getStart().length; i++) {
             if (param.getStart()[i] != null) {
                 start.append(param.getStart()[i]);
-                if(param.getEnd()[i] != null) {
+                if (param.getEnd()[i] != null) {
                     end.append(param.getEnd()[i]);
                 }
                 if (i != param.getStart().length - 1) {
@@ -237,18 +237,18 @@ public class ManagerService {
 
     @Transactional
     public Professor addProfessor(UserFormDTO dto, MultipartFile imageFile) {
-        log.info("addProfessor service"+ dto.toString());
+        log.info("addProfessor service" + dto.toString());
 
         String salt = hashComponent.getRandomSalt();
         String source = dto.getBackSecurity();
-        String pw = hashComponent.getHash(source,salt);
-        String userName = dto.getFirstName()+dto.getLastName();
-        String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
+        String pw = hashComponent.getHash(source, salt);
+        String userName = dto.getFirstName() + dto.getLastName();
+        String security = dto.getFrontSecurity() + "-" + dto.getBackSecurity();
         // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
-        String professor_img = fileService.uploadIdPhoto(imageFile, "idPhoto_professor",newFileName);
+        String professor_img = fileService.uploadIdPhoto(imageFile, "idPhoto_professor", newFileName);
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,
@@ -274,19 +274,20 @@ public class ManagerService {
 
         return professorRepository.save(professor);
     }
+
     @Transactional
     public Manager addManager(UserFormDTO dto, MultipartFile imageFile) {
-        System.err.println("userFormDTO : "+ dto.toString());
+        System.err.println("userFormDTO : " + dto.toString());
         String salt = hashComponent.getRandomSalt();
         String source = dto.getBackSecurity();
-        String pw = hashComponent.getHash(source,salt);
-        String userName = dto.getFirstName()+dto.getLastName();
-        String security = dto.getFrontSecurity() + "-"+ dto.getBackSecurity();
+        String pw = hashComponent.getHash(source, salt);
+        String userName = dto.getFirstName() + dto.getLastName();
+        String security = dto.getFrontSecurity() + "-" + dto.getBackSecurity();
 
         String originalFilename = imageFile.getOriginalFilename();
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
-        String manager_img = fileService.uploadIdPhoto(imageFile, "idPhoto_manager",newFileName);
+        String manager_img = fileService.uploadIdPhoto(imageFile, "idPhoto_manager", newFileName);
         System.err.println("manager_img : " + manager_img);
         System.err.println("newFileName : " + newFileName);
         System.err.println("imageFile : " + imageFile.getOriginalFilename());
@@ -314,39 +315,39 @@ public class ManagerService {
     public String verificationStudentDTOList(List<StudentFormDTO> studentList) {
         log.info("verificationStudentDTOList service");
         int index = 1;
-        StringBuilder notFoundStudents  = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
-        for(StudentFormDTO dto : studentList) {
+        StringBuilder notFoundStudents = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
+        for (StudentFormDTO dto : studentList) {
             System.err.println(index + "번 학생 확인 시작");
 //            Long idx = extractedIdx(dto.getMajor());
 
             Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
-            if(!major.get().getName().equals(extractedName(dto.getMajor()))){
+            if (!major.get().getName().equals(extractedName(dto.getMajor()))) {
                 notFoundStudents.append(index).append(", ");
                 index++;
                 continue;
             }
-            System.err.println(major.get().getName()+ "major");
+            System.err.println(major.get().getName() + "major");
             List<Professor> professors = professorRepository.findAllByMajor(major.get());
 
             boolean found = false;
-            for(Professor p : professors){
-                if(p.getProfessor_idx().equals(extractedIdx(dto.getProfessor()))){
+            for (Professor p : professors) {
+                if (p.getProfessor_idx().equals(extractedIdx(dto.getProfessor()))) {
                     found = true;
                     break;
                 }
             }
-            if(!found){
+            if (!found) {
                 notFoundStudents.append(index).append(", ");
             }
-            log.info("index"+index);
+            log.info("index" + index);
             index++;
 
         }
 
         String msg;
-        if(notFoundStudents.length() >0){
-            msg = notFoundStudents.substring(0,notFoundStudents.length()-2) + "번의 학생의 학과 혹은 교수정보를 찾을 수 없습니다.";
-        }else{
+        if (notFoundStudents.length() > 0) {
+            msg = notFoundStudents.substring(0, notFoundStudents.length() - 2) + "번의 학생의 학과 혹은 교수정보를 찾을 수 없습니다.";
+        } else {
 
             msg = "성공";
         }
@@ -355,22 +356,21 @@ public class ManagerService {
     }
 
 
-
     @Transactional
-    public String addStudentList(List<StudentFormDTO> studentList){
+    public String addStudentList(List<StudentFormDTO> studentList) {
         log.info("addStudentList service");
         int index = 0;
 
-        for(StudentFormDTO dto : studentList) {
+        for (StudentFormDTO dto : studentList) {
             System.err.println(index + "번 학생 추가 시작");
             String salt = hashComponent.getRandomSalt();
-            String source = dto.getSecurity().substring(dto.getSecurity().length()-7);
-            String pw = hashComponent.getHash(source,salt);
+            String source = dto.getSecurity().substring(dto.getSecurity().length() - 7);
+            String pw = hashComponent.getHash(source, salt);
 
             Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
             Optional<Professor> professor = professorRepository.findById(extractedIdx(dto.getProfessor()));
 
-            if(major.isPresent() && professor.isPresent()){
+            if (major.isPresent() && professor.isPresent()) {
                 User user = new User(
                         pw,
                         salt,
@@ -383,14 +383,14 @@ public class ManagerService {
                 );
                 userRepository.save(user);
                 System.err.println(index + "번 학생 유저저장");
-                log.info("dto.getStudent_grade() : {} ",dto.getStudent_grade());
-                log.info("user : {} ",user);
-                log.info("professor.get() : {} ",professor.get());
-                log.info("major.get() : {} ",major.get().getIdx());
-                log.info("dto.getEntranceDate() : {} ",dto.getEntranceDate().toLocalDate().getYear());
-                log.info("major.get().getIdx() : {} ",major.get().getIdx());
-                Integer lastStudentNum = studentRepository.findByEntranceDateAndMajorIdx(dto.getEntranceDate().toLocalDate().getYear()%100,major.get().getIdx());
-                log.info("lastStudentNum : {} ",lastStudentNum);
+                log.info("dto.getStudent_grade() : {} ", dto.getStudent_grade());
+                log.info("user : {} ", user);
+                log.info("professor.get() : {} ", professor.get());
+                log.info("major.get() : {} ", major.get().getIdx());
+                log.info("dto.getEntranceDate() : {} ", dto.getEntranceDate().toLocalDate().getYear());
+                log.info("major.get().getIdx() : {} ", major.get().getIdx());
+                Integer lastStudentNum = studentRepository.findByEntranceDateAndMajorIdx(dto.getEntranceDate().toLocalDate().getYear() % 100, major.get().getIdx());
+                log.info("lastStudentNum : {} ", lastStudentNum);
                 Student s = new Student(
                         dto.getStudent_grade(),
                         user,
@@ -416,15 +416,14 @@ public class ManagerService {
                 situationRepository.save(situation);
                 situationRecordRepository.save(situationRecord);
 
-                log.info("user.getUser_id : {} ",user.getUser_id());
+                log.info("user.getUser_id : {} ", user.getUser_id());
                 user.setUser_id(String.valueOf(s.getStudent_num()));
 
-                log.info("user.setUser_id : {} ",user.getUser_id());
-                log.info("s.getUser().getUser_id()"+ s.getUser().getUser_id());
+                log.info("user.setUser_id : {} ", user.getUser_id());
+                log.info("s.getUser().getUser_id()" + s.getUser().getUser_id());
 
 
-
-                log.info("index"+index);
+                log.info("index" + index);
                 index++;
             }
 
@@ -439,8 +438,8 @@ public class ManagerService {
         List<MajorDto> majorList = new ArrayList<>();
         long idx = 1;
 
-        if(!List.isEmpty()){
-            for (Major m : List){
+        if (!List.isEmpty()) {
+            for (Major m : List) {
                 MajorDto dto = new MajorDto(
                         m.getName(),
                         m.getCollege().getIdx(),
@@ -456,6 +455,7 @@ public class ManagerService {
         log.info("majorList. : " + majorList);
         return majorList;
     }
+
     public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
         return professorRepository.searchByMajorAndProfessorAndLeave(map, pageable);
     }
@@ -466,20 +466,37 @@ public class ManagerService {
     }
 
     @Transactional
-    public Professor updateProfessorByManager(HashMap<String, Object> map) {
-        Long idx = (Long)map.get("idx");
-        java.util.Date hireDate = (java.util.Date) map.get("hireDate");
-        java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
-        Professor professor = professorRepository.findById(idx).get();
-        professor.setHireDate(new Date(hireDate.getTime()));
-        professor.setLeaveDate(new Date(leaveDate.getTime()));
+    public int updateProfessorByManager(Long idx, HashMap<String, Object> map) {
+        int result = 0;
 
-        return professor;
+        Optional<Professor> professorOptional = professorRepository.findById(idx);
+        if (professorOptional.isPresent()) {
+            Professor professor = professorOptional.get();
+
+            java.util.Date hireDate = (java.util.Date) map.get("hireDate");
+            professor.setHireDate(new Date(hireDate.getTime()));
+
+            if (map.get("leaveDate") != null) {
+                java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
+                professor.setLeaveDate(new Date(leaveDate.getTime()));
+            }
+            if (map.get("professorImg") != null) {
+                fileService.deleteFile(professor.getProfessor_img(), "idPhoto_professor");
+                MultipartFile professorImg = (MultipartFile) map.get("professorImg");
+                // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
+                String extension = professorImg.getOriginalFilename().substring(professorImg.getOriginalFilename().lastIndexOf('.'));
+                String fileName = professor.getProfessor_img().split("\\.")[0];
+                String newFileName = fileName + extension;
+                fileService.uploadIdPhoto(professorImg, "idPhoto_professor", newFileName);
+            }
+            result = 1;
+        }
+        return result;
     }
 
     @Transactional
     public Professor professorDel(HashMap<String, Object> map) {
-        Long idx = (Long)map.get("idx");
+        Long idx = (Long) map.get("idx");
         java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
         Professor professor = professorRepository.findById(idx).get();
         professor.setLeave(YesOrNo.Y);
@@ -508,25 +525,40 @@ public class ManagerService {
     }
 
     @Transactional
-    public Manager updateManagerByManager(HashMap<String, Object> map) {
-        Long idx = (Long)map.get("idx");
-        Manager manager = managerRepository.findById(idx).get();
-        java.util.Date hireDate = (java.util.Date)map.get("hireDate");
-        Date date = new Date(hireDate.getTime());
-        manager.setHireDate(date);
+    public int updateManagerByManager(Long idx, HashMap<String, Object> map) {
+        int result = 0;
 
-        if(map.get("leaveDate") != null) {
-            java.util.Date leaveDate = (java.util.Date)map.get("leaveDate");
-            Date date2 = new Date(leaveDate.getTime());
-            manager.setLeaveDate(date2);
+        Optional<Manager> managerOptional = managerRepository.findById(idx);
+        if (managerOptional.isPresent()) {
+            Manager manager = managerOptional.get();
+
+            java.util.Date hireDate = (java.util.Date) map.get("hireDate");
+            Date date = new Date(hireDate.getTime());
+            manager.setHireDate(date);
+
+            if (map.get("leaveDate") != null) {
+                java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
+                Date date2 = new Date(leaveDate.getTime());
+                manager.setLeaveDate(date2);
+            }
+            if (map.get("managerImg") != null) {
+                fileService.deleteFile(manager.getManager_img(), "idPhoto_manager");
+                MultipartFile managerImg = (MultipartFile) map.get("managerImg");
+                // 새로운 파일 이름 생성 (사용자 이름과 주민등록번호로 조합)
+                String extension = managerImg.getOriginalFilename().substring(managerImg.getOriginalFilename().lastIndexOf('.'));
+                String fileName = manager.getManager_img().split("\\.")[0];
+                String newFileName = fileName + extension;
+                fileService.uploadIdPhoto(managerImg, "idPhoto_manager", newFileName);
+            }
+            result = 1;
         }
-        return manager;
+        return result;
     }
 
     @Transactional
     public Manager managerDel(Map<String, Object> map) {
-        Long idx = (Long)map.get("idx");
-        java.util.Date leaveDate = (java.util.Date)map.get("leaveDate");
+        Long idx = (Long) map.get("idx");
+        java.util.Date leaveDate = (java.util.Date) map.get("leaveDate");
         Manager manager = managerRepository.findById(idx).get();
         Date date = new Date(leaveDate.getTime());
 
@@ -543,8 +575,8 @@ public class ManagerService {
     private String extractedName(String str) {
         int end = str.indexOf('(');
         log.info("end : " + end);
-        log.info("name : " + str.substring(0,end));
-        return str.substring(0,end);
+        log.info("name : " + str.substring(0, end));
+        return str.substring(0, end);
     }
 
     private static Long extractedIdx(String str) {
@@ -564,6 +596,7 @@ public class ManagerService {
 
     /**
      * 게시글 전체조회
+     *
      * @param pageable 페이징 처리
      * @return 게시글 목록 (페이징)
      */
@@ -613,10 +646,10 @@ public class ManagerService {
                 .collect(Collectors.toList());
 
         String evaluationStatus = null;
-        for(Lecture one : lectureList)  {
+        for (Lecture one : lectureList) {
             log.info("강의 평가 여부[변경 전] : " + one.getVisible().toString() + "\\");
 
-            if(one.getVisible().equals(YesOrNo.Y)) {
+            if (one.getVisible().equals(YesOrNo.Y)) {
                 one.setVisible(YesOrNo.N);
                 log.info("변경된 평가 여부[DB-N] : " + one.getVisible().toString() + "\\");
                 evaluationStatus = "N";
@@ -640,10 +673,9 @@ public class ManagerService {
         boolean noneVisible = lectureList.stream().allMatch(lecture -> lecture.getVisible().equals(YesOrNo.N));
 
         String evaluationStatus = null;
-        if(allVisible) {
+        if (allVisible) {
             evaluationStatus = "Y";
-        }
-        else if(noneVisible) {
+        } else if (noneVisible) {
             evaluationStatus = "N";
         }
 
