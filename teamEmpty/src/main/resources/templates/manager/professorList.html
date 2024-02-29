@@ -13,7 +13,7 @@
         <div class="form-group">
             <label>학과명</label>
             <select class="form-control" id="major_idx" name="major_idx">
-                <option value="">학과를 선택하세요.</option>
+                <option value="" selected>학과를 선택하세요.</option>
                 <option th:each="row : ${majorList}"
                         th:text="${row.name}"
                         th:value="${row.idx}">
@@ -24,7 +24,7 @@
         <!-- 이름으로 검색할 수 있는 검색창 추가 -->
         <div class="form-group ml-4 mr-2">
             <label>이름</label>
-            <input type="text" class="form-control" id="name" name="name" placeholder="교수명을 입력하세요">
+            <input type="text" class="form-control" id="name" name="name" value="" placeholder="교수명을 입력하세요">
         </div>
 
         <!-- 퇴사 여부 필터 -->
@@ -101,10 +101,8 @@
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
 
-
 <script>
     var form = $('#searchForm');
-    var isInitialLoad = true;
 
     // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
     var previousMajorIdx = localStorage.getItem('previousMajorIdx');
@@ -143,17 +141,19 @@
         localStorage.removeItem('previousLeave');
     }
 
-    // 페이지 로드 시나 목록으로 버튼 클릭 시 검색어 초기화
-    if (isInitialLoad || form.data('fromList')) {
+    // 목록으로 버튼 클릭 시 검색어 초기화
+    if (form.data('fromList')) {
         resetSearchConditions();
     }
-    isInitialLoad = false;
 
     // 검색 결과 페이지에서 체크박스 상태 반영
     var resultLeaveValue = localStorage.getItem('previousLeave');
     if (resultLeaveValue && resultLeaveValue !== 'null') {
         $('#leaveCheckbox').prop('checked', resultLeaveValue === 'true');
     }
+
+
+
 </script>
 
 <script th:inline="javascript">
@@ -165,9 +165,7 @@
 
         $('.pagination a').on('click', function (event) {
             event.preventDefault();
-
             let href = $(this).attr('href');
-
             if (major_idx !== null) {
                 href += '&major_idx=' + encodeURIComponent(major_idx);
             }
