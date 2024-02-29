@@ -1,6 +1,5 @@
 package com.itbank.simpleboard.service;
 
-import com.itbank.simpleboard.component.FileComponent;
 import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.entity.Lecture;
 import com.itbank.simpleboard.repository.student.LectureRepository;
@@ -18,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LectureService {
     private final LectureRepository lectureRepository;
-    private final FileComponent fileComponent;
+    private final FileService fileService;
 
     public Page<LectureDto> selectAll(Pageable pageable) {
         return lectureRepository.getLectureDtos(pageable);
@@ -57,9 +56,9 @@ public class LectureService {
             if (optionalLecture.isPresent()) {
                 Lecture lecture = optionalLecture.get();
                 if (lecture.getPlan() != null) {
-                    fileComponent.deleteFile(lecture.getPlan(), "syllabus");
+                    fileService.deleteFile(lecture.getPlan(), "syllabus");
                 }
-                String syllabus = fileComponent.upload(plan, "syllabus");
+                String syllabus = fileService.upload(plan, "syllabus");
                 if (syllabus != null) {
                     lecture.setPlan(syllabus);
                     lectureRepository.save(lecture);
