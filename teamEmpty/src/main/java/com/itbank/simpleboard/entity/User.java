@@ -67,6 +67,8 @@ public class User {
         this.createdAt = Date.valueOf(LocalDate.now());
     }
 
+
+    // 더미데이터 생성자
     public User(String user_pw,String salt, String user_name, String security, String address, String pnum, String email, User_role role,Date createdAt) {
         this.user_id = email;
         this.user_pw = user_pw;
@@ -81,9 +83,6 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    private String randomId() {
-        UUID uuid = UUID.randomUUID();
-        return uuid.toString().substring(0,8);
-    }
+
 
 }
