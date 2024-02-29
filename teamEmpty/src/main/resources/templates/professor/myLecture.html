@@ -174,7 +174,7 @@
             <div class="m-auto" style="width: fit-content" th:if="${MyList.totalPages > 1}">
                 <ul class="pagination">
                     <!-- 이전 5 페이지로 이동 -->
-                    <li class="page-item" th:if="${MyList.hasNext} && ${((MyList.number / 5) - 1) * 5 >= 0}">
+                    <li class="page-item" th:if="${MyList.hasNext && ((MyList.number / 5) - 1) * 5 >= 0}">
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${((MyList.number / 5) - 1) * 5})|"
                                 th:text="'>>'"></button>
@@ -209,7 +209,7 @@
                     </li>
 
                     <!-- 다음 5 페이지로 이동 -->
-                    <li class="page-item" th:if="${MyList.hasNext} && ${MyList.totalPages - 1 >= ((MyList.number / 5) + 1) * 5}">
+                    <li class="page-item" th:if="${MyList.hasNext && MyList.totalPages - 1 >= ((MyList.number / 5) + 1) * 5}">
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${((MyList.number / 5) + 1) * 5})|"
                                 th:text="'>>'"></button>

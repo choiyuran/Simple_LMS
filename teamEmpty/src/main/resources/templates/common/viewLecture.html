@@ -11,6 +11,7 @@
         <head th:insert="layout/managerHeader :: head"></head>
     </th:block>
 </th:block>
+<body>
 <th:block th:switch="${session.user.user.role.toString()}">
     <th:block th:case="'교수'">
         <header th:insert="layout/professorHeader :: header"></header>

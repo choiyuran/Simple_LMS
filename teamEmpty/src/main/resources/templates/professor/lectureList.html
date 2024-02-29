@@ -1,9 +1,23 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 전체 강의 리스트 -->
-<head th:insert="layout/professorHeader :: head"></head>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
 <body>
-<header th:insert="layout/professorHeader :: header"></header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <main>
     <div class="w-50 m-auto">
         <form id="LectureSearchForm" method="POST">
@@ -172,7 +186,7 @@
                 <ul class="pagination">
                     <!-- 5페이지 이전으로 이동 -->
                     <li class="page-item"
-                        th:if="${LectureList.hasPrevious} && ${((LectureList.number / 5) - 1) * 5 >= 0}">
+                        th:if="${LectureList.hasPrevious && ((LectureList.number / 5) - 1) * 5 >= 0}">
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${((LectureList.number / 5) - 1) * 5})|"
                                 th:text="'<<'"></button>
@@ -205,7 +219,7 @@
 
                     <!-- 다음 5 페이지로 이동 -->
                     <li class="page-item"
-                        th:if="${LectureList.hasNext} && ${LectureList.totalPages - 1 >= ((LectureList.number / 5) + 1) * 5}">
+                        th:if="${LectureList.hasNext && LectureList.totalPages - 1 >= ((LectureList.number / 5) + 1) * 5}">
                         <button type="button" class="page-link"
                                 th:onclick="|setPageAndSubmit(${((LectureList.number / 5) + 1) * 5})|"
                                 th:text="'>>'"></button>
@@ -320,6 +334,13 @@
         });
     });
 </script>
-<footer th:insert="layout/professorHeader :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 </body>
 </html>
