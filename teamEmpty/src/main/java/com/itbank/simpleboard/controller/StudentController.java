@@ -160,29 +160,6 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/modifyCheck")
-    public String modifyCheck(HttpSession session) {
-        Object login = session.getAttribute("user");
-        if (login instanceof StudentDto) {
-            return "student/modifyCheck";
-        } else {
-            return "redirect:/login";
-        }
-    }
-
-    @PostMapping("/modifyCheck")
-    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
-        String url = "student/modifyCheck";
-        Object login = session.getAttribute("user");
-        int result = userService.checkPassword(login, password);
-        if (result != 0) {
-            url = "redirect:/student/studentModify";
-        } else {
-            model.addAttribute("msg", "비밀번호를 확인해주세요.");
-        }
-        return url;
-    }
-
     // 내 정보 수정
     @GetMapping("/studentModify")
     public ModelAndView myPage(HttpSession session) {
