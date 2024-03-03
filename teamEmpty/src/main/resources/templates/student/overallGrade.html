@@ -7,7 +7,8 @@
 <body>
 <header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-3">
-    <h2 id="gradeTitle" class="my-3" th:text="${session.user.user.user_name+'님의 '+ '전체' + '성적'}" th:data-user-name="${session.user.user.user_name}"></h2>
+    <h2 id="gradeTitle" class="my-3" th:text="${session.user.user.user_name+'님의 '+ '전체' + '성적'}"
+        th:data-user-name="${session.user.user.user_name}"></h2>
     <form id="SemesterSearchForm">
         <label>학기 선택 :
             <select name="semester" id="option" onchange="handleOptionSelect(this.value)">
@@ -40,22 +41,24 @@
     <h2 class="mt-3 mb-2" th:text="${session.user.user.user_name + '님의 전체성적 통계'}"></h2>
     <table class="table table-striped">
         <thead>
-            <tr>
-                <th>단과대학</th>
-                <th>학과</th>
-                <th>학년</th>
-                <th>총 이수학점</th>
-                <th>성적합계</th>
-                <th>평균</th>
-            </tr>
+        <tr>
+            <th>단과대학</th>
+            <th>학과</th>
+            <th>학년</th>
+            <th>총 이수학점</th>
+            <th>성적합계</th>
+            <th>평균</th>
+        </tr>
         </thead>
         <tbody>
+        <tr th:if="${overall != null}">
             <td th:text="${overall.collegeName}"></td>
             <td th:text="${overall.majorName}"></td>
             <td th:text="${overall.grade + '학년'}"></td>
             <td th:text="${overall.totalCredit + '학점'}"></td>
             <td th:text="${overall.sum + '점 '}"></td>
             <td th:text="${overall.avg + '점 / 4.5 점'}"></td>
+        </tr>
         </tbody>
     </table>
     <p class="my-2">
@@ -76,9 +79,9 @@
         // gradeTitle 내용 변경
         const gradeTitleElement = document.getElementById('gradeTitle');
         const userName = gradeTitleElement.dataset.userName;
-        if(selectedSemester === ''){
+        if (selectedSemester === '') {
             gradeTitleElement.textContent = `${userName}님의 전체 성적`;
-        }else{
+        } else {
             gradeTitleElement.textContent = `${userName}님의 ${selectedSemester} 성적`;
         }
 
@@ -154,7 +157,7 @@
 
     // 옵션 선택 이벤트에 핸들러 바인딩
     const optionElement = document.getElementById('option');
-    optionElement.addEventListener('change', function() {
+    optionElement.addEventListener('change', function () {
         handleOptionSelect(this.value);
     });
 </script>

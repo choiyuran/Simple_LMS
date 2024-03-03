@@ -24,7 +24,11 @@
                 <button type="submit" class="btn btn-primary">검색</button>
             </div>
             <div class="form-group col-md-2">
-                <a th:href="'/student/enroll'"><button type="button" class="btn btn-google"><i class="fa fa-refresh text-white" aria-hidden="false"></i>초기화</button></a>
+                <a th:href="'/student/enroll'">
+                    <button type="button" class="btn btn-google"><i class="fa fa-refresh text-white"
+                                                                    aria-hidden="false"></i>초기화
+                    </button>
+                </a>
             </div>
         </form>
         <table class="table table-bordered">
@@ -63,7 +67,7 @@
                     </td>
                 </form>
 
-                <form method="get" th:if="${#lists.contains(lectureList, item)}" action="/student/cancelEnroll">
+                <form method="post" th:if="${#lists.contains(lectureList, item)}" action="/student/cancelEnroll">
                     <td th:text="${item.name}"></td>
                     <td th:text="${item.professor_name}"></td>
                     <td th:text="${item.credit}"></td>
@@ -73,10 +77,12 @@
                     <td th:text="${item.maxCount+ '명 / ' + item.currentCount + '명'}"></td>
                     <td th:text="${item.semester}"></td>
                     <td th:text="${item.grade}"></td>
-                    <input th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required/>
-                    <input th:type="hidden" th:value="${item.idx}" th:name="idx" required/>
                     <td>
-                        <button type="submit" class="btn btn-warning">수강취소</button>
+                        <input class="stuIdx1" th:type="hidden" th:value="${stuIdx}" th:name="stuIdx" required/>
+                        <input class="idx1" th:type="hidden" th:value="${item.idx}" th:name="idx" required/>
+                        <input class="page1" th:type="hidden" th:value="${param.page}" th:name="page" th:default="0"
+                               required>
+                        <button type="button" class="enrollcancel btn btn-warning">수강취소</button>
                     </td>
                 </form>
             </tr>
@@ -147,6 +153,49 @@
             }
 
             location.href = href;
+        });
+
+        $(".enrollcancel").on("click", function () {
+            var td = $(this).closest('td');  // 클릭된 버튼의 가장 가까운 상위의 td를 찾음
+
+            $(this).on("click", function (e) {
+                e.preventDefault(); // 폼 제출 방지
+
+                // SweetAlert 를 이용한 수강 취소 확인
+                Swal.fire({
+                    title: "정말로 수강 취소 하시겠습니까?",
+                    text: "수강 취소 후에는 되돌릴 수 없습니다!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "네, 취소하겠습니다!",
+                    cancelButtonText: "아니요"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // AJAX 요청
+                        $.ajax({
+                            url: '/student/cancelEnroll',
+                            type: 'POST',
+                            data: {
+                                stuIdx: td.find('.stuIdx1').val(),
+                                idx: td.find('.idx1').val(),
+                                page: td.find('.page1').val()
+                            },
+                            success: function (response) {
+                                // 서버의 응답 처리
+                                Swal.fire('취소 완료!', '수강 취소가 정상적으로 처리되었습니다.', 'success').then(() => {
+                                    location.href = '/student/enroll?page=' + $('input[name="page"]').val(); // 페이지 리다이렉트
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                // 오류 처리
+                                Swal.fire('오류!', '수강 취소 중 문제가 발생하였습니다.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
         });
     });
     /*]]>*/

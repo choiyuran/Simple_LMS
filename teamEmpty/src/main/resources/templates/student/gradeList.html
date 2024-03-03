@@ -43,7 +43,7 @@
 
 </main>
 <footer th:insert="layout/studentHeader :: footer"></footer>
-<script>
+<script th:inline="javascript">
     let selectedSemester = ''; // 선택한 학기를 저장할 변수
 
     // 옵션 선택 이벤트 핸들러
@@ -138,6 +138,20 @@
     optionElement.addEventListener('change', function() {
         handleOptionSelect(this.value);
     });
+
+    // 성적 변환 function
+    /*<![CDATA[*/
+    function convertScoreToGrade(score) {
+        if (score >= 4.5) return 'A+';
+        if (score >= 4.0) return 'A';
+        if (score >= 3.5) return 'B+';
+        if (score >= 3.0) return 'B';
+        if (score >= 2.5) return 'C+';
+        if (score >= 2.0) return 'C';
+        if (score >= 1.5) return 'D';
+        return 'F';
+    }
+    /*]]>*/
 </script>
 </body>
 </html>

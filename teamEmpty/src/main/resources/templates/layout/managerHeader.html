@@ -58,8 +58,10 @@
                                             <li><a class="dropdown-item" href="/manager/managerList">교직원 조회</a></li>
                                             <li><a class="dropdown-item" href="/manager/majorList">학과 조회</a></li>
                                             <li><a class="dropdown-item" href="/professor/lectureList">강의 조회</a></li>
-                                            <li><a class="dropdown-item" href="/manager/checkTuitionPayments">등록금 고지서 확인</a></li>
-                                            <li><a class="dropdown-item" href="/manager/studentSituation">학생 상태 변경 처리</a></li>
+                                            <li><a class="dropdown-item" href="/manager/checkTuitionPayments">등록금 고지서
+                                                확인</a></li>
+                                            <li><a class="dropdown-item" href="/manager/studentSituation">학생 상태 변경
+                                                처리</a></li>
                                             <li><a class="dropdown-item" href="/manager/addStudent">학생 등록</a></li>
                                             <li><a class="dropdown-item" href="/manager/register">교수/직원 등록</a></li>
                                         </ul>
@@ -78,16 +80,23 @@
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="/manager/noticeList">공지사항</a></li>
                                             <li><a class="dropdown-item" href="/manager/calendar">학사일정</a></li>
-                                            <li><a class="dropdown-item" href="/manager/calendarAddForm">학사일정 추가</a></li>
+                                            <li><a class="dropdown-item" href="/manager/calendarAddForm">학사일정 추가</a>
+                                            </li>
                                         </ul>
                                     </li>
                                     <!-- Nav Item - User Information -->
                                     <li class="nav-item dropdown no-arrow">
-                                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown"
+                                        <a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle"
+                                           data-toggle="dropdown"
                                            href="#" id="userDropdown" role="button">
-                                            <span class="mr-2 d-none d-lg-inline text-white-600 small" th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
-                                            <img alt="유저 이미지" class="img-profile rounded-circle" th:if="${session.user != null && session.user.img != null}" th:src="@{'/images/manager/' + ${session.user.img}}">
-                                            <img alt="유저 이미지" class="img-profile rounded-circle" src="/img/undraw_profile.svg" th:if="${session.user == null || session.user.img == null}">
+                                            <span class="mr-2 d-none d-lg-inline text-white-600 small"
+                                                  th:text="${session.user != null ? session.user.user.user_name : 'Guest'}"></span>
+                                            <img alt="유저 이미지" class="img-profile rounded-circle"
+                                                 th:if="${session.user != null && session.user.img != null}"
+                                                 th:src="@{'/images/manager/' + ${session.user.img}}">
+                                            <img alt="유저 이미지" class="img-profile rounded-circle"
+                                                 src="/img/undraw_profile.svg"
+                                                 th:if="${session.user == null || session.user.img == null}">
                                         </a>
                                         <!-- Dropdown - User Information -->
                                         <div aria-labelledby="userDropdown"
@@ -137,14 +146,40 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        const msg = [[${msg}]];
+        let msg = [[${msg}]];
+        let alert_title = [[${title}]];
+        let alert_icon = [[${icon}]];
 
-        if (msg != '' && msg != null) {
-            alert(msg);
+        if (msg !== '' && msg != null && alert_title !== '로그인 성공') {
+            Swal.fire({
+                title: alert_title,
+                text: msg,
+                icon: alert_icon
+            });
+        }else if(msg !== '' && msg != null && alert_title === '로그인 성공'){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: alert_icon,
+                title: msg
+            });
         }
+        msg = '';
+        icon = '';
+        title = '';
 
         /*]]>*/
     </script>

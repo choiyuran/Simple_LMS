@@ -3,333 +3,431 @@
 <head th:insert="layout/managerHeader :: head">
 
 <body class="bg-gradient-success">
-    <header th:insert = "layout/managerHeader :: header" ></header>
+<header th:insert="layout/managerHeader :: header"></header>
 
-    <div class="container">
-        <p th:text="${msg}"></p>
+<div class="container">
+    <p th:text="${msg}"></p>
 
-        <div class="card o-hidden border-0 shadow-lg my-5">
-            <div class="card-body p-0">
-                <!-- Nested Row within Card Body -->
-                <div class="row">
-                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
-                    <div class="col-lg-7">
-                        <div class="p-5">
-                            <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">등록하기</h1>
-                            </div>
-                            <form class="userForm" enctype="multipart/form-data" name="userForm">
-                                <div class="form-group row">
-                                    <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
-                                        <label><input type="radio" name="userType" value="professor"
-                                                onclick="changeForm('professor')" required> 교수 등록</label>
-                                        <label><input type="radio" name="userType" value="manager"
-                                                onclick="changeForm('manager')" required> 교직원 등록</label>
-                                    </div>
-                                </div>
-                                <div class="row pb-0">
-                                    <div class="col-lg-6">
-
-                                        <div class=" form-group text-center">
-                                            <img id="imageContainer" src="/img/idPhoto.png"
-                                                 style="max-height: 100px; max-height: 130px; object-fit: contain;">
-
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="file" class="form-control form-control-user" name="imageFile" id="imageFile" accept="image/*" required>
-                                        </div>
-
-                                        <div class="form-group" id="majorSection">
-                                            <select class="form-control form-control-user" id="major" name="major" >
-                                                 <option value="">학과를 선택하세요</option>
-                                                <option th:each="major : ${majorList}" th:value="${major.getIdx()}" th:text="${major.getName()}"></option>
-                                            </select>
-                                        </div>
-
-                                    </div>
-                                    <div class="col-lg-6 pb-0">
-
-                                        <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" name="firstName" id="exampleFirstName"
-                                                   placeholder="성" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" name="lastName" id="exampleLastName"
-                                                   placeholder="이름" required>
-                                        </div>
-                                        <div class="form-group">
-
-                                            <input type="email" class="form-control form-control-user"
-                                                   id="exampleInputEmail" name="email" placeholder="Email" required>
-                                        </div>
-                                        <div class="form-group pb-0">
-                                            <label for="hireDate" class="hireDateform">입사 날짜</label>
-                                            <input type="date" class="form-control form-control-user"
-                                                   id="hireDate" name="hireDate" required>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" name="address" id="exampleInputUserid"
-                                        placeholder="주소입력" required>
-                                </div>
-
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="frontSecurity" name="frontSecurity"
-                                            placeholder="주민등록번호 앞자리" pattern="\d{6}" required>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user" id="backSecurity" name="backSecurity"
-                                            placeholder="주민등록번호 뒷자리" pattern="\d{7}" required>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-user" id="phonenumber" name="pnum"
-                                        placeholder="전화번호" required>
-                                </div>
-
-                                <!-- ID field will change based on user type -->
-
-                                <button type="button" class="btn btn-primary btn-user btn-block" id="btn-register">
-                                    등록하기
-                                </button>
-                            </form>
-
+    <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+                <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                <div class="col-lg-7">
+                    <div class="p-5">
+                        <div class="text-center">
+                            <h1 class="h4 text-gray-900 mb-4">등록하기</h1>
                         </div>
+                        <form class="userForm" enctype="multipart/form-data" name="userForm">
+                            <div class="form-group row">
+                                <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
+                                    <label><input type="radio" name="userType" value="professor"
+                                                  onclick="changeForm('professor')" required> 교수 등록</label>
+                                    <label><input type="radio" name="userType" value="manager"
+                                                  onclick="changeForm('manager')" required> 교직원 등록</label>
+                                </div>
+                            </div>
+                            <div class="row pb-0">
+                                <div class="col-lg-6">
+
+                                    <div class=" form-group text-center">
+                                        <img id="imageContainer" src="/img/idPhoto.png"
+                                             style="max-height: 100px; max-height: 130px; object-fit: contain;">
+
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="file" class="form-control form-control-user" name="imageFile"
+                                               id="imageFile" accept="image/*" required>
+                                    </div>
+
+                                    <div class="form-group" id="majorSection">
+                                        <select class="form-control form-control-user" id="major" name="major">
+                                            <option value="">학과를 선택하세요</option>
+                                            <option th:each="major : ${majorList}" th:value="${major.getIdx()}"
+                                                    th:text="${major.getName()}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-6 pb-0">
+
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-user" name="firstName"
+                                               id="exampleFirstName"
+                                               placeholder="성" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control form-control-user" name="lastName"
+                                               id="exampleLastName"
+                                               placeholder="이름" required>
+                                    </div>
+                                    <div class="form-group">
+
+                                        <input type="email" class="form-control form-control-user"
+                                               id="exampleInputEmail" name="email" placeholder="Email" required>
+                                    </div>
+                                    <div class="form-group pb-0">
+                                        <label for="hireDate" class="hireDateform">입사 날짜</label>
+                                        <input type="date" class="form-control form-control-user"
+                                               id="hireDate" name="hireDate" required>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" name="address"
+                                       id="exampleInputUserid"
+                                       placeholder="주소입력" required>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="text" class="form-control form-control-user" id="frontSecurity"
+                                           name="frontSecurity"
+                                           placeholder="주민등록번호 앞자리" pattern="\d{6}" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="password" class="form-control form-control-user" id="backSecurity"
+                                           name="backSecurity"
+                                           placeholder="주민등록번호 뒷자리" pattern="\d{7}" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control form-control-user" id="phonenumber" name="pnum"
+                                       placeholder="전화번호" required>
+                            </div>
+
+                            <!-- ID field will change based on user type -->
+
+                            <button type="button" class="btn btn-primary btn-user btn-block" id="btn-register">
+                                등록하기
+                            </button>
+                        </form>
+
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</div>
 
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-    <footer th:insert="layout/managerHeader :: footer"></footer>
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-    <script>
+<!-- Bootstrap core JavaScript-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-        var imageFile = document.getElementById('imageFile');
-        imageFile.addEventListener('change',previewImage)
-        function previewImage(event) {
-            var input = event.target;
-            var imageContainer = document.getElementById('imageContainer');
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
+<!-- Core plugin JavaScript-->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<footer th:insert="layout/managerHeader :: footer"></footer>
+<!-- Custom scripts for all pages-->
+<script src="js/sb-admin-2.min.js"></script>
+<script>
 
-                reader.onload = function () {
-                    // 이미지 로딩이 완료되면 이미지 컨테이너의 src를 설정하여 이미지를 미리보기로 표시
-                    imageContainer.src = reader.result;
+    var imageFile = document.getElementById('imageFile');
+    imageFile.addEventListener('change', previewImage)
 
-                    // 이미지 크기를 조절하여 이미지 컨테이너에 맞게 표시
-                    imageContainer.onload = function () {
-                        var maxWidth = 130;
-                        var maxHeight = 100;
-                        var width = imageContainer.width;
-                        var height = imageContainer.height;
-                        var ratio = 1;
+    function previewImage(event) {
+        var input = event.target;
+        var imageContainer = document.getElementById('imageContainer');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
 
-                        if (width > maxWidth) {
-                            ratio = maxWidth / width;
-                            height *= ratio;
-                            width = maxWidth;
-                        }
-                        if (height > maxHeight) {
-                            ratio = maxHeight / height;
-                            width *= ratio;
-                            height = maxHeight;
-                        }
+            reader.onload = function () {
+                // 이미지 로딩이 완료되면 이미지 컨테이너의 src를 설정하여 이미지를 미리보기로 표시
+                imageContainer.src = reader.result;
 
-                        imageContainer.style.width = width + 'px';
-                        imageContainer.style.height = height + 'px';
-                    };
+                // 이미지 크기를 조절하여 이미지 컨테이너에 맞게 표시
+                imageContainer.onload = function () {
+                    var maxWidth = 130;
+                    var maxHeight = 100;
+                    var width = imageContainer.width;
+                    var height = imageContainer.height;
+                    var ratio = 1;
+
+                    if (width > maxWidth) {
+                        ratio = maxWidth / width;
+                        height *= ratio;
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        ratio = maxHeight / height;
+                        width *= ratio;
+                        height = maxHeight;
+                    }
+
+                    imageContainer.style.width = width + 'px';
+                    imageContainer.style.height = height + 'px';
                 };
-                reader.readAsDataURL(input.files[0]);
-            }
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+
+    document.getElementById("frontSecurity").addEventListener("input", function () {
+        var inputVal = this.value;
+        // 숫자가 아닌 문자가 포함되어 있는지 확인
+        if (/[^\d]/.test(inputVal)) {
+            Swal.fire({
+                title: "숫자만 입력 가능합니다.",
+                showClass: {
+                    popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `
+                },
+                hideClass: {
+                    popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `
+                }
+            });
+            // 숫자가 아닌 문자를 모두 제거
+            this.value = inputVal.replace(/[^0-9]/g, "");
         }
 
+        // 앞자리는 6자리로 제한
+        if (this.value.length > 6) {
+            this.value = this.value.slice(0, 6);
+        }
+    });
 
-
-        document.getElementById("frontSecurity").addEventListener("input", function () {
-            var inputVal = this.value;
-            // 숫자가 아닌 문자가 포함되어 있는지 확인
-            if (/[^\d]/.test(inputVal)) {
-                alert("숫자만 입력 가능합니다.");
-                // 숫자가 아닌 문자를 모두 제거
-                this.value = inputVal.replace(/[^0-9]/g, "");
-            }
-
-            // 앞자리는 6자리로 제한
-            if (this.value.length > 6) {
-                this.value = this.value.slice(0, 6);
-            }
-        });
-
-        document.getElementById("backSecurity").addEventListener("input", function () {
-            var inputVal = this.value;
-            // 숫자가 아닌 문자가 포함되어 있는지 확인
-            if (/[^\d]/.test(inputVal)) {
-                alert("숫자만 입력 가능합니다.");
-                // 숫자가 아닌 문자를 모두 제거
-                this.value = inputVal.replace(/[^0-9]/g, "");
-            }
-
-            // 뒷자리는 7자리로 제한
-            if (this.value.length > 7) {
-                this.value = this.value.slice(0, 7);
-            }
-        });
-
-        document.getElementById("phonenumber").addEventListener("input", function () {
-            // 숫자만 입력되도록 필터링
-            this.value = this.value.replace(/[^0-9]/g, "");
-            // 010이 이미 입력되어있는 상태에서 추가적으로 숫자를 입력받아 '-'를 붙이는 과정
-            var inputVal = this.value;
-            var formatted = inputVal;
-            if (inputVal.length > 3) {
-                var front = inputVal.substr(0, 3);
-                var middle = inputVal.substr(3, 4);
-                var back = inputVal.substr(7, 4);
-                formatted = front;
-                if (middle != "") {
-                    formatted += "-" + middle;
+    document.getElementById("backSecurity").addEventListener("input", function () {
+        var inputVal = this.value;
+        // 숫자가 아닌 문자가 포함되어 있는지 확인
+        if (/[^\d]/.test(inputVal)) {
+            Swal.fire({
+                title: "숫자만 입력 가능합니다.",
+                showClass: {
+                    popup: `
+      animate__animated
+      animate__fadeInUp
+      animate__faster
+    `
+                },
+                hideClass: {
+                    popup: `
+      animate__animated
+      animate__fadeOutDown
+      animate__faster
+    `
                 }
-                if (back != "") {
-                    formatted += "-" + back;
-                }
-            }
-            this.value = formatted;
-        });
-
-
-
-
-        function changeForm(userType) {
-            const form = document.querySelector(".userForm");
-            const majorSection = document.getElementById("majorSection");
-            const backSecurityInput = document.getElementById('backSecurity');
-            // var selectedOption = document.getElementById("major");
-
-            // 이 부분에서 form의 method를 "POST"로 설정합니다.
-            form.method = "POST";
-
-            if (userType === 'professor') {
-                form.action = "/manager/addProfessor";
-                majorSection.style.display = "block"; // 학과 선택 부분 보이기
-
-                const selectMajor = document.getElementById("major");
-                selectMajor.required = true;
-
-            } else if (userType === 'manager') {
-                form.action = "/manager/addManager";
-                majorSection.style.display = "none"; // 학과 선택 부분 숨기기
-            }
-
-            // 주민등록번호 뒷자리 input 요소에 autocomplete 속성 추가
-            backSecurityInput.setAttribute('autocomplete', 'current-password');
-
+            });
+            // 숫자가 아닌 문자를 모두 제거
+            this.value = inputVal.replace(/[^0-9]/g, "");
         }
 
+        // 앞자리는 6자리로 제한
+        if (this.value.length > 6) {
+            this.value = this.value.slice(0, 6);
+        }
+    });
+            // 숫자가 아닌 문자를 모두 제거
+            this.value = inputVal.replace(/[^0-9]/g, "");
+        }
 
+        // 뒷자리는 7자리로 제한
+        if (this.value.length > 7) {
+            this.value = this.value.slice(0, 7);
+        }
+    });
 
-        var btnRegister = document.getElementById('btn-register');
-        btnRegister.addEventListener('click', submitForm);
-        function submitForm() {
-            // 필수 입력 필드들의 값을 확인하여 모두 작성되었는지 검사
-            if (!validateForm()) {
-                return; // 필수 입력 필드 중 하나라도 작성되지 않은 경우 함수 종료
+    document.getElementById("phonenumber").addEventListener("input", function () {
+        // 숫자만 입력되도록 필터링
+        this.value = this.value.replace(/[^0-9]/g, "");
+        // 010이 이미 입력되어있는 상태에서 추가적으로 숫자를 입력받아 '-'를 붙이는 과정
+        var inputVal = this.value;
+        var formatted = inputVal;
+        if (inputVal.length > 3) {
+            var front = inputVal.substr(0, 3);
+            var middle = inputVal.substr(3, 4);
+            var back = inputVal.substr(7, 4);
+            formatted = front;
+            if (middle != "") {
+                formatted += "-" + middle;
             }
-            const form = $(".userForm")[0];
-            const formData = new FormData(form);
-            const userType = $('input[name="userType"]:checked').val();
-            const major = $("#major").val();
-            var imageFile = $("#imageFile")[0].files[0];
+            if (back != "") {
+                formatted += "-" + back;
+            }
+        }
+        this.value = formatted;
+    });
 
 
-            formData.set("userType", userType);
-            formData.set("major", major);
-            formData.set("imageFile", imageFile);
+    function changeForm(userType) {
+        const form = document.querySelector(".userForm");
+        const majorSection = document.getElementById("majorSection");
+        const backSecurityInput = document.getElementById('backSecurity');
+        // var selectedOption = document.getElementById("major");
 
-            console.log("name:", $("#exampleFirstName").val());
-            console.log("userType:", userType);
-            console.log("imageFile:", imageFile);
-            console.log("major:", major);
+        // 이 부분에서 form의 method를 "POST"로 설정합니다.
+        form.method = "POST";
 
-            $.ajax({
-                url: form.action,
-                type: 'POST',
-                data: formData,
-                processData: false, // 데이터 처리 방식을 설정합니다. FormData를 사용하므로 false로 설정합니다.
-                contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
-                success: function(message) {
-                    console.log('등록 메시지:', message);
-                    alert(message);
-                    if (message.success) { // success가 true인 경우에만 실행
-                        var additionalRegistration = confirm('추가로 등록하시겠습니까?');
-                        if (additionalRegistration === true) {
-                            console.log("추가 등록을 진행합니다.");
+        if (userType === 'professor') {
+            form.action = "/manager/addProfessor";
+            majorSection.style.display = "block"; // 학과 선택 부분 보이기
+
+            const selectMajor = document.getElementById("major");
+            selectMajor.required = true;
+
+        } else if (userType === 'manager') {
+            form.action = "/manager/addManager";
+            majorSection.style.display = "none"; // 학과 선택 부분 숨기기
+        }
+
+        // 주민등록번호 뒷자리 input 요소에 autocomplete 속성 추가
+        backSecurityInput.setAttribute('autocomplete', 'current-password');
+
+    }
+
+
+    var btnRegister = document.getElementById('btn-register');
+    btnRegister.addEventListener('click', submitForm);
+
+    function submitForm() {
+        // 필수 입력 필드들의 값을 확인하여 모두 작성되었는지 검사
+        if (!validateForm()) {
+            return; // 필수 입력 필드 중 하나라도 작성되지 않은 경우 함수 종료
+        }
+        const form = $(".userForm")[0];
+        const formData = new FormData(form);
+        const userType = $('input[name="userType"]:checked').val();
+        const major = $("#major").val();
+        var imageFile = $("#imageFile")[0].files[0];
+
+
+        formData.set("userType", userType);
+        formData.set("major", major);
+        formData.set("imageFile", imageFile);
+
+        console.log("name:", $("#exampleFirstName").val());
+        console.log("userType:", userType);
+        console.log("imageFile:", imageFile);
+        console.log("major:", major);
+
+        $.ajax({
+            url: form.action,
+            type: 'POST',
+            data: formData,
+            processData: false, // 데이터 처리 방식을 설정합니다. FormData를 사용하므로 false로 설정합니다.
+            contentType: false, // 컨텐츠 타입을 설정합니다. FormData를 사용하므로 false로 설정합니다.
+            success: function (message) {
+                console.log('등록 메시지:', message);
+                Swal.fire(message);
+                if (message.success) { // success가 true인 경우에만 실행
+                    // const additionalRegistration = confirm('추가로 등록하시겠습니까?');
+                    const swalWithBootstrapButtons = Swal.mixin({
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                            cancelButton: "btn btn-danger"
+                        },
+                        buttonsStyling: false
+                    });
+                    swalWithBootstrapButtons.fire({
+                        title: "추가 등록 여부",
+                        text: "추가로 등록하시겠습니까?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "네, 추가 등록하겠습니다.",
+                        cancelButtonText: "아니요",
+                        reverseButtons: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            swalWithBootstrapButtons.fire({
+                                title: "추가 등록 여부",
+                                text: "추가 등록 하겠습니다.",
+                                icon: "success"
+                            });
                             window.location.href = '/manager/register';
-                        } else {
-                            console.log("추가 등록을 취소합니다.");
-                            if(userType === 'manager'){
+                        } else if (
+                            /* Read more about handling dismissals below */
+                            result.dismiss === Swal.DismissReason.cancel
+                        ) {
+                            swalWithBootstrapButtons.fire({
+                                title: "추가 등록 여부",
+                                text: "추가 등록 하지 않겠습니다.",
+                                icon: "error"
+                            });
+                            if (userType === 'manager') {
                                 window.location.href = '/manager/managerList';
                             }
-                            if(userType === 'professor'){
+                            if (userType === 'professor') {
                                 window.location.href = '/manager/professorList';
                             }
                         }
-                    } else {
-                        alert("폼 등록이 실패하였습니다. 오류 메시지: " + message.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('폼 등록이 실패하였습니다:', error);
+                    });
+                    // if (additionalRegistration === true) {
+                    //     console.log("추가 등록을 진행합니다.");
+                    //     window.location.href = '/manager/register';
+                    // } else {
+                    //     console.log("추가 등록을 취소합니다.");
+                    //     if (userType === 'manager') {
+                    //         window.location.href = '/manager/managerList';
+                    //     }
+                    //     if (userType === 'professor') {
+                    //         window.location.href = '/manager/professorList';
+                    //     }
+                    // }
+                } else {
+                    Swal.fire({
+                        title: "폼 등록 실패",
+                        text: "폼 등록을 실패하였습니다. 오류 메시지: " + message.message,
+                        icon: "error"
+                    });
                 }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    title: "폼 등록 실패",
+                    text: "폼 등록을 실패하였습니다. 오류 메시지: " + error,
+                    icon: "error"
+                });
+            }
+        });
+    }
+
+    function validateForm() {
+        // 필수 입력 필드의 값들을 확인하여 모두 작성되었는지 검사
+        const userType = $('input[name="userType"]:checked').val();
+        if (!userType) {
+            Swal.fire('등록할 사용자의 타입을 체크해주세요.');
+            return false;
+        }
+
+        if (userType === 'professor') {
+            const major = $("#major").val();
+            if (major === '') {
+                Swal.fire('학과를 선택해주세요.');// professor인 경우에는 학과를 선택해야 함
+                return false; // 작성되지 않은 경우 false 반환
+            }
+        }
+
+        // 나머지 필수 입력 필드들의 검사를 진행
+        const firstName = $("#exampleFirstName").val();
+        const lastName = $("#exampleLastName").val();
+        const email = $("#exampleInputEmail").val();
+        const hireDate = $("#hireDate").val();
+        const address = $("#exampleInputUserid").val();
+        const frontSecurity = $("#frontSecurity").val();
+        const backSecurity = $("#backSecurity").val();
+        const phonenumber = $("#phonenumber").val();
+        const imageFile = $("#imageFile").val();
+
+        if (!firstName || !lastName || !email || !hireDate || !address || !frontSecurity || !backSecurity || !phonenumber || !imageFile) {
+            Swal.fire({
+                title: "입력 누락",
+                text: "모든 입력 항목을 작성해주세요.",
+                icon: "error"
             });
+            return false; // 하나라도 작성되지 않은 경우 false 반환
         }
 
-        function validateForm() {
-            // 필수 입력 필드의 값들을 확인하여 모두 작성되었는지 검사
-            const userType = $('input[name="userType"]:checked').val();
-            if(!userType){
-                alert('등록할 사용자의 타입을 체크해주세요.');
-                return false;
-            }
-
-            if (userType === 'professor') {
-                const major = $("#major").val();
-                if (major === '') {
-                    alert('학과를 선택해주세요.'); // professor인 경우에는 학과를 선택해야 함
-                    return false; // 작성되지 않은 경우 false 반환
-                }
-            }
-
-            // 나머지 필수 입력 필드들의 검사를 진행
-            const firstName = $("#exampleFirstName").val();
-            const lastName = $("#exampleLastName").val();
-            const email = $("#exampleInputEmail").val();
-            const hireDate = $("#hireDate").val();
-            const address = $("#exampleInputUserid").val();
-            const frontSecurity = $("#frontSecurity").val();
-            const backSecurity = $("#backSecurity").val();
-            const phonenumber = $("#phonenumber").val();
-            const imageFile = $("#imageFile").val();
-
-            if (!firstName || !lastName || !email || !hireDate || !address || !frontSecurity || !backSecurity || !phonenumber || !imageFile) {
-                alert('모든 입력 항목을 작성해주세요.');
-                return false; // 하나라도 작성되지 않은 경우 false 반환
-            }
-
-            return true; // 모든 필수 입력 항목이 작성된 경우 true 반환
-        }
-    </script>
+        return true; // 모든 필수 입력 항목이 작성된 경우 true 반환
+    }
+</script>
 
 </body>
 

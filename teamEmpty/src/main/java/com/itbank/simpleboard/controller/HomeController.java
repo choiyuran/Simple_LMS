@@ -48,55 +48,58 @@ public class HomeController {
     public String login(@RequestParam String user_id, @RequestParam String user_pw, @RequestParam(required = false, defaultValue = "false") Boolean rememberMe, HttpSession session, RedirectAttributes ra, HttpServletResponse response) {
         String url = "redirect:/";
         if (!user_id.isEmpty() && !user_pw.isEmpty()) {
-            log.info("test1");
             UserDTO user = userService.getUser(user_id, user_pw);
             if (user == null) {
-                log.info("test2 : user가 null일 때");
                 ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                ra.addFlashAttribute("title", "로그인 실패");
+                ra.addFlashAttribute("icon", "error");
             } else {
                 // '내 아이디 기억하기'가 체크되었을 때
-                log.info("test2 : user가 null아닐 때");
-                log.info("test5 : 스위치 타기 직전");
                 switch (user.getRole().toString()) {
                     case "교수":
-                        log.info("test6 : 교수");
                         ProfessorDto professor = userService.getProfessor(user);
                         if (professor == null) {
-                            log.info("test6 : 교수 null");
                             ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("title", "로그인 실패");
+                            ra.addFlashAttribute("icon", "error");
                         } else {
-                            log.info("test6 : 교수 null x");
                             session.setAttribute("user", professor);
+                            ra.addFlashAttribute("msg", "로그인에 성공했습니다.");
+                            ra.addFlashAttribute("title", "로그인 성공");
+                            ra.addFlashAttribute("icon", "success");
                             url = "redirect:/professor/home";
                         }
                         break;
                     case "학생":
-                        log.info("test7 : 학생");
                         StudentDto student = userService.getStudent(user);
                         if (student == null) {
-                            log.info("test7 : 학생 null");
                             ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("title", "로그인 실패");
+                            ra.addFlashAttribute("icon", "error");
                         } else {
-                            log.info("test7 : 학생 null 아님");
                             session.setAttribute("user", student);
+                            ra.addFlashAttribute("msg", "로그인에 성공했습니다.");
+                            ra.addFlashAttribute("title", "로그인 성공");
+                            ra.addFlashAttribute("icon", "success");
                             url = "redirect:/student/home";
                         }
                         break;
                     case "교직원":
-                        log.info("test8 : 교직원 탔다");
                         ManagerLoginDto manager = userService.getManager(user);
                         if (manager == null) {
-                            log.info("test8 : 교직원 null");
                             ra.addFlashAttribute("msg", "정보가 일치하지 않습니다. 다시 확인해주세요.");
+                            ra.addFlashAttribute("title", "로그인 실패");
+                            ra.addFlashAttribute("icon", "error");
                         } else {
-                            log.info("test8 : 교직원 null 아님");
                             session.setAttribute("user", manager);
+                            ra.addFlashAttribute("msg", "로그인에 성공했습니다.");
+                            ra.addFlashAttribute("title", "로그인 성공");
+                            ra.addFlashAttribute("icon", "success");
                             url = "redirect:/manager/home";
                         }
                         break;
                 }
                 if (rememberMe) {
-                    log.info("test4 : 내가 만든 쿠키");
                     // 쿠키 생성
                     Cookie cookie = new Cookie("user_id", user_id);
                     // 쿠키 유효시간 설정(7일)
@@ -106,8 +109,9 @@ public class HomeController {
                 }
             }
         } else {
-            log.info("test9 : 메시지 호출 else문");
             ra.addFlashAttribute("msg", "ID와 Password를 입력해주세요");
+            ra.addFlashAttribute("title", "로그인 실패");
+            ra.addFlashAttribute("icon", "error");
         }
         return url;
     }
@@ -154,6 +158,8 @@ public class HomeController {
                 url = "redirect:/manager/managerModify";
             }
             ra.addFlashAttribute("msg", "회원 정보가 수정되었습니다.");
+            ra.addFlashAttribute("title", "회원 정보 수정 완료");
+            ra.addFlashAttribute("icon", "success");
         } else {
             if (login instanceof StudentDto) {
                 url = "redirect:/student/studentModify";
@@ -163,6 +169,8 @@ public class HomeController {
                 url = "redirect:/manager/managerModify";
             }
             ra.addFlashAttribute("msg", "회원 정보 수정에 실패하였습니다. 다시 시도해 주세요");
+            ra.addFlashAttribute("title", "회원 정보 수정 실패");
+            ra.addFlashAttribute("icon", "error");
         }
         return url;
     }
@@ -176,6 +184,8 @@ public class HomeController {
         if (result != 0) {
             url = "redirect:/";
             ra.addFlashAttribute("msg", "비밀번호가 수정되었습니다. 다시 로그인해주세요.");
+            ra.addFlashAttribute("title", "비밀번호 수정 성공");
+            ra.addFlashAttribute("icon", "success");
         } else {
             if (login instanceof StudentDto) {
                 url = "redirect:/student/studentModify";
@@ -185,6 +195,8 @@ public class HomeController {
                 url = "redirect:/manager/managerModify";
             }
             ra.addFlashAttribute("msg", "비밀번호를 정확히 입력해주세요.");
+            ra.addFlashAttribute("title", "비밀번호 수정 실패");
+            ra.addFlashAttribute("icon", "error");
         }
         return url;
     }
@@ -201,6 +213,8 @@ public class HomeController {
         if ((userId == null || userId.isEmpty()) || (email == null || email.isEmpty())) {
             response.put("result", 0);
             response.put("msg", "유효한 ID와 이메일을 입력하세요.");
+            response.put("title", "계정 정보 찾기 실패");
+            response.put("icon", "error");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -211,8 +225,12 @@ public class HomeController {
 
             if (result != 0) {
                 response.put("msg", "인증번호가 발송되었습니다.");
+                response.put("title", "인증번호 발송 성공");
+                response.put("icon", "success");
             } else {
                 response.put("msg", "ID 또는 이메일을 확인해주세요.");
+                response.put("title", "인증번호 발송 실패");
+                response.put("icon", "error");
             }
 
             return ResponseEntity.ok(response);
@@ -221,6 +239,8 @@ public class HomeController {
             log.error("findUser 오류: " + e.getMessage(), e);
             response.put("result", 0);
             response.put("msg", "서버 오류가 발생했습니다.");
+            response.put("title", "계정 정보 찾기 실패");
+            response.put("icon", "error");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -232,8 +252,12 @@ public class HomeController {
         int result = userService.changePassword(request.getParameter("user_id"), request.getParameter("newPassword"));
         if (result != 0) {
             ra.addFlashAttribute("msg", "비밀번호가 재설정 되었습니다.");
+            ra.addFlashAttribute("title", "비밀번호 재설정 성공");
+            ra.addFlashAttribute("icon", "success");
         } else {
             ra.addFlashAttribute("msg", "비밀번호 재설정에 실패하였습니다. 다시 시도해주세요.");
+            ra.addFlashAttribute("title", "비밀번호 재설정 실패");
+            ra.addFlashAttribute("icon", "error");
         }
         return url;
     }

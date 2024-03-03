@@ -430,7 +430,11 @@
                 return response.json();
             })
             .then(data => {
-                alert(data.msg);
+                Swal.fire({
+                    title: (data.title),
+                    text: (data.msg),
+                    icon: (data.icon)
+                });
                 if (data.result == 1) {
                     let button = currentOpenButton; // 현재 열려있는 모달을 열었던 버튼
                     openEnrollmentModal(button);

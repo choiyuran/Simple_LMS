@@ -197,7 +197,11 @@
             if (previousUrl) {
                 window.location.href = previousUrl;
             } else {
-                alert('잘못된 주소!');
+                Swal.fire({
+                    title: "주소 에러",
+                    text: "잘못된 주소!",
+                    icon: "error"
+                });
             }
         }
     </script>

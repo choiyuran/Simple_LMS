@@ -129,7 +129,28 @@ public class StudentService {
     }
 
     public List<GradeLectureDto> getLectureDtoList(GradeSearchConditionDto condition) {
-        return studentRepository.getLectureDtoList(condition);
+        List<GradeLectureDto> dtos =studentRepository.getLectureDtoList(condition);
+        for(GradeLectureDto dto : dtos) {
+            Double score = Double.parseDouble(dto.getScore());
+            if (score >= 4.3) {
+                dto.setScore("A+");
+            }else if(score >= 4.0){
+                dto.setScore("A");
+            }else if(score >= 3.5) {
+                dto.setScore("B+");
+            }else if(score >= 3.0) {
+                dto.setScore("B");
+            }else if(score >= 2.5){
+                dto.setScore("C+");
+            }else if(score >= 2.0) {
+                dto.setScore("C");
+            }else if(score >= 1.5) {
+                dto.setScore("D");
+            }else {
+                dto.setScore("F");
+            }
+        }
+        return dtos;
     }
 
 

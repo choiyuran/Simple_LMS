@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +45,6 @@ public class StudentController {
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
     private final UserService userService;
-    private final ProfessorService professorService;
-    private final ScholarShipService scholarShipService;
-    private final SituationRecordService situationRecordService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
@@ -56,6 +55,8 @@ public class StudentController {
         StudentDto student = (StudentDto) session.getAttribute("user");
         if (student == null) {
             mav.addObject("msg", "로그인하세요!");
+            mav.addObject("title", "인증 에러");
+            mav.addObject("icon", "error");
             mav.setViewName("index");
             return mav;
         }
@@ -124,8 +125,12 @@ public class StudentController {
             Enrollment enrollment = enrollmentService.save(stuIdx, idx);
             if (enrollment != null) {
                 ra.addFlashAttribute("msg", "수강신청되었습니다.");
+                ra.addFlashAttribute("title", "수강신청 성공");
+                ra.addFlashAttribute("icon", "success");
             } else {
                 ra.addFlashAttribute("msg", "수강신청에 실패했습니다.");
+                ra.addFlashAttribute("title", "수강신청 실패");
+                ra.addFlashAttribute("icon", "error");
             }
             if(page == null){
                 mav.setViewName("redirect:/student/enroll");
@@ -136,7 +141,7 @@ public class StudentController {
         } else {
             // 로그인이 안되어 있거나 학생이 아니야???
             // 학생이 아닌데 어케 수강신청함???? - 너 돌아가
-            mav.setViewName("redirect:/side");
+            mav.setViewName("redirect:/login");
         }
         long endTime = System.currentTimeMillis();
         log.info("수강신청 실행시간 : " + (endTime - startTime) / 1000 + "초");
@@ -144,11 +149,15 @@ public class StudentController {
     }
 
     // 수강 취소
-    @GetMapping("/cancelEnroll")
+    @PostMapping("/cancelEnroll")
     @ResponseBody
-    public String cancelEnroll(Long stuIdx, Long idx) {
-        enrollmentService.cancel(stuIdx, idx);
-        return "<script>alert('수강취소 되었습니다!!'); location.href = '/student/enroll';</script>";
+    public ResponseEntity<String> cancelEnroll(Long stuIdx, Long idx, Integer page) {
+        Integer result = enrollmentService.cancel(stuIdx, idx);
+        if (result == 1) {
+            return new ResponseEntity<>("수강 취소가 정상적으로 처리되었습니다.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("수강 취소 중 문제가 발생하였습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/modifyCheck")
@@ -197,6 +206,8 @@ public class StudentController {
                 mav.setViewName("student/evaluationList");
             } else {
                 mav.addObject("msg", "평가할 강의가 없습니다.");
+                mav.addObject("title", "수강 평가 알림");
+                mav.addObject("icon", "question");
             }
         }
         long endTime = System.currentTimeMillis();
@@ -214,11 +225,13 @@ public class StudentController {
     }
 
     @PostMapping("/evaluate/{idx}")                 // 강의 평가 등록
-    public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto) {
+    public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto,RedirectAttributes ra) {
         ModelAndView mav = new ModelAndView("student/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
         if (evaluation != null) {
-            mav.addObject("msg", "평가 등록 완료");
+            ra.addFlashAttribute("msg", "평가 등록 완료");
+            ra.addFlashAttribute("title", "강의 평가 등록");
+            ra.addFlashAttribute("icon", "success");
             mav.setViewName("redirect:/student/evaluationList");
         }
         return mav;
@@ -260,12 +273,18 @@ public class StudentController {
 
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "일반 휴학 신청 완료");
+                ra.addFlashAttribute("title", "휴학 신청 성공");
+                ra.addFlashAttribute("icon", "success");
             }else{
                 ra.addFlashAttribute("msg", "일반 휴학 신청 실패");
+                ra.addFlashAttribute("title", "휴학 신청 실패");
+                ra.addFlashAttribute("icon", "error");
             }
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            ra.addFlashAttribute("title", "휴학 신청 실패");
+            ra.addFlashAttribute("icon", "error");
             return "redirect:/login";
         }
     }
@@ -281,12 +300,19 @@ public class StudentController {
             Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "군 휴학 신청 완료");
+                ra.addFlashAttribute("title", "휴학 신청 성공");
+                ra.addFlashAttribute("icon", "success");
+                
             }else{
                 ra.addFlashAttribute("msg", "군 휴학 신청 실패");
+                ra.addFlashAttribute("title", "휴학 신청 실패");
+                ra.addFlashAttribute("icon", "error");
             }
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            ra.addFlashAttribute("title", "휴학 신청 실패");
+            ra.addFlashAttribute("icon", "error");
             return "redirect:/login";
         }
     }
@@ -301,12 +327,18 @@ public class StudentController {
             Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg","복학 신청 완료");
+                ra.addFlashAttribute("title", "복학 신청 성공");
+                ra.addFlashAttribute("icon", "success");
             }else{
                 ra.addFlashAttribute("msg", "복학 신청 실패");
+                ra.addFlashAttribute("title", "복학 신청 실패");
+                ra.addFlashAttribute("icon", "error");
             }
             return "redirect:/student/situation";
         }else{
             ra.addFlashAttribute("msg", "학생 로그인 상태가 아닙니다.");
+            ra.addFlashAttribute("title", "복학 신청 실패");
+            ra.addFlashAttribute("icon", "error");
             return "redirect:/login";
         }
     }
@@ -330,6 +362,8 @@ public class StudentController {
         }else{
             session.invalidate();
             mav.addObject("msg", "다시 학생로그인 하세요");
+            mav.addObject("title", "인증 에러");
+            mav.addObject("icon", "error");
             mav.setViewName("/home");
         }
         return mav;
@@ -354,6 +388,8 @@ public class StudentController {
         }else{
             session.invalidate();
             mav.addObject("msg", "다시 학생로그인 하세요");
+            mav.addObject("title", "인증 에러");
+            mav.addObject("icon", "error");
             mav.setViewName("/home");
         }
         return mav;
@@ -365,10 +401,14 @@ public class StudentController {
         Payments payments = paymentsService.save(dto);
 
         if(payments != null){
-            ra.addFlashAttribute("msg","등록금 납부 완료");
-            return "redirect:/student/home";
+            ra.addFlashAttribute("msg","등록금을 정상적으로 납부했습니다.");
+            ra.addFlashAttribute("title", "등록금 납부 확인");
+            ra.addFlashAttribute("icon", "success");
+            return "redirect:/student/paymentsList";
         }
-        ra.addFlashAttribute("msg", "등록금 납부 실패");
+        ra.addFlashAttribute("msg", "등록금을 납부하는데 실패했습니다.");
+        ra.addFlashAttribute("title", "등록금 납부 확인");
+        ra.addFlashAttribute("icon", "error");
         return "redirect:/student/paymentTuition";
     }
 
@@ -384,6 +424,8 @@ public class StudentController {
             mav.addObject("list", dtos);
         }else{
             ra.addFlashAttribute("msg", "학생 전용 페이지 입니다.");
+            ra.addFlashAttribute("title", "인증 에러");
+            ra.addFlashAttribute("icon", "error");
             mav.setViewName("redirect:/login");
         }
         return mav;
@@ -489,7 +531,11 @@ public class StudentController {
 
         if(row == 1){
             responseData.put("msg", "휴학 신청이 취소 되었습니다. ");
+            responseData.put("title", "휴학 신청 취소");
+            responseData.put("icon", "success");
         }else{
+            responseData.put("title", "휴학 신청 취소");
+            responseData.put("icon", "error");
             responseData.put("msg", "휴학 신청을 취소하지 못했습니다.");
         }
 

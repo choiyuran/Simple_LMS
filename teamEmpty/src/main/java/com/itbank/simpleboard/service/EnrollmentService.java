@@ -28,7 +28,7 @@ public class EnrollmentService {
     
     // 수강 취소
     @Transactional
-    public void cancel(Long studentIdx, Long lectureIdx) {
+    public Integer cancel(Long studentIdx, Long lectureIdx) {
         Student student = studentRepository.findById(studentIdx).get();
         Lecture lecture = lectureRepository.findById(lectureIdx).get();
         lecture.setCurrentCount(lecture.getCurrentCount()-1);
@@ -38,6 +38,9 @@ public class EnrollmentService {
         if (optionalEnrollment.isPresent()) {
             Enrollment enrollment = optionalEnrollment.get();
             enrollmentRepository.delete(enrollment);
+            return 1;
+        }else{
+            return 0;
         }
 
     }
@@ -45,66 +48,71 @@ public class EnrollmentService {
     @Transactional
     public Enrollment save(Long studentIdx, Long lectureIdx) {
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
-        Student student = studentRepository.findById(studentIdx).get();
-        Lecture lecture = lectureRepository.findById(lectureIdx).get();
+        Student student = studentRepository.findById(studentIdx).orElseThrow(() -> new IllegalArgumentException("Invalid studentIdx: " + studentIdx));
+        Lecture lecture = lectureRepository.findById(lectureIdx).orElseThrow(() -> new IllegalArgumentException("Invalid lectureIdx: " + lectureIdx));
+
+        Map<String, List<LocalTime[]>> schedule = getStudentSchedule(timeFormatter, student);
+
+        if(checkScheduleConflict(timeFormatter, lecture, schedule)){
+            // 실패일때 그냥 null 반환하면 controller가 처리해줌
+            return null;
+        }
+
+        if (lecture.getCurrentCount() >= lecture.getMaxCount()) {
+            // 실패일때 그냥 null 반환하면 controller가 처리해줌
+            return null;
+        }
+
+        lecture.setCurrentCount(lecture.getCurrentCount() + 1);
+        Enrollment enrollment = new Enrollment(student, lecture);
+
+        return enrollmentRepository.save(enrollment);
+    }
+
+    private Map<String, List<LocalTime[]>> getStudentSchedule(DateTimeFormatter timeFormatter, Student student) {
         List<Enrollment> enrollmentList = enrollmentRepository.findByStudent(student);
 
-        Map<String, List<LocalTime[]>> map = new HashMap<>();
+        Map<String, List<LocalTime[]>> schedule = new HashMap<>();
         for (Enrollment e : enrollmentList) {
-            String day = e.getLecture().getDay();
-            String[] days = day.split(",");
-            String start = e.getLecture().getStart();
-            String[] starts = start.split(",");
-            String end = e.getLecture().getEnd();
-            String[] ends = end.split(",");
+            String[] days = e.getLecture().getDay().split(",");
+            String[] starts = e.getLecture().getStart().split(",");
+            String[] ends = e.getLecture().getEnd().split(",");
 
             for (int i = 0; i < days.length; i++) {
-                LocalTime startTime = LocalTime.parse(starts[i], timeFormatter);
-                LocalTime endTime = LocalTime.parse(ends[i], timeFormatter);
-                LocalTime[] timeRange = {startTime, endTime};
+                LocalTime[] timeRange = parseTimeRange(timeFormatter, starts[i], ends[i]);
 
-                if (map.containsKey(days[i])) {
-                    map.get(days[i]).add(timeRange);
-                } else {
-                    List<LocalTime[]> times = new ArrayList<>();
-                    times.add(timeRange);
-                    map.put(days[i], times);
-                }
+                schedule.computeIfAbsent(days[i], k -> new ArrayList<>()).add(timeRange);
             }
         }
 
-        String[] addDays = lecture.getDay().split(",");
-        String[] addStarts = lecture.getStart().split(",");
-        String[] addEnds = lecture.getEnd().split(",");
+        return schedule;
+    }
 
-        for (int i = 0; i < addDays.length; i++) {
-            LocalTime addStartTime = LocalTime.parse(addStarts[i], timeFormatter);
-            LocalTime addEndTime = LocalTime.parse(addEnds[i], timeFormatter);
+    private LocalTime[] parseTimeRange(DateTimeFormatter timeFormatter, String start, String end) {
+        LocalTime startTime = LocalTime.parse(start, timeFormatter);
+        LocalTime endTime = LocalTime.parse(end, timeFormatter);
 
-            if (map.containsKey(addDays[i])) {
-                // 반복돌리면서 "ex) "
-                for (LocalTime[] timeRange : map.get(addDays[i])) {
-                    LocalTime startTime = timeRange[0];
-                    LocalTime endTime = timeRange[1];
+        return new LocalTime[]{startTime, endTime};
+    }
 
-                    if ((addStartTime.isAfter(startTime) && addStartTime.isBefore(endTime)) ||
-                            (addEndTime.isAfter(startTime) && addEndTime.isBefore(endTime)) ||
-                            (addStartTime.equals(startTime) && addEndTime.equals(endTime))) {
-                        return null;
+    private boolean checkScheduleConflict(DateTimeFormatter timeFormatter, Lecture lecture, Map<String, List<LocalTime[]>> schedule) {
+        String[] days = lecture.getDay().split(",");
+        String[] starts = lecture.getStart().split(",");
+        String[] ends = lecture.getEnd().split(",");
+
+        for (int i = 0; i < days.length; i++) {
+            LocalTime startTime = LocalTime.parse(starts[i], timeFormatter);
+            LocalTime endTime = LocalTime.parse(ends[i], timeFormatter);
+
+            if (schedule.containsKey(days[i])) {
+                for (LocalTime[] timeRange : schedule.get(days[i])) {
+                    if ((startTime.isBefore(timeRange[1]) && endTime.isAfter(timeRange[0]))) {
+                        return true;
                     }
                 }
             }
         }
-
-        Enrollment enrollment = null;
-        if (lecture.getCurrentCount() < lecture.getMaxCount()) {
-            lecture.setCurrentCount(lecture.getCurrentCount() + 1);
-            enrollment = new Enrollment(student, lecture);
-        } else {
-            return null;
-        }
-
-        return enrollmentRepository.save(enrollment);
+        return false;
     }
     
     public List<EnrollmentDto> findByStudentAll(Long studentIdx) {

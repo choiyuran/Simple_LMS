@@ -176,7 +176,11 @@ public class ProfessorController {
         responseData.put("result", save);
         if (save != 0) {
             responseData.put("msg", "성적이 입력되었습니다.");
+            responseData.put("icon", "success");
+            responseData.put("title", "성적입력");
         } else {
+            responseData.put("icon", "error");
+            responseData.put("title", "성적입력");
             responseData.put("msg", "성적 입력을 실패하였습니다.");
         }
         return responseData;

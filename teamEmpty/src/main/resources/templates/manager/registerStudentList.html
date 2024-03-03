@@ -237,7 +237,11 @@
         // 정보없음이 있는 학생이 있을 경우 알림창 표시
         if (studentsWithMissingInfo !== '') {
             // 마지막 쉼표 제거 후 알림창 표시
-            alert(studentsWithMissingInfo.slice(0, -2) + '번 학생의 학과 혹은 지도교수를 확인해주세요.');
+            Swal.fire({
+                title: "알림",
+                text: studentsWithMissingInfo.slice(0, -2) + '번 학생의 학과 혹은 지도교수를 확인해주세요.',
+                icon: "warning"
+            });
             return; // 저장하지 않고 종료
         }
 
@@ -257,11 +261,21 @@
                     console.log('서버 응답 메시지:', message);
                     if (message.includes('없습니다.')) {
                         // 실패한 경우
-                        alert(message); // 실패 메시지 표시
+                        // 실패 메시지 표시
+                        Swal.fire({
+                            title: "실패",
+                            text: message,
+                            icon: "error"
+                        });
                         // 추가적인 실패 처리 로직을 여기에 추가
                     } else {
                         // 성공한 경우
-                        alert(message); // 성공 메시지 표시
+                        // 성공 메시지 표시
+                        Swal.fire({
+                            title: "성공!",
+                            text: message,
+                            icon: "success"
+                        });
                         // 성공 시 추가 작업을 여기에 추가
                         window.location.href = '/manager/studentList';
                     }
@@ -269,7 +283,11 @@
                 .catch(error => {
                     console.error('학생 정보 업데이트 실패:', error);
                     // 실패 시 처리
-                    alert('학생 정보 업데이트에 실패했습니다.');
+                    Swal.fire({
+                        title: "학생 정보 업데이트 실패",
+                        text: message,
+                        icon: "error"
+                    });
                 });
         }
     }
