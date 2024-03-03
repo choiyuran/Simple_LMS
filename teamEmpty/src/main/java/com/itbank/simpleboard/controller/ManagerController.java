@@ -67,7 +67,7 @@ public class ManagerController {
     public String calendarAdd(Model model, HttpSession session) {
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
         Object user = session.getAttribute("user");
-        if (user instanceof ManagerLoginDto) {
+        if(user instanceof ManagerLoginDto) {
             ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarAddForm";
         }
@@ -89,7 +89,7 @@ public class ManagerController {
         model.addAttribute("academicCalendarDto", academicCalendarDto);
 
         Object user = session.getAttribute("user");
-        if (user instanceof ManagerLoginDto) {
+        if(user instanceof ManagerLoginDto) {
             ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarEditForm";
         }
@@ -99,14 +99,12 @@ public class ManagerController {
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
     public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar) {
         academicCalendarService.editCalendar(id, calendar);
-
         return "redirect:/manager/calendar";
     }
 
     @GetMapping("/calendarDelete/{idx}") // 학사일정 삭제
     public String calendarDelete(@PathVariable Long idx) {
         academicCalendarService.deleteCalendar(idx);
-
         return "redirect:/manager/calendar";
     }
 
@@ -234,7 +232,7 @@ public class ManagerController {
     @PostMapping("/registerMajor")              // 학과 등록
     public String registerMajor(MajorDto major) {
         Major addMajor = managerService.addMajor(major);
-        if (addMajor != null) {
+        if(addMajor != null) {
             return "redirect:/manager/majorList";
         }
         return "manager/registerMajor";
@@ -248,7 +246,7 @@ public class ManagerController {
         Page<Major> list = null;
 
         // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
-        if (collegeIdx != null && majorName != null && !majorName.isEmpty()) {
+        if (collegeIdx != null  && majorName != null && !majorName.isEmpty()) {
             list = managerService.searchByCollegeAndMajor(collegeIdx, majorName, pageable);
         }
         // 단과대학 이름만 검색어가 있는 경우
@@ -264,7 +262,7 @@ public class ManagerController {
             list = managerService.selectAllMajorPaging(pageable);
         }
 
-        if (list == null) {
+        if(list == null) {
             list = Page.empty();
         }
         mav.addObject("list", list);
@@ -291,7 +289,7 @@ public class ManagerController {
     public String majorUpdate(@PathVariable("idx") Long idx, MajorDto param) {
         param.setIdx(idx);
         Major major = managerService.majorUpdate(param);
-        if (major != null) {
+        if(major != null) {
             return "redirect:/manager/majorList";
         }
         return "redirect:/manager/majorView/" + idx;
@@ -314,7 +312,7 @@ public class ManagerController {
     @PostMapping("/lectureAdd")         // 강의 등록
     public String lectureAdd(RegisterlectureDto param) {
         Lecture lecture = managerService.addLecture(param);
-        if (lecture == null) {
+        if(lecture == null) {
             return "redirect:/manager/lectureAdd";
         }
         return "redirect:/professor/lectureList";
@@ -353,7 +351,7 @@ public class ManagerController {
     @PostMapping("/lectureUpdate/{idx}")                // 강의 수정
     public String lectureUpdate(@PathVariable("idx") Long idx, RegisterlectureDto param) {
         Lecture lecture = managerService.updateLecture(param);
-        if (lecture == null) {
+        if(lecture == null) {
             return "redirect:/manager/lectureUpdate" + idx;
         }
         return "redirect:/viewLecture/" + idx;
@@ -398,7 +396,7 @@ public class ManagerController {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String start = sdf.format(situation.getStart_date());
-        if (situation.getEnd_date() != null) {
+        if(situation.getEnd_date() != null) {
             String end = sdf.format(situation.getEnd_date());
             mav.addObject("end", end);
         }
@@ -411,7 +409,7 @@ public class ManagerController {
     public String studentSituationUpdate(@PathVariable("idx") Long idx,
                                          @PathVariable("student_idx") Long student_idx,
                                          SituationStuDto param, String start, String end) throws ParseException {
-        if (param.getStatus() == null) {
+        if(param.getStatus() == null) {
             return "redirect:/manager/studentSituationView/" + idx;
         }
         param.setIdx(idx);
@@ -422,8 +420,8 @@ public class ManagerController {
         param.setStart_date(sqldate);
 
         // status가 군휴학 또는 일반휴학일 때만 end_date를 설정
-        if (param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
-            if (end != null && !end.isEmpty()) {
+        if(param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
+            if(end != null && !end.isEmpty()) {
                 Date end_date = sdf.parse(end);
                 java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
                 param.setEnd_date(sqldate2);
@@ -469,7 +467,7 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("redirect:/manager/professorList");
         ProfessorListDto professor = managerService.selectOneProfessor(idx);
         List<Major> majorList = managerService.selectAllMajor();
-        if (professor != null) {
+        if(professor != null) {
             mav.addObject("professor", professor);
             mav.addObject("majorList", majorList);
             mav.setViewName("manager/professorView");
@@ -511,7 +509,7 @@ public class ManagerController {
     public String professorDel(@PathVariable("idx") Long idx,
                                @PathVariable("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate) {
         HashMap<String, Object> map = new HashMap<>();
-        if (leaveDate != null) {
+        if(leaveDate != null) {
             map.put("leaveDate", leaveDate);
             map.put(("idx"), idx);
         }
@@ -528,8 +526,8 @@ public class ManagerController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
+        map.put("todayRegistered",todayRegistered);
         log.info("todayRegistered : {}", todayRegistered);
-        map.put("todayRegistered", todayRegistered);
 
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
@@ -545,7 +543,7 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("redirect:/manager/studentList");
         StudentListDto student = managerService.selectOneStudent(idx);
         List<Major> majorList = managerService.selectAllMajor();
-        if (student != null) {
+        if(student != null) {
             mav.addObject("student", student);
             mav.addObject("majorList", majorList);
             mav.setViewName("manager/studentView");
@@ -564,7 +562,7 @@ public class ManagerController {
     public ModelAndView managerView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("redirect:/manager/managerList");
         ManagerDTO manager = managerService.selectOneManager(idx);
-        if (manager != null) {
+        if(manager != null) {
             mav.addObject("manager", manager);
             mav.setViewName("manager/managerView");
         }
@@ -606,7 +604,7 @@ public class ManagerController {
     public String managerDel(@PathVariable("idx") Long idx,
                              @PathVariable("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate) {
         Map<String, Object> map = new HashMap<>();
-        if (leaveDate != null) {
+        if(leaveDate != null) {
             map.put("idx", idx);
             map.put("leaveDate", leaveDate);
             Manager manager = managerService.managerDel(map);
@@ -626,7 +624,7 @@ public class ManagerController {
     public ModelAndView noticeView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("common/noticeList");
         Notice notice = noticeService.selectOne(idx);
-        if (notice != null) {
+        if(notice != null) {
             noticeService.increaseViewCount(idx);
             mav.addObject("notice", notice);
             mav.setViewName("common/noticeView");
@@ -653,7 +651,7 @@ public class ManagerController {
     public ModelAndView noticeUpdate(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("manager/noticeUpdate");
         Notice notice = noticeService.selectOne(idx);
-        if (notice != null) {
+        if(notice != null) {
             mav.addObject("notice", notice);
         }
         return mav;
@@ -717,7 +715,7 @@ public class ManagerController {
         if (condition.getUsername() == null || condition.getUsername().isEmpty()) {
             model.addAttribute("list", null);
             return "manager/checkTuitionPayments";
-        } else {
+        }else{
             List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(condition);
             model.addAttribute("list", tuitionPayments);
         }
@@ -745,7 +743,6 @@ public class ManagerController {
         return mav;
     }
 
-    // 교직원 입장에서 강의별 평가보기
     @GetMapping("/viewEvaluation/{idx}")            // 교직원 입장에서 강의별 평가보기
     public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
         Object login = session.getAttribute("user");

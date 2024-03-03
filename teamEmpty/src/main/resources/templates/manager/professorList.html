@@ -12,11 +12,12 @@
     <form id="searchForm" th:action="@{/manager/professorList}" class="form-inline">
         <div class="form-group">
             <label>학과명</label>
-            <select class="form-control" id="major_idx" name="major_idx">
-                <option value="" selected>학과를 선택하세요.</option>
+            <select class="form-control" name="major_idx">
+                <option value="">학과를 선택하세요.</option>
                 <option th:each="row : ${majorList}"
                         th:text="${row.name}"
-                        th:value="${row.idx}">
+                        th:value="${row.idx}"
+                        th:selected="${map.major_idx != null and map.major_idx == row.idx}">
                 </option>
             </select>
         </div>
@@ -24,17 +25,16 @@
         <!-- 이름으로 검색할 수 있는 검색창 추가 -->
         <div class="form-group ml-4 mr-2">
             <label>이름</label>
-            <input type="text" class="form-control" id="name" name="name" value="" placeholder="교수명을 입력하세요">
+            <input type="text" class="form-control" name="name" th:value="${map.name}" value="${map.name}" placeholder="교수명을 입력하세요">
         </div>
 
         <!-- 퇴사 여부 필터 -->
         <div class="form-check form-check-inline">
             <input type="hidden" id="leave" name="leave" value="false">
-            <input class="form-check-input" type="checkbox" id="leaveCheckbox"
-                   th:checked="${map['leave']}">
+            <input class="form-check-input" type="checkbox" id="leaveCheckbox" th:checked="${map['leave']}">
             <label class="form-check-label" for="leaveCheckbox">퇴사자 제외</label>
         </div>
-        <button class="btn btn-primary">검색</button>
+        <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
     </form>
 
     <br>
@@ -59,10 +59,8 @@
             <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <button class="btn btn-facebook"><a href="/manager/register">교수 등록</a></button>
-    <button class="btn btn-facebook"
-            th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">
-        <a href="/manager/professorList" onclick="resetSearchConditions()">목록으로</a></button>
+    <a href="/manager/register"><button class="btn btn-facebook">교수 등록</button></a>
+    <a href="/manager/professorList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${professorList.totalPages > 1}">
         <ul class="pagination">
@@ -106,54 +104,15 @@
 <footer th:insert="layout/managerHeader :: footer"></footer>
 
 <script>
-    var form = $('#searchForm');
+    function updateHiddenInput() {
+        var checkbox = document.getElementById('leaveCheckbox');
+        var hiddenInput = document.getElementById('leave');
 
-    // 페이지 로드 시 이전 검색어 및 체크박스 상태 설정
-    var previousMajorIdx = localStorage.getItem('previousMajorIdx');
-    var previousName = localStorage.getItem('previousName');
-    var previousLeave = localStorage.getItem('previousLeave');
-    if (previousMajorIdx && previousMajorIdx !== 'null') {
-        $('#major_idx').val(previousMajorIdx);
-    }
-    if (previousName && previousName !== 'null') {
-        $('#name').val(previousName);
-    }
-    if (previousLeave && previousLeave !== 'null') {
-        $('#leaveCheckbox').prop('checked', previousLeave === 'true');
-    }
-
-    form.submit(function (e) {
-        e.preventDefault();
-
-        // 검색어 저장
-        var majorIdx = $('#major_idx').val();
-        var name = $('#name').val();
-        localStorage.setItem('previousMajorIdx', majorIdx);
-        localStorage.setItem('previousName', name);
-
-        // 체크박스 상태 저장
-        var leaveValue = $('#leaveCheckbox').is(':checked') ? 'true' : 'false';
-        $('#leave').val(leaveValue); // leave input의 값을 변경
-
-        // 검색 실행
-        this.submit();
-    });
-
-    function resetSearchConditions() {
-        localStorage.removeItem('previousMajorIdx');
-        localStorage.removeItem('previousName');
-        localStorage.removeItem('previousLeave');
-    }
-
-    // 목록으로 버튼 클릭 시 검색어 초기화
-    if (form.data('fromList')) {
-        resetSearchConditions();
-    }
-
-    // 검색 결과 페이지에서 체크박스 상태 반영
-    var resultLeaveValue = localStorage.getItem('previousLeave');
-    if (resultLeaveValue && resultLeaveValue !== 'null') {
-        $('#leaveCheckbox').prop('checked', resultLeaveValue === 'true');
+        if (checkbox.checked) {
+            hiddenInput.value = 'true';
+        } else {
+            hiddenInput.value = 'false';
+        }
     }
 
     function isNumeric(str) {
