@@ -4,31 +4,31 @@
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 <!-- 내용 -->
-<div class="container mt-4">
+<div class="container mt-4 min-height">
     <h2>학사일정 등록</h2>
     <hr>
 
-    <div class="w-50 m-auto">
+    <div class="w-50 m-auto pt-5">
         <form method="post" th:object="${academicCalendarDto}">
             <!-- Thymeleaf의 th:field 속성을 사용하여 백엔드 모델과 폼 필드를 연결 -->
-            <div class="input-group input-group-sm mb-3" style="width: 70%;">
-                <span class="input-group-text" style="width: 20%;">시작 일자</span>
+            <div class="input-group input-group-sm mb-4" style="width: 80%;">
+                <span class="input-group-text" style="width: 90px;">시작 일자</span>
                 <input class="form-control" th:field="*{start_date}" type="date">
             </div>
 
-            <div class="input-group input-group-sm mb-3" style="width: 70%;">
-                <span class="input-group-text" style="width: 20%;">종료 일자</span>
+            <div class="input-group input-group-sm mb-4" style="width: 80%;">
+                <span class="input-group-text" style="width: 90px;">종료 일자</span>
                 <input class="form-control" th:field="*{end_date}" type="date">
             </div>
 
-            <div class="input-group input-group-sm mb-3" style="width: 70%;">
-                <span class="input-group-text" style="width: 20%;">일정 내용</span>
+            <div class="input-group input-group-sm mb-4" style="width: 80%;">
+                <span class="input-group-text" style="width: 90px;">일정 내용</span>
                 <input class="form-control" th:field="*{title}" type="text">
             </div>
 
-            <div class="w-50 m-auto">
-                <input class="btn btn-outline-secondary" type="submit" value="등록">
-                <a class="btn btn-outline-secondary" th:href="@{/calendarList}">취소</a>
+            <div class="flex" style="justify-content: flex-end;" >
+                <input class="btn btn-outline-secondary mr-3" type="submit" value="등록">
+                <a class="btn btn-outline-secondary" style="margin-right: 90px;" th:href="@{/calendarList}">취소</a>
             </div>
         </form>
     </div>
