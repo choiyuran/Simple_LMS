@@ -63,7 +63,7 @@
                             <!-- 공지 사항 -->
                             <div class="main-notice">
                                 <h3>
-                                    <a href="/">공지사항</a>
+                                    <a th:href="@{/noticeList}">공지사항</a>
                                 </h3>
                                 <div class="main-split"></div>
                                 <table>
@@ -74,7 +74,10 @@
                                     </tr>
                                     <tr th:each="notice : ${notice}">
                                         <td th:text="${notice.idx}"></td>
-                                        <td th:text="${notice.title}"></td>
+                                        <!--                                        <td th:text="${notice.title}"></td>-->
+                                        <td>
+                                            <a th:href="@{/noticeView/{id}(id=${notice.idx})}" th:text="${notice.title}">Notice title</a>
+                                        </td>
                                         <td th:text="${notice.wdate}"></td>
                                     </tr>
                                 </table>
@@ -82,7 +85,7 @@
 
                             <div class="main-calendar">
                                 <h3>
-                                    <a href="/">학사일정</a>
+                                    <a th:href="@{/calendar}">학사일정</a>
                                 </h3>
                                 <div class="main-split"></div>
                                 <table>
