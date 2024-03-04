@@ -17,7 +17,9 @@ select {
 select::-ms-expand {
     display: inline-block;
 }
-
+.min-height{
+    min-height: 500px;
+}
 .selectBox {
     margin: 30px 0;
 }
