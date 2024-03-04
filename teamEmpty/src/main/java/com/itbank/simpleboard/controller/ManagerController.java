@@ -5,15 +5,12 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -475,34 +468,17 @@ public class ManagerController {
         return mav;
     }
 
-//    @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정 - 입사일
-//    public String professorUpdateByManager(@PathVariable("idx") Long idx,
-//                                           @RequestParam("hireDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date hireDate,
-//                                           @RequestParam(value = "leaveDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate,
-//                                           @RequestParam(value = "professorImg", required = false) MultipartFile professorImg,
-//                                           RedirectAttributes ra) {
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("hireDate", hireDate);
-//        if (leaveDate != null) {
-//            map.put("leaveDate", leaveDate);
-//        }
-//        if (professorImg != null) {
-//            map.put("professorImg", professorImg);
-//        }
-//
-//        int result = managerService.updateProfessorByManager(idx, map);
-//        if (result != 0) {
-//            ra.addFlashAttribute("msg", "정보가 수정되었습니다.");
-//            return "redirect:/manager/professorList";
-//        }
-//        ra.addFlashAttribute("msg", "정보 수정에 실패하였습니다.");
-//        return "redirect:/manager/professorView/" + idx;
-//    }
     @PostMapping("/professorUpdateByManager/{idx}")         // 교직원이 교수 정보 수정
-    public String professorUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ProfessorListDto param) {
+    public String professorUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ProfessorListDto param, RedirectAttributes ra) {
         param.setIdx(idx);
-        Professor professor = managerService.updateProfessorByManager(param);
-        return "redirect:/manager/professorList";
+        int result = managerService.updateProfessorByManager(param);
+
+        if (result != 0) {
+            ra.addFlashAttribute("msg", "정보가 수정되었습니다.");
+            return "redirect:/manager/professorList";
+        }
+        ra.addFlashAttribute("msg", "정보 수정에 실패하였습니다.");
+        return "redirect:/manager/professorView/" + idx;
     }
 
     @GetMapping("/professorDel/{idx}/{leaveDate}")              // 교수 삭제
@@ -570,35 +546,19 @@ public class ManagerController {
     }
 
     @PostMapping("/managerUpdateByManager/{idx}")         // 교직원 정보 수정
-    public String managerUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ManagerDTO param) {
+    public String managerUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute ManagerDTO param, RedirectAttributes ra) {
         param.setIdx(idx);
-        Manager manager = managerService.updateManagerByManager(param);
-        return "redirect:/manager/managerList";
-    }
+        int result = managerService.updateManagerByManager(param);
 
-//    @PostMapping("/managerUpdateByManager/{idx}")         // 교직원 정보 수정(교직원이 하는 수정)
-//    public String managerUpdateByManager(@PathVariable("idx") Long idx,
-//                                         @RequestParam("hireDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date hireDate,
-//                                         @RequestParam(value = "leaveDate", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate,
-//                                         @RequestParam(value = "managerImg", required = false) MultipartFile managerImg,
-//                                         RedirectAttributes ra) {
-//        HashMap<String, Object> map = new HashMap<>();
-//        map.put("hireDate", hireDate);
-//        if (leaveDate != null) {
-//            map.put("leaveDate", leaveDate);
-//        }
-//        if (managerImg != null) {
-//            map.put("managerImg", managerImg);
-//        }
-//        int result = managerService.updateManagerByManager(idx, map);
-//        if (result != 0) {
-//            ra.addFlashAttribute("msg", "정보가 수정되었습니다.");
-//            return "redirect:/manager/managerList";
-//        } else {
-//            ra.addFlashAttribute("msg", "정보 수정에 실패하였습니다.");
-//            return "redirect:/manager/managerView/" + idx;
-//        }
-//    }
+        if (result != 0) {
+            ra.addFlashAttribute("msg", "정보가 수정되었습니다.");
+            return "redirect:/manager/managerList";
+        }
+        ra.addFlashAttribute("msg", "정보 수정에 실패하였습니다.");
+        return "redirect:/manager/managerView/" + idx;
+
+
+    }
 
     @GetMapping("/managerDel/{idx}/{leaveDate}")               // 교직원 퇴사 처리
     public String managerDel(@PathVariable("idx") Long idx,

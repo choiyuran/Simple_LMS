@@ -4,6 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 @Data
@@ -11,7 +12,7 @@ import java.util.Date;
 public class ManagerDTO {
     private Long idx;
     // 직원사진
-    private String managerImg;
+    private String img;
 
     // 아이디
     private String managerId;
@@ -33,10 +34,12 @@ public class ManagerDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date leaveDate;
 
+    private MultipartFile managerImg;
+
     @QueryProjection
     public ManagerDTO(Long idx, String managerImg, String managerId, String managerName, String managerPnum, String managerEmail, Date managerHireDate, String address, Date leaveDate) {
         this.idx = idx;
-        this.managerImg = managerImg;
+        this.img = managerImg;
         this.managerId = managerId;
         this.managerName = managerName;
         this.managerPnum = managerPnum;

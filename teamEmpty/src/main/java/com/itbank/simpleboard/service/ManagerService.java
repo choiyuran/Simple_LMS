@@ -1,10 +1,6 @@
 package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.component.HashComponent;
-import com.itbank.simpleboard.dto.MajorDto;
-import com.itbank.simpleboard.dto.ManagerDTO;
-import com.itbank.simpleboard.dto.RegisterlectureDto;
-import com.itbank.simpleboard.dto.UserFormDTO;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
@@ -28,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -60,7 +55,7 @@ public class ManagerService {
         for (Manager m : managerList) {
             ManagerDTO dto = new ManagerDTO();
             dto.setIdx(m.getIdx());
-            dto.setManagerImg(m.getManager_img());
+            dto.setImg(m.getManager_img());
             dto.setManagerId(m.getUser().getUser_id());
             dto.setManagerName(m.getUser().getUser_name());
             dto.setManagerPnum(m.getUser().getPnum());
@@ -467,27 +462,48 @@ public class ManagerService {
     }
 
     @Transactional
-    public Professor updateProfessorByManager(ProfessorListDto param) {
-        Professor professor = professorRepository.findById(param.getIdx()).get();
-        Major major = majorRepository.findById(param.getMajor_idx()).get();
-        User user = userRepository.findById(professor.getUser().getIdx()).get();
+    public int updateProfessorByManager(ProfessorListDto param) {
+        int result = 0;
+
         java.util.Date hire = param.getHireDate();
         Date hireDate = new Date(hire.getTime());
 
-        professor.setMajor(major);
-        professor.setHireDate(hireDate);
-        if(param.getLeaveDate() != null) {
-            java.util.Date leave = param.getLeaveDate();
-            Date leaveDate = new Date(leave.getTime());
-            professor.setLeave(YesOrNo.Y);
-            professor.setLeaveDate(leaveDate);
+        Optional<Professor> professorOptional = professorRepository.findById(param.getIdx());
+        Optional<Major> majorOptional = majorRepository.findById(param.getMajor_idx());
+        if (professorOptional.isPresent() && majorOptional.isPresent()) {
+            Professor professor = professorOptional.get();
+            Major major = majorOptional.get();
+            Optional<User> userOptional = userRepository.findById(professor.getUser().getIdx());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+
+                professor.setMajor(major);
+                professor.setHireDate(hireDate);
+                if (param.getLeaveDate() != null) {
+                    java.util.Date leave = param.getLeaveDate();
+                    Date leaveDate = new Date(leave.getTime());
+                    professor.setLeave(YesOrNo.Y);
+                    professor.setLeaveDate(leaveDate);
+                }
+                user.setUser_name(param.getName());
+                user.setUser_id(param.getEmail());
+                user.setEmail(param.getEmail());
+                user.setAddress(param.getAddress());
+                user.setPnum(param.getPnum());
+
+                if (!param.getProfessorImg().isEmpty()) {
+                    fileService.deleteFile(professor.getProfessor_img(), "idPhoto_professor");
+                    MultipartFile professorImg = param.getProfessorImg();
+                    String extension = professorImg.getOriginalFilename().substring(professorImg.getOriginalFilename().lastIndexOf('.'));
+                    String newFileName = user.getUser_name() + "_" + user.getSecurity().split("-")[0] + extension;
+                    String idPhotoProfessor = fileService.uploadIdPhoto(professorImg, "idPhoto_professor", newFileName);
+                    professor.setProfessor_img(idPhotoProfessor);
+                }
+                result = 1;
+            }
         }
-        user.setUser_name(param.getName());
-        user.setUser_id(param.getEmail());
-        user.setEmail(param.getEmail());
-        user.setAddress(param.getAddress());
-        user.setPnum(param.getPnum());
-        return professor;
+
+        return result;
     }
 
     @Transactional
@@ -532,24 +548,42 @@ public class ManagerService {
     }
 
     @Transactional
-    public Manager updateManagerByManager(ManagerDTO param) {
-        Manager manager = managerRepository.findById(param.getIdx()).get();
-        User user = userRepository.findById(manager.getUser().getIdx()).get();
+    public int updateManagerByManager(ManagerDTO param) {
+        int result = 0;
         java.util.Date hire = param.getManagerHireDate();
         Date hireDate = new Date(hire.getTime());
-        manager.setHireDate(hireDate);
-        if(param.getLeaveDate() != null) {
-            java.util.Date leave = param.getLeaveDate();
-            Date leaveDate = new Date(leave.getTime());
-            manager.setLeave(YesOrNo.Y);
-            manager.setLeaveDate(leaveDate);
+
+        Optional<Manager> managerOptional = managerRepository.findById(param.getIdx());
+        if (managerOptional.isPresent()) {
+            Manager manager = managerOptional.get();
+            Optional<User> userOptional = userRepository.findById(manager.getUser().getIdx());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                manager.setHireDate(hireDate);
+                if (param.getLeaveDate() != null) {
+                    java.util.Date leave = param.getLeaveDate();
+                    Date leaveDate = new Date(leave.getTime());
+                    manager.setLeave(YesOrNo.Y);
+                    manager.setLeaveDate(leaveDate);
+                }
+                user.setUser_name(param.getManagerName());
+                user.setEmail(param.getManagerEmail());
+                user.setUser_id(param.getManagerEmail());
+                user.setAddress(param.getAddress());
+                user.setPnum(param.getManagerPnum());
+
+                if (!param.getManagerImg().isEmpty()) {
+                    fileService.deleteFile(manager.getManager_img(), "idPhoto_manager");
+                    MultipartFile managerImg = param.getManagerImg();
+                    String extension = managerImg.getOriginalFilename().substring(managerImg.getOriginalFilename().lastIndexOf('.'));
+                    String newFileName = user.getUser_name() + "_" + user.getSecurity().split("-")[0] + extension;
+                    String idPhotoManager = fileService.uploadIdPhoto(managerImg, "idPhoto_manager", newFileName);
+                    manager.setManager_img(idPhotoManager);
+                }
+                result = 1;
+            }
         }
-        user.setUser_name(param.getManagerName());
-        user.setEmail(param.getManagerEmail());
-        user.setUser_id(param.getManagerEmail());
-        user.setAddress(param.getAddress());
-        user.setPnum(param.getManagerPnum());
-        return manager;
+        return result;
     }
 
     @Transactional
