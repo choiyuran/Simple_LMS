@@ -5,45 +5,45 @@
 
 
 <body>
-    <header th:insert="layout/managerHeader :: header"> </header>
-    <div class="container mt-3">
-        <h2>학생 등록</h2><p th:text="${message}"></p>
-        <hr>
+<header th:insert="layout/managerHeader :: header"></header>
+<div class="container mt-3">
+    <h2>학생 등록</h2>
+    <p th:text="${message}"></p>
+    <hr>
 
 
-        <table class="table table-bordered">
-            <tr>
-                <th>
-                    <div style="text-align: right;">
-                        <button type="button" id="downloadExcelForm"  class="formBtn">
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                <div style="text-align: right;">
+                    <button type="button" id="downloadExcelForm" class="formBtn">
+                        <label><img src="/img/디스켓.png" style="width: 1.5rem; height: 1.5rem;">
                             <a href="/manager/downloadStudentForm">학생 등록 폼 다운로드</a>
-                        </button>
+                        </label>
+                    </button>
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <form id="studentForm" method="post" action="/manager/addStudent" enctype="multipart/form-data"
+                      style="display: flex; align-items: center;">
+                    <input type="file" name="studentFile" accept=".xlsx, .xls" style="flex: 1;"/>
+                    <div style="text-align: right;">
+                        <button type="submit" class="formBtn">학생 등록 파일 업로드</button>
                     </div>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <form id="studentForm" method="post" action="/manager/addStudent" enctype="multipart/form-data"
-                          style="display: flex; align-items: center;" >
-                        <input type="file" name="studentFile" accept=".xlsx, .xls"  style="flex: 1;"/>
-                        <div style="text-align: right;">
-                            <button type="submit"  class="formBtn">학생 등록 파일 업로드</button>
-                        </div>
-                    </form>
-                </td>
-            </tr>
-        </table>
+                </form>
+            </td>
+        </tr>
+    </table>
 
 
-
-
-
-    </div>
-    <footer th:insert="layout/managerHeader :: footer"></footer>
+</div>
+<footer th:insert="layout/managerHeader :: footer"></footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    document.getElementById('studentForm').addEventListener('submit',function (event){
+    document.getElementById('studentForm').addEventListener('submit', function (event) {
         var fileInput = document.querySelector('input[name="studentFile"]');
         var file = fileInput.files[0];
         var allowedExtensions = ['.xlsx', '.xls'];
