@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 학사 일정 -->
-<head th:insert="layout/header :: head">
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
 <body>
-<header th:insert="layout/header :: header"></header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <!-- 제목 -->
 <main class="ly-main">
     <div class="ly-container">
@@ -41,7 +58,8 @@
                                 <div th:each="cal : ${calendarEntry.value}">
                                     <div class="work">
                                         <!-- 일자 -->
-                                        <p class="day" th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
+                                        <p class="day"
+                                           th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
                                         <!-- 내용 -->
                                         <p class="desc" th:text="${cal.title}"></p>
                                         <!-- 수정 / 삭제 버튼 -->
@@ -72,7 +90,8 @@
 
                 <div class="tip-box">
                     <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
-                    <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기 바랍니다.</p>
+                    <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기
+                        바랍니다.</p>
                 </div>
             </div>
         </div>
@@ -82,7 +101,7 @@
     const editBtn = document.getElementById('editBtn')
     const deleteBtn = document.getElementById('deleteBtn')
 
-    editBtn.onclick = function (){
+    editBtn.onclick = function () {
         // 컴펌버튼 출력
         var useConfirm = confirm('해당 학사일정을 수정 하시겠습니까 ?');
 
@@ -97,18 +116,28 @@
         }
     }
 
-    deleteBtn.onclick = function (){
+    deleteBtn.onclick = function () {
         var deleteConfirm = confirm('해당 학사 일정을 삭제 하시겠습니까 ?');
 
-        if(deleteConfirm){
+        if (deleteConfirm) {
             const deleteLink = document.querySelector("a[id='deleteBtn']");
 
-            if(deleteLink){
+            if (deleteLink) {
                 window.location.href = deleteLink.getAttribute('href')
             }
         }
     }
 </script>
-<footer th:insert="layout/header :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 </body>
 </html>
