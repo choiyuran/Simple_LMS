@@ -10,10 +10,14 @@
         <div class="container my-3">
             <div class="main-img text-center">
                 <img alt="오류" class="w-50" src="/img/centum_university.png">
+                <!-- main 이미지 div -->
+                <div>
+
+                </div>
                 <!-- 메인 페이지 div-->
                 <div class="d-flex justify-content-center align-items-start">
                     <div class="main-page">
-                        <div class="d-flex">
+                        <div class="d-flex" style="justify-content: space-evenly;">
                             <!-- 공지 사항 -->
                             <div class="main-notice">
                                 <h3>
@@ -21,36 +25,15 @@
                                 </h3>
                                 <div class="main-split"></div>
                                 <table>
-                                    <!-- DB에서 내용 꺼내와서 채워넣기 -->
                                     <tr>
                                         <th style="width: 10%">번호</th>
                                         <th>제목</th>
                                         <th>작성일</th>
                                     </tr>
-                                    <tr>
-                                        <td>1</td>
-                                        <td></td>
-                                        <td>2024-01-07</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td></td>
-                                        <td>2024-01-07</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td></td>
-                                        <td>2024-01-07</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td></td>
-                                        <td>2024-01-07</td>
-                                    </tr>
-                                    <tr>
-                                        <td>5</td>
-                                        <td></td>
-                                        <td>2024-01-07</td>
+                                    <tr th:each="notice : ${notice}">
+                                        <td th:text="${notice.idx}"></td>
+                                        <td th:text="${notice.title}"></td>
+                                        <td th:text="${notice.wdate}"></td>
                                     </tr>
                                 </table>
                             </div>

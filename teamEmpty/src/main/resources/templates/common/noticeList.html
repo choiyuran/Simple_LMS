@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
-</head>
-
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
 <body>
-<header th:insert="layout/header :: header"> </header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <div class="container mt-3">
     <h2>공지 사항</h2>
     <hr>
@@ -25,15 +43,19 @@
             <td th:text="${row.viewCount}"></td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">
                 <a th:href="@{'/manager/noticeUpdate/' + ${row.idx}}">
-                    <button class="btn btn-warning">수정</button></a>
+                    <button class="btn btn-warning">수정</button>
+                </a>
             </td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">
                 <a th:href="@{'/manager/noticeDel/' + ${row.idx}}">
-                    <button class="btn btn-danger" onclick="confirmDelete(event)">삭제</button></a>
+                    <button class="btn btn-danger" onclick="confirmDelete(event)">삭제</button>
+                </a>
             </td>
         </tr>
     </table>
-    <a href="/manager/noticeAdd"><button class="btn btn-primary" th:if="${session.user.user.role.toString() == '교직원'}">등록</button></a>
+    <a href="/manager/noticeAdd">
+        <button class="btn btn-primary" th:if="${session.user.user.role.toString() == '교직원'}">등록</button>
+    </a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${noticeList.totalPages > 1}">
         <ul class="pagination">
@@ -66,7 +88,8 @@
                 </a>
             </li>
 
-            <li class="page-item" th:if="${noticeList.hasNext && noticeList.totalPages - 1 >= ((noticeList.number / 5) + 1) * 5}">
+            <li class="page-item"
+                th:if="${noticeList.hasNext && noticeList.totalPages - 1 >= ((noticeList.number / 5) + 1) * 5}">
                 <a th:href="@{/manager/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
                     <button class="page-link" th:text="'>>'"></button>
                 </a>
@@ -75,7 +98,17 @@
     </div>
 
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 
 <script>
     function confirmDelete(event) {

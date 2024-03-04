@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/header :: head">
-</head>
-
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
 <body>
-<header th:insert="layout/header :: header"> </header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <div class="container mt-3">
     <h2>공지 상세보기</h2>
     <hr>
@@ -24,10 +42,22 @@
                 <td th:utext="${notice.content}" style="width: 150px; height: 200px;" th:colspan="2"></td>
             </tr>
         </table>
-        <a href="/manager/noticeList"><button class="btn btn-primary">목록으로</button></a>
+        <a href="/manager/noticeList">
+            <button class="btn btn-primary">목록으로</button>
+        </a>
     </div>
 </div>
-<footer th:insert="layout/header :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 
 </body>
 </html>

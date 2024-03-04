@@ -1,23 +1,59 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="layout/professorHeader :: head"></head>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <head th:insert="layout/professorHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <head th:insert="layout/managerHeader :: head"></head>
+    </th:block>
+</th:block>
 <body>
-<header th:insert="layout/professorHeader :: header"></header>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <header th:insert="layout/professorHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+</th:block>
 <main>
-    <div class="w-75 m-auto">
-        <form method="post">
-            <div>
-                <label style="width: 80px;">아이디 : </label>
-                <span th:text="${session.user.user.user_id}"></span>
-            </div>
-            <div>
-                <label style="width: 80px;">비밀번호 : </label>
-                <input type="password" placeholder="비밀번호를 입력하세요." name="password">
-            </div>
-            <input type="submit" value="확인">
-        </form>
+    <div class="w-50 m-auto">
+        <h2 class="w-50 m-auto">비밀번호 확인</h2>
+        <div class="w-100 m-auto ">
+            <form method="post" class="border border-dark my-4 mx-auto w-50 p-2" style="border-radius: 20px;">
+                <div class="my-2">
+                    <label style="width: 80px;">아이디 : </label>
+                    <span th:text="${session.user.user.user_id}"></span>
+                </div>
+                <div class="my-2">
+                    <label style="width: 80px;">비밀번호 : </label>
+                    <input type="password" class="form-control d-inline-block w-75" placeholder="비밀번호를 입력하세요."
+                           name="password">
+                </div>
+                <div class="w-100 d-flex justify-content-center">
+                    <input type="submit" value="확인" class="btn btn-success w-50 my-2 mx-auto">
+                </div>
+            </form>
+        </div>
     </div>
 </main>
-<footer th:insert="layout/professorHeader :: footer"></footer>
+<th:block th:switch="${session.user.user.role.toString()}">
+    <th:block th:case="'교수'">
+        <footer th:insert="layout/professorHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'교직원'">
+        <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+</th:block>
 </body>
 </html>

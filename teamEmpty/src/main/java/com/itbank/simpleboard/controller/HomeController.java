@@ -136,7 +136,6 @@ public class HomeController {
 
     @GetMapping("/modifyCheck")
     public String modifyCheck(HttpSession session) {
-        log.info("test");
         String url = "redirect:/login";
         Object login = session.getAttribute("user");
         if (login instanceof ProfessorDto) {
@@ -146,7 +145,6 @@ public class HomeController {
         } else if (login instanceof StudentDto) {
             url = "common/modifyCheck";
         }
-        System.out.println("url = " + url);
         return url;
     }
 
