@@ -4,17 +4,23 @@ import com.itbank.simpleboard.dto.ManagerLoginDto;
 import com.itbank.simpleboard.dto.ProfessorDto;
 import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.entity.Notice;
 import com.itbank.simpleboard.service.AcademicCalendarService;
 import com.itbank.simpleboard.service.NoticeService;
 import com.itbank.simpleboard.service.ProfessorService;
 import com.itbank.simpleboard.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
@@ -22,7 +28,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -299,5 +307,36 @@ public class HomeController {
     public String viewLecture(@PathVariable("idx") Long idx, Model model) {
         model.addAttribute("lecture", professorService.getLectureDto(idx));
         return "common/viewLecture";
+    }
+
+    @GetMapping("/calendar") // 전체 학사일정 조회
+    public String calendar(Model model) {
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+        // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
+        Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
+                .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
+        model.addAttribute("calendarByMonth", calendarByMonth);
+
+        return "common/calendar";
+    }
+
+    @GetMapping("/noticeList")          // 공지 사항 조회
+    public ModelAndView noticeList(@PageableDefault(size = 1) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Page<Notice> noticeList = noticeService.selectAll(pageable);
+        mav.addObject("noticeList", noticeList);
+        return mav;
+    }
+
+    @GetMapping("/noticeView/{idx}")      // 공지 사항 상세보기
+    public ModelAndView noticeView(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            noticeService.increaseViewCount(idx);
+            mav.addObject("notice", notice);
+            mav.setViewName("common/noticeView");
+        }
+        return mav;
     }
 }
