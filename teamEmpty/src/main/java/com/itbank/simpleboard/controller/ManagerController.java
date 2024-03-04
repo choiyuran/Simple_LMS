@@ -52,7 +52,6 @@ public class ManagerController {
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
         model.addAttribute("calendarByMonth", calendarByMonth);
-
         return "common/calendar";
     }
 

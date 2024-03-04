@@ -26,16 +26,14 @@
 </th:block>
 <!-- 제목 -->
 <main class="ly-main">
-    <div class="ly-container">
-        <div class="calendar-title">
+    <!-- 학사일정 부분 -->
+    <div class="container mt-3">
+        <div class="calendar-title mb-4">
             <p class="upper">
                 <span class="current-page">학사일정</span>
             </p>
         </div>
-    </div>
-    </div>
-    <!-- 학사일정 부분 -->
-    <div class="ly-section calendar">
+
         <div class="ly-container">
             <div class="ly-inner">
                 <div class="select-wrap">
@@ -44,11 +42,12 @@
                         <p>2024년도</p>
                     </div>
                 </div>
+
                 <!-- 달력 랩 -->
-                <div class="calendar-wrap">
+                <div class="calendar-wrap mb-3">
                     <!-- 각 월에 대한 루프-->
-                    <div th:each="calendarEntry : ${calendarByMonth}">
-                        <div class="work-wrap">
+                    <div class="w-100 d-flex justify-content-around" th:each="calendarEntry : ${calendarByMonth}">
+<!--                        <div class="work-wrap d-flex justify-content-center">-->
                             <div class="month">
                                 <!-- 월 표시 -->
                                 <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>
@@ -62,32 +61,23 @@
                                            th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
                                         <!-- 내용 -->
                                         <p class="desc" th:text="${cal.title}"></p>
-                                        <!-- 수정 / 삭제 버튼 -->
-                                        <div th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
-                                            <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}">
-                                                <button id=editBtn class="btn btn-warning">수정</button>
-                                            </a>
-                                            <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}">
-                                                <button id=deleteBtn class="btn btn-danger">삭제</button>
-                                            </a>
+
+                                        <div class="d-flex justify-content-around w-25" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
+                                            <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}"><button id="editBtn" class="btn btn-warning">수정</button></a>
+                                            <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}"><button id="deleteBtn" class="btn btn-danger">삭제</button></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
-                                <button class="btn btn-warning">수정</button>
-                                <button class="btn btn-danger">삭제</button>
-                            </div>
-                        </div>
+<!--                        </div>-->
                     </div>
-                    <a th:href="@{/manager/calendarAddForm}">
-                        <button class="btn btn-primary" style="text-align: center"
-                                th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">추가
-                        </button>
-                    </a>
                 </div>
 
+                <a th:href="@{/manager/calendarAddForm}">
+                    <button class="btn btn-primary" style="text-align: center"
+                            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">추가
+                    </button>
+                </a>
                 <div class="tip-box">
                     <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>
                     <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기
