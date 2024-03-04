@@ -134,6 +134,41 @@ public class HomeController {
         return authNumber;
     }
 
+    @GetMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session) {
+        log.info("test");
+        String url = "redirect:/login";
+        Object login = session.getAttribute("user");
+        if (login instanceof ProfessorDto) {
+            url = "common/modifyCheck";
+        } else if (login instanceof ManagerLoginDto) {
+            url = "common/modifyCheck";
+        } else if (login instanceof StudentDto) {
+            url = "common/modifyCheck";
+        }
+        System.out.println("url = " + url);
+        return url;
+    }
+
+    @PostMapping("/modifyCheck")
+    public String modifyCheck(HttpSession session, @RequestParam("password") String password, Model model) {
+        String url = "common/modifyCheck";
+        Object login = session.getAttribute("user");
+        int result = userService.checkPassword(login, password);
+        if (result != 0) {
+            if (login instanceof ProfessorDto) {
+                url = "redirect:/professor/professorModify";
+            } else if (login instanceof ManagerLoginDto) {
+                url = "redirect:/manager/managerModify";
+            } else if (login instanceof StudentDto) {
+                url = "redirect:/student/studentModify";
+            }
+        } else {
+            model.addAttribute("msg", "비밀번호를 확인해주세요.");
+        }
+        return url;
+    }
+
     @PostMapping("/userModify")
     public String userModify(HttpSession session, UserDTO param, RedirectAttributes ra) {  // 회원정보 수정
         String url = "";
