@@ -2,6 +2,7 @@ package com.itbank.simpleboard.controller;
 
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
+import com.itbank.simpleboard.entity.Notice;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class ProfessorController {
     private final GradeService gradeService;
     private final UserService userService;
     private final ManagerService managerService;
+    private final NoticeService noticeService;
 
     @RequestMapping("/lectureList") // 강의 목록
     public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
@@ -120,6 +122,8 @@ public class ProfessorController {
             // home 에서 calendar 불러오기
             List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
             model.addAttribute("calendar", calendar);
+            List<Notice> notice = noticeService.findNoticeAll();
+            model.addAttribute("notice", notice);
             return "professor/home";
         } else {
             return "redirect:/login";

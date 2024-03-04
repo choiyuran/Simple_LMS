@@ -71,23 +71,29 @@ li {
     margin-bottom: 10px;
 }
 
-.main-notice {
-    margin-right: 120px;
-}
-
 .main-notice tr td a {
     font-size:19px;
 }
 
-.main-calendar tr td:first-of-type {
+.main-calendar tr td:first-of-type,
+.main-notice tr td:first-of-type {
     padding-right: 28px;
     text-align: right;
 }
 
-.main-calendar tr td:last-of-type {
+.main-calendar tr td:last-of-type{
     font-size: 19px;
-    max-width: 400px;
-    min-width: 341px;
+    width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.main-notice tr td:last-of-type,
+.main-notice tr td:nth-child(2),
+.main-calendar tr td:nth-child(2){
+    font-size: 19px;
+    min-width: 160px;
+    max-width: 250px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -363,6 +363,8 @@ public class ManagerController {
             // home 에서 calendar 불러오기
             List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
             model.addAttribute("calendar", calendar);
+            List<Notice> notice = noticeService.findNoticeAll();
+            model.addAttribute("notice", notice);
             return "manager/home";
         } else {
             return "redirect:/login";
