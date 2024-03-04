@@ -218,7 +218,11 @@
                 email: $('#exampleInputEmail').val()
             },
             success: function (response) {
-                alert('인증번호가 전송되었습니다.');
+                Swal.fire({
+                    title: "인증번호 전송 확인",
+                    text: "이메일에 인증번호가 성공적으로 전송되었습니다.",
+                    icon: "success"
+                });
                 $('#verificationCode1').val(response);
                 document.getElementById('verificationField').style.display = 'flex';
 
@@ -240,6 +244,11 @@
                 document.getElementById('checkVerification').disabled = false;
             },
             error: function (request, status, error) {
+                Swal.fire({
+                    title: "이메일 전송 확인",
+                    text: "이메일에 전송하는데 실패했습니다.\n code:"+request.status,
+                    icon: "error"
+                });
                 console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
             }
         });
@@ -252,13 +261,21 @@
         var serverCode = $('#verificationCode1').val();
 
         if (userCode === serverCode) {
-            alert('인증이 완료되었습니다.');
+            Swal.fire({
+                title: "인증 확인",
+                text: "인증번호가 일치합니다.",
+                icon: "success"
+            });
             document.cookie = "authNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 만료시키기
             clearInterval(countdown); // 카운트다운 멈추기
             document.getElementById('timer').innerText = "인증이 완료되었습니다.";
             emailChecked = true
         } else {
-            alert('인증번호가 일치하지 않습니다.');
+            Swal.fire({
+                title: "인증 확인",
+                text: "인증번호가 일치하지 않습니다.",
+                icon: "error"
+            });
         }
     });
 
@@ -268,7 +285,11 @@
         if (emailChecked) {
             document.getElementById('modifyForm').submit();
         } else {
-            alert('이메일 인증 후 시도해주세요');
+            Swal.fire({
+                title: "이메일 인증 미확인",
+                text: "이메일 인증 후 시도해주세요.",
+                icon: "error"
+            });
         }
     })
 
