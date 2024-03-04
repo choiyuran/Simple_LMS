@@ -226,7 +226,11 @@
                 return response.json();
             })
             .then(data => {
-                alert(data.msg);
+                Swal.fire({
+                    title: (data.title),
+                    text: (data.msg),
+                    icon: (data.icon)
+                });
                 if (data.result !== 0) {
                     document.getElementById('checkAuthNumberDiv').style.display = 'block';
                     document.getElementById('checkAuthNumber').value = data.result;
@@ -259,7 +263,11 @@
             document.getElementById('findPasswordFirst').style.display = 'none';
             document.getElementById('findPasswordSecond').style.display = 'block';
         } else {
-            alert("인증번호가 일치하지 않습니다.");
+            Swal.fire({
+                title: "인증 실패",
+                text: "인증번호가 일치하지 않습니다.",
+                icon: "error"
+            });
         }
     });
 
