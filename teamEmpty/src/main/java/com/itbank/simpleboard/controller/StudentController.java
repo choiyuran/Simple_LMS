@@ -45,6 +45,7 @@ public class StudentController {
     private final MajorService majorService;
     private final ScholarShipAwardService scholarShipAwardService;
     private final UserService userService;
+    private final NoticeService noticeService;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
@@ -221,6 +222,8 @@ public class StudentController {
             // home 에서 calendar 불러오기
             List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
             model.addAttribute("calendar", calendar);
+            List<Notice> notice = noticeService.findNoticeAll();
+            model.addAttribute("notice", notice);
             return "student/home";
         } else {
             return "redirect:/login";

@@ -68,4 +68,7 @@ public class NoticeService {
     }
 
 
+    public List<Notice> findNoticeAll() {
+        return noticeRepository.findAll();
+    }
 }
