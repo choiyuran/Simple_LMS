@@ -45,6 +45,16 @@ public class ManagerController {
     private final MajorService majorService;
     private final LectureService lectureService;
 
+    @GetMapping("/calendar") // 전체 학사일정 조회
+    public String calendar(Model model) {
+        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+        // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
+        Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
+                .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
+        model.addAttribute("calendarByMonth", calendarByMonth);
+        return "common/calendar";
+    }
+
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session) {
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
@@ -560,6 +570,27 @@ public class ManagerController {
             Manager manager = managerService.managerDel(map);
         }
         return "redirect:/manager/managerList";
+    }
+
+    @GetMapping("/noticeList")          // 공지 사항 조회
+    public ModelAndView noticeList(@PageableDefault(size = 1) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Page<Notice> noticeList = noticeService.selectAll(pageable);
+        mav.addObject("noticeList", noticeList);
+        return mav;
+    }
+
+    @GetMapping("/noticeView/{idx}")      // 공지 사항 상세보기
+    public ModelAndView noticeView(@PathVariable("idx") Long idx) {
+        ModelAndView mav = new ModelAndView("common/noticeList");
+        Notice notice = noticeService.selectOne(idx);
+        if(notice != null) {
+            noticeService.increaseViewCount(idx);
+            mav.addObject("notice", notice);
+            mav.setViewName("common/noticeView");
+        }
+
+        return mav;
     }
 
     @GetMapping("/noticeAdd")            // 공지 사항 등록 페이지 이동
