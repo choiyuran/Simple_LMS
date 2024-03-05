@@ -1,25 +1,110 @@
 @charset "UTF-8";
 
+/*.calendar-title {*/
+/*    display: inline-block;*/
+/*    height: 30px;*/
+/*    font-family: 'Noto Serif KR', serif;*/
+/*    font-size: 50px;*/
+/*    font-weight: 600;*/
+/*    line-height: 30px;*/
+/*    letter-spacing: 0;*/
+/*    vertical-align: middle;*/
+/*    color: #3364c4;*/
+/*    margin-left: 30px;*/
+/*}*/
+
+/*.calendar-title .upper .current-page {*/
+/*    font-size: 24px;*/
+/*    font-weight: bold;*/
+/*}*/
+
+/*.ly-section.calendar {*/
+/*    padding: 20px;*/
+/*}*/
+
+/*.this-year {*/
+/*    margin-left: 30px;*/
+/*    border-bottom: 1px solid black;*/
+/*    font-size: 36px;*/
+/*    font-weight: bold;*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*.month {*/
+/*    font-size: 24px;*/
+/*    font-weight: bold;*/
+/*    color: #333;*/
+/*}*/
+
+/*.work {*/
+/*    padding: 10px;*/
+/*}*/
+
+/*.work:last-child {*/
+/*    border-bottom: none;*/
+/*}*/
+
+/*.tip-box {*/
+/*    background-color: #fff;*/
+/*    padding: 10px;*/
+/*    text-align: center;*/
+/*}*/
+
+/*.tip {*/
+/*    font-size: 14px;*/
+/*    color: #666;*/
+/*}*/
+/*.calendar .ly-container .ly-inner .calendar-wrap .work-wrap .month {*/
+/*    width: 240px;*/
+/*    padding: 50px 0px;*/
+/*    text-align: center;*/
+/*    display: inline-block;*/
+/*    vertical-align: top;*/
+/*}*/
+
+/*.work-wrap {*/
+/*    display: flex;*/
+/*    border-bottom: 1px solid #dadada;*/
+/*}*/
+
+/*.work-content {*/
+/*    width: 50%;*/
+/*    padding: 10px;  !* 추가된 부분 *!*/
+/*}*/
+
+/*.work {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    justify-content: space-around;*/
+/*    align-items: center;*/
+/*    padding: 10px;*/
+/*}*/
+/*.work div{*/
+/*    width: 50px;*/
+/*    display: flex;*/
+/*}*/
+
+/*.work div p {*/
+/*    padding: 5px;*/
+/*}*/
+
+/*.workbutton{*/
+/*    width: 100px;*/
+/*    height: 50px;*/
+/*}*/
+
 .calendar-title {
     display: inline-block;
     height: 30px;
     font-family: 'Noto Serif KR', serif;
-    font-size: 50px;
+    font-size: 30px;
     font-weight: 600;
     line-height: 30px;
     letter-spacing: 0;
     vertical-align: middle;
     color: #3364c4;
     margin-left: 30px;
-}
-
-.calendar-title .upper .current-page {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.ly-section.calendar {
-    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .this-year {
@@ -30,65 +115,37 @@
     margin-bottom: 20px;
 }
 
-.month {
-    font-size: 24px;
+.month{
+    font-size: 30px;
     font-weight: bold;
     color: #333;
-}
-
-.work {
-    padding: 10px;
-}
-
-.work:last-child {
-    border-bottom: none;
-}
-
-.tip-box {
-    background-color: #fff;
-    padding: 10px;
-    text-align: center;
-}
-
-.tip {
-    font-size: 14px;
-    color: #666;
-}
-.calendar .ly-container .ly-inner .calendar-wrap .work-wrap .month {
-    width: 240px;
-    padding: 50px 0px;
-    text-align: center;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.work-wrap {
-    display: flex;
-    border-bottom: 1px solid #dadada;
-}
-
-.work-content {
-    width: 50%;
-    padding: 10px;  /* 추가된 부분 */
-}
-
-.work {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
     align-items: center;
-    padding: 10px;
 }
-.work div{
-    width: 50px;
+
+.contents{
+    font-size: 25px;
     display: flex;
+    align-items: center;
+    text-align: left;
 }
 
-.work div p {
-    padding: 5px;
+.content1 {
+    margin-right: 40px;
+}
+.content2 {
+    margin-right: 70px;
 }
 
-.workbutton{
-    width: 100px;
-    height: 50px;
+.content-frame {
+    margin-left: 120px;
 }
+
+.buttons a {
+    padding-right:10px;
+    margin-top: 10px;
+}
+
+.calendarRow {
+    margin-bottom: 50px;
+}
+
