@@ -32,7 +32,7 @@
             <!-- Main Content -->
             <div id="content">
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand-sm bg-gradient-success topbar mb-4 static-top shadow navbar-dark  py-3">
+                <nav class="navbar navbar-expand-sm bg-gradient-success topbar static-top shadow navbar-dark  py-3">
                     <div class="container">
                         <div class="container">
                             <a class="navbar-brand" th:href="${'/manager/home'}">
@@ -150,9 +150,9 @@
     <script th:inline="javascript">
         /*<![CDATA[*/
 
-        let msg = [[${msg}]];
-        let alert_title = [[${title}]];
-        let alert_icon = [[${icon}]];
+        var msg = [[${msg}]];
+        var alert_title = [[${title}]];
+        var alert_icon = [[${icon}]];
 
         if (msg !== '' && msg != null && alert_title !== '로그인 성공') {
             Swal.fire({

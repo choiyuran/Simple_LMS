@@ -19,7 +19,7 @@
     </th:block>
 </th:block>
 <main>
-    <div class="w-50 m-auto">
+    <div class="w-50 m-auto mt-3">
         <div class="w-100 mx-auto mb-4">
             <form id="LectureSearchForm" method="POST">
                 <input type="hidden" id="page" name="page" value="0">
@@ -182,16 +182,7 @@
                     th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
             </button>
         </a>
-        <a href="/manager/lectureAdd">
-            <button class="btn btn-outline-secondary"
-                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
-            </button>
-        </a>
-        <a href="/manager/lectureEvaluation">
-            <button id="evaluation-button" class="btn btn-outline-secondary"
-                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
-            </button>
-        </a>
+
 
         <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
             <ul class="pagination">
@@ -239,7 +230,6 @@
         </div>
     </div>
 </main>
-<footer th:insert="layout/professorHeader :: footer"></footer>
 
 <script th:inline="javascript">
     function handleKeyDown(event) {
