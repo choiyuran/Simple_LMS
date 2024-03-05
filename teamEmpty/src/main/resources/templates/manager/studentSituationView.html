@@ -5,7 +5,7 @@
 
 <body>
 <header th:insert="layout/managerHeader :: header"> </header>
-<div class="container mt-3">
+<div class="container mt-3 min-height">
     <h2>학생 상태 수정</h2>
     <hr>
     <form th:action="@{'/manager/studentSituationUpdate/' + ${situation.idx} + '/' + ${situation.student_idx}}">
