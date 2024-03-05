@@ -25,10 +25,73 @@
     </th:block>
 </th:block>
 <!-- 제목 -->
-<main >
-    <div class="container min-height">
-        <div class="calendar-title">
+<!--<main class="ly-main">-->
+<!--    &lt;!&ndash; 학사일정 부분 &ndash;&gt;-->
+<!--    <div class="container min-height mt-3">-->
+<!--        <div class="calendar-title mb-4">-->
+<!--            <p class="upper">-->
+<!--                <span class="current-page">학사일정</span>-->
+<!--            </p>-->
+<!--        </div>-->
 
+<!--        <div class="ly-container">-->
+<!--            <div class="ly-inner">-->
+<!--                <div class="select-wrap">-->
+<!--                    &lt;!&ndash; 연도 선택 &ndash;&gt;-->
+<!--                    <div class="this-year">-->
+<!--                        <p>2024년도</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; 달력 랩 &ndash;&gt;-->
+<!--                <div class="calendar-wrap mb-3">-->
+<!--                    &lt;!&ndash; 각 월에 대한 루프&ndash;&gt;-->
+<!--                    <div class="w-100 d-flex justify-content-around" th:each="calendarEntry : ${calendarByMonth}">-->
+<!--&lt;!&ndash;                        <div class="work-wrap d-flex justify-content-center">&ndash;&gt;-->
+<!--                            <div class="month">-->
+<!--                                &lt;!&ndash; 월 표시 &ndash;&gt;-->
+<!--                                <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>-->
+<!--                            </div>-->
+
+<!--                            <div class="work-content">-->
+<!--                                <div th:each="cal : ${calendarEntry.value}">-->
+<!--                                    <div class="work">-->
+<!--                                        &lt;!&ndash; 일자 &ndash;&gt;-->
+<!--                                        <p class="day"-->
+<!--                                           th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>-->
+<!--                                        &lt;!&ndash; 내용 &ndash;&gt;-->
+<!--                                        <p class="desc" th:text="${cal.title}"></p>-->
+
+<!--                                        <div class="d-flex justify-content-around w-25" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">-->
+<!--                                            <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}"><button id="editBtn" class="btn btn-warning">수정</button></a>-->
+<!--                                            <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}"><button id="deleteBtn" class="btn btn-danger">삭제</button></a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <a th:href="@{/manager/calendarAddForm}">-->
+<!--                    <button class="btn btn-primary" style="text-align: center"-->
+<!--                            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">추가-->
+<!--                    </button>-->
+<!--                </a>-->
+<!--                <div class="tip-box">-->
+<!--                    <p class="tip">※ 학사일정은 학사운영의 사정에 따라 변경될 수 있습니다.</p>-->
+<!--                    <p class="tip">※ 공휴일 등으로 인한 수업결손은 학기 중 또는 보강기간에 반드시 보강하여야 하며, 법령상의 수업일수를 확보하기 위하여 종강일자를 반드시 지켜주시기-->
+<!--                        바랍니다.</p>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+
+<main class="ly-main">
+    <!-- 학사일정 부분 -->
+    <div class="container mt-3">
+        <div class="calendar-title mb-4">
             <p class="upper">
                 <span class="current-page">학사일정</span>
             </p>
@@ -37,7 +100,6 @@
         <div class="ly-container">
             <div class="ly-inner">
                 <div class="select-wrap">
-                    <!-- 연도 선택 -->
                     <div class="this-year">
                         <p>2024년도</p>
                     </div>
@@ -46,30 +108,33 @@
                 <!-- 달력 랩 -->
                 <div class="calendar-wrap mb-3">
                     <!-- 각 월에 대한 루프-->
-                    <div class="w-100 d-flex justify-content-around" th:each="calendarEntry : ${calendarByMonth}">
-<!--                        <div class="work-wrap d-flex justify-content-center">-->
-                            <div class="month">
-                                <!-- 월 표시 -->
-                                <span class="month-text" th:text="${calendarEntry.key} + '월'"></span>
-                            </div>
+                    <div class="w-100 d-flex calendarRow border-bottom border-secondary pb-4" th:each="calendarEntry : ${calendarByMonth}">
+                        <!--                        <div class="work-wrap d-flex justify-content-center">-->
+                        <div class="month w-25 text-center">
+                            <!-- 월 표시 -->
+                            <span class="" th:text="${calendarEntry.key} + '월'"></span>
+                        </div>
 
-                            <div class="work-content">
-                                <div th:each="cal : ${calendarEntry.value}">
-                                    <div class="work">
-                                        <!-- 일자 -->
-                                        <p class="day"
-                                           th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></p>
-                                        <!-- 내용 -->
-                                        <p class="desc" th:text="${cal.title}"></p>
+                        <div class="content-frame d-flex w-100" th:each="cal : ${calendarEntry.value}">
+                            <!--                            <div class="d-flex" >-->
+                            <!-- 일자 -->
+                            <div class="contents content1 w-25"
+                                 th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></div>
+                            <!-- 내용 -->
+                            <div class="contents content2 w-25" th:text="${cal.title}"></div>
 
-                                        <div class="d-flex justify-content-around w-25" th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
-                                            <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}"><button id="editBtn" class="btn btn-warning">수정</button></a>
-                                            <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}"><button id="deleteBtn" class="btn btn-danger">삭제</button></a>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="d-flex buttons w-25"
+                                 th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
+                                <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}">
+                                    <button id="editBtn" class="btn btn-warning">수정</button>
+                                </a>
+                                <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}">
+                                    <button id="deleteBtn" class="btn btn-danger">삭제</button>
+                                </a>
                             </div>
-<!--                        </div>-->
+                            <!--                            </div>-->
+                        </div>
+                        <!--                        </div>-->
                     </div>
                 </div>
 
@@ -87,6 +152,7 @@
         </div>
     </div>
 </main>
+
 <script>
     const editBtn = document.getElementById('editBtn')
     const deleteBtn = document.getElementById('deleteBtn')
