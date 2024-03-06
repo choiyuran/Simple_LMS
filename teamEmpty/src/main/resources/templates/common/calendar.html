@@ -108,31 +108,33 @@
                 <!-- 달력 랩 -->
                 <div class="calendar-wrap mb-3">
                     <!-- 각 월에 대한 루프-->
-                    <div class="w-100 d-flex calendarRow border-bottom border-secondary pb-4" th:each="calendarEntry : ${calendarByMonth}">
+                    <div class="w-100 d-flex calendarRow border-bottom border-secondary pb-4"
+                         th:each="calendarEntry : ${calendarByMonth}">
                         <!--                        <div class="work-wrap d-flex justify-content-center">-->
                         <div class="month w-25 text-center">
                             <!-- 월 표시 -->
                             <span class="" th:text="${calendarEntry.key} + '월'"></span>
                         </div>
+                        <div class="w-75 d-flex flex-wrap">
+                            <div class="content-frame d-flex w-100" th:each="cal : ${calendarEntry.value}">
+                                <!--                            <div class="d-flex" >-->
+                                <!-- 일자 -->
+                                <div class="contents content1 w-25"
+                                     th:text="${calendarEntry.key} +'/'+${#temporals.format(cal.start_date, 'dd')} +' ~ '+${#temporals.format(cal.end_date, 'MM')} +'/'+ ${#temporals.format(cal.end_date, 'dd')}"></div>
+                                <!-- 내용 -->
+                                <div class="contents content2 w-25" th:text="${cal.title}"></div>
 
-                        <div class="content-frame d-flex w-100" th:each="cal : ${calendarEntry.value}">
-                            <!--                            <div class="d-flex" >-->
-                            <!-- 일자 -->
-                            <div class="contents content1 w-25"
-                                 th:text="${#temporals.format(cal.start_date, 'dd')} +' ~ '+ ${#temporals.format(cal.end_date, 'dd')}"></div>
-                            <!-- 내용 -->
-                            <div class="contents content2 w-25" th:text="${cal.title}"></div>
-
-                            <div class="d-flex buttons w-25"
-                                 th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
-                                <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}">
-                                    <button id="editBtn" class="btn btn-warning">수정</button>
-                                </a>
-                                <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}">
-                                    <button id="deleteBtn" class="btn btn-danger">삭제</button>
-                                </a>
+                                <div class="d-flex buttons w-25"
+                                     th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">
+                                    <a th:href="@{/manager/calendarEditForm/{idx}(idx=${cal.idx})}">
+                                        <button id="editBtn" class="btn btn-warning">수정</button>
+                                    </a>
+                                    <a th:href="@{/manager/calendarDelete/{idx}(idx=${cal.idx})}">
+                                        <button id="deleteBtn" class="btn btn-danger">삭제</button>
+                                    </a>
+                                </div>
+                                <!--                            </div>-->
                             </div>
-                            <!--                            </div>-->
                         </div>
                         <!--                        </div>-->
                     </div>
