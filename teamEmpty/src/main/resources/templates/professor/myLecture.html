@@ -6,7 +6,7 @@
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
     <div class="container min-height">
-        <div class="w-100 mx-auto mb-4">
+        <div class="w-100 mx-auto mt-5">
             <form id="MyLectureSearchForm" method="POST">
                 <input type="hidden" id="page" name="page" value="0">
                 <div class="form-group w-100 flex justify-content-between">
@@ -379,9 +379,10 @@
         const tdElement = document.createElement('td');
         tdElement.colSpan = 3;
         tdElement.style.textAlign = "center";
+        tdElement.style.margin = '10px'
 
         const labelElement = document.createElement('label');
-        labelElement.textContent = '성적:';
+        labelElement.textContent = '성적 : ';
 
         const inputElement = document.createElement('input');
         inputElement.type = 'number';
@@ -394,6 +395,8 @@
         inputElement.value = score || '';
         inputElement.required = true;
         inputElement.style.width = '30%';
+        inputElement.classList.add('form-control')
+        inputElement.style.display = 'inline-block';
 
         const buttonElement = document.createElement('button');
         buttonElement.textContent = '저장';
