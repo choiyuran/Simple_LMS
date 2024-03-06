@@ -358,9 +358,9 @@
             tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
             if (hasGrade) {
                 let score = enrollment.score;
-                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" style="background-color: grey;">수정</button></td></tr>`;
+                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" class="btn-sm btn-dark">수정</button></td></tr>`;
             } else {
-                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" style="background-color: rgba(253,46,46,0.5);">성적 입력</button></td></tr>`;
+                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" class="btn-sm btn-danger">성적 입력</button></td></tr>`;
             }
         });
 
