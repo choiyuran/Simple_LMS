@@ -381,7 +381,7 @@
         const tdElement = document.createElement('td');
         tdElement.colSpan = 3;
         tdElement.style.textAlign = "center";
-        tdElement.style.margin = '10px'
+        tdElement.style.padding = '10px'
 
         const labelElement = document.createElement('label');
         labelElement.textContent = '성적 : ';
@@ -398,11 +398,13 @@
         inputElement.required = true;
         inputElement.style.width = '30%';
         inputElement.classList.add('form-control')
+        inputElement.classList.add('mx-2')
         inputElement.style.display = 'inline-block';
 
         const buttonElement = document.createElement('button');
         buttonElement.textContent = '저장';
         buttonElement.addEventListener('click', () => saveGrade(student_idx, lecture_idx, enrollment_idx));
+        buttonElement.classList.add('btn-sm')
 
         tdElement.appendChild(labelElement);
         tdElement.appendChild(inputElement);
