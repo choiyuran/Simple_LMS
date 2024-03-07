@@ -360,9 +360,9 @@
             tableHTML += `<td><div><span>${enrollment.student_name}</span></div></td>`;
             if (hasGrade) {
                 let score = enrollment.score;
-                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" class="btn-sm btn-dark my-2">수정</button></td></tr>`;
+                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}', '${score}')" class="btn-sm btn-warning border-0 my-2">수정</button></td></tr>`;
             } else {
-                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" class="btn-sm btn-danger my-2">성적 입력</button></td></tr>`;
+                tableHTML += `<td><button id="button_${student_idx}_${lecture_idx}" onclick="enterGrade('${student_idx}', '${lecture_idx}', '${enrollment_idx}')" class="btn-sm btn-facebook border-0 my-2">성적 입력</button></td></tr>`;
             }
         });
 
@@ -405,6 +405,7 @@
         buttonElement.textContent = '저장';
         buttonElement.addEventListener('click', () => saveGrade(student_idx, lecture_idx, enrollment_idx));
         buttonElement.classList.add('btn-sm')
+        buttonElement.style.border = '0.5px solid black'
 
         tdElement.appendChild(labelElement);
         tdElement.appendChild(inputElement);
