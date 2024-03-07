@@ -7,35 +7,48 @@
         display: none;
     }
     .evaluationRow {
-        padding: 10px 5px;
         border: 1px solid black;
+        padding: 5px;
         margin: 10px;
+        border-radius: 5px;
     }
     .evaluationContent {
-        padding: 5px;
         border: 1px solid grey;
-        margin: 10px 0;
+        padding: 5px;
+        width: 98%;
+        border-radius: 5px;
+    }
+    #pagination_p4, #pagination_p5 {
+        margin-top: 5px;
+    }
+    .even {
+        display: flex;
+        justify-content: space-evenly;
+    }
+    .evaluationRow > h5 {
+        width: 98%;
     }
 </style>
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 <main>
-    <div class="container my-2 min-height">
-        <h2 th:text="${lecture.getName()+' 강의 평가내역'}"></h2>
+    <div class="container mt-4 mb-2 min-height">
+        <h2 th:text="${lecture.name + ' 강의 평가내역'}"></h2>
+        <span th:text="'강의 학기 : ' + ${lecture.semester}"></span>
         <hr/>
-        <div class="evaluationRow mt-2">
-            <span>강의 내용이 강의 계획서대로 진행되었다.</span>
-            <div class="evaluationContent">
+        <div class="evaluationRow mt-4 w-75 mx-auto">
+            <h5 class="mx-auto mb-2 mt-1">강의 내용이 강의 계획서대로 진행되었다.</h5>
+            <div class="evaluationContent even mx-auto">
                 <span>A : <span th:text="${total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
                 <span>D : <span th:text="${total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
                 <span>E : <span th:text="${total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
             </div>
         </div>
-        <div class="evaluationRow">
-            <span>나는 이 수업을 전체적으로 우수하다고 평가한다.</span>
-            <div class="evaluationContent">
+        <div class="evaluationRow mt-4 w-75 mx-auto">
+            <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 전체적으로 우수하다고 평가한다.</h5>
+            <div class="evaluationContent even mx-auto">
                 <span>A : <span th:text="${total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
                 <span>B : <span th:text="${total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
@@ -43,9 +56,9 @@
                 <span>E : <span th:text="${total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
-        <div class="evaluationRow">
-            <span>나는 이 수업을 통하여 많은 지식을 얻었다.</span>
-            <div class="evaluationContent">
+        <div class="evaluationRow mt-4 w-75 mx-auto">
+            <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 통하여 많은 지식을 얻었다.</h5>
+            <div class="evaluationContent even mx-auto">
                 <span>A : <span th:text="${total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
                 <span>B : <span th:text="${total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
@@ -53,35 +66,35 @@
                 <span>E : <span th:text="${total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
-        <div class="evaluationRow">
-            <span>개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</span>
-            <div class="evaluationContent">
-                <th:block th:each="row : ${evaluation}">
-                    <div class="q4Content" th:text="${row.q4}"></div>
+        <div class="evaluationRow mt-4 w-75 mx-auto">
+            <h5 class="mx-auto mb-2 mt-1">개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</h5>
+            <div class="evaluationContent mx-auto">
+                <th:block th:each="row, status : ${evaluation}">
+                    <div class="q4Content my-1" th:text="${status.index + 1 + ' : ' + row.q4}"></div>
                 </th:block>
             </div>
-            <div id="pagination_p4">
-                <button class="btn btn-success" onclick="previousPage('q4')">이전</button>
+            <div id="pagination_p4" style="text-align: center;">
+                <button class="btn-sm border-0 btn-success my-2" onclick="previousPage('q4')">이전</button>
                 <span id="currentPage_q4">1 / 1</span>
-                <button class="btn btn-success" onclick="nextPage('q4')">다음</button>
+                <button class="btn-sm border-0 btn-success my-2" onclick="nextPage('q4')">다음</button>
             </div>
         </div>
 
-        <div class="evaluationRow">
-            <span>개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</span>
-            <div class="evaluationContent">
-                <th:block th:each="row : ${evaluation}">
-                    <div class="q5Content" th:text="${row.q5}"></div>
+        <div class="evaluationRow mt-4 w-75 mx-auto">
+            <h5 class="mx-auto mb-2 mt-1">개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</h5>
+            <div class="evaluationContent mx-auto">
+                <th:block th:each="row, status : ${evaluation}">
+                    <div class="q5Content my-1" th:text="${status.index + 1 + ' : ' + row.q5}"></div>
                 </th:block>
             </div>
-            <div id="pagination_p5">
-                <button class="btn btn-success" onclick="previousPage('q5')">이전</button>
+            <div id="pagination_p5" style="text-align: center;">
+                <button class="btn-sm border-0 btn-success my-2" onclick="previousPage('q5')">이전</button>
                 <span id="currentPage_q5">1 / 1</span>
-                <button class="btn btn-success" onclick="nextPage('q5')">다음</button>
+                <button class="btn-sm border-0 btn-success my-2" onclick="nextPage('q5')">다음</button>
             </div>
         </div>
 
-        <div class="my-2">
+        <div class="my-2 w-75 mx-auto">
             <button class="btn btn-primary" onclick="javascript:history.go(-1)">돌아가기</button>
         </div>
     </div>

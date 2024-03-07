@@ -95,12 +95,6 @@ public class ProfessorController {
         return lectureService.planUpload(plan, lectureIdx);
     }
 
-    @GetMapping("/viewLecture/{idx}")   // 강의 상세보기
-    public String viewLecture(@PathVariable("idx") Long idx, Model model) {
-        model.addAttribute("lecture", professorService.getLectureDto(idx));
-        return "professor/viewLecture";
-    }
-
     @GetMapping("/viewEvaluation/{idx}")    // 내 강의 평가 보기
     public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
         Object login = session.getAttribute("user");
@@ -108,6 +102,7 @@ public class ProfessorController {
             List<EvaluateFormDto> evaluation = professorService.getEvaluation(idx);
             if (evaluation != null) {
                 model.addAttribute("evaluation", evaluation);
+                model.addAttribute("lecture", lectureService.selectOne(idx));
                 model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
             }
             return "/professor/myLectureEvaluation";
