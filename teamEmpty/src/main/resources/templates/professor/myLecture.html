@@ -5,8 +5,10 @@
 <body>
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
-    <div class="container min-height">
-        <div class="w-100 mx-auto mt-5">
+    <div class="container mt-4 mb-5 min-height">
+        <h2>내 강의 목록</h2>
+        <hr>
+        <div class="w-100 mx-auto mb-5">
             <form id="MyLectureSearchForm" method="POST">
                 <input type="hidden" id="page" name="page" value="0">
                 <div class="form-group w-100 flex justify-content-between">
