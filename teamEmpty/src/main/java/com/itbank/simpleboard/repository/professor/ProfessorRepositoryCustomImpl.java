@@ -235,7 +235,7 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
                                         ), "score")))
                 .from(QEnrollment.enrollment)
                 .where(QEnrollment.enrollment.lecture.idx.eq(lectureIdx))
-                .orderBy(QEnrollment.enrollment.student.idx.asc())
+                .orderBy(QEnrollment.enrollment.student.idx.desc())
                 .fetch();
     }
 
