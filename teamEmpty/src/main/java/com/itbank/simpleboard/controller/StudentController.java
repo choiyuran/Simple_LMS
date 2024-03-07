@@ -173,15 +173,21 @@ public class StudentController {
     @GetMapping("/evaluationList")              // 강의 평가 목록
     public ModelAndView evaluationList(HttpSession session) {
         long startTime = System.currentTimeMillis();
-        ModelAndView mav = new ModelAndView("student/home");
+        ModelAndView mav = new ModelAndView("redirect:/student/home");
 
         StudentDto studentDto = (StudentDto) session.getAttribute("user");
         if (studentDto != null) {
             List<EnrollmentDto> enrollmentList = enrollmentService.findByStudentAll(studentDto.getIdx());
 
             if (!enrollmentList.isEmpty()) {
-                mav.addObject("list", enrollmentList);
-                mav.setViewName("student/evaluationList");
+                if(enrollmentList.get(0).getVisible().toString().equals("Y")){
+                    mav.addObject("list", enrollmentList);
+                    mav.setViewName("student/evaluationList");
+                }else{
+                    mav.addObject("msg", "평가기간이 아닙니다!");
+                    mav.addObject("title", "수강 평가 알림");
+                    mav.addObject("icon", "question");
+                }
             } else {
                 mav.addObject("msg", "평가할 강의가 없습니다.");
                 mav.addObject("title", "수강 평가 알림");
@@ -553,6 +559,8 @@ public class StudentController {
             condition.setProfessor_idx(student.getIdx());
             List<StudentLectureDto> totalLectureDtoList = studentService.getStudentLectureDtoList(condition);
             Page<StudentLectureDto> myLectureDtoList = studentService.getStudentLectureDtoListPage(condition,pageable);
+
+
             model.addAttribute("MyList", myLectureDtoList);
 
             // 각 LectureDto 객체에서 major를 추출하여 중복값 제거 후 Model에 추가

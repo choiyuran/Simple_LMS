@@ -88,74 +88,34 @@
             </tr>
             </thead>
             <tbody id="MyLectureTableBody">
-            <tr th:each="row : ${MyList.getContent()}">
-                <td>
-                    <a th:href="@{'/professor/viewLecture/' + ${row.idx}}">
-                        <span th:if="${row.abolition.equals('N')}" th:text="${row.name}"></span>
-                    </a>
-                    <span th:unless="${row.abolition.equals('N')}" th:text="${row.name} + '(폐강)'"></span>
-                </td>
-                <td>
-
-                    <span th:text="${row.major}"></span>
-
-                </td>
-                <td>
-
-                    <span th:text="${row.type}"></span>
-
-                </td>
-                <td>
-
-                    <span th:text="${row.credit}"></span>
-
-                </td>
-                <td>
-
-                    <span th:text="${row.day}"></span>
-
-                </td>
-                <td>
-                    <span th:text="${row.currentCount} + '/' + ${row.maxCount}"></span>
-                </td>
-                <td>
-                    <span th:text="${row.semester}" class="semesterValue"></span>
-                </td>
-                <td>
-                    <span th:text="${row.grade} + '학년'"></span>
-                </td>
-                <td>
-                    <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
-                </td>
-            </tr>
             <tr th:if="${MyList == null or MyList.getContent().isEmpty()}">
-                <td colspan="11">검색 결과가 없습니다.</td>
+                <td colspan="11" align="center"><div class="spinner-border"></div></td>
             </tr>
             </tbody>
         </table>
         <div class="d-flex justify-content-center">
             <ul class="pagination" style="cursor: pointer">
-                <li class="page-item" th:if="${MyList.number != 0}">
+                <li class="page-item" th:if="${MyList != null and MyList.number != 0}">
                     <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number - 1} + ')'"
                           th:text="'이전'"></span>
                 </li>
-                <li class="page-item disabled" th:if="${MyList.number == 0}">
+                <li class="page-item disabled" th:if="${MyList != null and MyList.number == 0}">
                     <span class="page-link">이전</span>
                 </li>
 
                 <th:block
-                        th:each="pageNumber : ${#numbers.sequence(MyList.number - 4 > 0 ? MyList.number - 4 : 0, MyList.number + 4 < MyList.totalPages ? MyList.number + 4 : MyList.totalPages - 1)}">
+                        th:if="${MyList != null}" th:each="pageNumber : ${#numbers.sequence(MyList.number - 4 > 0 ? MyList.number - 4 : 0, MyList.number + 4 < MyList.totalPages ? MyList.number + 4 : MyList.totalPages - 1)}">
                     <li class="page-item" th:classappend="${pageNumber == MyList.number ? 'active' : ''}">
                         <span class="page-link" th:attr="onclick='loadPage(' + ${pageNumber} + ')'"
                               th:text="${pageNumber + 1}"></span>
                     </li>
                 </th:block>
 
-                <li class="page-item" th:if="${MyList.number + 1 < MyList.totalPages}">
+                <li class="page-item" th:if="${MyList != null and MyList.number + 1 < MyList.totalPages}">
                     <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number + 1} + ')'"
                           th:text="'다음'"></span>
                 </li>
-                <li class="page-item disabled" th:if="${MyList.number + 1 >= MyList.totalPages}">
+                <li class="page-item disabled" th:if="${MyList != null and MyList.number + 1 >= MyList.totalPages}">
                     <span class="page-link">다음</span>
                 </li>
             </ul>
@@ -211,7 +171,7 @@
             // 기존 행 삭제 (기존 데이터를 모두 지우고 새로운 데이터를 추가할 것이므로)
             tbody.innerHTML = "";
 
-            if (!data || data.length === 0) {
+            if (!data.content || data.content.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="11" style="text-align: center;"><div><span>검색된 결과가 없습니다.</span></div></td></tr>';
             } else {
                 // 서버 응답을 이용하여 여러 행 추가

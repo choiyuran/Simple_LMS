@@ -43,7 +43,8 @@ public class EnrollmentRepositoryCustomImpl implements EnrollmentRepositoryCusto
                         e.getIdx(),
                         e.getLecture().getName(),
                         e.getLecture().getProfessor().getUser().getUser_name(),
-                        e.getLecture().getProfessor().getProfessor_idx()));
+                        e.getLecture().getProfessor().getProfessor_idx(),
+                        e.getLecture().getVisible()));
             }
         }
 
