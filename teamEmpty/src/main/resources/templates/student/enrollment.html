@@ -44,7 +44,7 @@
                 <td th:text="'학년'"></td>
                 <td th:text="'신청하기'"></td>
             </tr>
-            <tr th:each="item:${list}">
+            <tr th:each="item:${list.content}">
                 <form method="post" th:unless="${#lists.contains(lectureList, item)}">
                     <td th:text="${item.name}"></td>
                     <td th:text="${item.professor_name}"></td>

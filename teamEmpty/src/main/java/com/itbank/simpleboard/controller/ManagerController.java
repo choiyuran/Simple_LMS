@@ -45,16 +45,6 @@ public class ManagerController {
     private final MajorService majorService;
     private final LectureService lectureService;
 
-    @GetMapping("/calendar") // 전체 학사일정 조회
-    public String calendar(Model model) {
-        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
-        // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
-        Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
-                .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
-        model.addAttribute("calendarByMonth", calendarByMonth);
-        return "common/calendar";
-    }
-
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session) {
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
@@ -233,7 +223,7 @@ public class ManagerController {
     @GetMapping("/majorList")       // 학과 목록 (검색어가 있는 경우와 없는 경우 같이 사용)
     public ModelAndView majorList(@RequestParam(value = "collegeIdx", required = false) Long collegeIdx,
                                   @RequestParam(value = "majorName", required = false) String majorName,
-                                  @PageableDefault(size = 2, sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
+                                  @PageableDefault(size = 10, sort = "idx", direction = Sort.Direction.DESC) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/majorList");
         Page<Major> list = null;
 
@@ -498,7 +488,7 @@ public class ManagerController {
     public ModelAndView studentList(@RequestParam(value = "major_idx", required = false) Long major_idx,
                                     @RequestParam(value = "name", required = false) String name,
                                     @RequestParam(value = "todayRegistered", required = false) Boolean todayRegistered,
-                                    @PageableDefault(size = 5) Pageable pageable) {
+                                    @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentList");
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
@@ -573,7 +563,7 @@ public class ManagerController {
     }
 
     @GetMapping("/noticeList")          // 공지 사항 조회
-    public ModelAndView noticeList(@PageableDefault(size = 1) Pageable pageable) {
+    public ModelAndView noticeList(@PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/noticeList");
         Page<Notice> noticeList = noticeService.selectAll(pageable);
         mav.addObject("noticeList", noticeList);
@@ -661,7 +651,7 @@ public class ManagerController {
 
     @GetMapping("/lectureEvaluation")               // 강의 평가 여부 설정
     public ModelAndView lectureEvaluation(LectureSearchConditionDto condition,
-                                          @PageableDefault(size = 3) Pageable pageable) {
+                                          @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("professor/lectureList");
         String evaluationStatus = managerService.lectureEvaluation();
         Page<ProfessorLectureDto> LectureList = professorService.getLectureDtoList(condition, pageable);

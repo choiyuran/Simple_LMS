@@ -36,7 +36,7 @@ public class ProfessorController {
     private final NoticeService noticeService;
 
     @RequestMapping("/lectureList") // 강의 목록
-    public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
+    public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 10) Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
         Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
@@ -61,7 +61,7 @@ public class ProfessorController {
     }
 
     @RequestMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
-    public String myLecture(HttpSession session, Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 3) Pageable pageable) {
+    public String myLecture(HttpSession session, Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 10) Pageable pageable) {
         Object user = session.getAttribute("user");
         if (user instanceof ProfessorDto) {
             long startTime = System.currentTimeMillis();

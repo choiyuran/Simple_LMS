@@ -49,7 +49,7 @@ public class StudentController {
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
-                                   @PageableDefault(size = 2)Pageable pageable) {
+                                   @PageableDefault(size = 10)Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
         ModelAndView mav = new ModelAndView("student/home");
@@ -524,7 +524,7 @@ public class StudentController {
 
     @ResponseBody
     @PostMapping("/myLecture/data")
-    public ResponseEntity<Page<StudentLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition,@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseEntity<Page<StudentLectureDto>> myLectureListAjax(HttpSession session, @RequestBody LectureSearchConditionDto condition,@PageableDefault(size = 10, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
         long startTime = System.currentTimeMillis();
 
         condition.setStudent_idx(((StudentDto) session.getAttribute("user")).getIdx());
@@ -544,7 +544,7 @@ public class StudentController {
 
     // 검색조건에 따른 /myLecture
     @GetMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
-    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition,@PageableDefault(size = 2, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
+    public String myLecture(HttpSession session, Model model, LectureSearchConditionDto condition,@PageableDefault(size = 10, sort="idx", direction = Sort.Direction.DESC) Pageable pageable) {
         Object user = session.getAttribute("user");
         if (user instanceof StudentDto) {
             long startTime = System.currentTimeMillis();
