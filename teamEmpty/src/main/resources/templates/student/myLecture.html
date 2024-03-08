@@ -6,7 +6,7 @@
 <header th:insert="layout/studentHeader :: header"></header>
 <main>
     <input type="hidden" th:value="${param.page}" th:default="0">
-    <div class="container mt-3">
+    <div class="container mt-5">
         <h2 th:text="${session.user.user.user_name}+'님의 수강 목록'"></h2>
         <div class="w-100 d-flex">
             <form id="MyLectureSearchForm" method="POST" class="form-group w-100 d-inline-block">
@@ -88,36 +88,36 @@
             </tr>
             </thead>
             <tbody id="MyLectureTableBody">
-            <tr th:if="${MyList == null or MyList.getContent().isEmpty()}">
+            <tr>
                 <td colspan="11" align="center"><div class="spinner-border"></div></td>
             </tr>
             </tbody>
         </table>
         <div class="d-flex justify-content-center">
             <ul class="pagination" style="cursor: pointer">
-                <li class="page-item" th:if="${MyList != null and MyList.number != 0}">
-                    <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number - 1} + ')'"
-                          th:text="'이전'"></span>
-                </li>
-                <li class="page-item disabled" th:if="${MyList != null and MyList.number == 0}">
-                    <span class="page-link">이전</span>
-                </li>
+<!--                <li class="page-item" th:if="${MyList != null and MyList.number != 0}">-->
+<!--                    <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number - 1} + ')'"-->
+<!--                          th:text="'이전'"></span>-->
+<!--                </li>-->
+<!--                <li class="page-item disabled" th:if="${MyList != null and MyList.number == 0}">-->
+<!--                    <span class="page-link">이전</span>-->
+<!--                </li>-->
 
-                <th:block
-                        th:if="${MyList != null}" th:each="pageNumber : ${#numbers.sequence(MyList.number - 4 > 0 ? MyList.number - 4 : 0, MyList.number + 4 < MyList.totalPages ? MyList.number + 4 : MyList.totalPages - 1)}">
-                    <li class="page-item" th:classappend="${pageNumber == MyList.number ? 'active' : ''}">
-                        <span class="page-link" th:attr="onclick='loadPage(' + ${pageNumber} + ')'"
-                              th:text="${pageNumber + 1}"></span>
-                    </li>
-                </th:block>
+<!--                <th:block-->
+<!--                        th:if="${MyList != null}" th:each="pageNumber : ${#numbers.sequence(MyList.number - 4 > 0 ? MyList.number - 4 : 0, MyList.number + 4 < MyList.totalPages ? MyList.number + 4 : MyList.totalPages - 1)}">-->
+<!--                    <li class="page-item" th:classappend="${pageNumber == MyList.number ? 'active' : ''}">-->
+<!--                        <span class="page-link" th:attr="onclick='loadPage(' + ${pageNumber} + ')'"-->
+<!--                              th:text="${pageNumber + 1}"></span>-->
+<!--                    </li>-->
+<!--                </th:block>-->
 
-                <li class="page-item" th:if="${MyList != null and MyList.number + 1 < MyList.totalPages}">
-                    <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number + 1} + ')'"
-                          th:text="'다음'"></span>
-                </li>
-                <li class="page-item disabled" th:if="${MyList != null and MyList.number + 1 >= MyList.totalPages}">
-                    <span class="page-link">다음</span>
-                </li>
+<!--                <li class="page-item" th:if="${MyList != null and MyList.number + 1 < MyList.totalPages}">-->
+<!--                    <span class="page-link" th:attr="onclick='loadPage(' + ${MyList.number + 1} + ')'"-->
+<!--                          th:text="'다음'"></span>-->
+<!--                </li>-->
+<!--                <li class="page-item disabled" th:if="${MyList != null and MyList.number + 1 >= MyList.totalPages}">-->
+<!--                    <span class="page-link">다음</span>-->
+<!--                </li>-->
             </ul>
         </div>
     </div>

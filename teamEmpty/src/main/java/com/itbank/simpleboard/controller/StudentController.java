@@ -23,10 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -61,7 +58,7 @@ public class StudentController {
             mav.setViewName("index");
             return mav;
         }
-        Page<LectureDto> list;
+        Page<LectureDto> list = null;
         // 키워드 없을 때 전체검색
         if (searchType == null || keyword == null) {
             list = lectureService.selectAll(pageable);
@@ -70,6 +67,7 @@ public class StudentController {
             list = lectureService.selectAll(searchType, keyword, pageable);
             mav.addObject("list", list);
         }
+
 
         mav.addObject("searchType", searchType);
         mav.addObject("keyword", keyword);
@@ -106,12 +104,20 @@ public class StudentController {
             mav.addObject("stuIdx", student.getIdx());
         }
 
+
+
+        if(list != null){
+            ArrayList<LectureDto> arrayList = new ArrayList<>(list.getContent());
+            mav.addObject("arraylist", arrayList);
+        }
+
         log.info("모델테스트 : "+mav.getModel().toString());
 
         long endTime = System.currentTimeMillis();
         log.info("총 실행시간 : " + (endTime - startTime));
         return mav;
     }
+
 
     // 수강 신청프로세스
     @PostMapping("/enroll")
@@ -171,7 +177,7 @@ public class StudentController {
     }
 
     @GetMapping("/evaluationList")              // 강의 평가 목록
-    public ModelAndView evaluationList(HttpSession session) {
+    public ModelAndView evaluationList(HttpSession session, RedirectAttributes ra) {
         long startTime = System.currentTimeMillis();
         ModelAndView mav = new ModelAndView("redirect:/student/home");
 
@@ -183,15 +189,18 @@ public class StudentController {
                 if(enrollmentList.get(0).getVisible().toString().equals("Y")){
                     mav.addObject("list", enrollmentList);
                     mav.setViewName("student/evaluationList");
+                    ra.addFlashAttribute("msg", "강의 평가 완료!");
+                    ra.addFlashAttribute("title", "수강 평가 알림");
+                    ra.addFlashAttribute("icon", "success");
                 }else{
-                    mav.addObject("msg", "평가기간이 아닙니다!");
-                    mav.addObject("title", "수강 평가 알림");
-                    mav.addObject("icon", "question");
+                    ra.addFlashAttribute("msg", "강의평가 기간이 아닙니다!");
+                    ra.addFlashAttribute("title", "수강 평가 알림");
+                    ra.addFlashAttribute("icon", "question");
                 }
             } else {
-                mav.addObject("msg", "평가할 강의가 없습니다.");
-                mav.addObject("title", "수강 평가 알림");
-                mav.addObject("icon", "question");
+                ra.addFlashAttribute("msg", "평가할 강의가 없습니다.");
+                ra.addFlashAttribute("title", "수강 평가 알림");
+                ra.addFlashAttribute("icon", "question");
             }
         }
         long endTime = System.currentTimeMillis();
@@ -210,7 +219,7 @@ public class StudentController {
 
     @PostMapping("/evaluate/{idx}")                 // 강의 평가 등록
     public ModelAndView evaludatePro(@PathVariable("idx") Long idx, EvaluateFormDto evaluateFormDto,RedirectAttributes ra) {
-        ModelAndView mav = new ModelAndView("student/home");
+        ModelAndView mav = new ModelAndView("redirect:/student/home");
         Evaluation evaluation = evaluationService.save(evaluateFormDto);
         if (evaluation != null) {
             ra.addFlashAttribute("msg", "평가 등록 완료");

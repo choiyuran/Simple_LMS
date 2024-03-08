@@ -6,6 +6,8 @@ import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Data
 @NoArgsConstructor
 public class LectureDto {
@@ -52,5 +54,18 @@ public class LectureDto {
         this.visible = YesOrNo.N.toString();
         this.abolition = YesOrNo.N.toString();
         this.professor_name = professor_name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LectureDto)) return false;
+        LectureDto that = (LectureDto) o;
+        return Objects.equals(getIdx(), that.getIdx()) && Objects.equals(getName(), that.getName()) && Objects.equals(getIntro(), that.getIntro()) && Objects.equals(getCredit(), that.getCredit()) && Objects.equals(getDay(), that.getDay()) && Objects.equals(getStart(), that.getStart()) && Objects.equals(getEnd(), that.getEnd()) && Objects.equals(getType(), that.getType()) && Objects.equals(getMaxCount(), that.getMaxCount()) && Objects.equals(getCurrentCount(), that.getCurrentCount()) && Objects.equals(getSemester(), that.getSemester()) && Objects.equals(getGrade(), that.getGrade()) && Objects.equals(getProfessor(), that.getProfessor()) && Objects.equals(getPlan(), that.getPlan()) && Objects.equals(getProfessor_name(), that.getProfessor_name());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdx(), getName(), getIntro(), getCredit(), getDay(), getStart(), getEnd(), getType(), getMaxCount(), getCurrentCount(), getSemester(), getGrade(), getProfessor(), getPlan(), getProfessor_name());
     }
 }

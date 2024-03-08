@@ -152,7 +152,7 @@ table tr {
     border: 1px solid #cccccc;
     border-right: none;
     border-left: none;
-    border-top: 1px solid black;
+    border-top: 1px solid #8587a0;
 }
 
 .calendarRow {
@@ -184,7 +184,7 @@ table tr {
 }
 
 .content-frame {
-    margin: 15px;
+    margin: 10px;
 }
 
 .contents {

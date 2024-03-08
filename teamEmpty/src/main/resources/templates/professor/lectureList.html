@@ -84,9 +84,9 @@
                             <input id="viewAbolition" name="isAbolition" type="checkbox" value="isAbolition"
                                    class="form-check-inline">
                         </label>
-                        <input type="submit" value="검색" class="btn btn-outline-secondary mx-1">
+                        <input type="submit" value="검색" class="btn btn-primary mx-1">
                         <input type="submit" value="초기화" onclick="resetAndSearch(event)"
-                               class="btn btn-outline-secondary mx-1">
+                               class="btn btn-google mx-1">
                     </div>
                 </div>
             </form>
@@ -173,7 +173,7 @@
         </table>
 
         <a href="/manager/lectureAdd">
-            <button class="btn btn-outline-secondary"
+            <button class="btn btn-facebook"
                     th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
             </button>
         </a>

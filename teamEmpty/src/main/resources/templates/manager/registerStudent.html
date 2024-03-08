@@ -16,9 +16,9 @@
         <tr>
             <th>
                 <div style="text-align: right;">
-                    <button type="button" id="downloadExcelForm" class="formBtn">
+                    <button type="button" id="downloadExcelForm" class="formBtn btn btn-info text-white font-weight-bold">
                         <label style="margin-bottom: 0;">
-                            <a href="/manager/downloadStudentForm">학생 등록 폼 다운로드</a>
+                            <a href="/manager/downloadStudentForm" class="text-white">학생 등록 폼 다운로드</a>
                             <img src="/img/디스켓.png" style="width: 1.3rem; height: 1.3rem; vertical-align: text-bottom">
                         </label>
                     </button>
@@ -29,9 +29,9 @@
             <td>
                 <form id="studentForm" method="post" action="/manager/addStudent" enctype="multipart/form-data"
                       style="display: flex; align-items: center;">
-                    <input type="file" name="studentFile" accept=".xlsx, .xls" style="flex: 1;"/>
+                    <input type="file" class="form-control" name="studentFile" accept=".xlsx, .xls" style="flex: 1;"/>
                     <div style="text-align: right;">
-                        <button type="submit" class="formBtn">학생 등록 파일 업로드</button>
+                        <button type="submit" class="formBtn btn btn-facebook">학생 등록 파일 업로드</button>
                     </div>
                 </form>
             </td>
