@@ -321,7 +321,7 @@ public class HomeController {
     }
 
     @GetMapping("/noticeList")          // 공지 사항 조회
-    public ModelAndView noticeList(@PageableDefault(size = 1) Pageable pageable) {
+    public ModelAndView noticeList(@PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/noticeList");
         Page<Notice> noticeList = noticeService.selectAll(pageable);
         mav.addObject("noticeList", noticeList);
