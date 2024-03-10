@@ -59,7 +59,7 @@ public class ManagerController {
     @PostMapping("/calendarAddForm") // 학사일정 추가 Postmapping
     public String calendar(@ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar) {
         AcademicCalendar addCalendar = academicCalendarService.addCalendar(calendar);
-        return "redirect:/manager/calendar";
+        return "redirect:/calendar";
     }
 
     @GetMapping("/calendarEditForm/{id}") // 학사일정 수정 폼
@@ -81,13 +81,13 @@ public class ManagerController {
     @PostMapping("/calendarEditForm/{id}") // 학사일정 수정 Postmapping
     public String calendarEdit(@PathVariable Long id, @ModelAttribute("academicCalendarDto") AcademicCalendarDto calendar) {
         academicCalendarService.editCalendar(id, calendar);
-        return "redirect:/manager/calendar";
+        return "redirect:/calendar";
     }
 
     @GetMapping("/calendarDelete/{idx}") // 학사일정 삭제
     public String calendarDelete(@PathVariable Long idx) {
         academicCalendarService.deleteCalendar(idx);
-        return "redirect:/manager/calendar";
+        return "redirect:/calendar";
     }
 
     @GetMapping("/managerList") // 교직원 명단 조회
