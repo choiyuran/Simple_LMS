@@ -319,6 +319,7 @@ public class StudentController {
             StudentDto studentDto = (StudentDto)o;
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.복학신청);
+            System.out.println("dto : " + dto);
             Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg","복학 신청 완료");

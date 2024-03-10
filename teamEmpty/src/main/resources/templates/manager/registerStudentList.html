@@ -13,9 +13,8 @@
             학과, 교수 입력시 반드시 학과번호와 교수번호까지 함께 입력해주세요  EX)유아교육과(001) 김교수(123)
             <button id="showMajorAndProfessorBtn"  class="formBtn" type="button" onclick="toggleRow()">학과명 확인</button>
         </p>
-        <p class="text-danger">엑셀폼에 입력되어 있는 양식에 맞춰서 작성해주세요</p>
-
-
+        <p class="text-danger" th:if="${checked == false}">엑셀폼에 입력되어 있는 양식에 맞춰서 작성해주세요</p>
+        <p class="text-success" th:if="${checked == false}">엑셀폼에 입력되어 있는 양식에 문제가 없습니다.</p>
     </div>
     <div id="rowContainer" class="flex stickyContainer stickyRowContainer" style="display: none;">
         <div class="listBox">
@@ -71,7 +70,7 @@
 
 
         </table>
-        <button id="saveBtn" class="formBtn" type="button" onclick="saveStudentList()">학생 전체 등록</button>
+        <button id="saveBtn" class="formBtn btn btn-facebook" type="button" onclick="saveStudentList()">학생 전체 등록</button>
     </form>
 
 </div>

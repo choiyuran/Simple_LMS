@@ -70,7 +70,8 @@
                                 <h3>
                                     <a th:href="@{/noticeList}">공지사항</a>
                                 </h3>
-                                <table>
+
+                                <table class="mt-3 notice-table-content">
                                     <tr>
                                         <th style="width: 10%">번호</th>
                                         <th>제목</th>
@@ -86,15 +87,16 @@
                                         <td th:text="${notice.wdate}"></td>
                                     </tr>
                                 </table>
+
                             </div>
 
                             <div class="main-calendar">
                                 <h3>
-                                    <a href="/manager/calendar">학사일정</a>
+                                    <a th:href="@{/calendar}">학사일정</a>
                                 </h3>
-                                <table>
+                                <table class="mt-3 notice-table-content">
                                     <tr>
-                                        <th>글 번호</th>
+                                        <th>번호</th>
                                         <th>내용</th>
                                         <th>기간</th>
                                     </tr>

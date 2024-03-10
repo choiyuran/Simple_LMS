@@ -110,7 +110,7 @@ public class ManagerRepositoryCustomImpl implements ManagerRepositoryCustom {
                 QMajor.major.idx.eq(conditions.getMajor_idx()) : null;
 
         BooleanExpression userNameCondition = conditions.getUsername() != null ?
-                user.user_name.eq(conditions.getUsername()) : null;
+                user.user_name.like("%"+conditions.getUsername()+"%") : null;
 
         List<CheckTuitionPaymentDto> tuitionPayments = queryFactory
                 .select(Projections.constructor(CheckTuitionPaymentDto.class,

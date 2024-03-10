@@ -220,20 +220,12 @@
             this.value = inputVal.replace(/[^0-9]/g, "");
         }
 
-        // 앞자리는 6자리로 제한
-        if (this.value.length > 6) {
-            this.value = this.value.slice(0, 6);
-        }
-    });
-            // 숫자가 아닌 문자를 모두 제거
-            this.value = inputVal.replace(/[^0-9]/g, "");
-        }
-
         // 뒷자리는 7자리로 제한
         if (this.value.length > 7) {
             this.value = this.value.slice(0, 7);
         }
     });
+
 
     document.getElementById("phonenumber").addEventListener("input", function () {
         // 숫자만 입력되도록 필터링

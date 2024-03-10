@@ -30,7 +30,7 @@
             <input type="hidden" id="todayRegistered" name="todayRegistered" value="false">
             <input class="form-check-input" type="checkbox" id="todayRegisteredCheckbox"
                    th:checked="${map['todayRegistered']}">
-            <label class="form-check-label" for="todayRegisteredCheckbox">오늘 등록한 학생 보기</label>
+            <label class="form-check-label" for="todayRegisteredCheckbox" style="cursor:pointer;">오늘 등록한 학생 보기</label>
         </div>
         <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
     </form>

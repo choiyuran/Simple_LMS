@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.dto.StudentFormDTO;
 import com.itbank.simpleboard.service.ExcelFormService;
 import com.itbank.simpleboard.service.ManagerService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,13 +52,39 @@ public class ExcelFormController {
 
         }
 
+        List<StudentFormDTO> studentFormDTOList= excelFormService.saveStudentDTOList(studentFile);
         model.addAttribute("students","학생등록");
-        model.addAttribute("studentList",excelFormService.saveStudentDTOList(studentFile));
+        model.addAttribute("studentList", studentFormDTOList);
+
+        // null이 없는 값이다.
+        Boolean checked = true;
+
+        for(StudentFormDTO dto : studentFormDTOList){
+            if(hasNullField(dto)) {
+                checked = false;
+                break;
+            }
+        }
+
+        model.addAttribute("checked", checked);
         model.addAttribute("collegeList",managerService.selectAllCollege());
         return "manager/registerStudentList";
 
     }
 
+    public static Boolean hasNullField(Object obj) {
+        for(Field field : obj.getClass().getDeclaredFields()){
+            field.setAccessible(true);
+            try {
+                if(field.get(obj) == null){
+                    return true;
+                }
+            }catch (Exception e ){
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 
     @GetMapping("/downloadStudentForm") // 엑셀폼 다운로드
     public ResponseEntity<byte[]> downloadStudentForm() throws IOException {

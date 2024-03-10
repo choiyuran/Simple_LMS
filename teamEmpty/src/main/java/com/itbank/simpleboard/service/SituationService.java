@@ -69,8 +69,9 @@ public class SituationService {
         Student student = studentRepository.findById(dto.getStudent()).orElse(null);
         Situation situation = situationRepository.findByStudent(student).orElse(null);
         if(situation != null){
-            situation.setEnd_date(Date.valueOf(dto.getEnd_date()));
             if(dto.getEnd_date() != null)
+                situation.setEnd_date(Date.valueOf(dto.getEnd_date()));
+            if(dto.getStart_date() != null)
                 situation.setStart_date(Date.valueOf(dto.getStart_date()));
             situation.setStudent_status(dto.getStatus());
         }

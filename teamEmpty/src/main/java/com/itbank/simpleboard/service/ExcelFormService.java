@@ -140,7 +140,7 @@ public class ExcelFormService {
 
                                 if(major == null) {
                                     List<Major> majors = majorRepository.findByNameContaining(currentCell.getStringCellValue());
-                                    if(majors.isEmpty()){
+                                    if(majors.isEmpty() || currentCell.getStringCellValue().length() < 3){
                                         majorInfo = "학과정보없음";
                                     }else {
                                         mInfo = majors.get(0).getName();
