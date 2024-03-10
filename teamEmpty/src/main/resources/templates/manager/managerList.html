@@ -9,7 +9,7 @@
     <div class="container mt-5 min-height">
         <h2>교직원 명단</h2>
         <hr>
-        <form id="searchForm" action="/manager/managerListKeyword" class="form-inline">
+        <form action="/manager/managerListKeyword" class="form-inline">
             <div class="form-group">
                 <select class="form-control" name="searchType">
                     <option th:if="${param.searchType == 'name'}" value="name" th:text="이름" selected></option>

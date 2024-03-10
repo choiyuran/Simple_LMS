@@ -2,7 +2,6 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.dto.SituationChageDto;
 import com.itbank.simpleboard.dto.SituationStuDto;
-import com.itbank.simpleboard.dto.StudentDto;
 import com.itbank.simpleboard.entity.Situation;
 import com.itbank.simpleboard.entity.SituationRecord;
 import com.itbank.simpleboard.entity.Status_type;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -42,8 +41,8 @@ public class SituationService {
     }
 
 
-    public Page<SituationStuDto> selectSituationStu(String status, Pageable pageable) {
-        return situationRepository.findAllSituationStu(status, pageable);
+    public Page<SituationStuDto> selectSituationStu(HashMap<String, Object> map, Pageable pageable) {
+        return situationRepository.findAllSituationStu(map, pageable);
     }
 
     public SituationStuDto selectOneSituation(Long idx) {
