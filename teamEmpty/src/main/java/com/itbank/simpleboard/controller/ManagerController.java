@@ -361,17 +361,18 @@ public class ManagerController {
     }
 
     @GetMapping("/studentSituation")                // 학생 상태 조회
-    public ModelAndView studentSituation(@RequestParam(required = false) String status,
-                                         @RequestParam(value = "waiting", required = false) Boolean waiting,
-                                         @PageableDefault(size = 10) Pageable pageable) {
+    public ModelAndView studentSituation(@RequestParam(value = "name", required = false) String name, @RequestParam(required = false) String status,
+                                         @RequestParam(value = "waiting", required = false) Boolean waiting, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");
 
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
         HashMap<String, Object> map = new HashMap<>();
+        map.put("name", name);
         map.put("status", status);
         map.put("waiting", waiting);
         Page<SituationStuDto> studentList = situationService.selectSituationStu(map, pageable);
+        mav.addObject("name", name);
         mav.addObject("status", status);
         mav.addObject("waiting", waiting);
         mav.addObject("studentList", studentList);

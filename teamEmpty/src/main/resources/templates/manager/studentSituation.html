@@ -11,7 +11,12 @@
     <form action="/manager/studentSituation" class="form-inline">
         <!-- 학생의 상태로 검색할 수 있는 검색창 -->
         <div class="form-group">
+            <div class="form-group mr-2">
+                <label>이름</label>
+                <input type="text" class="form-control" name="name" th:value="${param.name}" placeholder="이름을 입력하세요">
+            </div>
             <div class="form-group ml-4 mr-2">
+                <label>상태</label>
                 <input type="text" class="form-control" name="status" th:value="${param.status}" placeholder="상태를 입력하세요">
             </div>
 
@@ -50,7 +55,7 @@
         </tr>
     </table>
     <a href="/manager/studentSituation">
-        <button class="btn btn-primary" th:if="${!#strings.isEmpty(status) or waiting != null}">목록으로</button>
+        <button class="btn btn-primary" th:if="${!#strings.isEmpty(status) or waiting != null or name != null}">목록으로</button>
     </a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${studentList.totalPages > 1}">

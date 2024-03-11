@@ -25,9 +25,13 @@ public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
     @Override
     public Page<SituationStuDto> findAllSituationStu(HashMap<String, Object> map, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
+        String name = (String)map.get("name");
         String status = (String)map.get("status");
         Boolean waiting = (Boolean)map.get("waiting");
 
+        if (name != null && !name.isEmpty()) {
+            builder.and(QUser.user.user_name.contains(name));
+        }
         if (status != null && !status.isEmpty()) {
             builder.and(QSituation.situation.student_status.stringValue().contains(status));
         }
