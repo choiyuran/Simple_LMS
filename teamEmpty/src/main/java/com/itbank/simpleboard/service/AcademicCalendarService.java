@@ -21,7 +21,7 @@ public class AcademicCalendarService {
 
     // 학사 일정 조회
     public List<AcademicCalendar> findCalendarAll() {
-        return academicCalendarRepository.findAll();
+        return academicCalendarRepository.findTop5ByOrderByIdxDesc();
     }
 
     // 학사 일정 추가

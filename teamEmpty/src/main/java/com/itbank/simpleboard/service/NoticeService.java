@@ -69,6 +69,6 @@ public class NoticeService {
 
 
     public List<Notice> findNoticeAll() {
-        return noticeRepository.findAll();
+        return noticeRepository.findTop5ByOrderByIdxDesc();
     }
 }
