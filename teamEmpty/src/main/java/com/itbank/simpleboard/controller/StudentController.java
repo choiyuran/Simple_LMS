@@ -1,6 +1,5 @@
 package com.itbank.simpleboard.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
@@ -11,11 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -533,6 +530,30 @@ public class StudentController {
             responseData.put("title", "휴학 신청 취소");
             responseData.put("icon", "error");
             responseData.put("msg", "휴학 신청을 취소하지 못했습니다.");
+        }
+
+        return responseData;
+    }
+
+    @ResponseBody
+    @PutMapping("/cancelreturn")
+    public Map<String, Object> cancelReturn(@RequestBody Map<String, String> request) {
+        log.info("복학 신청 취소 로직 시작");
+        Map<String, Object> responseData = new HashMap<>();
+        // 군 휴학 상태를 취소하기 위해서는 일반 휴학 신청 이전의 정보로 다시 되돌려야 한다.
+        // 이 정보는 SituationRecord에 있는 가장 최신의 내용으로 바꿔주면 된다.
+        Long studentIdx = Long.parseLong(request.get("idx"));
+
+        int row = studentService.changeLatestSituation(studentIdx);
+
+        if(row == 1){
+            responseData.put("msg", "복학 신청이 취소 되었습니다. ");
+            responseData.put("title", "복학 신청 취소");
+            responseData.put("icon", "success");
+        }else{
+            responseData.put("title", "복학 신청 취소");
+            responseData.put("icon", "error");
+            responseData.put("msg", "복학 신청을 취소하지 못했습니다.");
         }
 
         return responseData;

@@ -40,8 +40,10 @@
                     <p class="card-text">복학을 신청할 수 있습니다.</p>
                     <button th:if="${status.toString() == '군휴학' or status.toString() == '일반휴학'}" th:text="${'복학신청'}"
                             class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1"/>
-                    <button th:unless="${status.toString() == '군휴학' or status.toString() == '일반휴학'}"
+                    <button th:unless="${status.toString() == '복학신청' or status.toString() == '군휴학' or status.toString() == '일반휴학'}"
                             th:text="${'복학신청 대상 아님'}" class="btn btn-dark" disabled/>
+                    <button th:if="${status.toString() == '복학신청'}" th:text="${'복학 신청 취소'}" class="btn btn-warning"
+                            onclick="cancelReturn()"/>
                 </div>
             </div>
             <div class="card" style="width:300px">
@@ -182,6 +184,35 @@
     const student_idx = document.getElementById("studentIdx").value;
     console.log('student_idx : ' + student_idx);
 
+    async function cancelReturn() {
+        let url = '/student/cancelreturn';
+        await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                idx: student_idx
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('네트워크 응답이 정상이 아닙니다');
+                }
+                return response.json();
+            })
+            .then(data => {
+                Swal.fire({
+                    title: data.title,
+                    text: data.msg,
+                    icon: data.icon
+                });
+                location.reload();
+            })
+            .catch(error => {
+                console.error('예외 발생 :', error);
+            });
+    }
 
     async function cancelLeave() {
         let url = '/student/cancel';
