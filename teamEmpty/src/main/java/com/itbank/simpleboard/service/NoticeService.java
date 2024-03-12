@@ -9,11 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +19,7 @@ import java.util.Map;
 public class NoticeService {
     private final NoticeRepository noticeRepository;
     public Page<Notice> selectAll(Pageable pageable) {
-        return noticeRepository.findAll(pageable);
+        return noticeRepository.findAllByOrderByIdxDesc(pageable);
     }
 
     public Notice selectOne(Long idx) {
