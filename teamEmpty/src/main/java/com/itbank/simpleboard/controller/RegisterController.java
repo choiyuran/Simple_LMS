@@ -35,7 +35,6 @@ public class RegisterController {
     public String saveStudentList(@RequestBody List<StudentFormDTO> studentList) {
         log.info("학생등록 리스트 저장: AJAX");
         // 전달된 학생 정보 확인
-
         String resultMsg;
         String msg = managerService.verificationStudentDTOList(studentList);
         if(msg.equals("성공")){

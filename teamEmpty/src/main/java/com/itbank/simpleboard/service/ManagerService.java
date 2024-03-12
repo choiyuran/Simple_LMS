@@ -70,6 +70,18 @@ public class ManagerService {
     }
 
     public Page<ManagerDTO> searchManager(HashMap<String, Object> map, Pageable pageable) {
+        String searchType = (String)map.get("searchType");
+        String searchValue = (String)map.get("searchValue");
+        String searchValueKey = "";
+        if(searchType.equals("name")) {
+           if(searchValue != null) {
+               for(int i = 0; i < searchValue.length(); i++) {
+                   searchValueKey += searchValue.charAt(i);
+                   searchValueKey += "%";
+               }
+           }
+        }
+        map.put("searchValue", searchValueKey);
         Page<ManagerDTO> searchManagerList = managerRepository.findBySearchType(map, pageable);
         return searchManagerList;
     }
@@ -337,7 +349,6 @@ public class ManagerService {
             }
             log.info("index" + index);
             index++;
-
         }
 
         String msg;
@@ -453,6 +464,15 @@ public class ManagerService {
     }
 
     public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
+        String name = (String)map.get("name");
+        String namekey = "";
+        if(name != null) {
+            for(int i = 0; i < name.length(); i++) {
+                namekey += name.charAt(i);
+                namekey += "%";
+            }
+        }
+        map.put("name", namekey);
         return professorRepository.searchByMajorAndProfessorAndLeave(map, pageable);
     }
 
@@ -517,6 +537,15 @@ public class ManagerService {
     }
 
     public Page<StudentListDto> selectAllStudent(HashMap<String, Object> map, Pageable pageable) {
+        String name = (String)map.get("name");
+        String namekey = "";
+        if(name != null) {
+            for(int i = 0; i < name.length(); i++) {
+                namekey += name.charAt(i);
+                namekey += "%";
+            }
+        }
+        map.put("name", namekey);
         return studentRepository.selectAllStudent(map, pageable);
     }
 

@@ -42,6 +42,15 @@ public class SituationService {
 
 
     public Page<SituationStuDto> selectSituationStu(HashMap<String, Object> map, Pageable pageable) {
+        String name = (String)map.get("name");
+        String namekey = "";
+        if(name != null) {
+            for(int i = 0; i < name.length(); i++) {
+                namekey += name.charAt(i);
+                namekey += "%";
+            }
+        }
+        map.put("name", namekey);
         return situationRepository.findAllSituationStu(map, pageable);
     }
 

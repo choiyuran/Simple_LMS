@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
@@ -30,7 +31,7 @@ public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
         Boolean waiting = (Boolean)map.get("waiting");
 
         if (name != null && !name.isEmpty()) {
-            builder.and(QUser.user.user_name.contains(name));
+            builder.and(QUser.user.user_name.like("%" + name + "%"));
         }
         if (status != null && !status.isEmpty()) {
             builder.and(QSituation.situation.student_status.stringValue().contains(status));

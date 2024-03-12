@@ -108,7 +108,7 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
             builder.and(QStudent.student.major.idx.eq(majorIdx));
         }
         if (name != null && !name.isEmpty()) {
-            builder.and(QUser.user.user_name.contains(name));
+            builder.and(QUser.user.user_name.like("%" + name + "%"));
         }
         if(todayRegistered != null && todayRegistered){
             LocalDate today = LocalDate.now();

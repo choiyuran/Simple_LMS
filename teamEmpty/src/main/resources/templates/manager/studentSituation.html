@@ -115,15 +115,23 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
+        let name = /*[[${name}]]*/ null;
         let status = /*[[${status}]]*/ null;
+        let waiting = /*[[${waiting}]]*/ null;
 
         $('.pagination a').on('click', function (event) {
             event.preventDefault();
 
             let href = $(this).attr('href');
 
+            if (name !== null) {
+                href += '&name=' + encodeURIComponent(name);
+            }
             if (status !== null) {
                 href += '&status=' + encodeURIComponent(status);
+            }
+            if (waiting !== null) {
+                href += '&waiting=' + waiting;
             }
             location.href = href;
         });

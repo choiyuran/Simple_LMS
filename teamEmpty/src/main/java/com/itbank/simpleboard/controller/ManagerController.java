@@ -364,7 +364,6 @@ public class ManagerController {
     public ModelAndView studentSituation(@RequestParam(value = "name", required = false) String name, @RequestParam(required = false) String status,
                                          @RequestParam(value = "waiting", required = false) Boolean waiting, @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("manager/studentSituation");
-
         // 검색어가 없는 경우에는 모든 학생 목록을 반환하고,
         // 검색어가 있는 경우에는 검색어를 포함하는 학생 목록을 반환
         HashMap<String, Object> map = new HashMap<>();
@@ -445,7 +444,9 @@ public class ManagerController {
 
         Page<ProfessorListDto> professorList = managerService.searchByMajorAndProfessorAndLeave(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-
+        name = (String)map.get("name");
+        name =  name.replace("%", "");
+        map.put("name", name);
         mav.addObject("majorList", majorList);
         mav.addObject("professorList", professorList);
         mav.addObject("map", map);
@@ -503,7 +504,9 @@ public class ManagerController {
 
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-
+        name =  (String)map.get("name");
+        name = name.replace("%", "");
+        map.put("name",name);
         mav.addObject("map", map);
         mav.addObject("majorList", majorList);
         mav.addObject("studentList", studentList);
