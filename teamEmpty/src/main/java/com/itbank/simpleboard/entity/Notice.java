@@ -20,6 +20,7 @@ public class Notice {
     private String title;
 
     @Column(name="notice_content")
+    @Lob
     private String content;
 
     @Column(name = "notice_date")
