@@ -39,7 +39,7 @@
             </tr>
 
             <tr>
-                <td th:utext="${notice.content}" style="width: 150px; height: 200px;" th:colspan="2"></td>
+                <td style="width: 150px; height: 200px;" th:colspan="2"><pre style="font-family: 'Noto Sans KR', sans-serif; font-size: 16px;"><span th:utext="${#strings.replace(#strings.replace(notice.content, '\n', '<br>'), '\r', '')}"></span></pre></td>
             </tr>
         </table>
         <a href="/manager/noticeList">
