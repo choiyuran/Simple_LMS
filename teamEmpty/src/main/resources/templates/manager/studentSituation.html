@@ -4,18 +4,30 @@
 </head>
 
 <body>
-<header th:insert="layout/managerHeader :: header"> </header>
+<header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-3 min-height">
     <h2>신청 현황</h2>
     <hr>
-    <form th:action="@{/manager/studentSituation}">
-        <!-- 학생의 상태로 검색할 수 있는 검색창 추가 -->
-        <div class="form-group mr-2">
-            <label for="status">상태 검색</label>
-            <input type="text" class="form-control" id="status" name="status" placeholder="상태를 입력하세요.">
-        </div>
+    <form action="/manager/studentSituation" class="form-inline">
+        <!-- 학생의 상태로 검색할 수 있는 검색창 -->
+        <div class="form-group">
+            <div class="form-group mr-2">
+                <label>이름</label>
+                <input type="text" class="form-control" name="name" th:value="${param.name}" placeholder="이름을 입력하세요">
+            </div>
+            <div class="form-group ml-4 mr-2">
+                <label>상태</label>
+                <input type="text" class="form-control" name="status" th:value="${param.status}" placeholder="상태를 입력하세요">
+            </div>
 
-        <button class="btn btn-primary">검색</button>
+            <div class="form-check form-check-inline">
+                <input type="hidden" id="waiting" name="waiting" value="false">
+                <input class="form-check-input" type="checkbox" id="waitingCheckbox" th:checked="${waiting}">
+                <label class="form-check-label" for="waitingCheckbox">처리 대기 학생</label>
+            </div>
+            <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
+
+        </div>
     </form>
     <br>
     <table class="table table-bordered">
@@ -32,15 +44,19 @@
             <td><a th:text="${row.name}" th:href="@{'/manager/situationRecord/' + ${row.student_idx}}"></a></td>
             <td th:text="${row.major}"></td>
             <td th:text="${row.status}"></td>
-            <td><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}"><button class="btn btn-warning">수정</button></a></td>
+            <td><a th:href="@{/manager/studentSituationView/{idx}(idx=${row.idx})}">
+                <button class="btn btn-warning">수정</button>
+            </a></td>
         </tr>
 
         <!-- 검색 결과가 없는 경우 메시지 표시 -->
         <tr th:if="${studentList == null || studentList.isEmpty()}">
-            <td colspan="4" style="text-align: center;">검색 결과가 없습니다.</td>
+            <td colspan="5" style="text-align: center;">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <a href="/manager/studentSituation"><button class="btn btn-primary" th:if="${!#strings.isEmpty(status)}">목록으로</button></a>
+    <a href="/manager/studentSituation">
+        <button class="btn btn-primary" th:if="${!#strings.isEmpty(status) or waiting != null or name != null}">목록으로</button>
+    </a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${studentList.totalPages > 1}">
         <ul class="pagination">
@@ -73,7 +89,8 @@
                 </a>
             </li>
 
-            <li class="page-item" th:if="${studentList.hasNext && studentList.totalPages - 1 >= ((studentList.number / 5) + 1) * 5}">
+            <li class="page-item"
+                th:if="${studentList.hasNext && studentList.totalPages - 1 >= ((studentList.number / 5) + 1) * 5}">
                 <a th:href="@{/manager/studentSituation(page=${((studentList.number / 5) + 1) * 5})}">
                     <button class="page-link" th:text="'>>'"></button>
                 </a>
@@ -82,7 +99,19 @@
     </div>
 </div>
 <footer th:insert="layout/managerHeader :: footer"></footer>
+<script>
+    function updateHiddenInput() {
+        var checkbox = document.getElementById('waitingCheckbox');
+        var hiddenInput = document.getElementById('waiting');
 
+        if (checkbox.checked) {
+            hiddenInput.value = 'true';
+        } else {
+            hiddenInput.value = 'false';
+        }
+    }
+
+</script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {

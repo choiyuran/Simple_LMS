@@ -2,10 +2,7 @@ package com.itbank.simpleboard.repository.student;
 
 import com.itbank.simpleboard.dto.QSituationStuDto;
 import com.itbank.simpleboard.dto.SituationStuDto;
-import com.itbank.simpleboard.entity.QMajor;
-import com.itbank.simpleboard.entity.QSituation;
-import com.itbank.simpleboard.entity.QStudent;
-import com.itbank.simpleboard.entity.QUser;
+import com.itbank.simpleboard.entity.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -25,11 +23,20 @@ public class SituationRepositoryCustomImpl implements SituationRepositoryCustom{
     }
 
     @Override
-    public Page<SituationStuDto> findAllSituationStu(String status, Pageable pageable) {
+    public Page<SituationStuDto> findAllSituationStu(HashMap<String, Object> map, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
+        String name = (String)map.get("name");
+        String status = (String)map.get("status");
+        Boolean waiting = (Boolean)map.get("waiting");
 
+        if (name != null && !name.isEmpty()) {
+            builder.and(QUser.user.user_name.contains(name));
+        }
         if (status != null && !status.isEmpty()) {
             builder.and(QSituation.situation.student_status.stringValue().contains(status));
+        }
+        if (waiting != null && waiting) {
+            builder.and(QSituation.situation.student_status.stringValue().contains("신청"));
         }
 
         QueryResults<SituationStuDto> results = queryFactory
