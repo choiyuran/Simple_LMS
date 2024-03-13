@@ -297,7 +297,7 @@ public class ManagerController {
         if(lecture == null) {
             return "redirect:/manager/lectureAdd";
         }
-        return "redirect:/professor/lectureList";
+        return "redirect:/common/lectureList";
     }
 
     @ResponseBody
@@ -342,7 +342,7 @@ public class ManagerController {
     @GetMapping("/lectureDelete/{idx}")             // 강의 삭제
     public String lectureDelete(@PathVariable("idx") Long idx) {
         Lecture lecture = managerService.delLecture(idx);
-        return "redirect:/professor/lectureList";
+        return "redirect:/common/lectureList";
     }
 
     @GetMapping("/home")    // 교직원 홈으로 이동
@@ -661,7 +661,7 @@ public class ManagerController {
     @GetMapping("/lectureEvaluation")               // 강의 평가 여부 설정
     public ModelAndView lectureEvaluation(LectureSearchConditionDto condition,
                                           @PageableDefault(size = 10) Pageable pageable) {
-        ModelAndView mav = new ModelAndView("professor/lectureList");
+        ModelAndView mav = new ModelAndView("common/lectureList");
         String evaluationStatus = managerService.lectureEvaluation();
         Page<ProfessorLectureDto> LectureList = professorService.getLectureDtoList(condition, pageable);
 

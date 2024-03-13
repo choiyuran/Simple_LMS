@@ -82,8 +82,7 @@ public class ManagerService {
            }
         }
         map.put("searchValue", searchValueKey);
-        Page<ManagerDTO> searchManagerList = managerRepository.findBySearchType(map, pageable);
-        return searchManagerList;
+        return managerRepository.findBySearchType(map, pageable);
     }
 
     public List<College> selectAllCollege() {
