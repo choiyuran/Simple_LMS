@@ -2,6 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--수강 평가 리스트-->
 <head th:insert="layout/studentHeader :: head"></head>
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
 <body>
 <header th:insert="layout/studentHeader :: header"></header>
 <div class="container mt-5">
@@ -9,9 +14,9 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th class="lecture">강의이름</th>
-            <th class="professor">교수</th>
-            <th class="time">강의 평가 기간</th>
+            <th class="lecture" order="1">강의이름</th>
+            <th class="professor" order="1">교수</th>
+            <th class="time" order="1">강의 평가 기간</th>
             <th>강의평가하기</th>
         </tr>
         </thead>

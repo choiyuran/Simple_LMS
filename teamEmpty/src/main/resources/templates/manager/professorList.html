@@ -3,7 +3,11 @@
 <head th:insert="layout/managerHeader :: head">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-5 min-height">
@@ -59,8 +63,15 @@
             <td colspan="4" class="text-center">검색 결과가 없습니다.</td>
         </tr>
     </table>
-    <a href="/manager/register"><button class="btn btn-facebook">교수 등록</button></a>
-    <a href="/manager/professorList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">목록으로</button></a>
+    <a href="/manager/register">
+        <button class="btn btn-facebook">교수 등록</button>
+    </a>
+    <a href="/manager/professorList">
+        <button class="btn btn-facebook"
+                th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['leave'])}">
+            목록으로
+        </button>
+    </a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${professorList.totalPages > 1}">
         <ul class="pagination">
@@ -93,7 +104,8 @@
                 </a>
             </li>
 
-            <li class="page-item" th:if="${professorList.hasNext && professorList.totalPages - 1 >= ((professorList.number / 5) + 1) * 5}">
+            <li class="page-item"
+                th:if="${professorList.hasNext && professorList.totalPages - 1 >= ((professorList.number / 5) + 1) * 5}">
                 <a th:href="@{/manager/professorList(page=${((professorList.number / 5) + 1) * 5})}">
                     <button class="page-link" th:text="'>>'"></button>
                 </a>
@@ -153,7 +165,6 @@
     }
 
     thList.forEach(th => th.onclick = sortHandler)
-
 
 
 </script>
