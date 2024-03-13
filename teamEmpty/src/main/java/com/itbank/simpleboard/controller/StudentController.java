@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.component.GlobalVariable;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
@@ -40,6 +41,7 @@ public class StudentController {
     private final ScholarShipAwardService scholarShipAwardService;
     private final UserService userService;
     private final NoticeService noticeService;
+    private final GlobalVariable globalVariable;
 
     @GetMapping("/enroll")
     public ModelAndView enrollList(HttpSession session, String searchType, String keyword,
@@ -288,7 +290,6 @@ public class StudentController {
             StudentDto studentDto = (StudentDto)o;
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.군휴학신청);
-            System.err.println("dto : " + dto);
             Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg", "군 휴학 신청 완료");
@@ -316,7 +317,7 @@ public class StudentController {
             StudentDto studentDto = (StudentDto)o;
             dto.setStudent(studentDto.getIdx());
             dto.setStatus(Status_type.복학신청);
-            System.out.println("dto : " + dto);
+
             Situation chageSituation = situationService.updateSitu(dto);
             if(chageSituation != null){
                 ra.addFlashAttribute("msg","복학 신청 완료");
@@ -351,7 +352,7 @@ public class StudentController {
             }
             mav.addObject("tuition", tuition);
             mav.addObject("totalScholarship", totalScholarship);
-            mav.addObject("semester", "2024학년 1학기");
+            mav.addObject("semester", globalVariable.getGlobalSememster());
         }else{
             session.invalidate();
             mav.addObject("msg", "다시 학생로그인 하세요");
@@ -413,7 +414,6 @@ public class StudentController {
         if(o instanceof StudentDto) {
             StudentDto dto = (StudentDto) o;
             List<PaymentsListDto> dtos = paymentsService.getList(dto.getIdx());
-            System.err.println("Controller:" + dto);
             mav.addObject("list", dtos);
         }else{
             ra.addFlashAttribute("msg", "학생 전용 페이지 입니다.");

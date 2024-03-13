@@ -20,10 +20,10 @@
                         </div>
                         <form class="userForm" enctype="multipart/form-data" name="userForm">
                             <div class="form-group row">
-                                <div class="d-flex  justify-content-between col-sm-12 mb-3 mb-sm-0">
-                                    <label><input type="radio" name="userType" value="professor"
+                                <div class="d-flex justify-content-between col-sm-12 mb-3 mb-sm-0">
+                                    <label><input type="radio" name="userType" value="professor" class="form-check-input"
                                                   onclick="changeForm('professor')" required> 교수 등록</label>
-                                    <label><input type="radio" name="userType" value="manager"
+                                    <label><input type="radio" name="userType" value="manager" class="form-check-input"
                                                   onclick="changeForm('manager')" required> 교직원 등록</label>
                                 </div>
                             </div>
@@ -33,8 +33,8 @@
                                     <div class=" form-group text-center">
                                         <img id="imageContainer" src="/img/idPhoto.png"
                                              style="max-height: 100px; max-height: 130px; object-fit: contain;">
-
                                     </div>
+
                                     <div class="form-group">
                                         <input type="file" class="form-control form-control-user" name="imageFile"
                                                id="imageFile" accept="image/*" required>

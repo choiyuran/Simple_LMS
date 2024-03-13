@@ -42,8 +42,7 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(idx).get();
         notice.setTitle(title);
         notice.setContent(content);
-//        Date currentDate = new Date(System.currentTimeMillis());
-//        notice.setWdate(currentDate);
+
         return notice;
     }
 

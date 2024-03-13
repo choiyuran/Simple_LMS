@@ -12,7 +12,7 @@
             <div class="input-group input-group-sm mb-3">
 
                     <span class="input-group-text">학과선택</span>
-                    <select class="form-control" th:name="'major_idx'" required>
+                    <select class="form-select" th:name="'major_idx'" required>
                         <option th:each="row:${majorList}" th:value="${row.idx}" th:text="${row.name}"></option>
                     </select>
             </div>

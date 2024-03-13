@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/managerHeader :: head"></head>
+<body>
+<header th:insert="layout/managerHeader :: header"></header>
+<div th:if="${session.user.user.role.toString() != '교직원'}"  onload="history.go(-1)"></div>
+<!-- 내용 -->
+<div class="container mt-5 min-height">
+    <h2>현재학기 등록하기</h2>
+    <hr>
+    <div class="w-50 m-auto">
+        <form method="post">
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text" style="width: 20%;">시작 일자</span>
+                <input class="form-control" type="text" name="semester" th:value="${globalSemester}">
+            </div>
+            <div>
+                <button class="btn btn-warning">현재 학기 수정하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+<footer th:insert="layout/managerHeader :: footer"></footer>
+</body>
+</html>

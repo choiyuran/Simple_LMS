@@ -13,16 +13,16 @@
         <div class="col-md-6">
             <form method="post" th:action="@{'/manager/professorUpdateByManager/' + ${professor.idx}}" enctype="multipart/form-data">
                 <table class="table table-bordered">
-                    <tr>
+                    <tr class="form-group">
                         <th rowspan="4">
                             <img th:src="@{'/images/professor/' + ${professor.img}}" alt="Professor Image" class="img-thumbnail mb-3" id="professorImg">
-                            <input type="file" name="professorImg" accept="image/*" onchange="previewImage(this)" th:if="${session.user.user.role.toString() == '교직원'}">
+                            <input class="form-control" type="file" name="professorImg" accept="image/*" onchange="previewImage(this)" th:if="${session.user.user.role.toString() == '교직원'}">
                         </th>
-                        <td th:colspan="2"><input th:value="${professor.name}" type="text" name="name"></td>
+                        <td th:colspan="2"><input class="form-control" th:value="${professor.name}" type="text" name="name"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <td th:colspan="2">
-                            <select class="form-control" id="major_idx" name="major_idx">
+                            <select class="form-select" id="major_idx" name="major_idx">
                                 <option th:text="${professor.major_name}" th:value="${professor.major_idx}"></option>
                                 <option th:each="row : ${majorList}"
                                         th:text="${row.name}"
@@ -31,24 +31,24 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
-                        <td th:colspan="2"><input th:value="${professor.pnum}" type="text" name="pnum"></td>
+                    <tr class="form-group">
+                        <td th:colspan="2"><input class="form-control" th:value="${professor.pnum}" type="text" name="pnum"></td>
                     </tr>
-                    <tr>
-                        <td th:colspan="2"><input th:value="${professor.address}" type="text" name="address"></td>
+                    <tr class="form-group">
+                        <td th:colspan="2"><input class="form-control" th:value="${professor.address}" type="text" name="address"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th colspan="1">이메일</th>
-                        <td><input th:value="${professor.email}" type="text" name="email"></td>
+                        <td><input th:value="${professor.email}" class="form-control" type="text" name="email"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th colspan="1">입사일</th>
-                        <td><input th:value="${professor.hireDate}" type="date" name="hireDate"></td>
+                        <td><input th:value="${professor.hireDate}" class="form-control" type="date" name="hireDate"></td>
                     </tr>
 
-                    <tr th:if="${professor.leaveDate != null}">
+                    <tr class="form-group" th:if="${professor.leaveDate != null}">
                         <th colspan="1">퇴사일</th>
-                        <td><input th:value="${professor.leaveDate}" type="date" name="leaveDate"></td>
+                        <td><input th:value="${professor.leaveDate}" class="form-control" type="date" name="leaveDate"></td>
                     </tr>
                 </table>
             <button class="btn btn-warning">수정</button>
@@ -86,13 +86,44 @@
         completeButton.style.borderColor = '#28a745';
 
         completeButton.addEventListener("click", function() {
-            var result = confirm("퇴사 처리하시겠습니까?");
-            if (result) {
-                // 선택한 퇴사일 값을 Hidden Input에 설정
-                var selectedLeaveDate = leaveDateInput.value;
-                console.log("selectedLeaveDate : " + selectedLeaveDate);
-                window.location.href = "/manager/professorDel/" + professorIdx + "/" + selectedLeaveDate;
-            }
+            const result2 = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            result2.fire({
+                title: "퇴사확인",
+                text: "정말 퇴사처리 하시겠습니까?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "네, 퇴사처리 합니다.",
+                cancelButtonText: "아니요, 취소합니다.",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var selectedLeaveDate = leaveDateInput.value;
+                    window.location.href = "/manager/professorDel/" + professorIdx + "/" + selectedLeaveDate;
+                    result2.fire({
+                        title: "퇴사 확인",
+                        text: "퇴사처리가 완료되었습니다.",
+                        icon: "success"
+                    });
+                } else if (
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    result2.fire({
+                        title: "퇴사 확인",
+                        text: "퇴사처리가 취소되었습니다.",
+                        icon: "error"
+                    });
+                }
+            });
+            // if (result) {
+            //     // 선택한 퇴사일 값을 Hidden Input에 설정
+            //
+            // }
         });
 
         // 새로운 행 생성

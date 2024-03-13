@@ -42,5 +42,6 @@ public class Payments { // 등록금
     public Payments(Student student, String semester) {
         this.student = student;
         this.semester = semester;
+        this.flag = YesOrNo.N;
     }
 }

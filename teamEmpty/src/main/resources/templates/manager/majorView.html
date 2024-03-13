@@ -4,29 +4,30 @@
 </head>
 
 <body>
-<header th:insert="layout/managerHeader :: header"> </header>
+<header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-5 min-height">
     <form method="post" th:action="@{/manager/majorUpdate/{idx}(idx=${major.idx})}">
         <table class="table table-bordered">
-            <tr>
+            <tr class="form-group">
                 <th>학과명</th>
                 <td>
                     <label>
-                        <input type="text" th:value="${major.name}" name="name" required>
+                        <input class="form-control" type="text" th:value="${major.name}" name="name" required>
                     </label>
                 </td>
             </tr>
-            <tr>
+            <tr class="form-group">
                 <th>등록금</th>
                 <td>
                     <label>
-                        <input type="text" th:value="${major.tuition}" name="tuition" required>
+                        <input class="form-control" type="text" th:value="${major.tuition}" name="tuition" required>
                     </label>
                 </td>
             </tr>
-            <tr>
+            <tr class="form-group">
                 <th>단과대학</th>
-                    <td th:text="${major.college.name}">
+                <td>
+                    <input type="text" th:value="${major.college.name}" class="form-control" readonly>
                 </td>
             </tr>
         </table>

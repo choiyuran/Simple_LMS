@@ -13,18 +13,18 @@
         <div class="col-md-6">
             <form method="post" th:action="@{'/manager/studentUpdateByManager/' + ${student.idx}}">
                 <table class="table table-bordered">
-                    <tr>
+                    <tr class="form-group">
                         <th>이름</th>
-                        <td><input th:value="${student.name}" type="text" name="name"></td>
+                        <td><input th:value="${student.name}" type="text" name="name" class="form-control"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>학번</th>
-                        <td><input th:value="${student.student_num}" type="number" name="student_num"></td>
+                        <td><input th:value="${student.student_num}" type="number" name="student_num" class="form-control"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>학과</th>
                         <td>
-                            <select class="form-control" id="major_idx" name="major_idx">
+                            <select class="form-select" id="major_idx" name="major_idx">
                                 <option th:text="${student.major_name}" th:value="${student.major_idx}"></option>
                                 <option th:each="row : ${majorList}"
                                         th:text="${row.name}"
@@ -33,21 +33,21 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>이메일</th>
-                        <td><input th:value="${student.email}" type="text" name="email"></td>
+                        <td><input th:value="${student.email}" class="form-control" type="text" name="email"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>주소</th>
-                        <td><input th:value="${student.address}" type="text" name="address"></td>
+                        <td><input th:value="${student.address}" class="form-control" type="text" name="address"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>연락처</th>
-                        <td><input th:value="${student.pnum}" type="text" name="pnum"></td>
+                        <td><input th:value="${student.pnum}" class="form-control" type="text" name="pnum"></td>
                     </tr>
-                    <tr>
+                    <tr class="form-group">
                         <th>입학일</th>
-                        <td><input th:value="${student.entranceDate}" type="date" name="entranceDate"></td>
+                        <td><input th:value="${student.entranceDate}" class="form-control" type="date" name="entranceDate"></td>
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>

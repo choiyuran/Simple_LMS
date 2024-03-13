@@ -24,6 +24,7 @@
     </th:block>
 </th:block>
 <main>
+    <div id="lectureInfo" th:data-idx="${lecture.idx}" style="display:none;"></div>
     <div class="container mt-5 min-height">
         <table class="table table-bordered">
             <thead>
@@ -127,9 +128,12 @@
 
         <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a
                 th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+
         <button class="btn btn-danger" onclick="confirmDelete(event)"
                 th:if="${session.user.user.role.toString() == '교직원'}">
-            <a th:href="@{'/manager/lectureDelete/' + ${lecture.idx}}">삭제</a></button>
+            삭제
+        </button>
+
         <button class="btn btn-outline-secondary" onclick="Url()">목록으로</button>
 
         <a th:if="${session.user.user.role.toString() == '교직원'}" th:href="@{'/manager/viewEvaluation/'+${lecture.idx}}">
@@ -184,12 +188,55 @@
 
     <script>
         function confirmDelete(event) {
-            var result = confirm("정말 삭제하시겠습니까?");
-            if (result) {
-
-            } else {
-                event.preventDefault();
-            }
+            var lectureIdx = document.getElementById('lectureInfo').dataset.idx;
+            const result2 = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            result2.fire({
+                title: "강의 삭제확인",
+                text: "정말 삭제하시겠습니까?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "네, 삭제 합니다.",
+                cancelButtonText: "아니요, 취소합니다.",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // AJAX 요청 시작
+                    $.ajax({
+                        url: '/manager/lectureDelete/' + lectureIdx, // AJAX 요청 URL
+                        type: 'GET', // HTTP 메소드
+                        success: function (response) {
+                            // 성공 시 처리
+                            Swal.fire({
+                                title: "삭제 확인",
+                                text: "강의 삭제가 완료되었습니다.",
+                                icon: "success"
+                            }).then(() => {
+                                window.location.href = "/professor/lectureList"; // 페이지 새로고침
+                            });
+                        },
+                        error: function () {
+                            // 오류 시 처리
+                            Swal.fire({
+                                title: "오류",
+                                text: "삭제 중 오류가 발생했습니다.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        title: "삭제 취소",
+                        text: "강의 삭제가 취소되었습니다.",
+                        icon: "error"
+                    });
+                }
+            });
         }
 
         function Url() {

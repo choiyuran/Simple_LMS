@@ -12,7 +12,7 @@
           <div class="input-group input-group-sm mb-3" style="width: 70%;">
               <span class="input-group-text" style="width: 20%;">단과 대학</span>
               <label>
-                  <select name="college_idx">
+                  <select name="college_idx" class="form-select">
                       <option
                           th:each="college : ${list}"
                           th:value="${college.idx}"
