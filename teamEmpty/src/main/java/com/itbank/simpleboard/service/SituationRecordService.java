@@ -19,7 +19,6 @@ public class SituationRecordService {
     public SituationRecord findFirstRecordByIdOrderByDesc(Long studentIdx){
 
         Student student = studentRepository.findById(studentIdx).isPresent() ? studentRepository.findById(studentIdx).get() : null;
-        System.err.println("student : "+ student);
         return situationRecordRepository.findTopByStudentOrderByIdxDesc(student).orElseGet(() -> null);
 
     }

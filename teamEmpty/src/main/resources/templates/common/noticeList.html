@@ -46,9 +46,7 @@
                 </a>
             </td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">
-                <a th:href="@{'/manager/noticeDel/' + ${row.idx}}">
-                    <button class="btn btn-danger" onclick="confirmDelete(event)">삭제</button>
-                </a>
+                <button class="btn btn-danger" th:onclick="'confirmDelete('+${row.idx}+')'">삭제</button>
             </td>
         </tr>
     </table>
@@ -110,13 +108,56 @@
 </th:block>
 
 <script>
-    function confirmDelete(event) {
-        var result = confirm("정말 삭제하시겠습니까?");
-        if (result) {
 
-        } else {
-            event.preventDefault();
-        }
+    function confirmDelete(noticeIdx) {
+        const result2 = Swal.mixin({
+            customClass: {
+                confirmButton: "btn btn-success",
+                cancelButton: "btn btn-danger"
+            },
+            buttonsStyling: false
+        });
+        result2.fire({
+            title: "공지 삭제확인",
+            text: "정말 삭제하시겠습니까?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "네, 삭제 합니다.",
+            cancelButtonText: "아니요, 취소합니다.",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // AJAX 요청 시작
+                $.ajax({
+                    url: '/manager/noticeDel/' + noticeIdx, // AJAX 요청 URL
+                    type: 'GET', // HTTP 메소드
+                    success: function (response) {
+                        // 성공 시 처리
+                        Swal.fire({
+                            title: "삭제 확인",
+                            text: "공지 삭제가 완료되었습니다.",
+                            icon: "success"
+                        }).then(() => {
+                            window.location.href = "/noticeList";// 페이지 새로고침 또는 이동
+                        });
+                    },
+                    error: function () {
+                        // 오류 시 처리
+                        Swal.fire({
+                            title: "오류",
+                            text: "삭제 중 오류가 발생했습니다.",
+                            icon: "error"
+                        });
+                    }
+                });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire({
+                    title: "삭제 취소",
+                    text: "공지 삭제가 취소되었습니다.",
+                    icon: "error"
+                });
+            }
+        });
     }
 </script>
 

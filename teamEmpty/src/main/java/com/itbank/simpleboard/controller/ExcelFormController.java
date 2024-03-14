@@ -3,6 +3,7 @@ package com.itbank.simpleboard.controller;
 import com.itbank.simpleboard.dto.StudentFormDTO;
 import com.itbank.simpleboard.service.ExcelFormService;
 import com.itbank.simpleboard.service.ManagerService;
+import com.itbank.simpleboard.service.PaymentsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -30,6 +31,8 @@ import java.util.List;
 public class ExcelFormController {
     private final ExcelFormService excelFormService;
     private final ManagerService managerService;
+    private final PaymentsService paymentsService;
+
 
     @PostMapping("/addStudent")   // 학생 등록 엑셀 업로드
     public String uploadStudentList(@RequestParam("studentFile") MultipartFile studentFile, Model model) throws IOException {

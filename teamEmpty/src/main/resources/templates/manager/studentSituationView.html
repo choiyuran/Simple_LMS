@@ -10,25 +10,27 @@
     <hr>
     <form th:action="@{'/manager/studentSituationUpdate/' + ${situation.idx} + '/' + ${situation.student_idx}}">
         <table class="table table-bordered">
-            <tr>
+            <tr class="form-group">
                 <th>학생</th>
                 <td th:text="${situation.name}"></td>
             </tr>
-            <tr>
+            <tr class="form-group">
                 <th>학과</th>
                 <td th:text="${situation.major}"></td>
             </tr>
-            <tr>
+            <tr class="form-group">
                 <th>시작일</th>
                 <td>
-                    <input type="date" th:value="${start}" name="start">
+                    <input class="form-control" type="date" th:value="${start}" name="start">
                 </td>
             </tr>
+            <tr class="form-group">
                 <th>종료일</th>
                 <td>
-                    <input type="date" th:value="${end}" name="end">
+                    <input class="form-control" type="date" th:value="${end}" name="end">
                 </td>
-            <tr>
+            </tr>
+            <tr class="form-group">
                 <th>상태</th>
                 <td th:text="${situation.status}"></td>
             </tr>
@@ -36,27 +38,27 @@
             <td th:colspan="2">
                 <div class="d-flex">
                     <div class="radio-option mr-5">
-                        <input type="radio" id="radio1" name="status" value="군휴학">
+                        <input class="form-check-input" type="radio" id="radio1" name="status" value="군휴학">
                         <label for="radio1">군휴학</label>
                     </div>
 
                     <div class="radio-option mr-5">
-                        <input type="radio" id="radio2" name="status" value="일반휴학">
+                        <input class="form-check-input" type="radio" id="radio2" name="status" value="일반휴학">
                         <label for="radio2">일반휴학</label>
                     </div>
 
                     <div class="radio-option mr-5">
-                        <input type="radio" id="radio3" name="status" value="재학">
+                        <input class="form-check-input" type="radio" id="radio3" name="status" value="재학">
                         <label for="radio3">재학</label>
                     </div>
 
                     <div class="radio-option mr-5">
-                        <input type="radio" id="radio4" name="status" value="복학">
+                        <input class="form-check-input" type="radio" id="radio4" name="status" value="복학">
                         <label for="radio4">복학</label>
                     </div>
 
                     <div class="radio-option">
-                        <input type="radio" id="radio5" name="status" value="졸업">
+                        <input class="form-check-input" type="radio" id="radio5" name="status" value="졸업">
                         <label for="radio5">졸업</label>
                     </div>
                 </div>

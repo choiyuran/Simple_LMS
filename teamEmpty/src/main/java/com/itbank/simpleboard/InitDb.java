@@ -11,10 +11,7 @@
 //import java.text.SimpleDateFormat;
 //import java.time.LocalDate;
 //import java.time.format.DateTimeFormatter;
-//import java.time.LocalDate;
-//import java.time.ZoneId;
 //import java.text.ParseException;
-//import java.text.SimpleDateFormat;
 //import java.util.Date;
 //import java.util.Random;
 //
@@ -26,7 +23,6 @@
 //    @PostConstruct
 //    public void init() {
 //        try {
-//            initService.dbInit3();
 //            initService.dbInit6();
 //            initService.dbInit4();
 //            initService.dbInit();
@@ -136,10 +132,6 @@
 //                Payments payments8 = new Payments(student2,"2024학년 1학기");
 //                Payments payments9 = new Payments(student3,"2024학년 1학기");
 //
-//                Payments payments10 = new Payments(student1, "2024학년 2학기");
-//                Payments payments11 = new Payments(student2,"2024학년 2학기");
-//                Payments payments12 = new Payments(student3,"2024학년 2학기");
-//
 //
 //                em.persist(payments);
 //                em.persist(payments2);
@@ -150,9 +142,6 @@
 //                em.persist(payments7);
 //                em.persist(payments8);
 //                em.persist(payments9);
-//                em.persist(payments10);
-//                em.persist(payments11);
-//                em.persist(payments12);
 //
 //
 //                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
@@ -223,11 +212,6 @@
 //            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
 //            em.persist(calendar3);
 //        }
-//
-//        public void dbInit3() {
-//
-//        }
-//
 //
 //
 //        public void dbInit6() {
@@ -437,10 +421,6 @@
 //                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
 //                        em.persist(scholarshipAward1);
 //                    }
-//
-//
-//
-//
 //                } catch (ParseException e) {
 //                    throw new RuntimeException(e);
 //                }

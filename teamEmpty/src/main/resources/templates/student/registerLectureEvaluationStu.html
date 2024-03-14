@@ -72,16 +72,16 @@
     <table class="m-auto">
         <tr>
             <th class="title">전공</th>
-            <td class="content"><input th:value="${dto.getMajorName()}" readonly/></td>
+            <td class="content"><input class="form-control" th:value="${dto.getMajorName()}" readonly/></td>
             <th class="title">작성자</th>
-            <td class="content"><input th:value="${dto.getStudentName()}" readonly/></td>
+            <td class="content"><input class="form-control" th:value="${dto.getStudentName()}" readonly/></td>
         </tr>
 
         <tr>
             <th class="title">학번</th>
-            <td class="content"><input th:value="${dto.getStudentNum()}" readonly/></td>
+            <td class="content"><input class="form-control" th:value="${dto.getStudentNum()}" readonly/></td>
             <th class="title">강의명</th>
-            <td class="content"><input th:value="${dto.getLectureName()}" readonly/></td>
+            <td class="content"><input class="form-control" th:value="${dto.getLectureName()}" readonly/></td>
         </tr>
     </table>
 

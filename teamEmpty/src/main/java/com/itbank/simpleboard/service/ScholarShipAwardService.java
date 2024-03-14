@@ -41,7 +41,6 @@ public class ScholarShipAwardService {
                     total2 += 0;
                 }
             }
-            System.err.println("Service : total1" + total1 + "total2 : "+ total2);
         }
         return payments.getSemester().contains("2학기") ? total2 : total1;
     }

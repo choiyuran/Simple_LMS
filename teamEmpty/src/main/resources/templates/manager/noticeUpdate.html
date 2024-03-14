@@ -12,21 +12,21 @@
     <div class="d-flex flex-column align-items-center">
         <form method="post">
             <table class="table table-bordered">
-                <tr>
+                <tr class="form-group">
                     <td th:colspan="2">
-                        <input th:value="${notice.title}" name="title" style="width: 330px;">
+                        <input class="form-control" th:value="${notice.title}" name="title" style="width: 330px;">
                     </td>
                 </tr>
 
-                <tr>
+                <tr class="form-group">
                     <td th:text="${notice.wdate}"></td>
                     <td th:text="${notice.viewCount}"></td>
                 </tr>
 
-                <tr>
+                <tr class="form-group">
                     <td  th:colspan="2">
                         <label>
-                            <textarea th:text="${notice.content}" name="content" cols="40" rows="10"></textarea>
+                            <textarea class="form-control" th:text="${notice.content}" name="content" cols="40" rows="10"></textarea>
                         </label>
                     </td>
                 </tr>

@@ -241,8 +241,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
 
     @Override
     public List<Tuple> findByMajorAndUserUserNameContaining(String majorName, String professorName) {
-        System.err.println("findByMajorAndUserUserNameContaining :" + majorName);
-        System.err.println("findByMajorAndUserUserNameContaining :" + professorName);
         return queryFactory
                 .select(professor.professor_idx, professor.user.user_name)
                 .from(professor)

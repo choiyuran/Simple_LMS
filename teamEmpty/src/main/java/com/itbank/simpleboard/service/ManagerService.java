@@ -1,10 +1,12 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.GlobalVariable;
 import com.itbank.simpleboard.component.HashComponent;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.LectureRoomRepository;
+import com.itbank.simpleboard.repository.PaymentsRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
@@ -47,7 +49,8 @@ public class ManagerService {
     private final HashComponent hashComponent;
     private final SituationRepository situationRepository;
     private final SituationRecordRepository situationRecordRepository;
-
+    private final PaymentsRepository paymentsRepository;
+    private final GlobalVariable globalVariable;
     public Page<ManagerDTO> findAllManager(Pageable pageable) {
         Page<Manager> managerList = managerRepository.findAll(pageable);
         List<ManagerDTO> managerDTOList = new ArrayList<>();
@@ -128,8 +131,6 @@ public class ManagerService {
         StringBuilder day = new StringBuilder();
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
-
-        System.err.println("param : " + param.toString());
 
         for (int i = 0; i < param.getDay().length; i++) {
             day.append(param.getDay()[i]);
@@ -284,7 +285,7 @@ public class ManagerService {
 
     @Transactional
     public Manager addManager(UserFormDTO dto, MultipartFile imageFile) {
-        System.err.println("userFormDTO : " + dto.toString());
+
         String salt = hashComponent.getRandomSalt();
         String source = dto.getBackSecurity();
         String pw = hashComponent.getHash(source, salt);
@@ -295,9 +296,7 @@ public class ManagerService {
         String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         String newFileName = userName + "_" + dto.getFrontSecurity() + extension;
         String manager_img = fileService.uploadIdPhoto(imageFile, "idPhoto_manager", newFileName);
-        System.err.println("manager_img : " + manager_img);
-        System.err.println("newFileName : " + newFileName);
-        System.err.println("imageFile : " + imageFile.getOriginalFilename());
+
         Date hireDate = new java.sql.Date(dto.getHireDate().getTime());
         User user = new User(
                 pw,
@@ -324,7 +323,7 @@ public class ManagerService {
         int index = 1;
         StringBuilder notFoundStudents = new StringBuilder();// 교수정보를 찾을 수 없는 학생들의 번호를 담을 StringBuilder
         for (StudentFormDTO dto : studentList) {
-            System.err.println(index + "번 학생 확인 시작");
+
 //            Long idx = extractedIdx(dto.getMajor());
 
             Optional<Major> major = majorRepository.findById(extractedIdx(dto.getMajor()));
@@ -333,7 +332,7 @@ public class ManagerService {
                 index++;
                 continue;
             }
-            System.err.println(major.get().getName() + "major");
+
             List<Professor> professors = professorRepository.findAllByMajor(major.get());
 
             boolean found = false;
@@ -368,7 +367,6 @@ public class ManagerService {
         int index = 0;
 
         for (StudentFormDTO dto : studentList) {
-            System.err.println(index + "번 학생 추가 시작");
             String salt = hashComponent.getRandomSalt();
             String source = dto.getSecurity().substring(dto.getSecurity().length() - 7);
             String pw = hashComponent.getHash(source, salt);
@@ -388,7 +386,7 @@ public class ManagerService {
                         User_role.학생
                 );
                 userRepository.save(user);
-                System.err.println(index + "번 학생 유저저장");
+
                 log.info("dto.getStudent_grade() : {} ", dto.getStudent_grade());
                 log.info("user : {} ", user);
                 log.info("professor.get() : {} ", professor.get());
@@ -406,7 +404,7 @@ public class ManagerService {
                         major.get().getIdx(),
                         lastStudentNum
                 );
-                System.err.println(index + "번 학생엔티티");
+
                 Situation situation = new Situation(
                         s,
                         Status_type.재학
@@ -415,12 +413,14 @@ public class ManagerService {
                         Status_type.입학,
                         s
                 );
-                System.err.println("major" + major.get().getName());
-//            System.err.println("professor" + professor.getUser().getUser_name());
 
-                studentRepository.save(s);
+                Student student = studentRepository.save(s);
                 situationRepository.save(situation);
                 situationRecordRepository.save(situationRecord);
+                Payments payments = new Payments(student,globalVariable.getGlobalSememster());
+                Payments savedPayments =  paymentsRepository.save(payments);
+
+                log.info("savedPayments : " + savedPayments);
 
                 log.info("user.getUser_id : {} ", user.getUser_id());
                 user.setUser_id(String.valueOf(s.getStudent_num()));

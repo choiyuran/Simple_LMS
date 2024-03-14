@@ -1,10 +1,12 @@
 package com.itbank.simpleboard.controller;
 
+import com.itbank.simpleboard.component.GlobalVariable;
 import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -31,7 +33,6 @@ import java.util.*;
 @RequestMapping("/manager")
 @Slf4j
 public class ManagerController {
-
     private final ManagerService managerService;
     private final LectureRoomService lectureRoomService;
     private final AcademicCalendarService academicCalendarService;
@@ -43,6 +44,41 @@ public class ManagerController {
     private final StudentService studentService;
     private final MajorService majorService;
     private final LectureService lectureService;
+    private final GlobalVariable globalVariable;
+
+    // 전역 학기 바꾸기
+    @GetMapping("/changeGlobalSemester")
+    public String changeGlobalSemester(HttpSession session, RedirectAttributes ra, Model model){
+        if(session.getAttribute("user") instanceof ManagerLoginDto){
+            log.info("현재 학기는 : " + globalVariable.getGlobalSememster());
+            model.addAttribute("globalSemester", globalVariable.getGlobalSememster());
+            return "manager/changeGlobalSemester";
+        }else{
+            ra.addFlashAttribute("msg", "관리자 로그인 하세요!!");
+            ra.addFlashAttribute("icon", "error");
+            ra.addFlashAttribute("title", "관리자 인증 에러");
+        }
+        return "redirect:/login";
+    }
+
+    // 변경 - 모든 재학 학생에 대해서 등록금 납부 컬럼(납부일 null)인 테이블
+    @PostMapping("/changeGlobalSemester")
+    public String changeGlobalSemesterPro(String semester, HttpSession session, RedirectAttributes ra){
+
+        if(session.getAttribute("user") instanceof ManagerLoginDto){
+            globalVariable.setGlobalSememster(semester);
+            ra.addFlashAttribute("msg","현재 학기가 수정되었습니다.");
+            ra.addFlashAttribute("icon", "success");
+            ra.addFlashAttribute("title", "현재학기 수정");
+        }else{
+            ra.addFlashAttribute("msg","교직원만 접근 가능합니다.");
+            ra.addFlashAttribute("icon", "error");
+            ra.addFlashAttribute("title", "현재 학기 수정");
+            return "redirect:/login";
+        }
+
+        return "redirect:/manager/changeGlobalSemester";
+    }
 
     @GetMapping("/calendarAddForm") // 학사일정 추가
     public String calendarAdd(Model model, HttpSession session) {
@@ -286,6 +322,7 @@ public class ManagerController {
     public ModelAndView lectureAdd() {
         ModelAndView mav = new ModelAndView("manager/registerLecture");
         List<Major> majorList = managerService.selectAllMajor();
+        mav.addObject("globalSemester", globalVariable.getGlobalSememster());
         mav.addObject(majorList);
         return mav;
     }
@@ -646,7 +683,6 @@ public class ManagerController {
     public String checkTuitionPayment(Model model, CheckTutionPaymentConditionDto condition) {
         List<Major> majorDtos = majorService.findById();
         model.addAttribute("majorList", majorDtos);
-        System.err.println("test : " + majorDtos);
         if (condition.getUsername() == null || condition.getUsername().isEmpty()) {
             model.addAttribute("list", null);
             return "manager/checkTuitionPayments";
