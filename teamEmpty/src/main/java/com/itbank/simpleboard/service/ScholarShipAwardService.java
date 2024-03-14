@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -65,5 +66,21 @@ public class ScholarShipAwardService {
             }
         }
         return payments.getSemester().contains("2학기") ? total2 : total1;
+    }
+
+    @Transactional
+    public Scholarship_Award save(Long stuIdx, Long scholarshipIdx) {
+        Student student = studentRepository.findById(stuIdx).orElse(null);
+        Scholarship scholarship = scholarshipRepository.findById(scholarshipIdx).orElse(null);
+        return scholarshipAwardRepository.save(new Scholarship_Award(student,scholarship));
+    }
+
+    public List<Scholarship> findByStudentIdx(Long idx) {
+        Student student = studentRepository.findById(idx).orElse(null);
+        if(student != null){
+            List<Scholarship_Award> awards = scholarshipAwardRepository.findByStudent(student);
+            return awards.stream().map(Scholarship_Award::getScholarship).collect(Collectors.toList());
+        }
+        return null;
     }
 }

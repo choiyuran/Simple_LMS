@@ -45,6 +45,8 @@ public class ManagerController {
     private final MajorService majorService;
     private final LectureService lectureService;
     private final GlobalVariable globalVariable;
+    private final ScholarShipService scholarShipService;
+    private final ScholarShipAwardService scholarShipAwardService;
 
     // 전역 학기 바꾸기
     @GetMapping("/changeGlobalSemester")
@@ -554,9 +556,14 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("redirect:/manager/studentList");
         StudentListDto student = managerService.selectOneStudent(idx);
         List<Major> majorList = managerService.selectAllMajor();
+        String Semester = globalVariable.getGlobalSememster();
+        List<Scholarship> scholarshipList = scholarShipService.findAllByContainSemester(Semester);
+        List<Scholarship> scholarShipAwardList = scholarShipAwardService.findByStudentIdx(idx);
         if(student != null) {
+            mav.addObject("awardList", scholarShipAwardList);
             mav.addObject("student", student);
             mav.addObject("majorList", majorList);
+            mav.addObject("scholarshipList",scholarshipList);
             mav.setViewName("manager/studentView");
         }
         return mav;
@@ -727,6 +734,22 @@ public class ManagerController {
             return "/manager/myLectureEvaluation";
         }
         return "redirect:/login";
+    }
+
+    @PostMapping("/giveScholarship")
+    public String giveScholarship(Long stuIdx, Long scholarshipIdx, RedirectAttributes ra){
+        if(stuIdx != null && scholarshipIdx != null) {
+            Scholarship_Award scholarshipAward = scholarShipAwardService.save(stuIdx, scholarshipIdx);
+            ra.addFlashAttribute("msg","장학금 수여 완료");
+            ra.addFlashAttribute("icon", "success");
+            ra.addFlashAttribute("title", "장학금 수여 확인");
+        }else{
+            ra.addFlashAttribute("msg","장학금 수여 실패");
+            ra.addFlashAttribute("icon", "error");
+            ra.addFlashAttribute("title", "장학금 수여 확인");
+            return "redirect:/manager/studentList";
+        }
+        return "redirect:/manager/studentView/"+stuIdx;
     }
 }
 

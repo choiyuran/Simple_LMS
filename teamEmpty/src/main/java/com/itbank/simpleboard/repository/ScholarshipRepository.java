@@ -14,4 +14,8 @@ public interface ScholarshipRepository extends JpaRepository<Scholarship, Long> 
 
     @Query("SELECT SUM(sa.scholarship.price) FROM Scholarship_Award sa WHERE sa.student = :student and sa.scholarship.year=2024 and (sa.scholarship.quarter = 1 or sa.scholarship.quarter = 2)")
     Integer getTotal(@Param("student") Student student);
+
+    List<Scholarship> findByYearContaining(String year);
+
+    List<Scholarship> findByYear(Integer year);
 }

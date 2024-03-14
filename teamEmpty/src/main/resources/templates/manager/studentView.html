@@ -19,7 +19,8 @@
                     </tr>
                     <tr class="form-group">
                         <th>학번</th>
-                        <td><input th:value="${student.student_num}" type="number" name="student_num" class="form-control"></td>
+                        <td><input th:value="${student.student_num}" type="number" name="student_num"
+                                   class="form-control"></td>
                     </tr>
                     <tr class="form-group">
                         <th>학과</th>
@@ -47,15 +48,100 @@
                     </tr>
                     <tr class="form-group">
                         <th>입학일</th>
-                        <td><input th:value="${student.entranceDate}" class="form-control" type="date" name="entranceDate"></td>
+                        <td><input th:value="${student.entranceDate}" class="form-control" type="date"
+                                   name="entranceDate"></td>
                     </tr>
                 </table>
                 <button class="btn btn-warning">수정</button>
-                <a href="/manager/studentList"><button class="btn btn-warning" type="button">취소</button></a>
+                <a href="/manager/studentList">
+                    <button class="btn btn-danger" type="button">취소</button>
+                </a>
             </form>
+
+
+            <div class="d-flex w-50 justify-content-between">
+                <button type="button" class="btn btn-info mt-3" data-bs-toggle="modal"
+                        data-bs-target="#scholarshipModal">
+                    장학금 수여
+                </button>
+                <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#scholarList">
+                    현재 장학금 내역
+                </button>
+            </div>
+            <!-- The Modal -->
+            <div class="modal fade" id="scholarList">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title" th:text="${student.name +'님의 장학금 내역'}"></h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>이름</th>
+                                    <th>년</th>
+                                    <th>분기</th>
+                                    <th>금액</th>
+                                </tr>
+                                <tr th:each="row : ${awardList}">
+                                    <td th:text="${row.name}"></td>
+                                    <td th:text="${row.year}"></td>
+                                    <td th:text="${row.quarter}"></td>
+                                    <td th:text="${row.price}"></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Modal -->
+            <div class="modal fade" id="scholarshipModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <h4 class="modal-title" th:text="${student.name}+'님에게 장학금 수여하기'"></h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form action="/manager/giveScholarship" method="post">
+                            <label>
+                                <input type="hidden" name="stuIdx" th:value="${student.idx}">
+                            </label>
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                                <label class="form-group">
+                                    <select class="form-control" name="scholarshipIdx" required>
+                                        <option value="" selected disabled>장학금을 선택하세요</option>
+                                        <option th:each="item : ${scholarshipList}" th:text="${item.name}"
+                                                th:value="${item.idx}"></option>
+                                    </select>
+                                </label>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                                <button class="btn btn-facebook">등록금 수여하기</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 <footer th:insert="layout/managerHeader :: footer"></footer>
 
 </body>

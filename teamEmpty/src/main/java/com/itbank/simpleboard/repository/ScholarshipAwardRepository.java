@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface ScholarshipAwardRepository extends JpaRepository<Scholarship_Award, Long> {
     List<Scholarship_Award> findByStudent(Student student);
+
 }

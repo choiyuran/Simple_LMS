@@ -51,7 +51,7 @@
                 <td th:text="${item.user_name}"></td>
                 <td th:text="${item.tuition + '원'}"></td>
                 <td th:text="${item.scholarship + '원'}"></td>
-                <td th:text="${(item.tuition - item.scholarship) + '원'}"></td>
+                <td th:text="${((item.tuition - item.scholarship) < 0 ? '0' : (item.tuition - item.scholarship))+ '원'}"></td>
                 <td th:text="${#dates.format(item.date, 'yyyy-MM-dd')}"></td>
                 <td>
                     <a th:if="${item.flag.toString() == 'N'}" th:href="@{/student/paymentTuition/{idx}(idx=${item.idx})}"><button class="btn btn-primary">등록금 납부 하기</button></a>
