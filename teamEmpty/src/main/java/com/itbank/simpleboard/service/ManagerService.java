@@ -7,6 +7,7 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.repository.AcademicCalendarRepository;
 import com.itbank.simpleboard.repository.LectureRoomRepository;
 import com.itbank.simpleboard.repository.PaymentsRepository;
+import com.itbank.simpleboard.repository.ScholarshipRepository;
 import com.itbank.simpleboard.repository.manager.CollegeRepository;
 import com.itbank.simpleboard.repository.manager.MajorRepository;
 import com.itbank.simpleboard.repository.manager.ManagerRepository;
@@ -51,6 +52,8 @@ public class ManagerService {
     private final SituationRecordRepository situationRecordRepository;
     private final PaymentsRepository paymentsRepository;
     private final GlobalVariable globalVariable;
+    private final ScholarshipRepository scholarshipRepository;
+
     public Page<ManagerDTO> findAllManager(Pageable pageable) {
         Page<Manager> managerList = managerRepository.findAll(pageable);
         List<ManagerDTO> managerDTOList = new ArrayList<>();
@@ -734,6 +737,14 @@ public class ManagerService {
         }
 
         return evaluationStatus;
+    }
+
+    public Page<ScholarshipDto> findAllScholarship(Pageable pageable, ScholarshipDto dto) {
+        return scholarshipRepository.findAllScholarship(pageable, dto);
+    }
+
+    public List<Scholarship> findAllScholarshipList() {
+        return scholarshipRepository.findAll();
     }
 }
 

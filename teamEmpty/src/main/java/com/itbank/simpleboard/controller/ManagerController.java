@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -41,10 +42,10 @@ public class ManagerController {
     private final CollegeService collegeService;
     private final SituationService situationService;
     private final NoticeService noticeService;
-    private final StudentService studentService;
     private final MajorService majorService;
     private final LectureService lectureService;
     private final GlobalVariable globalVariable;
+    private final ScholarShipService scholarShipService;
 
     // 전역 학기 바꾸기
     @GetMapping("/changeGlobalSemester")
@@ -728,5 +729,41 @@ public class ManagerController {
         }
         return "redirect:/login";
     }
+
+    @GetMapping("/scholarshipList")             // 장학금 목록
+    public String scholarshipList(Model model, @PageableDefault(size = 10) Pageable pageable, ScholarshipDto dto) {
+        Page<ScholarshipDto> scholarshipList = managerService.findAllScholarship(pageable, dto);
+        List<Scholarship> scholarshipDtos = managerService.findAllScholarshipList();
+        // 장학금 이름
+        List<String> nameList = scholarshipDtos.stream().map(Scholarship::getName)
+                .distinct().collect(Collectors.toList());
+        // 년도
+        List<Integer> yearList = scholarshipDtos.stream().map(Scholarship::getYear)
+                .distinct().collect(Collectors.toList());
+        // 분기
+        List<Integer> quarterList = scholarshipDtos.stream().map(Scholarship::getQuarter)
+                .distinct().collect(Collectors.toList());
+
+        model.addAttribute("scholarshipList", scholarshipList);
+        model.addAttribute("nameList", nameList);
+        model.addAttribute("yearList", yearList);
+        model.addAttribute("quarterList", quarterList);
+        model.addAttribute("dto", dto);
+        return "/manager/scholarshipList";
+    }
+
+    @GetMapping("/registerScholarship")
+    public String registerScholarship(Model model) {
+        String year = globalVariable.getGlobalSememster().split("년")[0];
+        model.addAttribute("year", year);
+        return "/manager/registerScholarship";
+    }
+
+    @PostMapping("/registerScholarship")
+    public String registerScholarship(ScholarshipDto dto) {
+        Scholarship scholarship = scholarShipService.addScholarShip(dto);
+        return "redirect:/manager/scholarshipList";
+    }
+
 }
 

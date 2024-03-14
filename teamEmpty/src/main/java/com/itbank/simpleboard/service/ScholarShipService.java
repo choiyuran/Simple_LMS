@@ -1,5 +1,7 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.dto.ScholarshipDto;
+import com.itbank.simpleboard.entity.Scholarship;
 import com.itbank.simpleboard.entity.Scholarship_Award;
 import com.itbank.simpleboard.repository.ScholarshipAwardRepository;
 import com.itbank.simpleboard.repository.ScholarshipRepository;
@@ -14,4 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScholarShipService {
     private final ScholarshipRepository scholarshipRepository;
+
+    @Transactional
+    public Scholarship addScholarShip(ScholarshipDto dto) {
+        Scholarship scholarship = new Scholarship(
+                dto.getCategory(),
+                dto.getName(),
+                dto.getPrice(),
+                dto.getYear(),
+                dto.getQuarter()
+        );
+        return scholarshipRepository.save(scholarship);
+    }
 }
