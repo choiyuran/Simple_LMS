@@ -2,6 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 전체 강의 리스트 -->
 <head th:insert="layout/professorHeader :: head"></head>
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
 <body>
 <header th:insert="layout/professorHeader :: header"></header>
 <main>
@@ -63,7 +68,8 @@
                 <div class="form-group w-100 flex justify-content-between align-items-center">
                     <div class="w-50">
                         <label class="w-100 my-0">검색어 :
-                            <input id="MySearchInput" class="form-control d-inline-block w-50" name="name" type="text"
+                            <input class="form-control d-inline-block w-50" id="MySearchInput" name="name"
+                                   placeholder="강의명 입력" type="text"
                                    th:selected="${condition != null && condition.name != null && condition.name == name}">
                         </label>
                     </div>

@@ -1,15 +1,9 @@
 package com.itbank.simpleboard.controller;
 
-import com.itbank.simpleboard.dto.ManagerLoginDto;
-import com.itbank.simpleboard.dto.ProfessorDto;
-import com.itbank.simpleboard.dto.StudentDto;
-import com.itbank.simpleboard.dto.UserDTO;
+import com.itbank.simpleboard.dto.*;
 import com.itbank.simpleboard.entity.AcademicCalendar;
 import com.itbank.simpleboard.entity.Notice;
-import com.itbank.simpleboard.service.AcademicCalendarService;
-import com.itbank.simpleboard.service.NoticeService;
-import com.itbank.simpleboard.service.ProfessorService;
-import com.itbank.simpleboard.service.UserService;
+import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +21,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +36,7 @@ public class HomeController {
     private final ProfessorService professorService;
     private final AcademicCalendarService academicCalendarService;
     private final NoticeService noticeService;
+    private final ManagerService managerService;
 
     @GetMapping("/")
     public String root() {
@@ -338,5 +335,30 @@ public class HomeController {
             mav.setViewName("common/noticeView");
         }
         return mav;
+    }
+
+    @RequestMapping("/lectureList") // 강의 목록
+    public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 10) Pageable pageable) {
+        long startTime = System.currentTimeMillis();
+
+        Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
+        String evaluationStatus = managerService.selectEvaluationStatus();
+        // LectureDtoList를 Model에 추가
+        model.addAttribute("LectureList", lectureDtoList);
+        model.addAttribute("MajorList", professorService.getMajorNameList(condition));
+        model.addAttribute("GradeList", professorService.getGradeList(condition));
+
+        int currentYear = LocalDate.now().getYear();
+        List<Integer> yearList = new ArrayList<>();
+        for (int i = 4; i >= 0; i--) {
+            int year = currentYear - i;
+            yearList.add(year);
+        }
+        model.addAttribute("YearList", yearList);
+        model.addAttribute("condition", condition);
+        model.addAttribute("evaluationStatus", evaluationStatus);
+        long endTime = System.currentTimeMillis();
+        log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
+        return "common/lectureList";
     }
 }

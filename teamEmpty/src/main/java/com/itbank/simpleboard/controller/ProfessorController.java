@@ -31,33 +31,7 @@ public class ProfessorController {
     private final LectureService lectureService;
     private final AcademicCalendarService academicCalendarService;
     private final GradeService gradeService;
-    private final ManagerService managerService;
     private final NoticeService noticeService;
-
-    @RequestMapping("/lectureList") // 강의 목록
-    public String lectureList(Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 10) Pageable pageable) {
-        long startTime = System.currentTimeMillis();
-
-        Page<ProfessorLectureDto> lectureDtoList = professorService.getLectureDtoList(condition, pageable);
-        String evaluationStatus = managerService.selectEvaluationStatus();
-        // LectureDtoList를 Model에 추가
-        model.addAttribute("LectureList", lectureDtoList);
-        model.addAttribute("MajorList", professorService.getMajorNameList(condition));
-        model.addAttribute("GradeList", professorService.getGradeList(condition));
-
-        int currentYear = LocalDate.now().getYear();
-        List<Integer> yearList = new ArrayList<>();
-        for (int i = 4; i >= 0; i--) {
-            int year = currentYear - i;
-            yearList.add(year);
-        }
-        model.addAttribute("YearList", yearList);
-        model.addAttribute("condition", condition);
-        model.addAttribute("evaluationStatus", evaluationStatus);
-        long endTime = System.currentTimeMillis();
-        log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
-        return "professor/lectureList";
-    }
 
     @RequestMapping("/myLecture")   // "교수" 로그인 된 사용자의 본인이 하는 강의 리스트를 보여주는 메서드
     public String myLecture(HttpSession session, Model model, @ModelAttribute LectureSearchConditionDto condition, @PageableDefault(size = 10) Pageable pageable) {

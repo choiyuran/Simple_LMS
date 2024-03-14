@@ -2,6 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="layout/managerHeader :: head">
 </head>
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 
@@ -18,7 +23,8 @@
                     <option value="phone" th:text="연락처"></option>
                 </select>
                 <div class="form-group ml-4 mr-2">
-                    <input class="form-control" type="text" th:value="${param.searchValue}" name="searchValue" placeholder="검색어 입력">
+                    <input class="form-control" name="searchValue" placeholder="검색어 입력" th:value="${param.searchValue}"
+                           type="text">
                 </div>
 
                 <!--                     퇴사 여부 필터-->
@@ -48,18 +54,20 @@
                 </td>
             </tr>
             <tr th:unless="${#lists.isEmpty(managerList)}" th:each="row : ${managerList}">
-                <td class="name"><a th:text="${row.managerName}" th:href="@{'/manager/managerView/' + ${row.idx}}"></a></td>
+                <td class="name"><a th:href="@{'/manager/managerView/' + ${row.idx}}" th:text="${row.managerName}"></a>
+                </td>
                 <td th:text="${row.managerId}"></td>
                 <td th:text="${row.managerPnum}"></td>
                 <td class="hireDate" th:text="${row.managerHireDate}"></td>
-             </tr>
+            </tr>
             </tbody>
         </table>
         <a href="/manager/register">
             <button class="btn btn-primary">교직원 등록</button>
         </a>
         <a href="/manager/managerList">
-            <button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로</button>
+            <button class="btn btn-primary" th:if="${searchValue != null or searchType != null or leave != null}">목록으로
+            </button>
         </a>
 
         <div class="m-auto mt-3" style="width: fit-content" th:if="${managerList.totalPages > 1}">

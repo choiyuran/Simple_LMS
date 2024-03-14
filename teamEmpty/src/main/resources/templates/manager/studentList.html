@@ -2,6 +2,11 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head th:insert="layout/managerHeader :: head">
 </head>
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
 <div class="container mt-5 min-height">
@@ -57,8 +62,15 @@
         </tr>
         </tbody>
     </table>
-    <a href="/manager/addStudent"><button class="btn btn-facebook">학생 등록</button></a>
-    <a href="/manager/studentList"><button class="btn btn-facebook" th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['todayRegistered'])}">목록으로</button></a>
+    <a href="/manager/addStudent">
+        <button class="btn btn-facebook">학생 등록</button>
+    </a>
+    <a href="/manager/studentList">
+        <button class="btn btn-facebook"
+                th:if="${!#strings.isEmpty(map['major_idx']) or !#strings.isEmpty(map['name']) or !#strings.isEmpty(map['todayRegistered'])}">
+            목록으로
+        </button>
+    </a>
 
     <div class="m-auto mt-3" style="width: fit-content" th:if="${studentList.totalPages > 1}">
         <ul class="pagination">
@@ -91,7 +103,8 @@
                 </a>
             </li>
 
-            <li class="page-item" th:if="${studentList.hasNext && studentList.totalPages - 1 >= ((studentList.number / 5) + 1) * 5}">
+            <li class="page-item"
+                th:if="${studentList.hasNext && studentList.totalPages - 1 >= ((studentList.number / 5) + 1) * 5}">
                 <a th:href="@{/manager/studentList(page=${((studentList.number / 5) + 1) * 5})}">
                     <button class="page-link" th:text="'>>'"></button>
                 </a>

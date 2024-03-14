@@ -30,7 +30,6 @@
         <tr>
             <th>번호</th>
             <th>제목</th>
-            <th>내용</th>
             <th>등록일</th>
             <th>조회수</th>
             <th colspan="2" th:if="${session.user.user.role.toString() == '교직원'}"></th>
@@ -38,8 +37,7 @@
 
         <tr th:each="row : ${noticeList}">
             <td th:text="${row.idx}"></td>
-            <td><a th:href="@{'/manager/noticeView/' + ${row.idx}}" th:text="${#strings.length(row.title) > 5 ? #strings.substring(row.title, 0, 5) + '...' : row.title}"></a></td>
-            <td th:text="${#strings.length(row.content) > 10 ? #strings.substring(row.content, 0, 10) + '...' : row.content}"></td>
+            <td class="w-75"><a th:href="@{'/manager/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
             <td th:text="${row.wdate}"></td>
             <td th:text="${row.viewCount}"></td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">
