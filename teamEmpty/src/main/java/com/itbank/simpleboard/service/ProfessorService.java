@@ -34,13 +34,7 @@ public class ProfessorService {
     }
 
     public List<ProfessorUserDto> getProfessorsByMajor(Long majorIdx) {
-        List<ProfessorUserDto> professors = professorRepository.getProfessorNamesByMajor(majorIdx);
-        return professors;
-    }
-
-    public Professor getProfessorByIdx(Long professorIdx) {
-        Optional<Professor> professor = professorRepository.findById(professorIdx);
-        return professor.orElse(null);
+        return professorRepository.getProfessorNamesByMajor(majorIdx);
     }
 
     public List<EvaluateFormDto> getEvaluation(Long idx) {
