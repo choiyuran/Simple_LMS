@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert = "layout/managerHeader :: head"></head>
+<body>
+<header th:insert = "layout/managerHeader :: header" ></header>
+<div class="container mt-5 min-height">
+    <h2>장학금 등록</h2>
+    <hr>
+
+    <form method="post">
+        <div class="w-50 m-auto">
+            <div class="input-group input-group-sm mb-3 w-100">
+                <span class="input-group-text" style="width: 20%;">카테고리</span>
+                <select class="form-control" name="category">
+                    <option value="">장학금 카테고리 선택</option>
+                    <option value="내부">내부</option>
+                    <option value="외부">외부</option>
+                </select>
+            </div>
+
+            <div class="input-group input-group-sm mb-3 w-100">
+                <span class="input-group-text" style="width: 20%;">장학금 이름</span>
+                <input type="text" class="form-control" name="name">
+            </div>
+
+            <span class="text-danger">* 전액 장학금인 경우/졸업시까지 지원할 경우에는 9를 8개 입력</span>
+            <div class="input-group input-group-sm mb-3 w-100">
+                <span class="input-group-text" style="width: 20%;">금액</span>
+                <input type="number" class="form-control" name="price" max="99999999">
+            </div>
+
+            <div class="input-group input-group-sm mb-3 w-100">
+                <span class="input-group-text" style="width: 20%;">분기</span>
+                <select class="form-control" name="quarter">
+                    <option value="">분기 선택</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+
+            <div class="input-group input-group-sm mb-3 w-100">
+                <span class="input-group-text" style="width: 20%;">년도</span>
+                <input type="text" class="form-control bg-white" name="year" th:value="${year}" readonly>
+            </div>
+
+            <div class="w-50 m-auto text-center">
+                <button class="btn btn-facebook" style="margin-right: 10px;">등록</button>
+                <a href="/manager/scholarshipList"><button type="button" class="btn btn-danger">취소</button></a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<footer th:insert="layout/managerHeader :: footer"></footer>
+
+
+
+
+
+</body>
+</html>

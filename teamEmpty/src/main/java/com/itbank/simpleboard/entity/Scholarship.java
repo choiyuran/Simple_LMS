@@ -45,4 +45,6 @@ public class Scholarship {
         this.year = year;
         this.quarter = quarter;
     }
+
+
 }

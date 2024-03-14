@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="layout/managerHeader :: head">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<style>
+    th[order] {
+        cursor: pointer;
+    }
+</style>
+<body>
+<header th:insert="layout/managerHeader :: header"></header>
+<div class="container mt-5 min-height">
+    <h2>장학금 목록</h2>
+    <hr>
+    <form id="searchForm" th:action="@{/manager/scholarshipList}" class="form-inline">
+        <div class="form-group mr-3">
+            <label>장학금명</label>
+            <select class="form-control" name="name">
+                <option value="">장학금명을 선택하세요</option>
+                <option th:each="row : ${nameList}"
+                        th:text="${row}"
+                        th:value="${row}"
+                        th:selected="${dto.name}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>년도</label>
+            <select class="form-control mr-3" name="year">
+                <option value="">년도를 선택하세요</option>
+                <option th:each="row : ${yearList}"
+                        th:text="${row}"
+                        th:value="${row}"
+                        th:selected="${dto.year}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group mr-3">
+            <label>분기</label>
+            <select class="form-control" name="quarter">
+                <option value="">분기를 선택하세요</option>
+                <option th:each="row : ${quarterList}"
+                        th:text="${row}"
+                        th:value="${row}"
+                        th:selected="${dto.quarter}">
+                </option>
+            </select>
+        </div>
+        <button class="btn btn-primary" onclick="updateHiddenInput()">검색</button>
+    </form>
+
+    <br>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th class="name" order="1">번호<span class="order"></span></th>
+            <th class="major" order="1">카테고리<span class="order"></span></th>
+            <th>이름</th>
+            <th class="hireDate" order="1">금액<span class="order"></span></th>
+            <th class="hireDate" order="1">분기<span class="order"></span></th>
+            <th class="hireDate" order="1">년도<span class="order"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${scholarshipList}">
+            <td class="name" th:text="${row.idx}"></td>
+            <td class="major" th:text="${row.category}"></td>
+            <td class="major" th:text="${row.name}"></td>
+            <td th:text="${row.price}"></td>
+            <td class="hireDate" th:text="${row.quarter}"></td>
+            <td class="hireDate" th:text="${row.year}"></td>
+        </tr>
+        </tbody>
+        <tr th:if="${scholarshipList == null || scholarshipList.isEmpty()}">
+            <td colspan="6" class="text-center">검색 결과가 없습니다.</td>
+        </tr>
+    </table>
+    <a href="/manager/registerScholarship">
+        <button class="btn btn-facebook">장학금 등록</button>
+    </a>
+    <a href="/manager/scholarshipList">
+        <button class="btn btn-facebook" th:if="${dto.name != null or dto.year != null or dto.quarter != null}">목록으로</button>
+    </a>
+
+    <div class="m-auto mt-3" style="width: fit-content" th:if="${scholarshipList.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:if="${scholarshipList.hasPrevious && ((scholarshipList.number / 5) - 1) * 5 >= 0}">
+                <a th:href="@{/manager/scholarshipList(page=${((scholarshipList.number / 5) - 1) * 5})}">
+                    <button class="page-link" th:text="'<<'"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${scholarshipList.hasPrevious}">
+                <a th:href="@{/manager/scholarshipList(page=${scholarshipList.number - 1})}">
+                    <button class="page-link" th:text="'<'"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, scholarshipList.totalPages - 1)}"
+                th:if="${i / 5 == scholarshipList.number / 5}">
+                <a th:href="@{/manager/scholarshipList(page=${i})}">
+                    <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                            th:if="${scholarshipList.number == i}" th:text="${i + 1}"></button>
+                </a>
+                <a th:href="@{/manager/scholarshipList(page=${i})}">
+                    <button class="page-link" th:unless="${scholarshipList.number == i}" th:text="${i + 1}"></button>
+                </a>
+            </li>
+
+            <li class="page-item" th:if="${scholarshipList.hasNext}">
+                <a th:href="@{/manager/scholarshipList(page=${scholarshipList.number + 1})}">
+                    <button class="page-link" th:text="'>'"></button>
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:if="${scholarshipList.hasNext && scholarshipList.totalPages - 1 >= ((scholarshipList.number / 5) + 1) * 5}">
+                <a th:href="@{/manager/scholarshipList(page=${((scholarshipList.number / 5) + 1) * 5})}">
+                    <button class="page-link" th:text="'>>'"></button>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<footer th:insert="layout/managerHeader :: footer"></footer>
+
+<script>
+    function updateHiddenInput() {
+        var checkbox = document.getElementById('leaveCheckbox');
+        var hiddenInput = document.getElementById('leave');
+
+        if (checkbox.checked) {
+            hiddenInput.value = 'true';
+        } else {
+            hiddenInput.value = 'false';
+        }
+    }
+
+    function isNumeric(str) {
+        return !isNaN(str)  // NaN(Not A Number), isNaN은 숫자가 아닐 때 true를 반환한다
+    }
+
+    const tbody = document.querySelector('tbody')
+    // th를 클릭하면 각 클래스의 이름을 기준으로 정렬하기
+    const thList = document.querySelectorAll('th')
+
+    function sortHandler(event) {
+        // 클릭당한 th의 className을 불러온다
+        const className = event.target.className
+
+        // 클릭당한 th의 order 속성값을 정수로 불러온다
+        const order = +event.target.getAttribute('order')
+        // alert(order)
+
+        // 클릭당한 th 내부의 span을 불러온다(모든 span에 대해서 글자를 지우고 수행한다)
+        document.querySelectorAll('thead span.order').forEach(span => span.innerText = '')
+        const span = event.target.querySelector('span.order')
+        span.innerText = order > 0 ? ' ▲' : ' ▼'
+
+        const trArray = Array.from(document.querySelectorAll('tbody > tr'))
+
+        trArray.sort((a, b) => {
+            let valueA = a.querySelector('.' + className).innerText
+            let valueB = b.querySelector('.' + className).innerText
+            if (isNumeric(valueA) && isNumeric(valueB)) {
+                valueA = +valueA
+                valueB = +valueB
+            }
+            let result = valueA > valueB ? 1 : -1
+            event.target.setAttribute('order', order * -1)
+            return result * order
+        })
+        trArray.forEach(tr => tbody.appendChild(tr))
+    }
+
+    thList.forEach(th => th.onclick = sortHandler)
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        let name = /*[[${dto.name}]]*/ null;
+        let year = /*[[${dto.year}]]*/ null;
+        let quarter = /*[[${dto.quarter}]]*/ null;
+
+        $('.pagination a').on('click', function (event) {
+            event.preventDefault();
+            let href = $(this).attr('href');
+            if (name !== null) {
+                href += '&name=' + encodeURIComponent(name);
+            }
+            if (year !== null) {
+                href += '&year=' + encodeURIComponent(year);
+            }
+            if (quarter !== null) {
+                href += '&quarter=' + encodeURIComponent(quarter);
+            }
+            location.href = href;
+        });
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
