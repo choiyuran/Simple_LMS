@@ -23,11 +23,10 @@
 //    @PostConstruct
 //    public void init() {
 //        try {
-//            initService.dbInit6();
-//            initService.dbInit4();
-//            initService.dbInit();
-//            initService.insertCalendar();
-//            initService.generateDummyData();
+//            initService.dbInit6(); // 1. 단과대학 + 학과
+///*            initService.dbInit4();
+///            initService.insertCalendar();
+//           initService.generateDummyData();*/
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
@@ -41,6 +40,250 @@
 //        private final EntityManager em;
 //        private final HashComponent hashComponent;
 //
+//        public void dbInit6() {
+//            College college1 = new College("인문대학", "인문관");
+//            College college2 = new College("사회과학대학", "사회과학관");
+//            College college3 = new College("자연과학대학", "자연과학관");
+//            College college4 = new College("간호대학", "간호학관");
+//            College college5 = new College("경영대학", "경영학관");
+//            College college6 = new College("공과대학", "공학관");
+//            College college7 = new College("농업생명과학대학", "자연과학관");
+//            College college8 = new College("미술대학", "예술관");
+//            College college9 = new College("사범대학", "사범학관");
+//            College college10 = new College("생활과학대학", "인문관");
+//            College college11 = new College("수의과대학", "의학관");
+//            College college12 = new College("약학대학", "의학관");
+//            College college13 = new College("음악대학", "예술관");
+//            College college14 = new College("의과대학", "의학관");
+//            College college15 = new College("자유전공학부", "인문관");
+//            College college16 = new College("첨단융합학부", "첨단과학관");
+//            em.persist(college1);
+//            em.persist(college2);
+//            em.persist(college3);
+//            em.persist(college4);
+//            em.persist(college5);
+//            em.persist(college6);
+//            em.persist(college7);
+//            em.persist(college8);
+//            em.persist(college9);
+//            em.persist(college10);
+//            em.persist(college11);
+//            em.persist(college12);
+//            em.persist(college13);
+//            em.persist(college14);
+//            em.persist(college15);
+//            em.persist(college16);
+//
+//            Major c1Major1 = new Major("국어국문학과",3500000,college1);
+//            Major c1Major2 = new Major("중어중문학과",2900000,college1);
+//            Major c1Major3 = new Major("영어영문학과",3700000,college1);
+//            Major c1Major4 = new Major("불어불문학과",3700000,college1);
+//            Major c1Major5 = new Major("독어독문학과",3200000,college1);
+//            Major c1Major6 = new Major("노어노문학과",3200000,college1);
+//            Major c1Major7 = new Major("서어서문학과",3100000,college1);
+//            Major c1Major8 = new Major("아시아언어문명학부",3000000,college1);
+//            Major c1Major9 = new Major("언어학과",2800000,college1);
+//            Major c1Major10 = new Major("역사학부",3000000,college1);
+//            Major c1Major11 = new Major("철학과",2800000,college1);
+//            Major c1Major12 = new Major("종교학과",3000000,college1);
+//            Major c1Major13 = new Major("미학과",4000000,college1);
+//            Major c1Major14 = new Major("고고미술사학과",4100000,college1);
+//            em.persist(c1Major1);
+//            em.persist(c1Major2);
+//            em.persist(c1Major3);
+//            em.persist(c1Major4);
+//            em.persist(c1Major5);
+//            em.persist(c1Major6);
+//            em.persist(c1Major7);
+//            em.persist(c1Major8);
+//            em.persist(c1Major9);
+//            em.persist(c1Major10);
+//            em.persist(c1Major11);
+//            em.persist(c1Major12);
+//            em.persist(c1Major13);
+//            em.persist(c1Major14);
+//
+//
+//            Major c2Major1 = new Major("정치외교학부(정치학전공)",2900000,college2);
+//            Major c2Major2 = new Major("정치외교학부(외교학전공)",2800000,college2);
+//            Major c2Major3 = new Major("경제학부",3000000,college2);
+//            Major c2Major4 = new Major("사회학과",3100000,college2);
+//            Major c2Major5 = new Major("인류학과",3200000,college2);
+//            Major c2Major6 = new Major("심리학과",3300000,college2);
+//            Major c2Major7 = new Major("지리학과",3400000,college2);
+//            Major c2Major8 = new Major("사회복지학과",3500000,college2);
+//            Major c2Major9 = new Major("언론정보학과",3000000,college2);
+//            em.persist(c2Major1);
+//            em.persist(c2Major2);
+//            em.persist(c2Major3);
+//            em.persist(c2Major4);
+//            em.persist(c2Major5);
+//            em.persist(c2Major6);
+//            em.persist(c2Major7);
+//            em.persist(c2Major8);
+//            em.persist(c2Major9);
+//
+//            Major c3Major1 = new Major("수리과학부",5500000,college3);
+//            Major c3Major2 = new Major("통계학과",5700000,college3);
+//            Major c3Major3 = new Major("물리천문학부(물리학전공)",5200000,college3);
+//            Major c3Major4 = new Major("물리천문학부(천문학전공)",5200000,college3);
+//            Major c3Major5 = new Major("화학부",5200000,college3);
+//            Major c3Major6 = new Major("생명과학부",5200000,college3);
+//            Major c3Major7 = new Major("지구환경과학부",5200000,college3);
+//            em.persist(c3Major1);
+//            em.persist(c3Major2);
+//            em.persist(c3Major3);
+//            em.persist(c3Major4);
+//            em.persist(c3Major5);
+//            em.persist(c3Major6);
+//            em.persist(c3Major7);
+//
+//            Major c4Major1 = new Major("간호학과",5200000,college4);
+//            em.persist(c4Major1);
+//
+//            Major c5Major1 = new Major("경영학과",5200000,college5);
+//            em.persist(c5Major1);
+//
+//            Major c6Major1 = new Major("건설환경공학부",5200000,college6);
+//            Major c6Major2 = new Major("기계공학부",5200000,college6);
+//            Major c6Major3 = new Major("항공우주공학부",5200000,college6);
+//            Major c6Major4 = new Major("재료공학부",5200000,college6);
+//            Major c6Major5 = new Major("전기·정보공학부",5200000,college6);
+//            Major c6Major6 = new Major("컴퓨터공학부",5200000,college6);
+//            Major c6Major7 = new Major("화학생물공학부",5200000,college6);
+//            Major c6Major8 = new Major("건축학과",5200000,college6);
+//            Major c6Major9 = new Major("산업공학과",5200000,college6);
+//            Major c6Major10 = new Major("에너지자원공학과",5200000,college6);
+//            Major c6Major11 = new Major("원자핵공학과",5200000,college6);
+//            Major c6Major12 = new Major("조선해양공학과",5200000,college6);
+//            em.persist(c6Major1);
+//            em.persist(c6Major2);
+//            em.persist(c6Major3);
+//            em.persist(c6Major4);
+//            em.persist(c6Major5);
+//            em.persist(c6Major6);
+//            em.persist(c6Major7);
+//            em.persist(c6Major8);
+//            em.persist(c6Major9);
+//            em.persist(c6Major10);
+//            em.persist(c6Major11);
+//            em.persist(c6Major12);
+//
+//            Major c7Major1 = new Major("식물생산과학부",5100000,college7);
+//            Major c7Major2 = new Major("산림과학부",5000000,college7);
+//            Major c7Major3 = new Major("응용생물화학부",5100000,college7);
+//            Major c7Major4 = new Major("식품·동물생명공학부",5200000,college7);
+//            Major c7Major5 = new Major("바이오시스템·소재학부",5300000,college7);
+//            Major c7Major6 = new Major("조경·지역시스템공학부",5400000,college7);
+//            Major c7Major7 = new Major("농경제사회학부",5500000,college7);
+//            em.persist(c7Major1);
+//            em.persist(c7Major2);
+//            em.persist(c7Major3);
+//            em.persist(c7Major4);
+//            em.persist(c7Major5);
+//            em.persist(c7Major6);
+//            em.persist(c7Major7);
+//
+//            Major c8Major1 = new Major("동양화과",5200000,college8);
+//            Major c8Major2 = new Major("서양화과",5100000,college8);
+//            Major c8Major3 = new Major("조소과",4900000,college8);
+//            Major c8Major4 = new Major("디자인학부(공예)",5000000,college8);
+//            Major c8Major5 = new Major("디자인학부(디자인)",5500000,college8);
+//            em.persist(c8Major1);
+//            em.persist(c8Major2);
+//            em.persist(c8Major3);
+//            em.persist(c8Major4);
+//            em.persist(c8Major5);
+//
+//            Major c9Major1 = new Major("교육학과",5200000,college9);
+//            Major c9Major2 = new Major("국어교육과",4900000,college9);
+//            Major c9Major3 = new Major("영어교육과",4800000,college9);
+//            Major c9Major4 = new Major("불어교육과",3700000,college9);
+//            Major c9Major5 = new Major("독어교육과",4900000,college9);
+//            Major c9Major6 = new Major("사회교육과",3900000,college9);
+//            Major c9Major7 = new Major("역사교육과",3900000,college9);
+//            Major c9Major8 = new Major("지리교육과",4100000,college9);
+//            Major c9Major9 = new Major("윤리교육과",3600000,college9);
+//            Major c9Major10 = new Major("수학교육과",4000000,college9);
+//            Major c9Major11 = new Major("물리교육과",5100000,college9);
+//            Major c9Major12 = new Major("화학교육과",5000000,college9);
+//            Major c9Major13 = new Major("생물교육과",3900000,college9);
+//            Major c9Major14= new Major("지구과학교육과",4900000,college9);
+//            Major c9Major15 = new Major("체육교육과",3700000,college9);
+//            em.persist(c9Major1);
+//            em.persist(c9Major2);
+//            em.persist(c9Major3);
+//            em.persist(c9Major4);
+//            em.persist(c9Major5);
+//            em.persist(c9Major6);
+//            em.persist(c9Major7);
+//            em.persist(c9Major8);
+//            em.persist(c9Major9);
+//            em.persist(c9Major10);
+//            em.persist(c9Major11);
+//            em.persist(c9Major12);
+//            em.persist(c9Major13);
+//            em.persist(c9Major14);
+//            em.persist(c9Major15);
+//
+//
+//            Major c10Major1 = new Major("소비자아동학부(소비자학전공)",2700000,college10);
+//            Major c10Major2 = new Major("소비자아동학부(아동가족학)",3100000,college10);
+//            Major c10Major3 = new Major("식품영양학과",4400000,college10);
+//            Major c10Major4 = new Major("의류학과",4300000,college10);
+//            em.persist(c10Major1);
+//            em.persist(c10Major2);
+//            em.persist(c10Major3);
+//            em.persist(c10Major4);
+//
+//            Major c11Major1 = new Major("수의예과",5200000,college11);
+//            Major c11Major2 = new Major("수의학과",5100000,college11);
+//            em.persist(c11Major1);
+//            em.persist(c11Major2);
+//
+//            Major c12Major1 = new Major("약학과",5300000,college12);
+//            Major c12Major2 = new Major("제약학과",5000000,college12);
+//            em.persist(c12Major1);
+//            em.persist(c12Major2);
+//
+//            Major c13Major1 = new Major("성악과",5100000,college13);
+//            Major c13Major2 = new Major("작곡과",5200000,college13);
+//            Major c13Major3 = new Major("음악학과",5600000,college13);
+//            Major c13Major4 = new Major("피아노과",4900000,college13);
+//            Major c13Major5 = new Major("관현악과",3700000,college13);
+//            Major c13Major6 = new Major("국악과",4000000,college13);
+//            em.persist(c13Major1);
+//            em.persist(c13Major2);
+//            em.persist(c13Major3);
+//            em.persist(c13Major4);
+//            em.persist(c13Major5);
+//            em.persist(c13Major6);
+//
+//            Major c14Major1 = new Major("의예과",5700000,college14);
+//            Major c14Major2 = new Major("의학과",5900000,college14);
+//            em.persist(c14Major1);
+//            em.persist(c14Major2);
+//
+//            Major c15Major1 = new Major("자유전공학부",4500000,college15);
+//            em.persist(c15Major1);
+//
+//            Major c16Major1 = new Major("첨단융합학부",4900000,college16);
+//            em.persist(c16Major1);
+//
+//            LectureRoom lectureRoom1 = new LectureRoom(101,college1);
+//            LectureRoom lectureRoom2 = new LectureRoom(102,college1);
+//            LectureRoom lectureRoom3 = new LectureRoom(201,college2);
+//            LectureRoom lectureRoom4 = new LectureRoom(202,college2);
+//            LectureRoom lectureRoom5 = new LectureRoom(501,college3);
+//            LectureRoom lectureRoom6 = new LectureRoom(502,college3);
+//
+//            em.persist(lectureRoom1);
+//            em.persist(lectureRoom2);
+//            em.persist(lectureRoom3);
+//            em.persist(lectureRoom4);
+//            em.persist(lectureRoom5);
+//            em.persist(lectureRoom6);
+//        }
 //        public void dbInit4() {
 //            String randomSalt = hashComponent.getRandomSalt();
 //            String hash = hashComponent.getHash("1234", randomSalt);
@@ -51,6 +294,48 @@
 //            // 2024년 2월 25일로 설정
 //            LocalDate createdAt = LocalDate.parse("2024-02-25", formatter);
 //            java.sql.Date sqlCreatedAt = java.sql.Date.valueOf(createdAt);
+//
+//            College college1 = new College("사범대학","인문관1");
+//            College college2 = new College("사회과학대학","인문관2");
+//            College college3 = new College("의과대학","공학관");
+//            em.persist(college1);
+//            em.persist(college2);
+//            em.persist(college3);
+//
+//            Major major1 = new Major("정치외교학과",3500000,college1);
+//            Major major2 = new Major("지리학과",3200000,college1);
+//            Major major3 = new Major("군사학과",3300000,college1);
+//            em.persist(major1);
+//            em.persist(major2);
+//            em.persist(major3);
+//
+//            Major major4 = new Major("수학교육과",2900000,college2);
+//            Major major5 = new Major("사회교육과",2800000,college2);
+//            Major major6 = new Major("국어교육과",3000000,college2);
+//            em.persist(major4);
+//            em.persist(major5);
+//            em.persist(major6);
+//
+//            Major major7 = new Major("신경과",5500000,college3);
+//            Major major9 = new Major("정신과",5700000,college3);
+//            Major major8 = new Major("마취과",5200000,college3);
+//            em.persist(major7);
+//            em.persist(major8);
+//            em.persist(major9);
+//
+//            LectureRoom lectureRoom1 = new LectureRoom(101,college1);
+//            LectureRoom lectureRoom2 = new LectureRoom(102,college1);
+//            LectureRoom lectureRoom3 = new LectureRoom(201,college2);
+//            LectureRoom lectureRoom4 = new LectureRoom(202,college2);
+//            LectureRoom lectureRoom5 = new LectureRoom(501,college3);
+//            LectureRoom lectureRoom6 = new LectureRoom(502,college3);
+//
+//            em.persist(lectureRoom1);
+//            em.persist(lectureRoom2);
+//            em.persist(lectureRoom3);
+//            em.persist(lectureRoom4);
+//            em.persist(lectureRoom5);
+//            em.persist(lectureRoom6);
 //
 //
 //            User user1 = new User(hash, randomSalt, "정수용", "222222-2222222", "부산광역시 미남", "010-1234-1234", "tesrht2@naver.com", User_role.교수,sqlCreatedAt);
@@ -74,9 +359,6 @@
 //            em.persist(user8);
 //            em.persist(user9);
 //
-//            Major major1 = em.find(Major.class, 1L);
-//            Major major2 = em.find(Major.class, 2L);
-//            Major major3 = em.find(Major.class, 3L);
 //
 //            try {
 //                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
@@ -97,8 +379,8 @@
 //                em.persist(manager2);
 //                em.persist(manager3);
 //
-//                Student student1 = new Student(24000001, 1, user7, professor1, major1, sqlDate);
-//                Student student2 = new Student(24000002, 2, user8, professor2, major2, sqlDate);
+//                Student student1 = new Student(24000001, 3, user7, professor1, major1, sqlDate);
+//                Student student2 = new Student(24000002, 3, user8, professor2, major2, sqlDate);
 //                Student student3 = new Student(24000003, 3, user9, professor3, major3, sqlDate);
 //                em.persist(student1);
 //                em.persist(student2);
@@ -200,63 +482,19 @@
 //            AcademicCalendar calendar1 = new AcademicCalendar("학기 시작", startDate1, endDate1);
 //            em.persist(calendar1);
 //
-//            LocalDate startDate2 = LocalDate.parse("2024/06/01", formatter);
-//            LocalDate endDate2 = LocalDate.parse("2024/06/30", formatter);
+//            LocalDate startDate2 = LocalDate.parse("2024/06/21", formatter);
+//            LocalDate endDate2 = LocalDate.parse("2024/09/01", formatter);
 //
 //            AcademicCalendar calendar2 = new AcademicCalendar("여름 방학 시작", startDate2, endDate2);
 //            em.persist(calendar2);
 //
 //            LocalDate startDate3 = LocalDate.parse("2024/12/01", formatter);
-//            LocalDate endDate3 = LocalDate.parse("2024/12/31", formatter);
+//            LocalDate endDate3 = LocalDate.parse("2025/03/01", formatter);
 //
 //            AcademicCalendar calendar3 = new AcademicCalendar("겨울 방학 시작", startDate3, endDate3);
 //            em.persist(calendar3);
 //        }
 //
-//
-//        public void dbInit6() {
-//            College college1 = new College("사범대학","인문관1");
-//            College college2 = new College("사회과학대학","인문관2");
-//            College college3 = new College("의과대학","공학관");
-//            em.persist(college1);
-//            em.persist(college2);
-//            em.persist(college3);
-//
-//            Major major1 = new Major("정치외교학과",3500000,college1);
-//            Major major2 = new Major("지리학과",3200000,college1);
-//            Major major3 = new Major("군사학과",3300000,college1);
-//            em.persist(major1);
-//            em.persist(major2);
-//            em.persist(major3);
-//
-//            Major major4 = new Major("수학교육과",2900000,college2);
-//            Major major5 = new Major("사회교육과",2800000,college2);
-//            Major major6 = new Major("국어교육과",3000000,college2);
-//            em.persist(major4);
-//            em.persist(major5);
-//            em.persist(major6);
-//
-//            Major major7 = new Major("신경과",5500000,college3);
-//            Major major9 = new Major("정신과",5700000,college3);
-//            Major major8 = new Major("마취과",5200000,college3);
-//            em.persist(major7);
-//            em.persist(major8);
-//            em.persist(major9);
-//
-//            LectureRoom lectureRoom1 = new LectureRoom(101,college1);
-//            LectureRoom lectureRoom2 = new LectureRoom(102,college1);
-//            LectureRoom lectureRoom3 = new LectureRoom(201,college2);
-//            LectureRoom lectureRoom4 = new LectureRoom(202,college2);
-//            LectureRoom lectureRoom5 = new LectureRoom(501,college3);
-//            LectureRoom lectureRoom6 = new LectureRoom(502,college3);
-//
-//            em.persist(lectureRoom1);
-//            em.persist(lectureRoom2);
-//            em.persist(lectureRoom3);
-//            em.persist(lectureRoom4);
-//            em.persist(lectureRoom5);
-//            em.persist(lectureRoom6);
-//        }
 //        public void dbInit() {
 //            Lecture lecture= new Lecture("정치학개론", "정치학의 기본적인 이론과 원칙, 그리고 주요한 주제들에 대해서 다룹니다.", 3, "월,수,금", "09:00,15:30,09:00", "12:00,17:30,12:00", Lecture_Type.전공필수,  em.find(Professor.class, 1L), 30, "2022년 1학기", 1, null, em.find(Major.class, 2L), em.find(LectureRoom.class, 1L));
 //            em.persist(lecture);
@@ -312,22 +550,21 @@
 //                String hash = hashComponent.getHash("1234", randomSalt);
 //
 //
-//                java.sql.Date sqlCreatedAt = java.sql.Date.valueOf( generateRandomDate());
+//                java.sql.Date sqlCreatedAt = java.sql.Date.valueOf(generateRandomDate());
 //
-//                User user1 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8)+i + "@example.com", User_role.교수, sqlCreatedAt);
+//                User user1 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교수, sqlCreatedAt);
 //                em.persist(user1);
 //
-//                User user2 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8)+i + "@example.com", User_role.교직원, sqlCreatedAt);
+//                User user2 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교직원, sqlCreatedAt);
 //                em.persist(user2);
 //
-//                User user3 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8)+i + "@example.com", User_role.학생, sqlCreatedAt);
+//                User user3 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.학생, sqlCreatedAt);
 //                em.persist(user3);
 //
 //
 //                Random random = new Random();
 //                long majorId = random.nextInt(9) + 1; // 1부터 9까지의 랜덤값 생성
 //                Major major = em.find(Major.class, majorId);
-//
 //
 //
 //                try {
@@ -339,94 +576,87 @@
 //                    Manager manager = new Manager("hi", user2, sqlDate);
 //                    em.persist(manager);
 //
-//                    if(i == 7 || i == 43 || i == 47 || i == 65 || i == 70 ){
+//                    if (i == 7 || i == 43 || i == 47 || i == 65 || i == 70) {
 //
 //                        Date parsedDate = sdf.parse("2023/08/02");
 //                        java.sql.Date sqlparsedDate = new java.sql.Date(parsedDate.getTime());
-//                        Student student = new Student(studentNum,2,user3,professor, major, sqlDate);
+//                        Student student = new Student(studentNum, 2, user3, professor, major, sqlDate);
 //                        em.persist(student);
-//                        Situation situation = new Situation(student, Status_type.군휴학, sqlparsedDate,null);
+//                        Situation situation = new Situation(student, Status_type.군휴학, sqlparsedDate, null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.군휴학,student,situation.getStart_date(),null);
+//                        SituationRecord record = new SituationRecord(Status_type.군휴학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2023학년 1학기");
 //                        em.persist(payments);
 //                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
 //                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
+//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
 //                        em.persist(scholarshipAward1);
 //
-//                    }
-//
-//                    else if (10 <= i && i <= 40 && i % 2 != 0) {
-//                        Student student = new Student(studentNum,2,user3,professor, major, sqlDate);
+//                    } else if (10 <= i && i <= 40 && i % 2 != 0) {
+//                        Student student = new Student(studentNum, 2, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학,student,situation.getStart_date(),null);
+//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2023학년 1학기");
 //                        em.persist(payments);
 //                        Scholarship scholarship1 = new Scholarship("외부", "국가장학금", 300000, 2023, 3);
 //                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
+//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
 //                        em.persist(scholarshipAward1);
 //
-//                    }
-//                    else if (10 <= i && i <= 40 && i % 2 == 0){
-//                        Student student = new Student(studentNum,3,user3,professor, major, sqlDate);
+//                    } else if (10 <= i && i <= 40 && i % 2 == 0) {
+//                        Student student = new Student(studentNum, 3, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학,student,situation.getStart_date(),null);
+//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2023학년 2학기");
 //                        em.persist(payments);
 //                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
 //                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
+//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
 //                        em.persist(scholarshipAward1);
 //
-//                    }
-//                    else if (75 <= i && i % 2 == 0){
-//                        Student student = new Student(studentNum,4,user3,professor, major, sqlDate);
+//                    } else if (75 <= i && i % 2 == 0) {
+//                        Student student = new Student(studentNum, 4, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학,student,situation.getStart_date(),null);
+//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2024학년 1학기");
 //                        em.persist(payments);
 //                        Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
 //                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
+//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
 //                        em.persist(scholarshipAward1);
-//                    }
-//                    else{
-//                        Student student = new Student(studentNum,1,user3,professor, major, sqlDate);
+//                    } else {
+//                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학,student,situation.getStart_date(),null);
+//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2024학년 2학기");
 //                        em.persist(payments);
 //                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
 //                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student,scholarship1);
+//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
 //                        em.persist(scholarshipAward1);
 //                    }
 //                } catch (ParseException e) {
 //                    throw new RuntimeException(e);
 //                }
 //            }
-//
-//
 //        }
 //
 //        private String generateRandomPhoneNumber() {
