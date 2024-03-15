@@ -162,7 +162,7 @@
                 </td>
                 <td class="location">
                     <div>
-                        <span th:text="${row.location} + ' ' + ${row.lectureRoom}"></span>
+                        <span th:text="${row.location} + ${row.lectureRoom}"></span>
                     </div>
                 </td>
                 <td class="viewEvaluationBtnTd" th:data-lecture-idx="${row.idx}" style="text-align: center;">
