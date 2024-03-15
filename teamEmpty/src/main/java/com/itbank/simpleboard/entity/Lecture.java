@@ -24,6 +24,7 @@ public class Lecture {
 
     // 강의소개
     @Column(name = "lecture_intro")
+    @Lob
     private String intro;
 
     // 수강 학점
