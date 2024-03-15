@@ -24,10 +24,10 @@ public class StudentLectureDto {
     private String plan;
     private String major;
     private String location;
-    private Integer lectureRoom;
+    private String lectureRoom;
 
     @QueryProjection
-    public StudentLectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String abolition, Long professor_idx, String student_name, String plan, String major, String location, Integer lectureRoom) {
+    public StudentLectureDto(Long idx, String name, String intro, Integer credit, String day, String start, String end, String type, Integer maxCount, Integer currentCount, String semester, Integer grade, String abolition, Long professor_idx, String student_name, String plan, String major, String location, String lectureRoom) {
         this.idx = idx;
         this.name = name;
         this.intro = intro;

@@ -120,7 +120,7 @@
 
             <tr>
                 <th>강의실</th>
-                <td th:text="${lecture.lectureRoom} + '호'">
+                <td th:text="${lecture.location} + ${lecture.lectureRoom}">
                 </td>
             </tr>
         </table>
