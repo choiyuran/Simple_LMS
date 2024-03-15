@@ -6,7 +6,6 @@ import com.itbank.simpleboard.entity.*;
 import com.itbank.simpleboard.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -619,19 +618,6 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("common/noticeList");
         Page<Notice> noticeList = noticeService.selectAll(pageable);
         mav.addObject("noticeList", noticeList);
-        return mav;
-    }
-
-    @GetMapping("/noticeView/{idx}")      // 공지 사항 상세보기
-    public ModelAndView noticeView(@PathVariable("idx") Long idx) {
-        ModelAndView mav = new ModelAndView("common/noticeList");
-        Notice notice = noticeService.selectOne(idx);
-        if(notice != null) {
-            noticeService.increaseViewCount(idx);
-            mav.addObject("notice", notice);
-            mav.setViewName("common/noticeView");
-        }
-
         return mav;
     }
 
