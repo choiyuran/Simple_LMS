@@ -24,9 +24,10 @@
 //    public void init() {
 //        try {
 //            initService.dbInit6(); // 1. 단과대학 + 학과
+//            initService.generateDummyData();
 ///*            initService.dbInit4();
 ///            initService.insertCalendar();
-//           initService.generateDummyData();*/
+//           */
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
@@ -49,7 +50,7 @@
 //            College college6 = new College("공과대학", "공학관");
 //            College college7 = new College("농업생명과학대학", "자연과학관");
 //            College college8 = new College("미술대학", "예술관");
-//            College college9 = new College("사범대학", "사범학관");
+//            College college9 = new College("사범대학", "사범관");
 //            College college10 = new College("생활과학대학", "인문관");
 //            College college11 = new College("수의과대학", "의학관");
 //            College college12 = new College("약학대학", "의학관");
@@ -563,7 +564,8 @@
 //
 //
 //                Random random = new Random();
-//                long majorId = random.nextInt(9) + 1; // 1부터 9까지의 랜덤값 생성
+//                Integer count = em.createQuery("SELECT COUNT(e) FROM Lecture e", Integer.class).getSingleResult();
+//                long majorId = random.nextInt(count) + 1; // 1부터 n까지의 랜덤값 생성
 //                Major major = em.find(Major.class, majorId);
 //
 //
@@ -578,80 +580,65 @@
 //
 //                    if (i == 7 || i == 43 || i == 47 || i == 65 || i == 70) {
 //
-//                        Date parsedDate = sdf.parse("2023/08/02");
+//                        Date parsedDate = sdf.parse("2024/03/04");
 //                        java.sql.Date sqlparsedDate = new java.sql.Date(parsedDate.getTime());
-//                        Student student = new Student(studentNum, 2, user3, professor, major, sqlDate);
-//                        em.persist(student);
-//                        Situation situation = new Situation(student, Status_type.군휴학, sqlparsedDate, null);
-//                        em.persist(situation);
-//
-//                        SituationRecord record = new SituationRecord(Status_type.군휴학, student, situation.getStart_date(), null);
-//                        em.persist(record);
-//                        Payments payments = new Payments(student, "2023학년 1학기");
-//                        em.persist(payments);
-//                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
-//                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
-//                        em.persist(scholarshipAward1);
-//
-//                    } else if (10 <= i && i <= 40 && i % 2 != 0) {
-//                        Student student = new Student(studentNum, 2, user3, professor, major, sqlDate);
+//                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
-//                        em.persist(record);
-//                        Payments payments = new Payments(student, "2023학년 1학기");
-//                        em.persist(payments);
-//                        Scholarship scholarship1 = new Scholarship("외부", "국가장학금", 300000, 2023, 3);
-//                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
-//                        em.persist(scholarshipAward1);
-//
-//                    } else if (10 <= i && i <= 40 && i % 2 == 0) {
-//                        Student student = new Student(studentNum, 3, user3, professor, major, sqlDate);
-//                        em.persist(student);
-//                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
-//                        em.persist(situation);
-//
-//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
-//                        em.persist(record);
-//                        Payments payments = new Payments(student, "2023학년 2학기");
-//                        em.persist(payments);
-//                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
-//                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
-//                        em.persist(scholarshipAward1);
-//
-//                    } else if (75 <= i && i % 2 == 0) {
-//                        Student student = new Student(studentNum, 4, user3, professor, major, sqlDate);
-//                        em.persist(student);
-//                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
-//                        em.persist(situation);
-//
-//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
+//                        SituationRecord record = new SituationRecord(Status_type.입학, student, situation.getStart_date(), null);
 //                        em.persist(record);
 //                        Payments payments = new Payments(student, "2024학년 1학기");
 //                        em.persist(payments);
-//                        Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
-//                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
-//                        em.persist(scholarshipAward1);
+//
+//
+//                    } else if (10 <= i && i <= 40 && i % 2 != 0) {
+//                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+//                        em.persist(student);
+//                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                        em.persist(situation);
+//
+//                        SituationRecord record = new SituationRecord(Status_type.입학, student, situation.getStart_date(), null);
+//                        em.persist(record);
+//                        Payments payments = new Payments(student, "2024학년 1학기");
+//                        em.persist(payments);
+//
+//
+//                    } else if (10 <= i && i <= 40 && i % 2 == 0) {
+//                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+//                        em.persist(student);
+//                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                        em.persist(situation);
+//
+//                        SituationRecord record = new SituationRecord(Status_type.입학, student, situation.getStart_date(), null);
+//                        em.persist(record);
+//                        Payments payments = new Payments(student, "2024학년 1학기");
+//                        em.persist(payments);
+//
+//
+//                    } else if (75 <= i && i % 2 == 0) {
+//                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+//                        em.persist(student);
+//                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                        em.persist(situation);
+//
+//                        SituationRecord record = new SituationRecord(Status_type.입학, student, situation.getStart_date(), null);
+//                        em.persist(record);
+//                        Payments payments = new Payments(student, "2024학년 1학기");
+//                        em.persist(payments);
+//
 //                    } else {
 //                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
 //                        em.persist(student);
 //                        Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
 //                        em.persist(situation);
 //
-//                        SituationRecord record = new SituationRecord(Status_type.재학, student, situation.getStart_date(), null);
+//                        SituationRecord record = new SituationRecord(Status_type.입학, student, situation.getStart_date(), null);
 //                        em.persist(record);
-//                        Payments payments = new Payments(student, "2024학년 2학기");
+//                        Payments payments = new Payments(student, "2024학년 1학기");
 //                        em.persist(payments);
-//                        Scholarship scholarship1 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
-//                        em.persist(scholarship1);
-//                        Scholarship_Award scholarshipAward1 = new Scholarship_Award(student, scholarship1);
-//                        em.persist(scholarshipAward1);
+//
 //                    }
 //                } catch (ParseException e) {
 //                    throw new RuntimeException(e);
@@ -731,7 +718,7 @@
 //            Random random = new Random();
 //            String firstName = FIRST_NAMES[random.nextInt(FIRST_NAMES.length)];
 //            String lastName = LAST_NAMES[random.nextInt(LAST_NAMES.length)];
-//            return firstName + " " + lastName;
+//            return firstName + lastName;
 //        }
 //
 //        private LocalDate generateRandomDate() {
