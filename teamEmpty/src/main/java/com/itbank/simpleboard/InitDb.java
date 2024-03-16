@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.text.ParseException;
 import java.util.*;
 
 @Component
@@ -30,7 +30,6 @@ public class InitDb {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Component
@@ -74,35 +73,40 @@ public class InitDb {
             em.persist(college15);
             em.persist(college16);
 
-            em.flush();
-            em.clear();
-
-            List<College> colleges = new ArrayList<>();
-            colleges.add(college1);
-            colleges.add(college2);
-            colleges.add(college3);
-            colleges.add(college4);
-            colleges.add(college5);
-            colleges.add(college6);
-            colleges.add(college7);
-            colleges.add(college8);
-            colleges.add(college9);
-            colleges.add(college10);
-            colleges.add(college11);
-            colleges.add(college12);
-            colleges.add(college13);
-            colleges.add(college14);
-            colleges.add(college15);
-            colleges.add(college16);
-
-            // 강의실
-            Random random = new Random();
-            for(College college : colleges){
-                for (int i = 1; i < 12; i++) {
-                    LectureRoom lectureRoom = new LectureRoom(String.format("1 "+(random.nextInt(9)+1)+"%02d호", i), college);
-                    em.persist(lectureRoom);
-                }
-            }
+            // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
+            // 계산 기준 학과 * 3 해서 많은 쪽으로
+            // c1 14개 학과 45개
+            makeLectureRoom(5, college1);
+            // c2 9개 학과 27개
+            makeLectureRoom(3, college2);
+            // c3 7개 학과 27개
+            makeLectureRoom(3, college3);
+            // c4 1개 학과 9개
+            makeLectureRoom(1, college4);
+            // c5 1개 학과 9개
+            makeLectureRoom(1, college5);
+            // c6 12개 학과 36개
+            makeLectureRoom(4, college6);
+            // c7 7개 학과 27개
+            makeLectureRoom(3, college7);
+            // c8 5개 학과 18개
+            makeLectureRoom(3, college8);
+            // c9 15개 학과 45개
+            makeLectureRoom(5, college9);
+            // c10 4개 학과 18개
+            makeLectureRoom(3, college10);
+            // c11 2개 학과 9개
+            makeLectureRoom(1,college11);
+            // c12 2개 학과 9개
+            makeLectureRoom(1, college12);
+            // c13 6개 학과 18개
+            makeLectureRoom(3, college13);
+            // c14 2개 학과 9개
+            makeLectureRoom(1, college14);
+            // c15 1개 학과 9개
+            makeLectureRoom(1, college15);
+            // c16 1개 학과 9개
+            makeLectureRoom(1, college16);
 
 
             Major c1Major1 = new Major("국어국문학과", 3500000, college1);
@@ -300,8 +304,26 @@ public class InitDb {
 
             Major c16Major1 = new Major("첨단융합학부", 4900000, college16);
             em.persist(c16Major1);
+        }
 
-
+        private void makeLectureRoom(int dong, College college) {
+            Random ran = new Random();
+            String[] floor = {"1", "2", "3", "4", "5"};
+            String[] roomNum = {"1", "2", "3", "4", "5", "6", "7"};
+            ArrayList<String> makeRoom = new ArrayList<>();
+            for (int i = 1; i <= dong; i++) {
+                while (makeRoom.size() < 9) {
+                    int floorRan = ran.nextInt(floor.length);
+                    int roomRan = ran.nextInt(roomNum.length);
+                    String room = i + " " + floor[floorRan] + "0" + roomNum[roomRan] + "호";
+                    if (!makeRoom.contains(room)) {
+                        makeRoom.add(room);
+                        LectureRoom lectureRoom = new LectureRoom(room, college);
+                        em.persist(lectureRoom);
+                    }
+                }
+                makeRoom.clear();
+            }
         }
 
         // 이거 안씀
