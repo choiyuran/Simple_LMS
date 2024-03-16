@@ -10,5 +10,5 @@ import java.util.List;
 public interface LectureRepositoryCustom {
     Page<LectureDto> getLectureListDtos(String searchType, String keyword, Pageable pageable);
 
-    Page<LectureDto> getLectureDtos(Pageable pageable);
+    Page<LectureDto> getLectureDtos(Pageable pageable,String semester);
 }

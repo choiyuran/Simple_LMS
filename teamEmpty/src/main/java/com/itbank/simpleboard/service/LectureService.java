@@ -1,5 +1,6 @@
 package com.itbank.simpleboard.service;
 
+import com.itbank.simpleboard.component.GlobalVariable;
 import com.itbank.simpleboard.dto.LectureDto;
 import com.itbank.simpleboard.entity.Lecture;
 import com.itbank.simpleboard.repository.student.LectureRepository;
@@ -18,9 +19,10 @@ import java.util.Optional;
 public class LectureService {
     private final LectureRepository lectureRepository;
     private final FileService fileService;
+    private final GlobalVariable globalVariable;
 
     public Page<LectureDto> selectAll(Pageable pageable) {
-        return lectureRepository.getLectureDtos(pageable);
+        return lectureRepository.getLectureDtos(pageable,globalVariable.getGlobalSememster());
     }
 
     public LectureDto selectOne(Long idx){

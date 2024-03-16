@@ -93,7 +93,7 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
     }
 
     @Override
-    public Page<LectureDto> getLectureDtos(Pageable pageable) {
+    public Page<LectureDto> getLectureDtos(Pageable pageable, String semester) {
         QueryResults<LectureDto> results = queryFactory
                 .select(new QLectureDto(
                         lecture.idx,
@@ -115,6 +115,7 @@ public class LectureRepositoryCustomImpl implements LectureRepositoryCustom{
                 .from(lecture)
                 .innerJoin(QProfessor.professor).on(lecture.professor.eq(QProfessor.professor))
                 .innerJoin(QUser.user).on(QProfessor.professor.user.eq(QUser.user))
+                .where(lecture.semester.eq(semester))
                 .orderBy(lecture.idx.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

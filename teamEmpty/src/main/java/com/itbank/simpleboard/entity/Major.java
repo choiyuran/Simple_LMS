@@ -18,7 +18,7 @@ public class Major {
     private Long idx;
 
     // 전공 이름
-    @Column(name = "major_name", nullable = false)
+    @Column(name = "major_name", nullable = false, unique = true, length = 50)
     private String name;
     
     // 등록금
