@@ -271,7 +271,7 @@ public class InitDb {
 
             // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
             // 계산 기준 학과 * 3 해서 많은 쪽으로
-            // Map의 형태는 {1동, [1 101호, 1 302호]} 이런 식
+            // Map의 형태는 {1, [1 101호, 1 302호]}, {2, [2 203호, 2 406호]} 이런 식
             // Map의 크기는 dong과 같다
             // c1 14개 학과 45개
             Map<Integer, List<String>> c1LectureRoom = makeLectureRoom(5, college1);
