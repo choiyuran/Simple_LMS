@@ -37,7 +37,7 @@ public class User {
     @Column(name = "user_pnum", nullable = false)
     private String pnum;   // 연락처
 
-    @Column(name = "user_email", nullable = false, unique = true)
+    @Column(name = "user_email", nullable = false, unique = true, length = 200)
     private String email;  // email
 
     @Column(name = "user_role", nullable = false)

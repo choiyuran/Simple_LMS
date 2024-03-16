@@ -334,7 +334,7 @@ public class ManagerController {
         if(lecture == null) {
             return "redirect:/manager/lectureAdd";
         }
-        return "redirect:/common/lectureList";
+        return "redirect:/lectureList";
     }
 
     @ResponseBody

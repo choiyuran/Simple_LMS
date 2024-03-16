@@ -19,11 +19,11 @@ public class College {
     private Long idx;
 
     // 단과대학_이름
-    @Column(name="college_name")
+    @Column(name="college_name", unique = true,length = 50)
     private String name;
 
     // 건물위치
-    @Column(name="college_location")
+    @Column(name="college_location", length = 200)
     private String location;
 
     public College(String name, String location) {
