@@ -73,42 +73,6 @@ public class InitDb {
             em.persist(college15);
             em.persist(college16);
 
-            // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
-            // 계산 기준 학과 * 3 해서 많은 쪽으로
-            // c1 14개 학과 45개
-            makeLectureRoom(5, college1);
-            // c2 9개 학과 27개
-            makeLectureRoom(3, college2);
-            // c3 7개 학과 27개
-            makeLectureRoom(3, college3);
-            // c4 1개 학과 9개
-            makeLectureRoom(1, college4);
-            // c5 1개 학과 9개
-            makeLectureRoom(1, college5);
-            // c6 12개 학과 36개
-            makeLectureRoom(4, college6);
-            // c7 7개 학과 27개
-            makeLectureRoom(3, college7);
-            // c8 5개 학과 18개
-            makeLectureRoom(3, college8);
-            // c9 15개 학과 45개
-            makeLectureRoom(5, college9);
-            // c10 4개 학과 18개
-            makeLectureRoom(3, college10);
-            // c11 2개 학과 9개
-            makeLectureRoom(1,college11);
-            // c12 2개 학과 9개
-            makeLectureRoom(1, college12);
-            // c13 6개 학과 18개
-            makeLectureRoom(3, college13);
-            // c14 2개 학과 9개
-            makeLectureRoom(1, college14);
-            // c15 1개 학과 9개
-            makeLectureRoom(1, college15);
-            // c16 1개 학과 9개
-            makeLectureRoom(1, college16);
-
-
             Major c1Major1 = new Major("국어국문학과", 3500000, college1);
             Major c1Major2 = new Major("중어중문학과", 2900000, college1);
             Major c1Major3 = new Major("영어영문학과", 3700000, college1);
@@ -304,13 +268,51 @@ public class InitDb {
 
             Major c16Major1 = new Major("첨단융합학부", 4900000, college16);
             em.persist(c16Major1);
+
+            // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
+            // 계산 기준 학과 * 3 해서 많은 쪽으로
+            // Map의 형태는 {1동, [1 101호, 1 302호]} 이런 식
+            // Map의 크기는 dong과 같다
+            // c1 14개 학과 45개
+            Map<String, List<String>> c1LectureRoom = makeLectureRoom(5, college1);
+            // c2 9개 학과 27개
+            Map<String, List<String>> c2LectureRoom = makeLectureRoom(3, college2);
+            // c3 7개 학과 27개
+            Map<String, List<String>> c3LectureRoom = makeLectureRoom(3, college3);
+            // c4 1개 학과 9개
+            Map<String, List<String>> c4LectureRoom = makeLectureRoom(1, college4);
+            // c5 1개 학과 9개
+            Map<String, List<String>> c5LectureRoom = makeLectureRoom(1, college5);
+            // c6 12개 학과 36개
+            Map<String, List<String>> c6LectureRoom = makeLectureRoom(4, college6);
+            // c7 7개 학과 27개
+            Map<String, List<String>> c7LectureRoom = makeLectureRoom(3, college7);
+            // c8 5개 학과 18개
+            Map<String, List<String>> c8LectureRoom = makeLectureRoom(3, college8);
+            // c9 15개 학과 45개
+            Map<String, List<String>> c9LectureRoom = makeLectureRoom(5, college9);
+            // c10 4개 학과 18개
+            Map<String, List<String>> c10LectureRoom = makeLectureRoom(3, college10);
+            // c11 2개 학과 9개
+            Map<String, List<String>> c11LectureRoom = makeLectureRoom(1, college11);
+            // c12 2개 학과 9개
+            Map<String, List<String>> c12LectureRoom = makeLectureRoom(1, college12);
+            // c13 6개 학과 18개
+            Map<String, List<String>> c13LectureRoom = makeLectureRoom(3, college13);
+            // c14 2개 학과 9개
+            Map<String, List<String>> c14LectureRoom = makeLectureRoom(1, college14);
+            // c15 1개 학과 9개
+            Map<String, List<String>> c15LectureRoom = makeLectureRoom(1, college15);
+            // c16 1개 학과 9개
+            Map<String, List<String>> c16LectureRoom = makeLectureRoom(1, college16);
         }
 
-        private void makeLectureRoom(int dong, College college) {
+        private Map<String, List<String>> makeLectureRoom(int dong, College college) {
             Random ran = new Random();
             String[] floor = {"1", "2", "3", "4", "5"};
             String[] roomNum = {"1", "2", "3", "4", "5", "6", "7"};
             ArrayList<String> makeRoom = new ArrayList<>();
+            Map<String, List<String>> total = new HashMap<>();
             for (int i = 1; i <= dong; i++) {
                 while (makeRoom.size() < 9) {
                     int floorRan = ran.nextInt(floor.length);
@@ -322,198 +324,10 @@ public class InitDb {
                         em.persist(lectureRoom);
                     }
                 }
+                total.put(i + "동", makeRoom);
                 makeRoom.clear();
             }
-        }
-
-        // 이거 안씀
-        public void dbInit4() {
-            String randomSalt = hashComponent.getRandomSalt();
-            String hash = hashComponent.getHash("1234", randomSalt);
-
-            // 날짜 형식 지정
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-            // 2024년 2월 25일로 설정
-            LocalDate createdAt = LocalDate.parse("2024-02-25", formatter);
-            java.sql.Date sqlCreatedAt = java.sql.Date.valueOf(createdAt);
-
-            College college1 = new College("사범대학", "인문관1");
-            College college2 = new College("사회과학대학", "인문관2");
-            College college3 = new College("의과대학", "공학관");
-            em.persist(college1);
-            em.persist(college2);
-            em.persist(college3);
-
-            Major major1 = new Major("정치외교학과", 3500000, college1);
-            Major major2 = new Major("지리학과", 3200000, college1);
-            Major major3 = new Major("군사학과", 3300000, college1);
-            em.persist(major1);
-            em.persist(major2);
-            em.persist(major3);
-
-            Major major4 = new Major("수학교육과", 2900000, college2);
-            Major major5 = new Major("사회교육과", 2800000, college2);
-            Major major6 = new Major("국어교육과", 3000000, college2);
-            em.persist(major4);
-            em.persist(major5);
-            em.persist(major6);
-
-            Major major7 = new Major("신경과", 5500000, college3);
-            Major major9 = new Major("정신과", 5700000, college3);
-            Major major8 = new Major("마취과", 5200000, college3);
-            em.persist(major7);
-            em.persist(major8);
-            em.persist(major9);
-
-            LectureRoom lectureRoom1 = new LectureRoom("101", college1);
-            LectureRoom lectureRoom2 = new LectureRoom("102", college1);
-            LectureRoom lectureRoom3 = new LectureRoom("201", college2);
-            LectureRoom lectureRoom4 = new LectureRoom("202", college2);
-            LectureRoom lectureRoom5 = new LectureRoom("501", college3);
-            LectureRoom lectureRoom6 = new LectureRoom("502", college3);
-
-            em.persist(lectureRoom1);
-            em.persist(lectureRoom2);
-            em.persist(lectureRoom3);
-            em.persist(lectureRoom4);
-            em.persist(lectureRoom5);
-            em.persist(lectureRoom6);
-
-
-            User user1 = new User(hash, randomSalt, "정수용", "222222-2222222", "부산광역시 미남", "010-1234-1234", "tesrht2@naver.com", User_role.교수, sqlCreatedAt);
-            User user2 = new User(hash, randomSalt, "최유란", "111111-1111111", "울산광역시 남구", "010-1234-1234", "tesagat1@naver.com", User_role.교수, sqlCreatedAt);
-            User user3 = new User(hash, randomSalt, "이병길", "333333-3333333", "부산광역시 대연동", "010-1234-1234", "ahtest3@naver.com", User_role.교수, sqlCreatedAt);
-            em.persist(user1);
-            em.persist(user2);
-            em.persist(user3);
-
-            User user5 = new User(hash, randomSalt, "황민우", "555555-5555555", "서울특별시 강북", "010-1234-1234", "teulahst2@naver.com", User_role.교직원, sqlCreatedAt);
-            User user6 = new User(hash, randomSalt, "박소은", "666666-6666666", "부산광역시 수영구", "010-1234-1234", "teulhst3@naver.com", User_role.교직원, sqlCreatedAt);
-            User user4 = new User(hash, randomSalt, "안지혜", "444444-4444444", "서울특별시 강남", "010-1234-1234", "testuil1@naver.com", User_role.교직원, sqlCreatedAt);
-            em.persist(user4);
-            em.persist(user5);
-            em.persist(user6);
-
-            User user7 = new User(hash, randomSalt, "송근욱", "777777-7777777", "울산광역시 남구", "010-1234-1234", "tesryidt1@naver.com", User_role.학생, sqlCreatedAt);
-            User user8 = new User(hash, randomSalt, "이순신", "888888-8888888", "부산광역시 미남", "010-1234-1234", "tedlfyist2@naver.com", User_role.학생, sqlCreatedAt);
-            User user9 = new User(hash, randomSalt, "안중근", "999999-9999999", "부산광역시 대연동", "010-1234-1234", "tesilfyilt3@naver.com", User_role.학생, sqlCreatedAt);
-            em.persist(user7);
-            em.persist(user8);
-            em.persist(user9);
-
-
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-                Date utilDate = sdf.parse("2024/11/02");
-                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-                Professor professor1 = new Professor("hi", user1, major1, sqlDate);
-                Professor professor2 = new Professor("hi", user2, major2, sqlDate);
-                Professor professor3 = new Professor("hi", user3, major3, sqlDate);
-                em.persist(professor1);
-                em.persist(professor2);
-                em.persist(professor3);
-
-                Manager manager1 = new Manager("hi", user4, sqlDate);
-                Manager manager2 = new Manager("hi", user5, sqlDate);
-                Manager manager3 = new Manager("hi", user6, sqlDate);
-                em.persist(manager1);
-                em.persist(manager2);
-                em.persist(manager3);
-
-                Student student1 = new Student(24000001, 3, user7, professor1, major1, sqlDate);
-                Student student2 = new Student(24000002, 3, user8, professor2, major2, sqlDate);
-                Student student3 = new Student(24000003, 3, user9, professor3, major3, sqlDate);
-                em.persist(student1);
-                em.persist(student2);
-                em.persist(student3);
-
-                Situation situation1 = new Situation(student1, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
-                Situation situation2 = new Situation(student2, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
-                Situation situation3 = new Situation(student3, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
-
-                em.persist(situation1);
-                em.persist(situation2);
-                em.persist(situation3);
-
-                SituationRecord record1 = new SituationRecord(Status_type.재학, student1, situation1.getStart_date(), null);
-                SituationRecord record2 = new SituationRecord(Status_type.재학, student2, situation2.getStart_date(), null);
-                SituationRecord record3 = new SituationRecord(Status_type.재학, student3, situation3.getStart_date(), null);
-
-                em.persist(record1);
-                em.persist(record2);
-                em.persist(record3);
-
-                Payments payments = new Payments(student1, "2023학년 1학기");
-                Payments payments2 = new Payments(student2, "2023학년 1학기");
-                Payments payments3 = new Payments(student3, "2023학년 1학기");
-
-                Payments payments4 = new Payments(student1, "2023학년 2학기");
-                Payments payments5 = new Payments(student2, "2023학년 2학기");
-                Payments payments6 = new Payments(student3, "2023학년 2학기");
-
-                Payments payments7 = new Payments(student1, "2024학년 1학기");
-                Payments payments8 = new Payments(student2, "2024학년 1학기");
-                Payments payments9 = new Payments(student3, "2024학년 1학기");
-
-
-                em.persist(payments);
-                em.persist(payments2);
-                em.persist(payments3);
-                em.persist(payments4);
-                em.persist(payments5);
-                em.persist(payments6);
-                em.persist(payments7);
-                em.persist(payments8);
-                em.persist(payments9);
-
-
-                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
-                em.persist(scholarship1);
-                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
-                em.persist(scholarship2);
-                Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2023, 3);
-                em.persist(scholarship3);
-                Scholarship scholarship4 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
-                em.persist(scholarship4);
-                Scholarship scholarship5 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
-                em.persist(scholarship5);
-                Scholarship scholarship6 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
-                em.persist(scholarship6);
-
-
-                Scholarship_Award scholarshipAward1 = new Scholarship_Award(student1, scholarship1);
-                Scholarship_Award scholarshipAward2 = new Scholarship_Award(student1, scholarship2);
-                Scholarship_Award scholarshipAward3 = new Scholarship_Award(student1, scholarship3);
-                Scholarship_Award scholarshipAward4 = new Scholarship_Award(student2, scholarship1);
-                Scholarship_Award scholarshipAward5 = new Scholarship_Award(student2, scholarship2);
-                Scholarship_Award scholarshipAward6 = new Scholarship_Award(student3, scholarship1);
-                Scholarship_Award scholarshipAward7 = new Scholarship_Award(student1, scholarship4);
-                Scholarship_Award scholarshipAward8 = new Scholarship_Award(student1, scholarship5);
-                Scholarship_Award scholarshipAward9 = new Scholarship_Award(student1, scholarship6);
-                Scholarship_Award scholarshipAward10 = new Scholarship_Award(student2, scholarship4);
-                Scholarship_Award scholarshipAward11 = new Scholarship_Award(student2, scholarship5);
-                Scholarship_Award scholarshipAward12 = new Scholarship_Award(student3, scholarship6);
-
-                em.persist(scholarshipAward1);
-                em.persist(scholarshipAward2);
-                em.persist(scholarshipAward3);
-                em.persist(scholarshipAward4);
-                em.persist(scholarshipAward5);
-                em.persist(scholarshipAward6);
-                em.persist(scholarshipAward7);
-                em.persist(scholarshipAward8);
-                em.persist(scholarshipAward9);
-                em.persist(scholarshipAward10);
-                em.persist(scholarshipAward11);
-                em.persist(scholarshipAward12);
-
-
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
+            return total;
         }
 
         public void insertCalendar() throws Exception {
@@ -805,6 +619,194 @@ public class InitDb {
             return LocalDate.ofEpochDay(randomDay);
         }
 
-
+//        // 이거 안씀
+//        public void dbInit4() {
+//            String randomSalt = hashComponent.getRandomSalt();
+//            String hash = hashComponent.getHash("1234", randomSalt);
+//
+//            // 날짜 형식 지정
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+//
+//            // 2024년 2월 25일로 설정
+//            LocalDate createdAt = LocalDate.parse("2024-02-25", formatter);
+//            java.sql.Date sqlCreatedAt = java.sql.Date.valueOf(createdAt);
+//
+//            College college1 = new College("사범대학", "인문관1");
+//            College college2 = new College("사회과학대학", "인문관2");
+//            College college3 = new College("의과대학", "공학관");
+//            em.persist(college1);
+//            em.persist(college2);
+//            em.persist(college3);
+//
+//            Major major1 = new Major("정치외교학과", 3500000, college1);
+//            Major major2 = new Major("지리학과", 3200000, college1);
+//            Major major3 = new Major("군사학과", 3300000, college1);
+//            em.persist(major1);
+//            em.persist(major2);
+//            em.persist(major3);
+//
+//            Major major4 = new Major("수학교육과", 2900000, college2);
+//            Major major5 = new Major("사회교육과", 2800000, college2);
+//            Major major6 = new Major("국어교육과", 3000000, college2);
+//            em.persist(major4);
+//            em.persist(major5);
+//            em.persist(major6);
+//
+//            Major major7 = new Major("신경과", 5500000, college3);
+//            Major major9 = new Major("정신과", 5700000, college3);
+//            Major major8 = new Major("마취과", 5200000, college3);
+//            em.persist(major7);
+//            em.persist(major8);
+//            em.persist(major9);
+//
+//            LectureRoom lectureRoom1 = new LectureRoom("101", college1);
+//            LectureRoom lectureRoom2 = new LectureRoom("102", college1);
+//            LectureRoom lectureRoom3 = new LectureRoom("201", college2);
+//            LectureRoom lectureRoom4 = new LectureRoom("202", college2);
+//            LectureRoom lectureRoom5 = new LectureRoom("501", college3);
+//            LectureRoom lectureRoom6 = new LectureRoom("502", college3);
+//
+//            em.persist(lectureRoom1);
+//            em.persist(lectureRoom2);
+//            em.persist(lectureRoom3);
+//            em.persist(lectureRoom4);
+//            em.persist(lectureRoom5);
+//            em.persist(lectureRoom6);
+//
+//
+//            User user1 = new User(hash, randomSalt, "정수용", "222222-2222222", "부산광역시 미남", "010-1234-1234", "tesrht2@naver.com", User_role.교수, sqlCreatedAt);
+//            User user2 = new User(hash, randomSalt, "최유란", "111111-1111111", "울산광역시 남구", "010-1234-1234", "tesagat1@naver.com", User_role.교수, sqlCreatedAt);
+//            User user3 = new User(hash, randomSalt, "이병길", "333333-3333333", "부산광역시 대연동", "010-1234-1234", "ahtest3@naver.com", User_role.교수, sqlCreatedAt);
+//            em.persist(user1);
+//            em.persist(user2);
+//            em.persist(user3);
+//
+//            User user5 = new User(hash, randomSalt, "황민우", "555555-5555555", "서울특별시 강북", "010-1234-1234", "teulahst2@naver.com", User_role.교직원, sqlCreatedAt);
+//            User user6 = new User(hash, randomSalt, "박소은", "666666-6666666", "부산광역시 수영구", "010-1234-1234", "teulhst3@naver.com", User_role.교직원, sqlCreatedAt);
+//            User user4 = new User(hash, randomSalt, "안지혜", "444444-4444444", "서울특별시 강남", "010-1234-1234", "testuil1@naver.com", User_role.교직원, sqlCreatedAt);
+//            em.persist(user4);
+//            em.persist(user5);
+//            em.persist(user6);
+//
+//            User user7 = new User(hash, randomSalt, "송근욱", "777777-7777777", "울산광역시 남구", "010-1234-1234", "tesryidt1@naver.com", User_role.학생, sqlCreatedAt);
+//            User user8 = new User(hash, randomSalt, "이순신", "888888-8888888", "부산광역시 미남", "010-1234-1234", "tedlfyist2@naver.com", User_role.학생, sqlCreatedAt);
+//            User user9 = new User(hash, randomSalt, "안중근", "999999-9999999", "부산광역시 대연동", "010-1234-1234", "tesilfyilt3@naver.com", User_role.학생, sqlCreatedAt);
+//            em.persist(user7);
+//            em.persist(user8);
+//            em.persist(user9);
+//
+//
+//            try {
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+//                Date utilDate = sdf.parse("2024/11/02");
+//                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+//
+//                Professor professor1 = new Professor("hi", user1, major1, sqlDate);
+//                Professor professor2 = new Professor("hi", user2, major2, sqlDate);
+//                Professor professor3 = new Professor("hi", user3, major3, sqlDate);
+//                em.persist(professor1);
+//                em.persist(professor2);
+//                em.persist(professor3);
+//
+//                Manager manager1 = new Manager("hi", user4, sqlDate);
+//                Manager manager2 = new Manager("hi", user5, sqlDate);
+//                Manager manager3 = new Manager("hi", user6, sqlDate);
+//                em.persist(manager1);
+//                em.persist(manager2);
+//                em.persist(manager3);
+//
+//                Student student1 = new Student(24000001, 3, user7, professor1, major1, sqlDate);
+//                Student student2 = new Student(24000002, 3, user8, professor2, major2, sqlDate);
+//                Student student3 = new Student(24000003, 3, user9, professor3, major3, sqlDate);
+//                em.persist(student1);
+//                em.persist(student2);
+//                em.persist(student3);
+//
+//                Situation situation1 = new Situation(student1, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                Situation situation2 = new Situation(student2, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//                Situation situation3 = new Situation(student3, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
+//
+//                em.persist(situation1);
+//                em.persist(situation2);
+//                em.persist(situation3);
+//
+//                SituationRecord record1 = new SituationRecord(Status_type.재학, student1, situation1.getStart_date(), null);
+//                SituationRecord record2 = new SituationRecord(Status_type.재학, student2, situation2.getStart_date(), null);
+//                SituationRecord record3 = new SituationRecord(Status_type.재학, student3, situation3.getStart_date(), null);
+//
+//                em.persist(record1);
+//                em.persist(record2);
+//                em.persist(record3);
+//
+//                Payments payments = new Payments(student1, "2023학년 1학기");
+//                Payments payments2 = new Payments(student2, "2023학년 1학기");
+//                Payments payments3 = new Payments(student3, "2023학년 1학기");
+//
+//                Payments payments4 = new Payments(student1, "2023학년 2학기");
+//                Payments payments5 = new Payments(student2, "2023학년 2학기");
+//                Payments payments6 = new Payments(student3, "2023학년 2학기");
+//
+//                Payments payments7 = new Payments(student1, "2024학년 1학기");
+//                Payments payments8 = new Payments(student2, "2024학년 1학기");
+//                Payments payments9 = new Payments(student3, "2024학년 1학기");
+//
+//
+//                em.persist(payments);
+//                em.persist(payments2);
+//                em.persist(payments3);
+//                em.persist(payments4);
+//                em.persist(payments5);
+//                em.persist(payments6);
+//                em.persist(payments7);
+//                em.persist(payments8);
+//                em.persist(payments9);
+//
+//
+//                Scholarship scholarship1 = new Scholarship("내부", "성적우수장학금", 1000000, 2023, 1);
+//                em.persist(scholarship1);
+//                Scholarship scholarship2 = new Scholarship("내부", "근로장학금", 2000000, 2023, 2);
+//                em.persist(scholarship2);
+//                Scholarship scholarship3 = new Scholarship("외부", "국가장학금", 300000, 2023, 3);
+//                em.persist(scholarship3);
+//                Scholarship scholarship4 = new Scholarship("내부", "성적우수장학금", 1000000, 2024, 1);
+//                em.persist(scholarship4);
+//                Scholarship scholarship5 = new Scholarship("내부", "근로장학금", 2000000, 2024, 2);
+//                em.persist(scholarship5);
+//                Scholarship scholarship6 = new Scholarship("외부", "국가장학금", 300000, 2024, 3);
+//                em.persist(scholarship6);
+//
+//
+//                Scholarship_Award scholarshipAward1 = new Scholarship_Award(student1, scholarship1);
+//                Scholarship_Award scholarshipAward2 = new Scholarship_Award(student1, scholarship2);
+//                Scholarship_Award scholarshipAward3 = new Scholarship_Award(student1, scholarship3);
+//                Scholarship_Award scholarshipAward4 = new Scholarship_Award(student2, scholarship1);
+//                Scholarship_Award scholarshipAward5 = new Scholarship_Award(student2, scholarship2);
+//                Scholarship_Award scholarshipAward6 = new Scholarship_Award(student3, scholarship1);
+//                Scholarship_Award scholarshipAward7 = new Scholarship_Award(student1, scholarship4);
+//                Scholarship_Award scholarshipAward8 = new Scholarship_Award(student1, scholarship5);
+//                Scholarship_Award scholarshipAward9 = new Scholarship_Award(student1, scholarship6);
+//                Scholarship_Award scholarshipAward10 = new Scholarship_Award(student2, scholarship4);
+//                Scholarship_Award scholarshipAward11 = new Scholarship_Award(student2, scholarship5);
+//                Scholarship_Award scholarshipAward12 = new Scholarship_Award(student3, scholarship6);
+//
+//                em.persist(scholarshipAward1);
+//                em.persist(scholarshipAward2);
+//                em.persist(scholarshipAward3);
+//                em.persist(scholarshipAward4);
+//                em.persist(scholarshipAward5);
+//                em.persist(scholarshipAward6);
+//                em.persist(scholarshipAward7);
+//                em.persist(scholarshipAward8);
+//                em.persist(scholarshipAward9);
+//                em.persist(scholarshipAward10);
+//                em.persist(scholarshipAward11);
+//                em.persist(scholarshipAward12);
+//
+//
+//            } catch (ParseException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//        }
     }
 }
