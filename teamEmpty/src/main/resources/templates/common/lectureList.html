@@ -180,18 +180,24 @@
             </tbody>
         </table>
 
-        <a href="/manager/lectureAdd">
-            <button class="btn btn-facebook"
-                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
-            </button>
-        </a>
-        <a href="/manager/lectureEvaluation">
-            <button th:class="${evaluationStatus == 'Y' ? 'btn btn-warning' : 'btn btn-outline-secondary'}"
-                    type="button"
-                    th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
-            </button>
-        </a>
+        <div class="d-flex">
+            <div class="mr-2">
+                <a href="/manager/lectureAdd">
+                    <button class="btn btn-facebook"
+                            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">등록
+                    </button>
+                </a>
+            </div>
 
+            <div>
+                <a href="/manager/lectureEvaluation">
+                    <button th:class="${evaluationStatus == 'Y' ? 'btn btn-warning' : 'btn btn-outline-secondary'}"
+                            type="button"
+                            th:if="${session.user != null && session.user.user.role.toString() == '교직원'}">평가 기간
+                    </button>
+                </a>
+            </div>
+        </div>
 
         <div class="m-auto" style="width: fit-content" th:if="${LectureList.totalPages > 1}">
             <ul class="pagination">

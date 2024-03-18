@@ -340,11 +340,12 @@ public class ManagerController {
     @ResponseBody
     @GetMapping("/getLecturerooms")             // 학과를 선택하면 해당 학과의 교수와 강의실 조회
     public ResponseEntity<Map<String, Object>> getLecturerooms(@RequestParam("college_idx") Long collegeIdx, @RequestParam("major_idx") Long major_idx) {
-        log.info("ResponseEntity");
+        College college = collegeService.findByIdx(collegeIdx);
         List<LectureRoom> lecturerooms = lectureRoomService.getLectureroomsByCollege(collegeIdx);
         List<ProfessorUserDto> professors = professorService.getProfessorsByMajor(major_idx);
 
         Map<String, Object> response = new HashMap<>();
+        response.put("college", college);
         response.put("lecturerooms", lecturerooms);
         response.put("professors", professors);
 

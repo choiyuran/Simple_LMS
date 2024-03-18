@@ -19,4 +19,8 @@ public class CollegeService {
     public List<College> getAllColleges() {
         return collegeRepository.findAll();
     }
+
+    public College findByIdx(Long collegeIdx) {
+        return collegeRepository.findById(collegeIdx).get();
+    }
 }
