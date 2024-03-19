@@ -271,51 +271,47 @@ public class InitDb {
 
             // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
             // 계산 기준 학과 * 3 해서 많은 쪽으로
-            // Map의 형태는 {1, [{1 101호, college1}, {1 302호, college1}]}, {2, [{2 203호, college1}, {2 406호, college1}]} 이런 식
-            // Map의 크기는 dong과 같다
-            // c1 14개 학과 45개
-            Map<Integer, List<LectureRoom>> c1LectureRoom = makeLectureRoom(5, college1);
-            // c2 9개 학과 27개
-            Map<Integer, List<LectureRoom>> c2LectureRoom = makeLectureRoom(3, college2);
-            // c3 7개 학과 27개
-            Map<Integer, List<LectureRoom>> c3LectureRoom = makeLectureRoom(3, college3);
-            // c4 1개 학과 9개
-            Map<Integer, List<LectureRoom>> c4LectureRoom = makeLectureRoom(1, college4);
-            // c5 1개 학과 9개
-            Map<Integer, List<LectureRoom>> c5LectureRoom = makeLectureRoom(1, college5);
-            // c6 12개 학과 36개
-            Map<Integer, List<LectureRoom>> c6LectureRoom = makeLectureRoom(4, college6);
-            // c7 7개 학과 27개
-            Map<Integer, List<LectureRoom>> c7LectureRoom = makeLectureRoom(3, college7);
-            // c8 5개 학과 18개
-            Map<Integer, List<LectureRoom>> c8LectureRoom = makeLectureRoom(3, college8);
-            // c9 15개 학과 45개
-            Map<Integer, List<LectureRoom>> c9LectureRoom = makeLectureRoom(5, college9);
-            // c10 4개 학과 18개
-            Map<Integer, List<LectureRoom>> c10LectureRoom = makeLectureRoom(3, college10);
-            // c11 2개 학과 9개
-            Map<Integer, List<LectureRoom>> c11LectureRoom = makeLectureRoom(1, college11);
-            // c12 2개 학과 9개
-            Map<Integer, List<LectureRoom>> c12LectureRoom = makeLectureRoom(1, college12);
-            // c13 6개 학과 18개
-            Map<Integer, List<LectureRoom>> c13LectureRoom = makeLectureRoom(3, college13);
-            // c14 2개 학과 9개
-            Map<Integer, List<LectureRoom>> c14LectureRoom = makeLectureRoom(1, college14);
-            // c15 1개 학과 9개
-            Map<Integer, List<LectureRoom>> c15LectureRoom = makeLectureRoom(1, college15);
-            // c16 1개 학과 9개
-            Map<Integer, List<LectureRoom>> c16LectureRoom = makeLectureRoom(1, college16);
+            // Map을 반환하는 거 삭제 => 강의에 사람도 넣어야 하는데 사람 만드는게 다른 메서드라서 어차피 메서드 분리해야했네
             
-            // 교수 넣는거는 JPQL 써야할듯? major idx가 일치하는 교수 목록 가져오는 식으로
+            // c1 14개 학과 45개
+            makeLectureRoom(5, college1);
+            // c2 9개 학과 27개
+            makeLectureRoom(3, college2);
+            // c3 7개 학과 27개
+            makeLectureRoom(3, college3);
+            // c4 1개 학과 9개
+            makeLectureRoom(1, college4);
+            // c5 1개 학과 9개
+            makeLectureRoom(1, college5);
+            // c6 12개 학과 36개
+            makeLectureRoom(4, college6);
+            // c7 7개 학과 27개
+            makeLectureRoom(3, college7);
+            // c8 5개 학과 18개
+            makeLectureRoom(3, college8);
+            // c9 15개 학과 45개
+            makeLectureRoom(5, college9);
+            // c10 4개 학과 18개
+            makeLectureRoom(3, college10);
+            // c11 2개 학과 9개
+            makeLectureRoom(1, college11);
+            // c12 2개 학과 9개
+            makeLectureRoom(1, college12);
+            // c13 6개 학과 18개
+            makeLectureRoom(3, college13);
+            // c14 2개 학과 9개
+            makeLectureRoom(1, college14);
+            // c15 1개 학과 9개
+            makeLectureRoom(1, college15);
+            // c16 1개 학과 9개
+            makeLectureRoom(1, college16);
         }
 
-        private Map<Integer, List<LectureRoom>> makeLectureRoom(int dong, College college) {
+        private void makeLectureRoom(int dong, College college) {
             Random ran = new Random();
             String[] floor = {"1", "2", "3", "4", "5"};
             String[] roomNum = {"1", "2", "3", "4", "5", "6", "7"};
             ArrayList<String> makeRoom = new ArrayList<>();
-            ArrayList<LectureRoom> roomEntity = new ArrayList<>();
-            Map<Integer, List<LectureRoom>> total = new HashMap<>();
             for (int i = 1; i <= dong; i++) {
                 while (makeRoom.size() < 9) {
                     int floorRan = ran.nextInt(floor.length);
@@ -324,14 +320,11 @@ public class InitDb {
                     if (!makeRoom.contains(room)) {
                         makeRoom.add(room);
                         LectureRoom lectureRoom = new LectureRoom(room, college);
-                        roomEntity.add(lectureRoom);
                         em.persist(lectureRoom);
                     }
                 }
-                total.put(i, roomEntity);
                 makeRoom.clear();
             }
-            return total;
         }
 
         public void insertCalendar() throws Exception {
@@ -621,6 +614,33 @@ public class InitDb {
             long maxDay = LocalDate.now().toEpochDay();
             long randomDay = minDay + random.nextLong() % (maxDay - minDay + 1);
             return LocalDate.ofEpochDay(randomDay);
+        }
+
+        private void addLecture() {
+//          Lecture(String name,
+//                  String intro,
+//                  Integer credit,
+//                  String day,
+//                  String start,
+//                  String end,
+//                  Lecture_Type type,
+//                  Professor professor,
+//                  Integer maxCount,
+//                  String semester,
+//                  Integer grade,
+//                  String plan,
+//                  Major major,
+//                  LectureRoom lectureRoom) {
+            // 먼저 대학교 목록을 받아온다.
+            List<College> collegeList = em.createQuery("select c from College c", College.class).getResultList();
+            // 대학에서 보유 중인 강의실 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
+            List<LectureRoom> c1LectureRoom = em.createQuery("select r from LectureRoom r where r.college.idx = :cidx order by r.idx", LectureRoom.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
+            // 대학에 소속된 전공 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
+            List<Major> c1Major = em.createQuery("select m from Major m where m.college.idx = :cidx order by m.idx", Major.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
+            // 해당 전공의 교수 목록을 불러온다. 아래 구문은 collegeList의 첫 대학의 첫 전공으로 되어있다
+            List<Professor> c1m1Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(0).getIdx()).getResultList();
+            // 위의 것들을 이래저래 잘 써서 아래의 강의를 만들면 된다. 지금은 get(0)으로 다 되어있는데, 이걸 어떻게 써먹어야할까?
+            Lecture lectureTmp = new Lecture("1", "123", 3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수, c1m1Professor.get(0), 30, "2024년 1학기", 1, null, c1Major.get(0), c1LectureRoom.get(0));
         }
 
 //        // 이거 안씀
