@@ -56,22 +56,22 @@
     <table class="table table-bordered">
         <thead>
         <tr>
-            <th class="name" order="1">번호<span class="order"></span></th>
-            <th class="major" order="1">카테고리<span class="order"></span></th>
-            <th>이름</th>
-            <th class="hireDate" order="1">금액<span class="order"></span></th>
-            <th class="hireDate" order="1">분기<span class="order"></span></th>
-            <th class="hireDate" order="1">년도<span class="order"></span></th>
+            <th class="num" order="1">번호<span class="order"></span></th>
+            <th class="category" order="1">카테고리<span class="order"></span></th>
+            <th class="name" order="1">이름<span class="order"></span></th>
+            <th class="price" order="1">금액<span class="order"></span></th>
+            <th class="quarter" order="1">분기<span class="order"></span></th>
+            <th class="year" order="1">년도<span class="order"></span></th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="row : ${scholarshipList}">
-            <td class="name" th:text="${row.idx}"></td>
-            <td class="major" th:text="${row.category}"></td>
-            <td class="major" th:text="${row.name}"></td>
-            <td th:text="${row.price}"></td>
-            <td class="hireDate" th:text="${row.quarter}"></td>
-            <td class="hireDate" th:text="${row.year}"></td>
+            <td class="num" th:text="${row.idx}"></td>
+            <td class="category" th:text="${row.category}"></td>
+            <td class="name" th:text="${row.name}"></td>
+            <td class="price" th:text="${row.price}"></td>
+            <td class="quarter" th:text="${row.quarter}"></td>
+            <td class="year" th:text="${row.year}"></td>
         </tr>
         </tbody>
         <tr th:if="${scholarshipList == null || scholarshipList.isEmpty()}">
