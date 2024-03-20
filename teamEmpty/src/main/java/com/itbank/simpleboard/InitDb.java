@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class InitDb {
             initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.insertCalendar(); // 학사 일정
             initService.insertNotice(); // 공지사항
+            initService.addLecture();
 /*            initService.dbInit4(); // 안씀; */
         } catch (Exception e) {
             e.printStackTrace();
@@ -50,12 +52,6 @@ public class InitDb {
             College college8 = new College("미술대학", "예술관");
             College college9 = new College("사범대학", "사범관");
             College college10 = new College("생활과학대학", "인문관");
-            College college11 = new College("수의과대학", "의학관");
-            College college12 = new College("약학대학", "의학관");
-            College college13 = new College("음악대학", "예술관");
-            College college14 = new College("의과대학", "의학관");
-            College college15 = new College("자유전공학부", "인문관");
-            College college16 = new College("첨단융합학부", "첨단과학관");
             em.persist(college1);
             em.persist(college2);
             em.persist(college3);
@@ -66,12 +62,6 @@ public class InitDb {
             em.persist(college8);
             em.persist(college9);
             em.persist(college10);
-            em.persist(college11);
-            em.persist(college12);
-            em.persist(college13);
-            em.persist(college14);
-            em.persist(college15);
-            em.persist(college16);
 
             Major c1Major1 = new Major("국어국문학과", 3500000, college1);
             Major c1Major2 = new Major("중어중문학과", 2900000, college1);
@@ -80,13 +70,6 @@ public class InitDb {
             Major c1Major5 = new Major("독어독문학과", 3200000, college1);
             Major c1Major6 = new Major("노어노문학과", 3200000, college1);
             Major c1Major7 = new Major("서어서문학과", 3100000, college1);
-            Major c1Major8 = new Major("아시아언어문명학부", 3000000, college1);
-            Major c1Major9 = new Major("언어학과", 2800000, college1);
-            Major c1Major10 = new Major("역사학부", 3000000, college1);
-            Major c1Major11 = new Major("철학과", 2800000, college1);
-            Major c1Major12 = new Major("종교학과", 3000000, college1);
-            Major c1Major13 = new Major("미학과", 4000000, college1);
-            Major c1Major14 = new Major("고고미술사학과", 4100000, college1);
             em.persist(c1Major1);
             em.persist(c1Major2);
             em.persist(c1Major3);
@@ -94,13 +77,6 @@ public class InitDb {
             em.persist(c1Major5);
             em.persist(c1Major6);
             em.persist(c1Major7);
-            em.persist(c1Major8);
-            em.persist(c1Major9);
-            em.persist(c1Major10);
-            em.persist(c1Major11);
-            em.persist(c1Major12);
-            em.persist(c1Major13);
-            em.persist(c1Major14);
 
 
             Major c2Major1 = new Major("정치외교학부(정치학전공)", 2900000, college2);
@@ -108,31 +84,18 @@ public class InitDb {
             Major c2Major3 = new Major("경제학부", 3000000, college2);
             Major c2Major4 = new Major("사회학과", 3100000, college2);
             Major c2Major5 = new Major("인류학과", 3200000, college2);
-            Major c2Major6 = new Major("심리학과", 3300000, college2);
-            Major c2Major7 = new Major("지리학과", 3400000, college2);
-            Major c2Major8 = new Major("사회복지학과", 3500000, college2);
-            Major c2Major9 = new Major("언론정보학과", 3000000, college2);
             em.persist(c2Major1);
             em.persist(c2Major2);
             em.persist(c2Major3);
             em.persist(c2Major4);
             em.persist(c2Major5);
-            em.persist(c2Major6);
-            em.persist(c2Major7);
-            em.persist(c2Major8);
-            em.persist(c2Major9);
 
-            Major c3Major1 = new Major("수리과학부", 5500000, college3);
+
             Major c3Major2 = new Major("통계학과", 5700000, college3);
-            Major c3Major3 = new Major("물리천문학부(물리학전공)", 5200000, college3);
-            Major c3Major4 = new Major("물리천문학부(천문학전공)", 5200000, college3);
             Major c3Major5 = new Major("화학부", 5200000, college3);
             Major c3Major6 = new Major("생명과학부", 5200000, college3);
             Major c3Major7 = new Major("지구환경과학부", 5200000, college3);
-            em.persist(c3Major1);
             em.persist(c3Major2);
-            em.persist(c3Major3);
-            em.persist(c3Major4);
             em.persist(c3Major5);
             em.persist(c3Major6);
             em.persist(c3Major7);
@@ -149,50 +112,28 @@ public class InitDb {
             Major c6Major4 = new Major("재료공학부", 5200000, college6);
             Major c6Major5 = new Major("전기·정보공학부", 5200000, college6);
             Major c6Major6 = new Major("컴퓨터공학부", 5200000, college6);
-            Major c6Major7 = new Major("화학생물공학부", 5200000, college6);
-            Major c6Major8 = new Major("건축학과", 5200000, college6);
-            Major c6Major9 = new Major("산업공학과", 5200000, college6);
-            Major c6Major10 = new Major("에너지자원공학과", 5200000, college6);
-            Major c6Major11 = new Major("원자핵공학과", 5200000, college6);
-            Major c6Major12 = new Major("조선해양공학과", 5200000, college6);
             em.persist(c6Major1);
             em.persist(c6Major2);
             em.persist(c6Major3);
             em.persist(c6Major4);
             em.persist(c6Major5);
             em.persist(c6Major6);
-            em.persist(c6Major7);
-            em.persist(c6Major8);
-            em.persist(c6Major9);
-            em.persist(c6Major10);
-            em.persist(c6Major11);
-            em.persist(c6Major12);
 
             Major c7Major1 = new Major("식물생산과학부", 5100000, college7);
             Major c7Major2 = new Major("산림과학부", 5000000, college7);
             Major c7Major3 = new Major("응용생물화학부", 5100000, college7);
             Major c7Major4 = new Major("식품·동물생명공학부", 5200000, college7);
-            Major c7Major5 = new Major("바이오시스템·소재학부", 5300000, college7);
-            Major c7Major6 = new Major("조경·지역시스템공학부", 5400000, college7);
-            Major c7Major7 = new Major("농경제사회학부", 5500000, college7);
             em.persist(c7Major1);
             em.persist(c7Major2);
             em.persist(c7Major3);
             em.persist(c7Major4);
-            em.persist(c7Major5);
-            em.persist(c7Major6);
-            em.persist(c7Major7);
 
             Major c8Major1 = new Major("동양화과", 5200000, college8);
             Major c8Major2 = new Major("서양화과", 5100000, college8);
             Major c8Major3 = new Major("조소과", 4900000, college8);
-            Major c8Major4 = new Major("디자인학부(공예)", 5000000, college8);
-            Major c8Major5 = new Major("디자인학부(디자인)", 5500000, college8);
             em.persist(c8Major1);
             em.persist(c8Major2);
             em.persist(c8Major3);
-            em.persist(c8Major4);
-            em.persist(c8Major5);
 
             Major c9Major1 = new Major("교육학과", 5200000, college9);
             Major c9Major2 = new Major("국어교육과", 4900000, college9);
@@ -202,13 +143,6 @@ public class InitDb {
             Major c9Major6 = new Major("사회교육과", 3900000, college9);
             Major c9Major7 = new Major("역사교육과", 3900000, college9);
             Major c9Major8 = new Major("지리교육과", 4100000, college9);
-            Major c9Major9 = new Major("윤리교육과", 3600000, college9);
-            Major c9Major10 = new Major("수학교육과", 4000000, college9);
-            Major c9Major11 = new Major("물리교육과", 5100000, college9);
-            Major c9Major12 = new Major("화학교육과", 5000000, college9);
-            Major c9Major13 = new Major("생물교육과", 3900000, college9);
-            Major c9Major14 = new Major("지구과학교육과", 4900000, college9);
-            Major c9Major15 = new Major("체육교육과", 3700000, college9);
             em.persist(c9Major1);
             em.persist(c9Major2);
             em.persist(c9Major3);
@@ -217,57 +151,11 @@ public class InitDb {
             em.persist(c9Major6);
             em.persist(c9Major7);
             em.persist(c9Major8);
-            em.persist(c9Major9);
-            em.persist(c9Major10);
-            em.persist(c9Major11);
-            em.persist(c9Major12);
-            em.persist(c9Major13);
-            em.persist(c9Major14);
-            em.persist(c9Major15);
 
-
-            Major c10Major1 = new Major("소비자아동학부(소비자학전공)", 2700000, college10);
-            Major c10Major2 = new Major("소비자아동학부(아동가족학)", 3100000, college10);
             Major c10Major3 = new Major("식품영양학과", 4400000, college10);
             Major c10Major4 = new Major("의류학과", 4300000, college10);
-            em.persist(c10Major1);
-            em.persist(c10Major2);
             em.persist(c10Major3);
             em.persist(c10Major4);
-
-            Major c11Major1 = new Major("수의예과", 5200000, college11);
-            Major c11Major2 = new Major("수의학과", 5100000, college11);
-            em.persist(c11Major1);
-            em.persist(c11Major2);
-
-            Major c12Major1 = new Major("약학과", 5300000, college12);
-            Major c12Major2 = new Major("제약학과", 5000000, college12);
-            em.persist(c12Major1);
-            em.persist(c12Major2);
-
-            Major c13Major1 = new Major("성악과", 5100000, college13);
-            Major c13Major2 = new Major("작곡과", 5200000, college13);
-            Major c13Major3 = new Major("음악학과", 5600000, college13);
-            Major c13Major4 = new Major("피아노과", 4900000, college13);
-            Major c13Major5 = new Major("관현악과", 3700000, college13);
-            Major c13Major6 = new Major("국악과", 4000000, college13);
-            em.persist(c13Major1);
-            em.persist(c13Major2);
-            em.persist(c13Major3);
-            em.persist(c13Major4);
-            em.persist(c13Major5);
-            em.persist(c13Major6);
-
-            Major c14Major1 = new Major("의예과", 5700000, college14);
-            Major c14Major2 = new Major("의학과", 5900000, college14);
-            em.persist(c14Major1);
-            em.persist(c14Major2);
-
-            Major c15Major1 = new Major("자유전공학부", 4500000, college15);
-            em.persist(c15Major1);
-
-            Major c16Major1 = new Major("첨단융합학부", 4900000, college16);
-            em.persist(c16Major1);
 
             // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
             // 계산 기준 학과 * 3 해서 많은 쪽으로
@@ -294,17 +182,6 @@ public class InitDb {
             // c10 4개 학과 18개
             makeLectureRoom(3, college10);
             // c11 2개 학과 9개
-            makeLectureRoom(1, college11);
-            // c12 2개 학과 9개
-            makeLectureRoom(1, college12);
-            // c13 6개 학과 18개
-            makeLectureRoom(3, college13);
-            // c14 2개 학과 9개
-            makeLectureRoom(1, college14);
-            // c15 1개 학과 9개
-            makeLectureRoom(1, college15);
-            // c16 1개 학과 9개
-            makeLectureRoom(1, college16);
         }
 
         private void makeLectureRoom(int dong, College college) {
@@ -313,7 +190,7 @@ public class InitDb {
             String[] roomNum = {"1", "2", "3", "4", "5", "6", "7"};
             ArrayList<String> makeRoom = new ArrayList<>();
             for (int i = 1; i <= dong; i++) {
-                while (makeRoom.size() < 9) {
+                while (makeRoom.size() < 5) {
                     int floorRan = ran.nextInt(floor.length);
                     int roomRan = ran.nextInt(roomNum.length);
                     String room = i + " " + floor[floorRan] + "0" + roomNum[roomRan] + "호";
@@ -625,7 +502,7 @@ public class InitDb {
             return LocalDate.ofEpochDay(randomDay);
         }
 
-        private void addLecture() {
+        public void addLecture() {
             List<String> m1LectureName = new ArrayList<>();
             m1LectureName.add("(필)한국어연구입문(Introduction to Korean Linguistics)");
             m1LectureName.add("한국어문학연구입문(Introduction to Korean Literature");
@@ -709,15 +586,182 @@ public class InitDb {
 //                  Major major,
 //                  LectureRoom lectureRoom) {
             // 먼저 대학교 목록을 받아온다.
-            List<College> collegeList = em.createQuery("select c from College c", College.class).getResultList();
+            List<College> collegeList = em.createQuery("select c from College c order by c.idx", College.class).getResultList();
+            System.out.println("collegeList = " + collegeList);
             // 대학에서 보유 중인 강의실 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
             List<LectureRoom> c1LectureRoom = em.createQuery("select r from LectureRoom r where r.college.idx = :cidx order by r.idx", LectureRoom.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
+            System.out.println("c1LectureRoom = " + c1LectureRoom);
             // 대학에 소속된 전공 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
             List<Major> c1Major = em.createQuery("select m from Major m where m.college.idx = :cidx order by m.idx", Major.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
+            System.out.println("c1Major = " + c1Major);
             // 해당 전공의 교수 목록을 불러온다. 아래 구문은 collegeList의 첫 대학의 첫 전공으로 되어있다
             List<Professor> c1m1Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(0).getIdx()).getResultList();
-            // 위의 것들을 이래저래 잘 써서 아래의 강의를 만들면 된다. 지금은 get(0)으로 다 되어있는데, 이걸 어떻게 써먹어야할까?
-            Lecture lectureTmp = new Lecture("1", "123", 3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수, c1m1Professor.get(0), 30, "2024년 1학기", 1, null, c1Major.get(0), c1LectureRoom.get(0));
+            System.out.println("c1m1Professor = " + c1m1Professor);
+
+            Random ran = new Random();
+
+            for (int i = 0; i < m1LectureName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m1Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                if (m1LectureName.get(i).contains("(필)")) {
+                     lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
+                                                3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                                                    c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+                                                    1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+                } else {
+                    lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
+                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+                }
+                em.persist(lectureTmp);
+            }
+
+            List<Professor> c1m2Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(1).getIdx()).getResultList();
+
+            List<String> m2CultureName = new ArrayList<>();
+            m2CultureName.add("초급한문1");
+            m2CultureName.add("초급한문2");
+            m2CultureName.add("중급한문");
+            m2CultureName.add("한문명작읽기");
+            m2CultureName.add("초급중국어1");
+            m2CultureName.add("초급중국어2");
+            m2CultureName.add("중급중국어1");
+            m2CultureName.add("중급중국어2");
+            m2CultureName.add("중국어회화1");
+            m2CultureName.add("중국어회화2");
+            m2CultureName.add("미디어중국어");
+            m2CultureName.add("동양의 고전");
+            m2CultureName.add("한자와 동양문화");
+            m2CultureName.add("중국어권의 사회와 문화");
+            m2CultureName.add("중국인의 언어와 문화");
+
+            List<String> m2CultureIntro = new ArrayList<>();
+            m2CultureIntro.add("본 교과목은 한자와 한문에 대해 거의 모르는 초보자를 위한 강좌로 한문에 대한 기초적인 이해와 지식의 배양에 중점을 둔다. 여기서는 한문의 품사와 기본 구조 등 문법에 대한 기초적인 이해를 기반으로 짧고 기본적인 구문이나 시가 등을 정밀하게 분석하고 감상한다. 이를 통해 기초적인 한문 독해력을 배양하며, 아울러 과제 등의 방식으로 일상생활에 쓰이는 한자어 실력도 증진시키고자 한다.");
+            m2CultureIntro.add("본 교과목은 초급한문1에 이어진 기초 한문 강좌로 기존의 한문1과 한문2 사이의 수준차를 완화하고 효율적인 학습을 도모하기 위해 개설된 강좌이다. 초급한문1에서 학습한 지식을 바탕으로 한문의 주요한 문형과 허사 등에 대한 이해를 추가하여 한문 문법에 대한 이해를 심화하고 이를 기반으로 단문 독해 연습을 집중적으로 한다. 중국은 물론 우리나라의 다양한 문장과 시가를 분석하고 감상함으로써 기초적인 한문 독해력을 배양하고 아울러 선인들의 사상과 동양문화에 대한 이해를 증진시키는 계기를 제공하고자 한다. 본 강좌를 통해 초급 수준의 한문 실력을 충실히 배양하게 되면 중급 이상의 한문 강좌를 수강하는데 무리가 없을 것이다.");
+            m2CultureIntro.add("본 교과목은 초급한문1과 초급한문2에 이은 중급수준의 한문 강좌이다. 초급 한문 과정에서 다져진 기초 실력을 바탕으로 한문에 대한 이해를 심화하고 보다 발전된 한문 독해 실력을 배양하는 과정이다. 여기에서는 보다 완결된 형태의 문학, 철학, 역사 등 다방면의 고전 산문 문장과 시가 작품들을 익힐 수 있다. 이를 통해 한문 문법 지식을 체화하고 구문에 익숙해지도록 함과 동시에 선현들의 사상과 인생관 등을 비판적으로 검토해봄으로써 인문학적인 소양을 늘리는 기회를 가질 수 있을 것이다. 본 교과목까지 수강하면 고급 한문 강좌나 한문 관련 전공과목을 수강하는 데에도 무리가 없는 수준의 한문 실력을 배양할 수 있을 것이다.");
+            m2CultureIntro.add("본 교과목은 초급한문과 중급한문에 이은 고급 수준의 한문 명작에 대한 강좌이다. 초중급 한문 과정에서 다져진 실력을 바탕으로 고품격의 다양한 한문 문장을 정밀하게 읽어보는 과정이다. 초급한문과 중급한문에서는 주로 모범적이고 정격에 가까우며 비교적 평이한 문장을 다룬다. 그러다보니 유명하고 중요한 한문 문장임에도 초급자가 이해하기 쉽지 않다고 판단되면 배제되는 경우가 많았다. 본 강좌에서는 이러한 한문 문장을 경사자집(經史子集)의 다방면에 걸쳐 두루 선별하여 읽어보고자 한다. 본 교과목까지 수강하게 되면 정격적인 한문 문장뿐만 아니라 다소 파격적이고 난해한 문장에 대한 이해와 적응력을 높임으로써 한문을 깊이 배우거나 한문과 관련된 분야를 전공하려는 학문후속세대에게 자신감을 심어줄 수 있을 것이다.");
+            m2CultureIntro.add("고등학교 과정에서 중국어를 배우지 않은 학생을 위한 초급 단계의 중국어 강의이다. 중국어 발음법을 정확하게 습득한 후 구문을 토대로 한 초급 문법을 학습하여 회화 및 독해와 작문의 기초를 확립하는 과정이다. 따라서 본 교과목은 이전 과정에서 중국어를 학습한 경험이 있는 학생의 수강은 권하지 않는다.");
+            m2CultureIntro.add("고등학교 과정에서 2개 학기 이상 중국어를 배웠거나 중국어에 대한 초보적인 지식이 있는 학생을 위한 초급 두 번째 단계의 강의이다. 중국어 발음법을 숙지하고 문법과 작문에 기초 지식을 갖춘 학생이라면 누구나 들을 수 있다. 말하기, 듣기, 읽기, 쓰기와 문법 등 중국어 전반에 걸쳐 초급 단계의 학습을 완성하는 과정이다. 이 과목을 수강하면 기초 회화와 독해 능력을 갖출 수 있고, 향후 중급의 중국어를 학습할 수 있다.");
+            m2CultureIntro.add("본 교과목은 초급중국어2 또는 고등학교에서 중국어를 4개 학기 이상 수강한 학생을 대상으로 말하기, 듣기, 읽기, 쓰기의 전 영역에 걸쳐 중급 수준의 중국어를 학습할 수 있도록 개설하였다. 초급중국어2를 이어 일상의 구어 듣기와 말하기, 중국의 고등학교 수준의 문장 읽기와 쓰기를 익힌다. 본 과목을 수강한 학생은 중국어를 모국어로 쓰는 사람들과 일상생활에서의 원활한 의사소통이 가능함은 물론 기본적인 문헌 해독에도 어려움이 없게 될 것이다. 나아가 중국어로 학문 연구 및 사회생활을 수행할 수 있는 고급 문헌 해독의 기초를 닦는 과정이므로 중국 관련 학문 및 직업에 종사하려는 학생은 반드시 수강해야 한다.");
+            m2CultureIntro.add("본 교과목은 중급중국어1을 수강한 학생을 대상으로 중급중국어1을 이어 말하기, 듣기, 읽기, 쓰기 전 영역에 걸쳐 중급 수준의 중국어를 학습할 수 있도록 개설하였다. 수강생은 본 교과목을 수강한 후 중국어를 모국어로 쓰는 사람들과 일상생활에서의 원활한 의사소통이 가능함은 물론 중급 수준 이상의 문헌 해독에도 어려움이 없게 될 것이며, 또한 중어중문학과 전공과정에 개설된 현대 중국어 강독 교과목을 수강할 수 있다. 나아가 중국어로 학문 연구 및 사회생활을 수행할 수 있는 고급 문헌 해독의 기초를 닦는 과정이므로 중국 관련 학문 및 직업에 종사하려는 학생은 반드시 수강해야 한다.");
+            m2CultureIntro.add("본 교과목은 중급중국어1 이상의 수준을 갖추고 있는 학생을 대상으로 회화에 중점을 두고 중급 이상의 중국어 말하기 듣기 훈련을 시킨다. 초급중국어 및 중급중국어1에서 익힌 중국어를 기반으로 한 본격적인 말하기와 듣기 훈련을 통해 수강생은 중국어를 모국어로 쓰는 사람들과 중급 이상의 원활한 의사소통이 가능하게 된다. 중국 현지에서 일상생활을 정상적으로 영위할 수 있는 수준의 회화 구사력을 갖출 수 있다. 이 과목에 이어 중국어회화2 교과목까지 수강한다면 고급의 회화 소통은 물론 중어중문학과 전공과정에 개설된 고급의 중국어문학 교과목을 수강하는 데에도 큰 어려움을 느끼지 않을 것이다.");
+            m2CultureIntro.add("본 교과목은 중국어회화1 이상의 수준을 갖춘 학생을 대상으로 유창하고 우아한 소통에 중점을 두고 고급 중국어 말하기 듣기를 훈련시킨다. 따라서 본 교과목을 성실하게 수강한 학생은 중국어를 모국어로 쓰는 사람들, 특히 사회 지도층과 고급 중국어로 원활하고 우아하게 의사를 소통할 수 있게 된다. 또한 이 과목은 중어중문학과 전공과정에 개설된 고급의 중국어문학 과목을 수강하는 데에도 기초가 된다.");
+            m2CultureIntro.add("본 과목은 중급 정도의 중국어 능력을 갖춘 학생들이 다양한 매체를 통해 입체적으로 중국 관련 정보와 지식을 습득 이해할 수 있게 만든다. 각종 미디어를 통해 제공되는 다양한 중국어 자료를 보고 듣고 분석함으로써 중국어 수준을 높임은 물론 중국어권 국가의 사회와 문화에 대한 이해를 넓히고 분석능력을 배양시킨다. 중국의 현실에 관심이 많고 장차 중국을 활동 영역으로 삼고자 하는 학생들에게 필수적인 과목이다.");
+            m2CultureIntro.add("동양의 각 고전에는 우리나라의 고전과 중국의 경서, 제자집성, 교재류, 문학류 등이 포함되며, 연차적으로 일본, 인도 등의 고전이 포함될 것이며, 성경, 불경, 코란 등의 종교서도 포함될 것이다. 이 강의는 이상과 같은 동양의 각 고전에 나타나는 인간의 본질, 심성, 의무, 사고, 생활 등에 대한 견해를 분류 종합하고, 이에 대한 적절한 주석 및 번역을 가한 교재를 편찬한다. 교재에는 사고의 핵심 부분을 명시하여 학생들에게 이에 대한 생각을 하게 하고 이에 대한 리포트를 제출하게 하고 토론하게 한다. 이 강의는 학생들로 하여금 이 과정을 통하여 인간에 대한 신뢰와 사랑을 회복할 수 있기를 기대한다.");
+            m2CultureIntro.add("한자는 갑골문부터만 계산해도 대략 3,500여 년의 역사를 가지고 있으며, 오랫동안 동양의 문화 전반에 걸쳐 큰 영향을 미쳐왔다. 특히 한중일 삼국은 한자를 매개로 한 문화적 공통점을 많이 가지고 있어 한자문화권에 속하는 것으로 불려진다. 본 교과목에서는 한자와 관련된 동양의 문화와 그 속에 담겨진 동양인의 사유 방식을 살펴보는 것을 그 목적으로 한다. 강의의 내용에는 다음과 같은 내용이 포함된다.\n" +
+                    "1) 한자의 역사와 변천 과정\n" +
+                    "2) 실생활에 많이 쓰이는 한자의 원래 의미\n" +
+                    "3) 한자와 농경문화, 한자와 동양인의 인명, 한자와 동양인의 금기 등의 한자와 고대인의 생활\n" +
+                    "4) 한자와 사군자, 한자와 서예처럼 한자와 현대인의 취미에 대한 부분\n" +
+                    "5) 한자와 디자인 등 직접 현실에 이용 가능한 동양의 문화\n" +
+                    "강의의 과정에서는 시청각 자료를 많이 활용하여 시각적 효과를 높이며, 실제 생활에 적용 가능한 문화적인 요소에 대하여 수강생 스스로 찾아오도록 유도할 것이다.");
+            m2CultureIntro.add("이 강의는 갈수록 그 영향력이 증대되어 가는 현재의 중국(대륙) 및 중국어권(대만, 홍콩 그리고 세계 각 지역의 화교사회)의 사회, 문화적 상황 및 장래의 발전방향에 관심을 가진 학부생을 위해 개설되었다. 70년대 말 개혁개방을 시작한 이래 연평균 9%가 넘는 경제성장률을 이어온 중국의 발전상은 이제 미국과 어깨를 나란히 하는 글로벌 리더로 인정 받아가는 형국에 이르렀다. 중국이 이룬 급속한 발전의 배후에 대만, 홍콩 및 전 세계 화교네트워크와의 긴밀한 연계와 협력이 있었음은 물론이다. 본 강의에서는 오늘의 중국이 이룬 발전을 가능하게 한 요인들을 문화적, 역사적, 정치적 맥락에서 일별하는 동시에 중국 대륙과는 다른 역사적 경험(발전경로)을 거친 대만, 홍콩, 기타 화교권이 갖는 대륙과의 사회, 문화적 동질성과 차별성에 대한 이해를 통해 범중화권 사회에 대한 인식의 폭을 확장함으로써 미래의 변화에 능동적으로 대처할 역량을 키우는 데 그 목표를 둔다.");
+            m2CultureIntro.add("본 강좌는 현재의 중국(대륙) 및 중국어권(대만, 홍콩 그리고 세계 각 지역의 화교사회)에 대해 그들의 언어와 문화적 특징을 살펴보고, 아울러 중국어와 계통상으로 유사하거나, 비록 계통은 같지 않지만 지대한 영향을 주고 받은 한국어, 일본어 등과 비교하는 것을 목적으로 한다. 한국을 포함해 전 세계에서 중국어에 대해 관심을 보이고 있다. 그렇지만 그러한 중국어에 대해 공시적, 통시적, 그리고 문화적 배경을 토대로 언어적 특징을 제시한 과목은 거의 존재하지 않았다. 이 때문에 중국어 학습은 그들의 깊고 풍부한 문화적 배경이 배제된 상황에서 이루어져 무미건조한 것이 되었다. 본 강좌는 이러한 점을 극복하고 중국인이라는 사람을 기준으로, 그들이 사용하고 있는 언어라는 면에 착안하여 사람이 살면서 보이는 문화적 특징을 가미하여 언어를 설명하고자 한다. 이를 위해 중국어의 기본적 특징을 우선 습득하고, 이를 토대로 중국내의 소수민족의 언어와의 비교, 표준어와 방언의 비교, 한장어계의 비교 및 한국인으로서 중국어를 배울 때 나타나는 특징 등을 골고루 적용하여 중국어에 대한 이해의 폭을 넓히고자 한다.");
+
+            for (int i = 0; i < m2CultureName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m2Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                lectureTmp = new Lecture(m2CultureName.get(i), m2CultureIntro.get(i),
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.선택교양,
+                        c1m2Professor.get(professorIndex), 30, "2024년 1학기",
+                        1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
+                em.persist(lectureTmp);
+            }
+
+            List<String> m2MajorName = new ArrayList<>();
+            m2MajorName.add("중국어학의 이해");
+            m2MajorName.add("중국의 대중문학");
+            m2MajorName.add("중국현대명작의 세계");
+            m2MajorName.add("중국고전문학탐색");
+            m2MajorName.add("(필)한문강독1");
+            m2MajorName.add("(필)중국문학사");
+            m2MajorName.add("(필)고급중국어");
+            m2MajorName.add("한자의 세계");
+            m2MajorName.add("한문강독2");
+            m2MajorName.add("중국역대시가강독1");
+            m2MajorName.add("중국역대시가강독2");
+            m2MajorName.add("한문문법");
+            m2MajorName.add("현대중국소설");
+            m2MajorName.add("중국소설과 문화");
+            m2MajorName.add("중국어음성학");
+            m2MajorName.add("중국어어휘론");
+            m2MajorName.add("현대중국의 영화와 사회");
+            m2MajorName.add("중국현대문학강독");
+            m2MajorName.add("고대중국의 텍스트와 현대사회");
+            m2MajorName.add("중국역대산문강독1");
+            m2MajorName.add("중국역대산문강독2");
+            m2MajorName.add("중국 전통문화의 의미와 현대 중국 (영어 강의)");
+            m2MajorName.add("중국어문법");
+            m2MajorName.add("중국어학특강");
+            m2MajorName.add("중국어교육론");
+            m2MajorName.add("중국어교재연구 및 지도법");
+            m2MajorName.add("중국어교과논리 및 논술");
+            m2MajorName.add("중국현대문학론");
+            m2MajorName.add("중국사곡강독");
+            m2MajorName.add("중국공연예술");
+            m2MajorName.add("시경·초사");
+            m2MajorName.add("중국사회문화론특강");
+            m2MajorName.add("중국어글쓰기");
+            m2MajorName.add("중국어발표와 토론");
+            m2MajorName.add("중국어문학논문쓰기");
+
+            List<String> m2MajorIntro = new ArrayList<>();
+            m2MajorIntro.add("이 강의는 중국어의 언어학적 특성을 이해하고, 언어 현상과 자료를 분석하는 기초적 방법을 탐색한다. 수강생은 음운학과 음성학, 어휘론, 통사론, 화용론, 문자학, 역사와 방언 등 다양한 언어학적 관점에서 중국어를 고찰함으로써, 중국어학의 기초 지식을 배양할 수 있다.");
+            m2MajorIntro.add("이 과목은 역대로 중국인들에게 친숙하게 읽혔던 대중문학 작품들을 대상으로 하여, 먼저 개론적인 이해를 위하여 대중문학의 의미 및 가치, 사회적 전후 상황 등에 대해 살펴볼 것이며, 이후 개별적인 작품에 대한 심화된 접근과 부분적 강독이 이루어진다. 다루어지는 작품은 주로 소설과 희곡 장르에서 선별된다. 이 과정에서 학생들은 중국문학의 주요한 면모의 일부를 심도 있게 학습하는 기초를 마련한다.");
+            m2MajorIntro.add("이 과목은 20세기 이후 창작된 중국현대문학 작품 중에서 명작으로 널리 인정받는 시, 소설, 희곡 등의 작품들을 학생들이 직접 읽고 감상할 수 있도록 개론적인 설명과 강독의 기회를 제공한다. 이를 바탕으로 향후 학생들은 중국현대문학비평과 중국현대시사, 중국현대소설사 등을 심도 있게 학습하는 기초를 마련한다.");
+            m2MajorIntro.add("이 과목은 중국고전문학의 개념과 그 연구대상 및 연구 방법 등에 대하여 알아봄으로써 학생들이 보다 친근감을 느끼면서 중국고전문학에 접근할 수 있도록 한다. 구체적으로 학생들은 중국고전문학의 개념과 범위, 장르, 역사적 전개 과정, 미학적 특성, 전반적인 작품의 면모 등을 체계적으로 고찰한다. 이를 통하여 학생들은 본격적인 중국고전문학 연구를 위한 기초를 다지게 된다.");
+            m2MajorIntro.add("한문 자료의 해독 능력은 중국문학 전공자들에게 필수적으로 요구되는 과제이다. 고등학교 과정과 교양과정에서 배운 한문 지식을 보다 체계화하고 직접 한문 자료를 다룰 수 있는 수준으로 고양시키는 동시에 좋은 문장을 보다 풍부하게 접할 기회를 제공하는 것이 이 강의의 목표이다. 이 강의에서는 한문 학습 효과를 극대화시킬 수 있는, 좋은 문장의 전범으로 ‘맹자’를 선택하여 강독하는 것을 기본적인 과제로 한다. ‘맹자’ 강독을 통해 전공자들은 한문에 관한 체계적인 지식을 쌓아가는 동시에 한문 자료를 다루는 방법을 배울 수 있을 것이다. (한문강독 2)와 연계하여 두 학기에 걸쳐 ‘맹자’의 완독을 목표로 강의를 진행한다.");
+            m2MajorIntro.add("이 강좌는 전근대시기 중국문학 전반을 심도 있게 소개하는 것을 목적으로 개설된다. 중국문학사는 질과 양 두 측면에서 세계적으로 그 유례를 찾아볼 수 없는 방대한 자료를 축적하고 있다. 이 강좌에서는 그 중 주요 문학사적 현상을 중심으로 중국문학 전반에 대한 이해를 도모한다. 이를 통해 수강생들은 문학 작품에 대한 심도 있는 분석과 함께 전근대시기 중국문학사에 대한 안목을 넓히고 중국, 중국문화, 인문적 앎 등에 대한 안목과 통찰력을 갖출 수 있을 것이다.");
+            m2MajorIntro.add("(초급중국어 1·2)와 (중급중국어 1·2) 과목을 기 수강한 전공자들을 대상으로 고급 수준의 문법과 작문, 독해 능력을 기르는 것이 이 과목의 학습 목표이다. 또한 다양한 독해를 통해 중국 문화의 심층을 이해함과 동시에 언어사용에 개재된 중국인들의 사고 패턴을 이해함으로써 자연스런 회화 구사 능력의 배양에 비중을 둔다.");
+            m2MajorIntro.add("한자는 중국에서 사용되는 문자이면서 동시에 중국의 전통과 현대를 아우르는 문화적 요소를 담고 있으며, 중국을 비롯한 동아시아 공통의 문화유산으로서의 지위도 가지고 있다. 따라서 한자에 대한 학습은 중국의 고대와 현대에 대한 이해는 물론 한자문화권의 역사와 문화를 이해하는 데 필수적인 요소라고 할 수 있다. 이 과목은 한자의 유래와 발전 과정, 그리고 현대적 변용을 포함한 한자를 둘러싼 여러 가지 사항들에 대해 학습하도록 설계되어 있다. 이 과정을 통해 수강생은 한자 자체에 대한 흥미를 높일 수 있으며, 더 많은 한자를 학습하게 됨은 물론 현대 사회에서 한자가 담당하고 있는 역할과 전망에 대해서도 이해하게 될 것이다.");
+            m2MajorIntro.add("한문 자료의 해독 능력은 중국문학 전공자들에게 필수적으로 요구되는 과제이다. 고등학교 과정과 교양과정에서 배운 한문 지식을 보다 체계화하고 직접 한문 자료를 다룰 수 있는 수준으로 고양시키는 동시에 좋은 문장을 보다 풍부하게 접할 기회를 제공하는 것이 이 강의의 목표이다. 이 강의에서는 한문 학습 효과를 극대화시킬 수 있는, 좋은 문장의 전범으로 ‘맹자’를 선택하여 강독하는 것을 기본적인 과제로 한다. ‘맹자’ 강독을 통해 수강자들은 한문에 관한 체계적인 지식을 쌓아가는 동시에 한문 자료를 다루는 방법을 배울 수 있을 것이다. (한문강독 1)과 연계하여 두 학기에 걸쳐 ‘맹자’의 완독을 목표로 강의를 진행한다.");
+            m2MajorIntro.add("중국문학 내부의 여러 가지 전공 분야 가운데에서도 시는 특별한 중요성을 갖는 분야이다. 이 과목은 중국의 시가 작품들 가운데서 명편을 뽑아 심층적으로 감상, 분석함으로써 중국 시가에 대한 이해의 지평을 넓히는 것을 목표로 한다. 다루어야 할 작품의 범위를 고려하여 이 과목은 (중국역대시가강독 2)와 연계하여 강의한다.");
+            m2MajorIntro.add("중국문학 내부의 여러 가지 전공 분야 가운데에서도 시는 특별한 중요성을 갖는 분야이다. 이 과목은 중국의 시가 작품들 가운데서 명편을 뽑아 심층적으로 감상, 분석함으로써 중국 시가에 대한 이해의 지평을 넓히는 것을 목표로 한다. 다루어야 할 작품의 범위를 고려하여 이 과목은 (중국역대시가강독 1)과 연계하여 강의한다.");
+            m2MajorIntro.add("한문문법의 학습은 교양과정과 전공과정의 한문 교육을 통해 어느 정도 이루어지고 있지만, 종합적이고 체계적인 학습에는 한계가 있다. 본 강좌는 한문 문장을 언어학적인 관점에 입각한 문법적인 분석을 함으로써 고급수준의 한문 문장 해독 능력 배양의 바탕을 제공하고자 하는 목적을 갖고 있다. 따라서 본 강좌는 중어중문학과의 전공 교과목으로 설계되었지만, 한문 해독 능력이 전공에서 중요한 여러 전공자에게 유익한 강좌가 될 것이다.");
+            m2MajorIntro.add("현대중국은 개혁개방 30년을 거치는 동안 대단히 역동적인 변화를 보여주고 있다. 인류 역사상 유례를 찾기 어려울 정도의 이 같은 변화의 양상은 문학에도 깊은 영향을 미쳤으며, 특히 그 속성상 인정세태의 변화를 날카롭고 깊이 있게 반영해내는 소설 장르에 폭넓게 흔적을 남기고 있다. 본 과목은 중국현대소설 작품들에 대한 깊이 있는 독해를 통해 현대중국이 겪고 있는 사회문화적 변모양상에 대한 보다 폭넓은 이해에 도달하는 것을 목적으로 개설된다. 한국어로 번역된 19세기말에서 최근까지의 다양한 단·중·장편 소설들을 미리 읽고 강의시간에 감상(발표), 논평, 상호 토론하는 방식으로 진행되기에 중국어 원문해독능력이 없는 저학년 전공자들에게도 보다 넓게 문호가 개방되어 있다.");
+            m2MajorIntro.add("중국의 소설은 근대 이전 명청(明淸) 시기에 이미 확고한 작자-독자의 시장 체계와 독서 환경의 중심에 있었을 뿐만 아니라, 소위 ‘사대기서(四大奇書)’ 혹은 ‘육대기서(六大奇書)’라 불리는 작품들을 통해 당시의 문화 및 문학적 역량의 총결 혹은 정점으로서의 획기적인 성과를 보여주었다. 이러한 성과로 인해 이 시기 대표적 작품들은 근대의 변혁을 거쳐 現當代에 이르기까지 중국 소설의 고전으로서 확고부동한 지위를 얻게 되었을 뿐만 아니라, 오늘날 영화와 드라마, 애니메이션과 같은 각종 매체의 유력한 콘텐츠로서 끊임없이 재창작·재해석되는 대상이 되었다. 이 과목은 이러한 명청 시기 소설 작품들을 통해 당시 사회의 모습과 문화를 이해하고, 아울러 전통시기에서 현재에 이르는 중국 문화의 연속성과 근원적 특성을 탐색하기 위해 개설되었다. 이 수업에서는 중국 소설의 역사적 중요성 및 현대적 수용에 대해 살펴볼 것이며, 학생들은 중국 소설에 대한 탐색과 이해를 통해 중국의 전통과 현대를 아우르는 포괄적인 시각을 갖게 될 것이다. 뿐만 아니라 오늘날 이 작품들이 향유되는 방식을 고찰함으로써 시대와 공간을 초월하는 고전의 보편성이 어느 지점에서 형성되고 의미화 되었는지를 파악할 수 있을 것이다.");
+            m2MajorIntro.add("이 교과목은 중국어 말소리의 특성을 이해하고 분석하는 능력을 기르는 데에 목표를 둔다. 음성언어 연구에 필요한 기본 개념과 방법을 익히고, 표준중국어의 말소리 목록을 이해한다. 자음과 모음, 성조, 강세가 표준중국어에서 실현되는 양상을 탐색하고, 한국어와의 공통성과 차이를 논의한다. 이를 토대로 언어 비교, 발음 습득 및 음성 인식, 합성 등의 영역으로 지식을 확장할 수 있는 능력을 배양한다.");
+            m2MajorIntro.add("본 강좌는 중국어의 어휘 체계와 특성에 대한 언어학적인 고찰과 이해를 도모한다. 학생들은 중국어 단어의 구조, 의미, 기능적 특성을 이해하고 어휘와 사회의 상호작용, 외래어의 수용, 관용어구의 유형과 특성 등을 살펴볼 것이며, 아울러 중국어 어휘의 통시적 발전 과정에 대해서 함께 고찰한다.");
+            m2MajorIntro.add("이 과목은 중국 영화사를 대표하는 영화 작품과 현대 중국 사회의 중요한 문제들을 잘 보여주는 영화 작품을 선별하여 감상하고, 이를 통해 중국 사회에 대한 통찰력 있는 시각과 깊이 있는 미학적 인식을 얻게 하는 것을 목표로 한다. 중국어를 모르는 학생도 수강할 수 있도록, 선별된 작품의 한국어 자막을 제공한다.");
+            m2MajorIntro.add("이 과목은 20세기에 씌어진 중국현대문학 작품들 가운데 중요한 작품들을 뽑아 원어로 강독함으로써 작품에 대한 충실한 이해와 감상 능력의 계발을 도모하기 위해 개설되었다. 주로 20세기의 산문·소설·시를 다루게 된다. 이 과목은 <현대중국의 문학과 사회>와 연계되어 강의가 진행된다.");
+            m2MajorIntro.add("이 강좌에서는 고대 중국의 텍스트를 문학적, 지성사적 차원에서 분석하고 그 현재적 의미를 탐구한다. 주지하듯이 고대 중국의 텍스트는 양적으로 방대하며 질적으로도 높은 수준을 갖추고 있다. 이 강좌에서는 이들 중 경서나 제자백가서 같은 고전 급의 텍스트, 역대로 문학 고전으로 꼽혀온 텍스트를 대상으로, 그들이 현대사회에서도 여전히 유의미한 지식과 지혜를 담고 있는 고전인 까닭을 다면적으로 분석한다.");
+            m2MajorIntro.add("중국문학의 전개 과정에 있어 산문은 시와 더불어 가장 중심적인 위치를 점하여 왔다. 이 과목은 ≪서경≫에서 비롯한 중국의 산문이 제자서와 사전문 등을 거쳐 당송의 고문과 변려문으로 발전해가는 과정을 이해하고 중국산문의 특징과 고유의 미학적 구조를 해명하는 데 그 목적이 있다. 이 강의는 (중국역대산문강독 2)와 연계되어 진행된다.");
+            m2MajorIntro.add("중국문학의 전개 과정에 있어 산문은 시와 더불어 가장 중심적인 위치를 점하여 왔다. 이 과목은 ≪서경≫에서 비롯한 중국의 산문이 제자서와 사전문 등을 거쳐 당송의 고문과 변려문으로 발전해가는 과정을 이해하고 중국산문의 특징과 고유의 미학적 구조를 해명하는 데 그 목적이 있다. 이 강의는 (중국역대산문강독 1)과 연계되어 진행된다.");
+            m2MajorIntro.add("중국의 전통 문화에 보이는 여러 특징적인 양상을 살펴본 뒤, 그것이 갖는 의미가 무엇인지를 논제로 하여 강의를 진행한다. 그리고 그 의미가 현대 사회에 나타난 발현을 통하여 중국 전통문화와 현대 사회가 어떠한 상관성이 있는지에 대해 학생들과 토론한다. 중국의 전통 문화를 살펴보기 위하여 문학, 역사, 철학 등과 관련된 텍스트를 검토할 뿐만 아니라, 고고학과 인류학 방면의 기존 성과도 참고하게 될 것이다.");
+            m2MajorIntro.add("중국어문법은 교양 과정과 전공 기초 과정의 중국어 교육을 통해 어느 정도 이루어지고 있으나 단편적이라는 한계를 지닌다. 본 강좌는 중국어문법을 종합적, 체계적으로 고찰하고 엄밀한 언어학적 관점에서 중국어문법을 분석적으로 이해함으로써 고급 수준의 중국어 회화·작문 및 독해 능력 구비에 기초를 제공하는 데에 그 목적이 있다.");
+            m2MajorIntro.add("중국어학특강은 중국어 음성학, 음운론, 문자학, 형태론, 의미론, 통사론, 화용론 등의 영역에서 중국어에 대한 언어학적 지식을 심화하여 습득할 수 있는 교과목이다. 강의 주제는 이론적, 실천적으로 중요성을 지니는 중국어의 현상 분석 및 관련 이론으로 구성된다. 이를 토대로 중국어 연구에 필요한 언어학 이론을 이해하며, 언어습득, 컴퓨터언어학, 코퍼스언어학, 기계번역, 인공언어 등의 응용언어학 영역으로 지식을 확장하는 방법을 탐구한다.");
+            m2MajorIntro.add("이 과목은 교직에 진출할 전공자들을 위해 개설되는 교직 교과목으로 중국어 교육과 관련된 제반 문제를 학습하는 데 그 목적이 있다. 특히 한국인의 중국어 학습이 일반적으로 범하는 여러가지 오류와 그 문제를 효과적으로 극복할 수 있는 방법 등이 구체적인 사례를 중심으로 고찰될 것이다.");
+            m2MajorIntro.add("이 과목은 교직 교과목으로, 중국어 학습에 필수적이라 할 수 있는 교재의 개발과 교재에 대한 교수자 입장에서의 심층적 이해, 효율적인 지도 방법 등을 토론하기 위해 개설된 과목이다. 현장에서 중국어 교육을 담당할 전공자들은 이 과목의 수강을 통해 중국어 교수법을 체득하는 기회를 가지게 될 것이다.");
+            m2MajorIntro.add("이 과목은 교직에 진출할 전공자들을 위해 개설되는 교직 교과목으로, 중국어 교과의 논리 및 논술 교육을 위해 개설된 과목이다. 특히 교육 및 학습과 관련하여 창의성 발달 지도에 중점을 두며 교과과정, 평가방법, 교수법 등을 폭넓게 다룰 것이다.");
+            m2MajorIntro.add("1919년 오사 운동 이후의 중국현대문학은 백화문학운동을 필두로 민족형식논쟁·문예대중화논쟁·국방문학논쟁 등 수많은 논쟁을 거치는 한편 현실주의·낭만주의·현대주의 등의 다기한 문예사조가 교차되면서 전개돼 나간다. 이러한 논쟁과 다양한 문예사조에 대해 문인들의 검토가 진행되면서 중국현대문학은 풍부한 문학논의로 채워지게 된다. 의 이 과목은 논쟁사와 사조사의 관점에서 중국현대문학의 다양한 면모를 고찰하는 데 그 목표가 있다.");
+            m2MajorIntro.add("중국시가문학에 있어 사와 곡은 정통 장르로 분류되는 시에 비해 그 문학사적 의의가 충분히 인정되지 못하였으며 그에 대한 연구도 충분히 이루어지지 않은 편이다. 이 과목은 사와 산곡의 텍스트를 충실히 읽고 그 고유의 미학적 구조와 시가발전사상의 의의를 이해하는 데 그 목적이 있다.");
+            m2MajorIntro.add("중국의 고대에서부터 발전하여 현재까지 창작과 공연이 지속되는 희곡(戱曲, opera)과 강창(講唱, oral performance arts)의 역사와 내용을 고찰한다. 대본 강독과 무대 상연 고찰을 병행하여 그 문학성과 예술성을 이해 분석한다. 잡극(雜劇), 전기(傳奇), 곤곡(崑曲), 경극(京劇), 탄사(彈詞), 고사(鼓詞), 설서(說書) 등의 대표 작가와 작품을 섭렵하면서 그 사회적 문화적 함의를 탐구한다.");
+            m2MajorIntro.add("시경은 중국문학사에 있어 가장 오래된 텍스트이며 후대의 문학발전에 가장 큰 영향을 끼친 텍스트이다. 초사 역시 중국문학의 기원을 살펴볼 수 있는 중요한 문헌이다. 따라서 시경과 초사의 연구는 중국문학의 성격과 발전방향을 이해하는 데 필수적이다. 본 강좌는 이러한 요구에 부응하기 위해 시경과 초사의 원문을 충실히 강독하고 문학적 특징과 의의, 후대의 영향 그리고 서로간의 연계성을 살펴보는 데 그 목적이 있다.");
+            m2MajorIntro.add("이 강좌에서는 중국의 중요한 사회문화적 주제를 선별하여 강의하고, 이를 통해 학생들에게 문학과 언어에서 나타나는 모습의 배경을 추론하도록 유도한다. 주제는 문화인류학, 사회경제학, 정치학 등의 다양한 분야에서 선택되며, 독서는 주로 사회과학적인 관점에서 쓰여 진 서적을 중심으로 한다. 또 강의 및 독서의 경험과 학생들이 다른 전공 강의에서 접하는 문학작품 및 언어 현상과의 접목을 시도하는 보고서의 작성을 통해 학생들의 시야를 확대시킨다.\n");
+            m2MajorIntro.add("대학에서의 중국어 교육은 중국어 구사능력 그 자체의 향상이 아니라 보다 넓은 중국어 사용권 속에서 중국어를 수단으로 한 지적 활동 및 의사소통 능력을 갖추도록 하는 것을 최종적 목표로 삼는다. 이 과목은 교양단계와 전공단계를 거쳐 대학에서 3년 이상 체계적인 중국어 교육을 받은 전공자들이 중국어 글쓰기를 통해 지적인 의사소통 활동에 참여할 수 있도록 하기 위해 개설된다. 기초적 문법사항 및 기초 구문 연습에 중점을 둔 초중급단계의 중국어작문 과목과 달리 전공필수과목인 고급중국어 과목을 수강했거나 그에 준하는 중국어 능력을 갖춘 학생들을 수강대상으로 하며, 고급의 중국어글쓰기 능력을 갖춘 원어민 교사가 담당하는 것을 원칙으로 한다.");
+            m2MajorIntro.add("이 과목은 중국어글쓰기와 더불어 중국어를 실질적 의사소통 및 업무처리의 수단으로 활용하고자 하는 학생들을 위해 개설된다. 따라서 대학에서 개설된 교양 및 전공과정의 단계별 중국어 과정을 마친 후 전공필수 과목인 고급중국어 과목을 수강했거나 그에 준하는 중국어구사능력을 갖춘 전공자들을 수강대상으로 한다. 최근 중국 사회의 주요 이슈들을 다루기에 중국어 구사능력 이외에도 최근 중국 사회의 변화상을 반영하는 폭넓은 사회, 문화적 이슈들에 대한 관심과 일정한 이해를 필요로 하며, 이 과목의 수강을 통해 동 주제에 대한 심화된 이해와 향후 변화에 대한 예측능력의 향상 또한 기대할 수 있다. 중국어글쓰기 과목과 마찬가지로 높은 수준의 중국어 사고능력 및 논리 구사능력을 갖춘 원어민 교사가 담당하는 것을 원칙으로 한다.");
+            m2MajorIntro.add("이 강좌에서는 중국어문학 논문의 작성에 필요한 역량을 다룬다. 연구주제의 설정, 논문체제의 구성, 연구방법의 모색, 연구대상의 설정 및 분석 등 학술논문 작성에 필요한 기본적 소양과 실제적인 기술을 익힌다. 또한 사고를 논리적으로 전개하는 역량과 정합적으로 표현하는 역량을 배양한다.");
+
+            for (int i = 0; i < m2MajorName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m2Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                if (m2MajorName.get(i).contains("(필)")) {
+                    lectureTmp = new Lecture(m2MajorName.get(i), m2MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
+                } else {
+                    lectureTmp = new Lecture(m2MajorName.get(i), m2MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
+                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
+                }
+                em.persist(lectureTmp);
+            }
         }
 
 //        // 이거 안씀
