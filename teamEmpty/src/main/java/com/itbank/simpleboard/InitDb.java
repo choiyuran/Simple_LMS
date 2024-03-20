@@ -700,15 +700,24 @@ public class InitDb {
 //                  Major major,
 //                  LectureRoom lectureRoom) {
             // 먼저 대학교 목록을 받아온다.
-            List<College> collegeList = em.createQuery("select c from College c", College.class).getResultList();
+            List<College> collegeList = em.createQuery("select c from College c order by c.idx", College.class).getResultList();
             // 대학에서 보유 중인 강의실 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
             List<LectureRoom> c1LectureRoom = em.createQuery("select r from LectureRoom r where r.college.idx = :cidx order by r.idx", LectureRoom.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
             // 대학에 소속된 전공 목록을 불러온다. 아래 구문은 collegeList의 첫 대학으로 되어있다
             List<Major> c1Major = em.createQuery("select m from Major m where m.college.idx = :cidx order by m.idx", Major.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
             // 해당 전공의 교수 목록을 불러온다. 아래 구문은 collegeList의 첫 대학의 첫 전공으로 되어있다
             List<Professor> c1m1Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(0).getIdx()).getResultList();
-            // 위의 것들을 이래저래 잘 써서 아래의 강의를 만들면 된다. 지금은 get(0)으로 다 되어있는데, 이걸 어떻게 써먹어야할까?
-            Lecture lectureTmp = new Lecture("1", "123", 3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수, c1m1Professor.get(0), 30, "2024년 1학기", 1, null, c1Major.get(0), c1LectureRoom.get(0));
+
+            Random ran = new Random();
+
+            for (int i = 0; i < m1LectureName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m1Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
+                                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                                                c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+                                                1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+            }
         }
 
 //        // 이거 안씀
