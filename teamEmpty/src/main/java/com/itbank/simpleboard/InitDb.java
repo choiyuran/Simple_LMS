@@ -19,16 +19,16 @@ import java.util.*;
 @RequiredArgsConstructor
 public class InitDb {
     private final InitService initService;
-
+    private static long count;
     @PostConstruct
     public void init() {
+        count = 0;
         try {
             initService.dbInit6(); // 1. 단과대학 + 강의실 + 학과
-            initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.insertCalendar(); // 학사 일정
             initService.insertNotice(); // 공지사항
+            initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.addLecture();
-/*            initService.dbInit4(); // 안씀; */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -280,8 +280,10 @@ public class InitDb {
                 em.persist(user3);
 
 
+                if(count == 0){
+                    count = em.createQuery("SELECT COUNT(e) FROM Major e", Long.class).getSingleResult();
+                }
                 Random random = new Random();
-                Long count = em.createQuery("SELECT COUNT(e) FROM Major e", Long.class).getSingleResult();
                 Long majorId = Math.abs(random.nextLong()) % count + 1L;; // 1부터 n까지의 랜덤값 생성
                 Major major = em.find(Major.class, majorId);
 
@@ -414,7 +416,6 @@ public class InitDb {
                         Scholarship_Award scholarshipAward = new Scholarship_Award(student, scholarship);
                         em.persist(scholarshipAward);
                     }
-
                 }
             }
         }

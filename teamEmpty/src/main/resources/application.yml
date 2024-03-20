@@ -2,8 +2,8 @@ spring:
   profiles:
     active: local
   datasource:
-    url: jdbc:mysql://database-1.c9qyy8822qo7.us-east-2.rds.amazonaws.com:3306/test4
-    username: team4
+    url: jdbc:mysql://database-1.c9qyy8822qo7.us-east-2.rds.amazonaws.com:3306/team
+    username: admin
     password: ${DB_PASSWORD} 
     driver-class-name: com.mysql.cj.jdbc.Driver
 
@@ -14,7 +14,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true

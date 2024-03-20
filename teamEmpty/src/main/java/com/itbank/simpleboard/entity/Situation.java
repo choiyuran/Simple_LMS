@@ -19,7 +19,7 @@ public class Situation {
     private Long idx;
 
     // 학생번호
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "student_idx", unique = true)
     private Student student;
 
