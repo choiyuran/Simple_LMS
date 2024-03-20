@@ -272,7 +272,7 @@ public class InitDb {
             // makeLectureRoom 돌리면 1동 당 9개의 강의실 생김
             // 계산 기준 학과 * 3 해서 많은 쪽으로
             // Map을 반환하는 거 삭제 => 강의에 사람도 넣어야 하는데 사람 만드는게 다른 메서드라서 어차피 메서드 분리해야했네
-            
+
             // c1 14개 학과 45개
             makeLectureRoom(5, college1);
             // c2 9개 학과 27개
@@ -376,20 +376,30 @@ public class InitDb {
             for (int i = 0; i < 100; i++) {
                 int studentNum = startingStudentNum + i;
 
+                String randomResidentNumber1 = generateRandomResidentNumber();
+                String randomResidentNumber2 = generateRandomResidentNumber();
+                String randomResidentNumber3 = generateRandomResidentNumber();
 
-                String randomSalt = hashComponent.getRandomSalt();
-                String hash = hashComponent.getHash("1234", randomSalt);
+                String realPassword1 = randomResidentNumber1.split("-")[1]; // 주민 뒷자리
+                String realPassword2 = randomResidentNumber2.split("-")[1]; // 주민 뒷자리
+                String realPassword3 = randomResidentNumber3.split("-")[1]; // 주민 뒷자리
+
+                String randomSalt1 = hashComponent.getRandomSalt();
+                String randomSalt2 = hashComponent.getRandomSalt();
+                String randomSalt3 = hashComponent.getRandomSalt();
 
 
                 java.sql.Date sqlCreatedAt = java.sql.Date.valueOf(generateRandomDate());
 
-                User user1 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교수, sqlCreatedAt);
+
+                User user1 = new User(hashComponent.getHash(realPassword1, randomSalt1), randomSalt1, generateRandomName(), randomResidentNumber1, generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교수, sqlCreatedAt);
                 em.persist(user1);
 
-                User user2 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교직원, sqlCreatedAt);
+                User user2 = new User(hashComponent.getHash(realPassword2, randomSalt2), randomSalt2, generateRandomName(), randomResidentNumber2, generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.교직원, sqlCreatedAt);
                 em.persist(user2);
 
-                User user3 = new User(hash, randomSalt, generateRandomName(), generateRandomResidentNumber(), generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.학생, sqlCreatedAt);
+                User user3 = new User(hashComponent.getHash(realPassword3, randomSalt3), randomSalt3, generateRandomName(), randomResidentNumber3, generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.학생, sqlCreatedAt);
+                user3.setUser_id(studentNum+"");
                 em.persist(user3);
 
 
@@ -460,7 +470,6 @@ public class InitDb {
 
                     } else {
                         Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
-                        em.persist(student);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
 
