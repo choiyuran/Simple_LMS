@@ -529,10 +529,10 @@ public class InitDb {
             m1LectureName.add("(필)한국어연구입문");
             m1LectureIntro.add("이 과목은 한국어 연구, 즉 국어학은 어떠한 학문이며, 구체적으로 무엇을 연구하는지에 대한 정보를 제공하고, 동시에 국어가 어떠한 특징을 지닌 언어인지 알아봄으로써 학생들이 보다 쉽게 국어학에 접근할 수 있도록 한다. 구체적으로는 일반언어학과의 관계에서 정립되는 국어학의 위치, 국어학의 하위 분야들, 연구대상 및 범위, 국어의 역사적인 변화 양상, 현대국어의 음운, 문법, 어휘적 특징 등을 고찰한다. 이를 바탕으로 학생들이 더욱 깊이 있는 국어연구를 위한 기초를 다지도록 한다.");
 
-            m1LectureName.add("한국어문학연구입문");
+            m1LectureName.add("(탐)한국어문학연구입문");
             m1LectureIntro.add("이 교과목은 한국문학의 연구 대상과 연구 방법은 무엇인가 하는 물음에 대해 충실한 답변을 제시함으로써 학생들이 우리 문학 전반에 대해 이해하고 우리 문학을 연구하는 데 필요한 기본 지식을 습득하도록 하는 데 목적을 둔다. 구체적으로는 한국문학의 개념과 범위, 갈래 체계와 역사적 전개 과정, 주제적, 미학적 특성, 전반적인 작품의 실상 등을 체계적으로 고찰한다. 이를 통해 학생들은 본격적인 한국문학 연구의 기초를 다지게 된다.");
 
-            m1LectureName.add("한국문학과 한국사회");
+            m1LectureName.add("(탐)한국문학과 한국사회");
             m1LectureIntro.add("이 교과목은 문학이 사회를 반영하면서 동시에 작품의 배경으로 삼기도 한다는 문학 일반의 원칙을 한국 문학 작품들을 통해 확인함으로써, 학생들이 문학과 실제 삶의 연관성을 이해하도록 하는 데 목적을 둔다. 구체적으로는 시, 소설, 평론 등으로 짜여진 한국 문학을 한국인의 삶의 현장인 한국사회의 관점에서 살펴보는 것을 주된 내용으로 삼는다. 이를 바탕으로 학생들은 본격적인 한국문학 연구를 위한 기초를 다지게 된다.");
 
             m1LectureName.add("한국어음운론");
@@ -626,16 +626,24 @@ public class InitDb {
                 int professorIndex = ran.nextInt(c1m1Professor.size());
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
-                if (m1LectureName.get(i).contains("(필)")) {
-                    lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
+                if (m1LectureName.get(i).contains("(탐)")) {
+                    String replace = m1LectureName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
                             c1m1Professor.get(professorIndex), 30, "2024년 1학기",
                             1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+                }
+                else if (m1LectureName.get(i).contains("(필)")) {
+                    String replace = m1LectureName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
                 } else {
                     lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
                             c1m1Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
                 }
                 em.persist(lectureTmp);
             }
@@ -711,16 +719,16 @@ public class InitDb {
             List<String> m2MajorName = new ArrayList<>();
             List<String> m2MajorIntro = new ArrayList<>();
 
-            m2MajorName.add("중국어학의 이해");
+            m2MajorName.add("(탐)중국어학의 이해");
             m2MajorIntro.add("이 강의는 중국어의 언어학적 특성을 이해하고, 언어 현상과 자료를 분석하는 기초적 방법을 탐색한다. 수강생은 음운학과 음성학, 어휘론, 통사론, 화용론, 문자학, 역사와 방언 등 다양한 언어학적 관점에서 중국어를 고찰함으로써, 중국어학의 기초 지식을 배양할 수 있다.");
 
-            m2MajorName.add("중국의 대중문학");
+            m2MajorName.add("(탐)중국의 대중문학");
             m2MajorIntro.add("이 과목은 역대로 중국인들에게 친숙하게 읽혔던 대중문학 작품들을 대상으로 하여, 먼저 개론적인 이해를 위하여 대중문학의 의미 및 가치, 사회적 전후 상황 등에 대해 살펴볼 것이며, 이후 개별적인 작품에 대한 심화된 접근과 부분적 강독이 이루어진다. 다루어지는 작품은 주로 소설과 희곡 장르에서 선별된다. 이 과정에서 학생들은 중국문학의 주요한 면모의 일부를 심도 있게 학습하는 기초를 마련한다.");
 
-            m2MajorName.add("중국현대명작의 세계");
+            m2MajorName.add("(탐)중국현대명작의 세계");
             m2MajorIntro.add("이 과목은 20세기 이후 창작된 중국현대문학 작품 중에서 명작으로 널리 인정받는 시, 소설, 희곡 등의 작품들을 학생들이 직접 읽고 감상할 수 있도록 개론적인 설명과 강독의 기회를 제공한다. 이를 바탕으로 향후 학생들은 중국현대문학비평과 중국현대시사, 중국현대소설사 등을 심도 있게 학습하는 기초를 마련한다.");
 
-            m2MajorName.add("중국고전문학탐색");
+            m2MajorName.add("(탐)중국고전문학탐색");
             m2MajorIntro.add("이 과목은 중국고전문학의 개념과 그 연구대상 및 연구 방법 등에 대하여 알아봄으로써 학생들이 보다 친근감을 느끼면서 중국고전문학에 접근할 수 있도록 한다. 구체적으로 학생들은 중국고전문학의 개념과 범위, 장르, 역사적 전개 과정, 미학적 특성, 전반적인 작품의 면모 등을 체계적으로 고찰한다. 이를 통하여 학생들은 본격적인 중국고전문학 연구를 위한 기초를 다지게 된다.");
 
             m2MajorName.add("(필)한문강독1");
@@ -820,16 +828,23 @@ public class InitDb {
                 int professorIndex = ran.nextInt(c1m2Professor.size());
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
-                if (m2MajorName.get(i).contains("(필)")) {
-                    lectureTmp = new Lecture(m2MajorName.get(i), m2MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                if (m2MajorName.get(i).contains("(탐)")) {
+                    String replace = m2MajorName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m2MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
                             c1m2Professor.get(professorIndex), 30, "2024년 1학기",
                             1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
+                } else if (m2MajorName.get(i).contains("(필)")) {
+                    String replace = m2MajorName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m2MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
                 } else {
                     lectureTmp = new Lecture(m2MajorName.get(i), m2MajorIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
                             c1m2Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
+                            2, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
                 }
                 em.persist(lectureTmp);
             }
@@ -840,134 +855,141 @@ public class InitDb {
             List<String> m3MajorName = new ArrayList<>();
             List<String> m3MajorIntro = new ArrayList<>();
 
-            m3MajorName.add("영어학입문(100.109)");
+            m3MajorName.add("(탐)영어학입문");
             m3MajorIntro.add("영문과 전공탐색과목. 영어학의 여러 분야와 분야별 언어현상 및 탐구방법 등을 소개함으로써, 영어학이란 무엇인가에 대한 이해를 높이고, 영어학 연구의 내용, 방법, 활용 등에 대한 기본을 익히는 것을 목표로 한다. 전반부에는 주로 영어의 음성/음운 체계 및 어휘, 문장, 의미 구조와 관련한 다양한 현상을 다루고, 후반부에는 주로 영어사용의 화용적, 사회적 특성, 코퍼스 자료를 이용한 영어 연구, 영어습득 및 영어교육 등 응용분야를 다루되, 각 분야 별 특징적인 현상들에 초점을 맞춤으로써 영어학 연구에 대한 실질적인 이해를 돕는다.");
 
-            m3MajorName.add("영문학입문(M1236.000600)");
+            m3MajorName.add("(탐)영문학입문");
             m3MajorIntro.add("영문과 전공 탐색 과목. 시, 소설, 드라마 등 각 장르에 걸쳐 작품들을 읽고 영문학 연구를 위한 기본 용어를 익히는 개론과목이다. 비교적 해독하기 쉽고 길지 않은 작품을 영미문학에서 고루 다룬다. 영문학의 기본 개념, 정의, 문학 언어의 성격, 표현양식, 비평의 방법, 시작법의 기본원리로서의 프로소디 등은 작품을 읽으면서 자연스럽게 습득하도록 한다. ");
 
-            m3MajorName.add("영미영작의 세계(100.112)");
+            m3MajorName.add("(탐)영미영작의 세계");
             m3MajorIntro.add("영어영문학과 전공탐색과목. 영문학의 대표적인 고전들을 선별하여 읽으면서 문학 텍스트를 분석하는 법을 배운다. <영문학서설>에서보다 더 긴 작품들을 읽으며, 소설, 시, 희곡 중 두 장르 이상을 다루는 것을 원칙으로 한다.");
 
-            m3MajorName.add("영작문(103.219)");
+            m3MajorName.add("영작문");
             m3MajorIntro.add("영어영문학과 학생으로서 필요한 영어글쓰기 능력을 집중적으로 배양한다. 글쓰기 논리와 문체에 대해서는 물론 어법과 기술적인 면에 대해서도 체계적인 지도를 하며, 적절한 길이와 난이도의 영미문학 및 문화 텍스트를 분석대상으로 활용하여 읽기와 쓰기를 연결시킨다. 영어 글쓰기 능력에 있어 중·상급 이상의 학생을 대상으로 하는 교과목으로 수준 높은 문장 구사력과 논리적인 논지 전개 능력을 기르는데 주력한다.");
 
-            m3MajorName.add("영어음성학(103.222)");
+            m3MajorName.add("영어음성학");
             m3MajorIntro.add("이 강좌는 영어화자들이 사용하는 언어음의 조음적 특징을 살펴보고 이해하는 것을 주목적으로 한다. 언어음이 발화될 때 어떠한 조음기관이 사용되고 그 기관이 어떠한 모습을 보이는지를 알아보는 것이 조음적 특징을 이해하는 것이다. 영어의 변별적 음의 조음적 특징을 이해한 후, 다수의 음이 연쇄적으로 발화될 때 음들 상호간에 어떠한 현상이 나타나고 그것이 왜 발생하는지를 이해하는 것도 이 강좌가 추구하는 목적 중의 하나이다.");
 
-            m3MajorName.add("영어와 사회(103.223)");
+            m3MajorName.add("영어와 사회");
             m3MajorIntro.add("이 과목에서는 영어를 사회언어학적 관점으로 관찰하는데 필요한 기본 용어 및 개념들을 알아보고 국가별 표준어, 지역방언, 사회적 방언, 레지스터 등을 포함하는 다양한 형태의 영어 변이형들을 탐구해 본다. 아울러 영어가 지구화 시대에 영어를 제 2 언어 혹은 외국어로 배우고 사용하는 국가들의 사회, 문화, 언어에 영어가 끼치는 영향에 대해서도 살펴본다.");
 
-            m3MajorName.add("영국문학개관 1(M1236.000700)");
+            m3MajorName.add("(필)영국문학개관 1");
             m3MajorIntro.add("앵글로색슨 시대부터 18세기 말까지의 영국문학을 조망하는 과목이다. 다양한 장르와 전통을 대표하는 작품을 선별해서 읽으며, 시대 간의 차이와 연속성에 특히 주목한다. 개별 텍스트를 사회문화적 맥락, 시대적 감수성과 연계해서 이해한다.");
 
-            m3MajorName.add("미국문학개관(M1236.000900)");
+            m3MajorName.add("(필)미국문학개관");
             m3MajorIntro.add("식민지시대초기부터 현재 시대까지의 미국문학을 개관하는 과목으로, 여러 장르에 걸쳐 주요작가들이 미국문학전통에 어떻게 기여했는지 살펴본다. 브래드스트리트, 프랭클린, 호손, 에머슨, 멜빌, 휘트먼, 포크너, 프로스트, 윌리엄스, 포크너, 로웰, 모리슨 등을 포함한 미국문학의 주요작가의 작품을 역사적, 사회적, 문화적 맥락에서 읽음으로써 미국문학사 전반에 대한 이해를 넓히도록 한다.");
 
-            m3MajorName.add("19세기 영국시(M1236.001000)");
+            m3MajorName.add("19세기 영국시");
             m3MajorIntro.add("19세기 영국시를 프랑스혁명, 산업혁명, 빅토리아시대의 문화, 대영제국 확장의 맥락에서 선별적으로 읽는다. 바볼드, 샬럿 스미스, 블레이크, 워즈워스, 코울리지, 바이런, 셸리, 키츠와 같은 낭만주의 시인들과, 테니슨, 로버트와 엘리자베스 브라우닝, 크리스티나 로제티, 아놀드와 같은 빅토리아시대의 시인들을 함께 읽는다.");
 
-            m3MajorName.add("현대미국소설(M1236.001100)");
+            m3MajorName.add("현대미국소설");
             m3MajorIntro.add("20세기 이후 현대 미국소설의 주요 작품을 선별하여 읽는다. 20세기 전반 모더니즘 문학의 전체적 흐름을 파악하는 동시에 제2차 세계대전 이후 미국소설의 변화된 문학적 감수성과 형식, 주제, 문화적 맥락을 이해한다. 흑인문학을 비롯한 소수민족문학의 소설적 성과 또한 점검한다.");
 
-            m3MajorName.add("영어담화분석(103.225)");
+            m3MajorName.add("영어담화분석");
             m3MajorIntro.add("응용언어학의 한 분야인 담화분석에 대해 소개하고 대화분석, 상호작용적 사회언어학, 비판적 담화분석 등 담화분석의 제반 이론 및 분석방법론을 살펴본다. 아울러 이들 방법론을 이용하여 다양한 장르의 영어 담화를 분석해 봄으로써 구체적 상황 맥락에서의 영어의 사용에 대한 이해를 돕고 언어의 기능을 분석하는 능력을 높인다.");
 
-            m3MajorName.add("코퍼스 영어학(103.340)");
+            m3MajorName.add("코퍼스 영어학");
             m3MajorIntro.add("이 과목에서는 전산 코퍼스에 기반한 영어 연구 이론, 연구 방법, 응용 기술 등을 습득한다. 코퍼스를 활용한 언어 분석의 기초를 익히고, 영어학 연구 제 분야에서 필요로 하는 영어 자료 관찰 및 분석 기술을 습득하고, 코퍼스 자료를 활용한 영어학 및 영어 교육 관련 논문을 읽는다. 컴퓨터로 영어 코퍼스를 언어학적으로 분석하고 연구하는 능력을 함양하여 궁극적으로 학부 졸업 논문 수준의 연구 논문을 완성하는 것을 목표로 한다.");
 
-            m3MajorName.add("영국문학개관 2(M1236.000800)");
+            m3MajorName.add("(필)영국문학개관 2");
             m3MajorIntro.add("19세기 초부터 20세기 말까지의 영국문학을 조망하는 과목이다. 다양한 장르와 전통을 대표하는 작품을 선별해서 읽으며, 시대 간의 차이와 연속성에 특히 주목한다. 개별 텍스트를 사회문화적 맥락, 시대적 감수성과 연계해서 이해한다.");
 
-            m3MajorName.add("셰익스피어(103.325)");
+            m3MajorName.add("셰익스피어");
             m3MajorIntro.add("셰익스피어의 희곡을 집중적으로 강독한다. 오늘의 영어와 상이한 어법. 단어와 어귀의 의미를 정확하게 파악하고, 극적 아이러니와 심상 등 여러 가지 시적 요소와 플롯, 주제, 성격 등 여러 가지 극적 요소들의 분석을 통해서 셰익스피어의 극예술을 올바르게 이해하고 감상하도록 유의한다.");
 
-            m3MajorName.add("영문학과 대중문화(M1236.001200)");
+            m3MajorName.add("영문학과 대중문화");
             m3MajorIntro.add("영화, TV, 공연, 그래픽 노블, 음악, 비디오 게임, 인터넷 등 다양한 형식과 매체를 통해 발달해온 대중문화와 영문학의 접점을 탐구하는 과목이다. 선별된 영문학 작품을 읽고 관련된 대중문화를 살펴봄으로써 영문학과 대중문화의 상호 영향 관계에 대한 심도 있는 이해를 도모한다.");
 
-            m3MajorName.add("현대영국소설(M1236.001300)");
+            m3MajorName.add("현대영국소설");
             m3MajorIntro.add("20세기 이후 현대 영국소설의 주요 작품을 선별하여 읽는다. 20세기 전반 모더니즘 문학의 전체적 흐름을 파악하는 동시에 제2차 세계대전 이후 영국소설의 변화된 문학적 감수성과 형식, 주제, 문화적 맥락을 이해하도록 한다. 최근 영미 외의 영어권에서 축적된 소설적 성과 또한 점검한다.");
 
-            m3MajorName.add("고급영문법(103.201A)");
+            m3MajorName.add("고급영문법");
             m3MajorIntro.add("영문법 구조에 관한 지식을 실제 언어가 사용되는 다양한 상황이나 맥락 속에서 어떻게 적절히 사용할 수 있을 것인가에 초점을 맞추어 학생들로 하여금 영문법을 제대로 활용하는 방법을 익힐 수 있도록 하는 것을 목표로 한다. 코퍼스 자료, 신문기사, 뉴스, 영화, 시트콤, 광고, 스포츠 중계 등 다양한 자료를 활용하여, 구어/문어 담화나 장르 등에 따라 영문법 구조가 어떤 변이형들을 취하는지를 보여줌으로써 영문법에 대한 보다 폭 넓은 이해를 할 수 있도록 돕는다.");
 
-            m3MajorName.add("영어의미의 이해(M1236.003400)");
+            m3MajorName.add("영어의미의 이해");
             m3MajorIntro.add("영어표현의 의미와 실제 상황에서의 용법을 살펴보면서 영어 의미론과 화용론의 주요 개념과 연구방법들을 소개한다. 어휘의미, 의미합성, 지시, 의미역할, 상황유형, 정보구조, 전제, 대화함축, 화행 등과 관련된 다양한 영어자료를 분석해 봄으로써 영어 단어와 문장의 의미 해석과 인간의 인지에 대한 깊이 있는 이해에 도달하는 것을 목표로 한다.");
 
-            m3MajorName.add("르네상스 영시(103.343)");
+            m3MajorName.add("르네상스 영시");
             m3MajorIntro.add("16세기 초에서 17세기 중반까지의 영국시 고전들을 선별해서 읽는다. 중세 말기의 작품 또한 포함할 수 있다. 와이엇, 스펜서, 시드니, 셰익스피어, 던, 존슨, 허버트, 마블, 밀턴 등의 시인들을 다룰 수 있다.");
 
-            m3MajorName.add("르네상스 영국 드라마(M1236.001400)");
+            m3MajorName.add("르네상스 영국 드라마");
             m3MajorIntro.add("셰익스피어를 제외한 16ㆍ17세기 영국 희곡의 고전들을 선별해서 읽는다. 중세 말기와 왕정복고기의 희곡을 포함할 수도 있다. 개별 작가ㆍ작품과 사회문화적인 맥락에 대한 균형 잡힌 이해를 도모한다.");
 
-            m3MajorName.add("현대영시(M1236.001600)");
+            m3MajorName.add("현대영시");
             m3MajorIntro.add("19세기 후반에 등장한 현대시의 선구자들을 비롯하여 20세기의 주요 영미시인들, 특히 모더니스트 시인들을 중점적으로 읽는다. 20세기 중반의 시인들과 20세기 후반의 다양한 유파의 시인들을 다룰 수도 있다.");
 
-            m3MajorName.add("현대영미드라마(M1236.002500)");
+            m3MajorName.add("현대영미드라마");
             m3MajorIntro.add("19세기 말 이후 오늘에 이르기까지 영국과 미국의 희곡문학을 조망한다. 특히 입센 이후 현대희곡의 주요 경향 및 형식 실험에 주목한다. 시대별로 주요작품을 선별하여 정독함으로써 현대희곡의 큰 흐름을 파악하는 동시에 개별 작품에 대한 깊이 있는 이해를 도모한다.");
 
-            m3MajorName.add("19세기 영국소설(M1236.001900)");
+            m3MajorName.add("19세기 영국소설");
             m3MajorIntro.add("이 수업은 제인 오스틴, 에밀리 브론테, 샬럿 브론테, 찰스 디킨즈, 조지 엘리엇, 루이스 캐롤 등 19세기 영국소설의 고전을 선별하여 읽는다. 결혼, 가족, 교육, 이주, 공간, 제국주의 등의 주제를 중심으로 당대 영국사회를 관통한 역사적 변화가 어떻게 문학적으로 재현되는지 공부한다.");
 
-            m3MajorName.add("영어문장구조의 이해(M1236.003500)");
+            m3MajorName.add("영어문장구조의 이해");
             m3MajorIntro.add("영어 문장들이 단어나 구의 결합을 통해 형성되는 원리를 알아보고 다양한 영어 구문의 특성과 용법에 대해 살펴본다. 문장구조의 주요 원칙뿐 아니라 개별 구문에 나타나는 어휘적 특성, 어순, 구조적 특성 등 세부 현상들에 대한 체계적 설명 방법을 모색해보고 의미 해석 및 화용적 기능과는 어떻게 연결되는지 알아봄으로써 영어 문장 사용에 대한 심층적 이해를 돕는다. ");
 
-            m3MajorName.add("영어습득의 이해(M1236.003600)");
+            m3MajorName.add("영어습득의 이해");
             m3MajorIntro.add("이 과목은 영어학의 주요 분야 중의 하나인 영어습득에 대한 전반적인 이해를 돕는 과목이다. 영어습득 이론 및 습득 과정에 대한 이해와 습득에 관련된 다양한 현상의 분석을 통해 성인 영어학습자들이 궁극적으로 수준 높은 영어 수준에 도달할 수 있도록 돕는 것을 목적으로 한다.");
 
-            m3MajorName.add("중세영문학(103.341A)");
+            m3MajorName.add("중세영문학");
             m3MajorIntro.add("앵글로색슨 시대에서 15세기 말까지의 중세영문학과 유럽문학 고전들을 선별해서 읽는다. 중세 텍스트, 장르, 주제, 기법 등이 현대문학과 대중매체에서 번안되고 변용되는 양상 또한 살펴볼 수 있다.");
 
-            m3MajorName.add("17∙18세기 영국시(M1236.001800)");
+            m3MajorName.add("17∙18세기 영국시");
             m3MajorIntro.add("17세기 중반부터 18세기말까지의 영국시를 선별하여 읽는다. 밀턴 이후 영국시 전통이 어떻게 발달하였는지 정치, 사회문화적 맥락과 연결해서 고찰하면서 서사시, 영웅시, 풍자시, 발라드, 풍경시 등의 장르가 이 시기에 어떻게 발달하였는지에 대한 문학사적 이해를 도모한다. 아울러 18세기 영국시 전통이 초기 낭만주의와 어떻게 연결되었는지를 다룬다. 밀턴, 드라이든, 포우프, 스위프트, 게이, 존슨, 그레이 등의 작품을 선별하여 읽을 수 있다.");
 
-            m3MajorName.add("미국시(103.404)");
+            m3MajorName.add("미국시");
             m3MajorIntro.add("17세기 식민지 시대로부터 현대에 이르기까지의 주요 시인들의 작품을 광범하게 읽고 미국시의 특성과 그 전통을 포괄적으로 이해한다. 동시대의 주요 영국시와의 비교연구, 그리고 미국시와 미국적 현실과의 관련 연구 역시 이 과목의 중요한 한 부분을 이룰 것이다. 브라이언트, 포우, 에머슨, 휘트먼, 디킨슨, 로빈슨, 프로스트, 샌드벅, 크레인, 윌리엄스, 스티븐스, 파운드, 휴즈 등을 주로 다룬다.");
 
-            m3MajorName.add("18세기 영국소설(M1236.001900)");
+            m3MajorName.add("18세기 영국소설");
             m3MajorIntro.add("17세기 후반의 산문을 포함하여 디포우부터 오스틴 이전에 이르는 18세기 “소설의 발생” 과정과 발전을 추적한다. 18세기 주요 작가의 작품을 읽음으로써 소설이라는 장르의 특수성과 문화사를 이해한다. 또한 보다 총체적 이해를 위해 작품뿐만 아니라 그 작가의 시대적 배경과 전기적 사실 등 작품 외적인 자료들도 취급할 수 있다.");
 
-            m3MajorName.add("19세기 미국소설(103.214B)");
+            m3MajorName.add("19세기 미국소설");
             m3MajorIntro.add("19세기 미국소설을 주요 작가의 대표작을 통하여 집중적으로 연구한다. 저명한 비평서와 개별 장편들에 대한 비평을 읽어 주제와 문체, 기교 등을 분석하는데 참고한다. 내용과 형식면에서 미국소설의 전통과 특징을 파악하는 것은 작품 자체를 읽음으로써만 이루어질 수 있으므로 비평서는 이차적인 중요성을 갖게 될 것이다. 미국소설에 대한 심미적인 접근도 시도한다.");
 
-            m3MajorName.add("영어발달사(103.320)");
+            m3MajorName.add("영어발달사");
             m3MajorIntro.add("영어의 변천 과정을 인구어에서부터 시작하여 고대영어, 중세영어, 근대영어에 이르는 시기를 대상으로 영어의 내적 역사–음운구조, 철자체계, 굴절체계, 통사구조, 의미–의 관점에서 다룬다. 언어변화는 필연적으로 외적 변화와 연결되어 있으므로 영어에서의 변화를 다루는 과정에서도 해당시기에 일어난 역사적인 사건들과 언어변화의 상관관계를 살핀다. 또한 시기별로 일어난 변화에 대한 이해와 더불어 변화의 원인, 양상, 방향에 대해서도 논의한다.");
 
-            m3MajorName.add("최근 영어권 소설(103.421)");
+            m3MajorName.add("최근 영어권 소설");
             m3MajorIntro.add("20세기 중반 이후 출판된 영어권 소설을 읽는다. 아체베, 앳우드, 쿳시, 파울즈, 이시구로, 레싱, 나보코프, 루시디, 스미스 등 영미 및 캐나다, 인도, 아프리카 출신 작가들의 작품을 선별하여 읽으며 해당 작품의 역사적, 문화적 맥락을 살펴본다.");
 
-            m3MajorName.add("소설의 이론과 서사 전통(103.422)");
+            m3MajorName.add("소설의 이론과 서사 전통");
             m3MajorIntro.add("소설을 중심으로 서사 전통과 서사형식에 대한 역사적, 비평적 이해를 도모하는 과목이다. 18세기 영국소설 발생기의 서사전통 및 작품과 미국의 로맨스장르와 같은 특정한 전통에 대한 논의를 포함할 수도 있다. 아울러 소설과 인접한 산문 장르의 서사 전통도 함께 다룰 수 있다.");
 
-            m3MajorName.add("비평이론(M1236.002100)");
+            m3MajorName.add("비평이론");
             m3MajorIntro.add("영미 문학이론을 비롯한 현대 비평이론의 다양한 흐름들을 체계적으로 배우는 과목이다. 특정한 비평이론에 집중하기보다 신비평에서부터 시작되는 비평이론의 역사를 개괄하거나 문학작품의 해석과 이해에 필요한 다양한 주제의 비평이론들을 섭렵한다.");
 
-            m3MajorName.add("영문학특강 1(M1236.002300)");
+            m3MajorName.add("영문학특강 1");
             m3MajorIntro.add("영문학의 전통적인 장르 및 시대별 교과과정 내에 포함되지 않는 다양한 주제들을 매학기 강의한다. 매 학기 다른 강의 주제들이 제공될 것이며 학생들은 활발하고 밀도 높은 토론과 정교한 글쓰기 훈련을 통해 자신의 시각으로 새로운 주제를 발굴하고 분석하는 능력을 습득할 것이다.");
 
-            m3MajorName.add("영어학특강(103.420)");
+            m3MajorName.add("영어학특강");
             m3MajorIntro.add("<영어학특강>은 영어학과 관련된 특정주제를 선택하여 이를 심도있게 다룬다. 강의 주제는 특정 분야에서 최근 관심을 모으고 있는 이슈 중에서 선정되며, 수강생들은 이 과목을 통해 선정주제에 대한 이론적인 분석과 실증적인 분석을 검토하고 다양한 영어학관련 현상들을 체계적으로 분석하는 방법을 배우게 된다.");
 
-            m3MajorName.add("여성문학의 전통(103.423)");
+            m3MajorName.add("여성문학의 전통");
             m3MajorIntro.add("여성작가들의 문학적 성취를 공부함으로써 영문학 전통의 의미를 확장하는 것이 이 수업의 목적이다. 영미권 여성작가의 시, 소설, 드라마, 에세이, 비평 등 장르와 시대를 아울러 다양한 작품을 골고루 읽으면서 여성과 문학이라는 주제를 탐구한다.");
 
-            m3MajorName.add("영문학특강 2(M1236.002400)");
+            m3MajorName.add("영문학특강 2");
             m3MajorIntro.add("영문학에 대한 전통적 접근법으로 쉽게 포괄되지 않는 특정 주제, 쟁점, 방법론을 집중적으로 다룬다. 매 학기 다른 주제가 제공되며, 분석적/창의적 사고와 글쓰기에 중점을 둔다. 영어 전용 과목이다.");
 
             for (int i = 0; i < m3MajorName.size(); i++) {
                 int professorIndex = ran.nextInt(c1m3Professor.size());
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
-                if (m3MajorName.get(i).contains("(필)")) {
-                    lectureTmp = new Lecture(m3MajorName.get(i), m3MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                if (m3MajorName.get(i).contains("(탐)")) {
+                    String replace = m3MajorName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m3MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
                             c1m3Professor.get(professorIndex), 30, "2024년 1학기",
                             1, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
+                } else if (m3MajorName.get(i).contains("(필)")) {
+                    String replace = m3MajorName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m3MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m3Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
                 } else {
                     lectureTmp = new Lecture(m3MajorName.get(i), m3MajorIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
                             c1m3Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
+                            2, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
                 }
                 em.persist(lectureTmp);
             }
@@ -975,35 +997,35 @@ public class InitDb {
             List<String> m3CultureName = new ArrayList<>();
             List<String> m3CultureIntro = new ArrayList<>();
 
-            m3CultureName.add("현대사회와 국제어(041.021)");
+            m3CultureName.add("현대사회와 국제어");
             m3CultureIntro.add("‘현대사회와 국제어’는 “현대 사회에서 세계어는 필요한가”, “필요하다면 어떤 과정을 거쳐서 어떻게 선택되는가”, “세계어의 역할은 무엇이며 다양한 분야에서 어떻게 사용되는가” 등의 여러 문제에 대해 고찰해봄으로써, 학생들이 변화하는 국제 사회의 흐름을 이해하고 대처할 수 있도록 하는 것을 목표로 한다. 강의는 주로 지금 현재 세계어로서의 역할을 하는 영어를 매개로 하여 영어가 세계어로 형성된 배경과 역사, 영미 사회 및 문화를 반영하는 영어의 특성, 세계어로서의 영어의 다양한 기능 및 변이형들, 영어와 관련된 언어 정책 등에 대해 소개하고 여러 가지 문제점 등도 함께 다루어 세계어의 다양한 측면에 대한 올바른 이해를 돕게 될 것이다.");
 
-            m3CultureName.add("서양근대문학의 이해(041.022) ");
+            m3CultureName.add("서양근대문학의 이해");
             m3CultureIntro.add("서양이 비서양과의 만남을 통해 구성되었으며 그 양상이 서양근대문학에 나타난다는 전제 아래, 강의의 전반부에서는 서양 근대의 성격을 결정한 여러 사건 중 특히 ‘신세계’의 발견이 문학작품에 어떻게 분석되고 논의되며 형상화되는지 살펴보고, 후반부에서는 서양의 제국주의적 팽창과 근대 문학의 접점을 짚어보도록 한다.");
 
-            m3CultureName.add("문학과 정신분석(041.023) ");
+            m3CultureName.add("문학과 정신분석");
             m3CultureIntro.add("프로이트의 주요 저술들을 전체 또는 발췌로 읽으면서 정신분석이 전제하고 있는 인간관, 사회관, 예술관은 어떤 것인가를 검토하고, 정신분석이 설정하고 추구하는 “진실”이란 어떤 의의를 부여받을 수 있는가 고찰한다. 또한 문학작품의 정신분석학적 해석을 통해 어떤 의미를 읽어내는 것이 가능해지며 그것의 한계는 무엇일까 생각해 봄으로써, 정신분석적 “환원”을 넘어서는 정신분석적 문학비평은 어떤 것일까 모색한다. 이를 선정된 문학작품의 면밀한 분석을 통해 수행하도록 한다.");
 
-            m3CultureName.add("문학으로 읽는 서양문명(L0545.001000)");
+            m3CultureName.add("문학으로 읽는 서양문명");
             m3CultureIntro.add("근대 초기 이전의 서양을 대표하는 문학 작품들을 우리말 또는 영어 번역으로 읽음으로써 서양 문명이 고대에서 중세를 거쳐 르네상스에 이르면서 진화한 과정을 살핀다. 호메로스, 베르길리우스, 오비디우스 등 고전 시대 시인들, 무훈시와 기사 로맨스를 포함하는 다양한 중세 문학 장르, 아리오스토, 세르반테스, 셰익스피어, 밀턴 등 초기 근대 작가들을 다룰 수 있으며, 개별 텍스트와 그 사회문화적 맥락뿐 아니라 텍스트와 텍스트, 문명과 문명 간의 역사적 변천 또한 주목한다.");
 
-            m3CultureName.add("문학과 철학의 대화(041.025) ");
+            m3CultureName.add("문학과 철학의 대화");
             m3CultureIntro.add("문학과 철학은 근원적으로 하나의 뿌리를 공유하고 있는 것으로, 그 근원에는 인간과 세계에 대한 이해라는 인문학적 문제가 걸려 있다. 동서양을 막론하고 이 두 인문학 분야는 동일한 문제를 탐구해 왔으며, 이로 인해 이 두 분야를 서로 견주어 조명하는 경우 인문학적 문제에 대한 보다 폭넓고 균형 잡힌 이해가 가능할 것이다. 요컨대, 본 강의의 주제는 문학과 철학의 만남에 초점을 맞추고, 나아가 양자에 대한 교차 조명을 통해 인문학의 근본적 문제들을 탐구하는 데 놓인다.\n" +
                     "본 교과목에서는 먼저 문학과 철학 사이의 관계를 역사적으로 개관하고, 문학과 철학에서 공통으로 문제되는 ‘해석과 이해의 문제’를 몇 편의 영화를 통해 검토하기로 한다. 이어서 문학과 철학의 다양한 텍스트를 다루되, 철학적 사유를 유발하거나 철학적 상상과 깊은 관련을 맺고 있는 문학 텍스트 및 문학에 대한 다양한 사유를 담고 있는 철학적 텍스트를 꼼꼼하고 깊이 있게 읽어나감으로써, 문학에 대한 철학적 이해와 철학에 대한 문학적 이해의 폭을 넓히기로 한다.");
 
-            m3CultureName.add("영어 대중소설 읽기(L0545.000300)");
+            m3CultureName.add("영어 대중소설 읽기");
             m3CultureIntro.add("영어로 쓰인 대중소설을 선별해서 읽음으로써 영어 읽기 능력을 향상시키고 영어권 문화에 대한 이해를 확장한다. 추리소설, 과학소설, 판타지, 아동/청소년 문학 등 다양한 대중문학 장르가 다루어질 수 있다.");
 
-            m3CultureName.add("영시의 이해(041.027) ");
+            m3CultureName.add("영시의 이해");
             m3CultureIntro.add("영시를 공부한 적이 없는 학생들을 위한 수업으로 영시를 어떻게 즐길 수 있는가에 중점을 둔다. 영시를 이해하고 즐길 수 있는 능력은 영어의 특성과 시 형식에 대한 올바른 이해에 기초하는 만큼, 이 강의는 영어의 음절(syllable)에 대한 기초적인 분석에서 시작하여 영시의 운율을 살펴보고 다양한 시 형식(발라드, 소네트, 만가 등)을 체험할 수 있는 기회를 학생들에게 제공한다. 이 수업을 통하여 학생들은 영시를 보다 깊이 음미하고 영시전통을 잘 이해하게 될 것이다.");
 
-            m3CultureName.add("영어로 읽는 세계문학(041.028)");
+            m3CultureName.add("영어로 읽는 세계문학");
             m3CultureIntro.add("본 과목은 비영미권 (호주, 인도, 캐나다, 남아공 등) 출신으로 영어로 글을 쓰는 작가들과 (영미권의 혹은 영미 지역의) 소수문화 작가들이 쓴 문학작품을 읽음으로써 시대와 지역을 달리하는 작품들이 보여주는 상이한 입장과 관심사를 이해하는 것을 목표로 한다. 어떤 주제나 문학형식에 대한 이해를 돕기 위해 필요하다면 비영어권이라 하더라도 영어로 번역되어 널리 읽히는 작가의 작품도 다룰 수 있다.");
 
-            m3CultureName.add("미국문화와 현대사회의 이해(042.007)");
+            m3CultureName.add("미국문화와 현대사회의 이해");
             m3CultureIntro.add("미국문화의 이해를 통한 현대사회의 이해를 목표로 하는 강의이다. 미국에 대한 폭넓고 깊이 있는 이해를 위해 제 2차 세계대전 이후의 다양한 역사, 철학, 대중문화, 문학 텍스트를 고찰하여 미국문화가 현대를 살아가는 우리와 어떤 관계를 맺고 있는지 다각적으로 점검하고자 한다. 이를 위해 현대 미국문화를 구성하며 끊임없이 교차하고 있는 주요한 사회적 흐름–미국의 예외주의, 소비주의, 세계화와 대중문화, 다문화주의, 생태주의–들을 공시적, 통시적으로 살펴볼 것이다.");
 
-            m3CultureName.add("영미문화 읽기(042.008)");
+            m3CultureName.add("영미문화 읽기");
             m3CultureIntro.add("영미권의 대표적인 사상가, 문필가, 예술가들의 산문을 영어로 읽어보는 수업이다. 고전에서부터 최근 글에 이르기까지 정선된 명산문을 읽음으로써 영미 문화를 깊이있게 이해하는 것을 목표로 한다. 역사, 개인과 사회, 정의, 사랑, 죽음, 환경, 교육 등 중요한 주제들에 대해 다양한 시대에 걸쳐 어떤 생각들을 해 왔으며 이들이 현재와 어떤 관련성이 있는지를 고찰하게 될 것이다. 다양한 장르와 스타일의 글들을 꼼꼼히 읽어 영어 독해능력을 향상시키는 것도 이 강의의 목표이다.");
 
             for (int i = 0; i < m3CultureName.size(); i++) {
@@ -1073,10 +1095,10 @@ public class InitDb {
             List<String> m4MajorName = new ArrayList<>();
             List<String> m4MajorIntro = new ArrayList<>();
 
-            m4MajorName.add("세계속의 프랑스어");
+            m4MajorName.add("(탐)세계속의 프랑스어");
             m4MajorIntro.add("현대 유럽 문화의 한 중심에 프랑스가 위치하고 있다고 볼 때, 프랑스어가 유럽과 전 세계에 미친 정신적, 문화적 영향력은 엄청나다고 할 수 있다. 이 강좌는 유럽을 넘어 세계 속에서 프랑스어가 갖는 영향력을 유럽문화의 역사적 흐름과 확산이라는 관점에서 살펴보고 전 세계에서 프랑스어의 사용도와 인도 유럽어 내에서의 프랑스어의 계통을 중심으로 유럽 인근언어와 한국어 사이의 형태적, 구조적 차이를 조명한다.");
 
-            m4MajorName.add("프랑스문학과 예술의 흐름");
+            m4MajorName.add("(탐)프랑스문학과 예술의 흐름");
             m4MajorIntro.add("프랑스의 지식인들이 상아탑에 안주하기 이전에 많은 문학가들은 작가인 동시에 음악이나 미술, 건축과 같은 분야의 비평가였고 심지어는 철학가이기도 했다. 이처럼 프랑스 문학은 예술의 전반적인 흐름과 분리해서 이해할 수 없는데, 우리는 중세부터 현대에 이르는 프랑스 문학 작품과 예술 작품을 당대의 사상사적 맥락에서 체계적으로 분석하고 그것을 우리 시대의 관점에서 재구성함으로써 프랑스 문학과 예술의 전반적인 흐름을 이해하고자 한다.");
 
             m4MajorName.add("시청각프랑스어 연습");
@@ -1088,19 +1110,19 @@ public class InitDb {
             m4MajorName.add("프랑스연극");
             m4MajorIntro.add("17세기 고전주의 시대뿐만 아니라 그 이후 현대에 이르기까지의 프랑스문학사상 탁월한 희곡 작가의 작품들을 본 강좌에서 강독한다. 그리하여 대화체의 프랑스어 문장에 대한 독해력을 기르고, 프랑스단편 강독과 프랑스산문 강독과 더불어서 독해력의 완성을 기함과 동시에 희곡 장르에 대한 기본적인 이해를 가능하게 한다.");
 
-            m4MajorName.add("프랑스어문법과 작문");
+            m4MajorName.add("(필)프랑스어문법과 작문");
             m4MajorIntro.add("프랑스어를 전공하는 학생들에게 요구되는 본 과목에서 학생들은 프랑스어문장을 작문하고 분석하는 방법을 습득하게 될 것이며, 인문학, 사회학, 자연과학 제 분야의 여러 텍스트를 읽게 될 것이다. 본 과목은 학생들로 하여금 프랑스어로 효율적인 의사소통을 가능하게 하는 것을 목표로 삼는다.");
 
             m4MajorName.add("프랑스어학개론 1");
             m4MajorIntro.add("중세 이후부터 현대까지의 프랑스어의 음운적, 형태적, 통사적, 어휘적 발달과정을 통시적으로 연구하고, 음성, 문자의 기호체계, 의미, 문법의 가치체계의 특징 및 가치체계와 기호체계의 관계를 공시적으로 연구하여, 프랑스어의 정체성과 독자성을 이해함을 목적으로 한다. 또한, 프랑스어의 전반적인 구조와 특징을 공시적 관점에서 고찰하고 특히 발음과 철자법의 상호 보완관계, 의미와 문법적인 메커니즘의 연관성 등과 이러한 각 요소와 언어의 심리적 구조의 상호경향을 주요 문제로 연구한다.");
 
-            m4MajorName.add("프랑스어학개론 2");
+            m4MajorName.add("(필)프랑스어학개론 2");
             m4MajorIntro.add("<프랑스어학개론 1>과 연결된 강좌로서 프랑스어의 전반적인 구조와 특징을 공시적 관점에서 고찰하고 특히 발음과 철자법의 상호보완관계, 의미와 문법적인 메커니즘의 연관성 및 이러한 각 요소와 언어의 심리적 구조의 상호 경향을 주요 문제로 연구한다.");
 
             m4MajorName.add("18세기 프랑스문학");
             m4MajorIntro.add("18세기 프랑스문학, 특히 계몽주의에 대한 깊이 있는 이해를 목표로 하는 본 과목은 이 시대의 전반적인 특징인 계몽주의 사상의 형성과정과 구체적인 면모를 몽테스키외, 볼테르, 디드로, 루소를 통하여 살피고 그들의 역할과 후세에 미친 영향을 고찰한다.");
 
-            m4MajorName.add("프랑스문학개론 1");
+            m4MajorName.add("(필)프랑스문학개론 1");
             m4MajorIntro.add("<프랑스문학개론 1>은 중세에서 현대까지의 프랑스 문학을 대상으로 삼는다. 한편으로는 여러 문예사조를 중심으로 문학사적 접근의 중요성과 의의를 배우며, 다른 한편으로는 대표적인 텍스트들을 읽고 해석하면서 텍스트 설명이라는 정치한 해석 방식의 기초를 배운다. 이를 통해 학생들은 문학사의 흐름, 문학과 사회의 관계, 개별 텍스트에 대한 이해를 심화할 수 있을 것이다. 특히 <프랑스문학개론 1>에서는 프랑스어가 문학의 언어로 사용되기 시작한 중세 텍스트들에서 출발하여, 르네상스 및 16세기의 작품들, 바로크 문학, 고전극으로 대표되는 17세기의 고전주의 문학, 그리고 18세기 계몽주의 문학 텍스트들을 다룰 것이다. 몽테뉴, 라블레, 라신, 코르네유, 볼테르, 루소처럼 프랑스 문화와 사상의 꽃을 피운 대가들의 작품을 통하여 우리는 전통 프랑스 문화의 핵심을 맛볼 수 있을 것이다.");
 
             m4MajorName.add("19세기 프랑스소설");
@@ -1152,16 +1174,23 @@ public class InitDb {
                 int professorIndex = ran.nextInt(c1m4Professor.size());
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
-                if (m4MajorName.get(i).contains("(필)")) {
-                    lectureTmp = new Lecture(m4MajorName.get(i), m4MajorIntro.get(i),
+                if (m4MajorName.get(i).contains("(탐)")) {
+                    String replace = m4MajorName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m4MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
+                            c1m4Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
+                } else if (m4MajorName.get(i).contains("(필)")) {
+                    String replace = m4MajorName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m4MajorIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
                             c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
+                            2, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
                 } else {
-                    lectureTmp = new Lecture(m3MajorName.get(i), m3MajorIntro.get(i),
+                    lectureTmp = new Lecture(m4MajorName.get(i), m4MajorIntro.get(i),
                             3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
                             c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
+                            2, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
                 }
                 em.persist(lectureTmp);
             }
@@ -1208,20 +1237,30 @@ public class InitDb {
             m5CultureName.add("이중언어사용");
             m5CultureIntro.add("본 강좌는 이중언어사용 현상의 언어학, 심리언어학, 신경언어학, 사회언어학적, 교육적 측면을 소개하는 것을 목표로 한다. ‘이중언어사용’의 정의와 측정, 이중언어 아동의 발달, 이중언어사용자의 언어 접촉 현상, 이중언어사용의 심리언어학적·신경언어학적 기초 지식, 이중/다중언어 사회의 사회언어학적 양상, 이중언어사용자의 교육과 언어 정책의 쟁점 등을 다룬다.");
 
+            for (int i = 0; i < m5CultureName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m5Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                lectureTmp = new Lecture(m5CultureName.get(i), m5CultureIntro.get(i),
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
+                        c1m5Professor.get(professorIndex), 30, "2024년 1학기",
+                        1, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
+                em.persist(lectureTmp);
+            }
 
             List<String> m5MajorName = new ArrayList<>();
             List<String> m5MajorIntro = new ArrayList<>();
 
-            m5MajorName.add("언어와 언어학");
+            m5MajorName.add("(탐)언어와 언어학");
             m5MajorIntro.add("인문학의 관점에서 인간 언어의 구조와 언어능력을 이해하도록 하며, 이에 관한 기존의 이론적 연구와 실제적 적용을 소개한다. 언어표현의 형식과 의미의 관계에 대하여 다양한 시각에서 접근할 뿐만 아니라, 특히 현대 언어학이 철학, 문학, 심리학, 전산과학, 신경과학, 사회학, 수학 등과 어떠한 관계 속에서 연구되고 있는지를 살펴본다. 특히 최근의 언어학적 연구가 언어정보의 전산처리와 언어습득, 언어장애, 언어교육 등에 어떻게 실제로 적용되고 있는지를 소개하고, 미래의 새로운 언어학적 연구 분야를 탐색하게 한다.");
 
-            m5MajorName.add("말소리의 세계");
+            m5MajorName.add("(필)말소리의 세계");
             m5MajorIntro.add("말소리를 어떻게 분류하고 어떻게 발음하는지 체계적으로 학습하고, 이를 토대로 한국어, 영어, 불어, 이태리어 등 여러 언어의 말소리를 분별해서 듣고 정확하게 발음할 수 있는 능력을 함양한다. 아울러 여러 언어의 강세, 리듬, 성조, 억양에 대해서도 체계적으로 학습한다.");
 
-            m5MajorName.add("언어와 컴퓨터");
+            m5MajorName.add("(탐)언어와 컴퓨터");
             m5MajorIntro.add("인간언어에 대한 연구가 여러 가지 정보축적과 정보소통의 문제와 어떤 관련을 맺고 있는지를 소개한다. 인간의 자연언어와 컴퓨터의 인공언어의 공통점과 차이점을 이해한다. 언어정보의 자동처리 방법과 응용을 소개한다. 인간 언어에 대한 기초연구가 어떻게 음성인식, 음성합성 등의 음성정보 처리와 구문 분석, 의미정보 처리에 응용되며, 현대 정보사회의 발달을 위한 정보검색, 요약, 필터링, 그리고 기계번역 등에 적용되는지를 소개한다.");
 
-            m5MajorName.add("세계의 언어");
+            m5MajorName.add("(탐)세계의 언어");
             m5MajorIntro.add("세계의 주요 언어들을 대상으로 계통론적 관점과 유형론적 관점에 입각하여 대조.비교함으로써, 언어의 보편적 특성과 개별적 특수성에 대한 새로운 인식을 높인다. 아울러 사회언어학적, 인류인어학적 관점에서 언어의 변화와 변이를 통한 언어의 다양성에 대해 이해한다.");
 
             m5MajorName.add("만주어");
@@ -1236,10 +1275,10 @@ public class InitDb {
             m5MajorName.add("음운론");
             m5MajorIntro.add("본 강좌에서는 음운론개론을 강의한다. 인간언어에서 관찰되는 여러가지 음운현상을 기술하고 분석하는 방법을 배우게 된다.");
 
-            m5MajorName.add("역사비교언어학");
+            m5MajorName.add("(필)역사비교언어학");
             m5MajorIntro.add("19세기부터 발전하기 시작한 역사비교언어학의 기본 개념을 다루며 아울러 언어변화의 여러 유형들을 설명하고 역사비교언어학에서의 문제점들을 제시한다. 이 강좌는 4학년 과정에 개설되어 있는 알타이어학과 인구어학의 이수를 위학 기초 과목이다. 따라서, 이들 분야에 적용할 수 있는 초보적 방법론에 중점을 두고 강의한다. 또한 강의 후반부에서는 국어에 관련된 자료들을 직접 다루어 봄으로써 앞으로의 연구를 위한 기초를 다진다. 이 강좌를 이수하기 위한 기초 과목은 ‘음운론’이다.");
 
-            m5MajorName.add("통사론");
+            m5MajorName.add("(필)통사론");
             m5MajorIntro.add("단어들의 결합에 의한 문장이나 구 절의 기능 및 구조를 분석하는 것을 목표로 한다. 이 강좌는 Chomsky를 중심으로 발전하고 있는 변형생성문법의 여러 이론들을 소개하고, 또한 여러 이론의 변화 배경 및 과정을 검토 비판한다. 최근에 와서는 통사론을 중심으로 문법을 기술하려는 주장이 강해지고 있는데, 이러한 여러 이론들의 특징과 장단점을 포괄적으로 살펴 본다. 또한 종래의 형태론에서 다루어 온 문제들을 통사론에서 어떻게 다루는지, 그리고 의미론과의 관계는 어떠한지를 함께 탐구한다.");
 
             m5MajorName.add("의미론");
@@ -1251,7 +1290,7 @@ public class InitDb {
             m5MajorName.add("특수언어특강");
             m5MajorIntro.add("어문계열의 언어학 분야 전공자들에게 역사언어학 및 공시언어학의 관점에서 학술적으로 상당한 가치를 지닌 다양한 특수외국어들을 습득할 기회를 제공한다. 몽골어와 터키어는 한국어와 여러 가지 문법적 혹은 형태적 유사성을 지닌 알타이제어 계통의 언어를 연구하는데 있어서 중요한 자료가 된다. 본 강좌는 알타이제어인 몽골어와 터키어를 비롯한 기타 특수 외국어의 구조, 형태, 음운적 특성에 포괄적으로 접근할 기회를 제공하는 것을 목표로 한다.");
 
-            m5MajorName.add("컴퓨터언어학");
+            m5MajorName.add("(필)컴퓨터언어학");
             m5MajorIntro.add("이 강좌에서는 근래에 들어 언어학과 컴퓨터과학이 밀접한 관련을 맺으면서 확립되기 시작한 컴퓨터언어학의 기초적 지식을 소개하고, 그러한 컴퓨터과학의 관점에서 언어가 어떻게 연구될 수 있는가 하는 점이 모색한다. 따라서 이 강좌의 내용에는 단어 빈도 계산, 색인 작성, 기계 번역, 언어 인지, 언어 합성을 위한 언어처리의 방법론 등이 포함된다. 컴퓨터언어학의 수강을 위해서는 최근의 통사이론 및 의미이론에 대한 전반적인 지식이 먼저 요구된다.");
 
             m5MajorName.add("언어학을 위한 통계");
@@ -1308,6 +1347,30 @@ public class InitDb {
             m5MajorName.add("언어데이터과학");
             m5MajorIntro.add("본 교과목에서는 언어학을 위한 데이터과학의 방법론과 기술을 학습한다. 언어 데이터를 수집, 정제, 정리, 저장, 관리, 요약, 분석하고 데이터 프로덕트를 만드는 방법론을 살펴봄으로써 데이터를 다루는 전과정을 이해할 수 있도록 한다. 이와 함께 실질적인 소프트웨어 도구와 기술을 익히고 예제를 통해 그 실제 응용을 경험함으로써 기술을 활용할 수 있는 능력을 배양한다. 언어학 이론과 컴퓨터 프로그래밍에 기본 지식을 갖춘 전공자들에게 고급 기법을 소개하고 종합적인 응용을 경험할 수 있도록 하는 것을 목표로 한다. 이 수업에서 학습하는 방법론과 기술은 컴퓨터언어학, 자연언어처리와 같은 직접 관련 분야에 한정되지 않고 언어학의 다양한 분야의 데이터 분석을 위해 유용한 것으로 선정될 것이다.");
 
+            for (int i = 0; i < m5MajorName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m5Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                if (m5MajorName.get(i).contains("(탐)")) {
+                    String replace = m5MajorName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m5MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
+                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
+                } else if (m5MajorName.get(i).contains("(필)")) {
+                    String replace = m5MajorName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m5MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
+                } else {
+                    lectureTmp = new Lecture(m5MajorName.get(i), m5MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
+                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
+                }
+                em.persist(lectureTmp);
+            }
 
             // c1m6
             List<Professor> c1m6Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(5).getIdx()).getResultList();
@@ -1372,14 +1435,24 @@ public class InitDb {
             m6CultureName.add("서양철학의 고전");
             m6CultureIntro.add("이 과목은 세계, 자연, 인간, 사회를 바라보는 포괄적이고 근본적인 관점을 제시하는 서양철학의 대표적인 고전 작품들을 다루며, 스스로의 힘으로 철학적 고전을 읽고 서양철학의 주요한 논제들과 개념들을 이해할 수 있는 수강생들의 역량을 함양하는 데에 목적을 둔다. 학생들은 철학적 고전 텍스트의 의미와 가치를 탐구함으로써, 어떻게 철학적 성찰과 논쟁을 통해 일상생활 속의 다양한 문제들에 비판적으로 참여할 수 있는지를 배우게 될 것이다.");
 
+            for (int i = 0; i < m6CultureName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m6Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                lectureTmp = new Lecture(m6CultureName.get(i), m6CultureIntro.get(i),
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
+                        c1m6Professor.get(professorIndex), 30, "2024년 1학기",
+                        1, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
+                em.persist(lectureTmp);
+            }
 
             List<String> m6MajorName = new ArrayList<>();
             List<String> m6MajorIntro = new ArrayList<>();
 
-            m6MajorName.add("인도불교철학");
+            m6MajorName.add("(탐)인도불교철학");
             m6MajorIntro.add("이 교과목은 인도철학과 불교철학 일반을 다룬다. 인도에서 나타난 여러 철학 학파들의 형성과 발달을 역사적으로 고찰하고, 인도의 문화적 역사적 배경 속에서 탄생하여 아시아의 여러 문화권에서 다양한 사상적 전통을 형성한 불교에 대해 고찰한다.");
 
-            m6MajorName.add("서양고대철학");
+            m6MajorName.add("(탐)서양고대철학");
             m6MajorIntro.add("서양 철학의 고중세 시기에 어떤 문제들이 어떤 방식으로 제기되고 제기된 문제들의 해결을 위해 도입된 개념과 논변들이 어떤 것인지를 당시 작품의 강독을 통해 검토한다. 플라톤, 아리스토텔레스, 아우구스티누스, 토마스 아퀴나스의 문헌이 일차적인 선택 범위에 들며, 철학적 분석과 문헌학적 역사적 접근방법을 통해 학생들에게 서양 고중세의 철학적 문헌을 학적으로 접근하는 방식이 어떤 것인지를 이해하도록 한다.");
 
             m6MajorName.add("중국고대철학");
@@ -1477,6 +1550,31 @@ public class InitDb {
 
             m6MajorName.add("역사철학");
             m6MajorIntro.add("역사가 철학적 관심의 대상이 된 것은 오래이나, 특히 근대 이후 역사가 고유한 의미에서 철학적 관심의 대상이 되며 동시에 철학은 역사화 된다. 이러한 인식에 입각하여 이 교과목은 역사에 대한 철학적 접근유형을 체계적으로 고찰하고 역사를 파악하는 다양한 방법론의 특성을 탐구함으로써 인간 존재와 세계의 근본적인 역사적 성격을 해명한다.");
+
+            for (int i = 0; i < m6MajorName.size(); i++) {
+                int professorIndex = ran.nextInt(c1m6Professor.size());
+                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+                Lecture lectureTmp = null;
+                if (m6MajorName.get(i).contains("(탐)")) {
+                    String replace = m6MajorName.get(i).replace("(탐)", "");
+                    lectureTmp = new Lecture(replace, m6MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
+                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
+                            1, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
+                } else if (m6MajorName.get(i).contains("(필)")) {
+                    String replace = m6MajorName.get(i).replace("(필)", "");
+                    lectureTmp = new Lecture(replace, m6MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
+                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
+                } else {
+                    lectureTmp = new Lecture(m6MajorName.get(i), m6MajorIntro.get(i),
+                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
+                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
+                            2, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
+                }
+                em.persist(lectureTmp);
+            }
         }
 
 
