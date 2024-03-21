@@ -27,7 +27,6 @@ public class InitDb {
             initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.insertCalendar(); // 학사 일정
             initService.insertNotice(); // 공지사항
-            initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.c1addLecture();
             /*            initService.dbInit4(); // 안씀; */
         } catch (Exception e) {
@@ -246,6 +245,7 @@ public class InitDb {
 
         public void generateDummyData() {
             int startingStudentNum = 24000004;
+            int professorMajor = 0;
 
             for (int i = 0; i < 100; i++) {
                 int studentNum = startingStudentNum + i;
@@ -277,19 +277,23 @@ public class InitDb {
                 em.persist(user3);
 
 
-                if(count == 0){
-                    count = em.createQuery("SELECT COUNT(e) FROM Major e", Long.class).getSingleResult();
+                if (professorMajor == 40) {
+                    professorMajor = 0;
                 }
-                Random random = new Random();
-                Long majorId = Math.abs(random.nextLong()) % count + 1L;; // 1부터 n까지의 랜덤값 생성
-                Major major = em.find(Major.class, majorId);
+                List<Major> majorList = em.createQuery("select m from Major m order by m.idx", Major.class).getResultList();
+//                if(count == 0){
+//                    count = em.createQuery("SELECT COUNT(e) FROM Major e", Long.class).getSingleResult();
+//                }
+//                Random random = new Random();
+//                Long majorId = Math.abs(random.nextLong()) % count + 1L;; // 1부터 n까지의 랜덤값 생성
+//                Major major = em.find(Major.class, majorId);
 
 
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                     Date utilDate = sdf.parse("2024/11/02");
                     java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-                    Professor professor = new Professor("hi", user1, major, sqlDate);
+                    Professor professor = new Professor("hi", user1, majorList.get(professorMajor), sqlDate);
                     em.persist(professor);
                     Manager manager = new Manager("hi", user2, sqlDate);
                     em.persist(manager);
@@ -298,7 +302,7 @@ public class InitDb {
 
                         Date parsedDate = sdf.parse("2024/03/04");
                         java.sql.Date sqlparsedDate = new java.sql.Date(parsedDate.getTime());
-                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+                        Student student = new Student(studentNum, 1, user3, professor, majorList.get(professorMajor), sqlDate);
                         em.persist(student);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
@@ -310,7 +314,7 @@ public class InitDb {
 
 
                     } else if (10 <= i && i <= 40 && i % 2 != 0) {
-                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+                        Student student = new Student(studentNum, 1, user3, professor, majorList.get(professorMajor), sqlDate);
                         em.persist(student);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
@@ -322,7 +326,7 @@ public class InitDb {
 
 
                     } else if (10 <= i && i <= 40 && i % 2 == 0) {
-                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+                        Student student = new Student(studentNum, 1, user3, professor, majorList.get(professorMajor), sqlDate);
                         em.persist(student);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
@@ -334,7 +338,7 @@ public class InitDb {
 
 
                     } else if (75 <= i && i % 2 == 0) {
-                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+                        Student student = new Student(studentNum, 1, user3, professor, majorList.get(professorMajor), sqlDate);
                         em.persist(student);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
@@ -345,7 +349,7 @@ public class InitDb {
                         em.persist(payments);
 
                     } else {
-                        Student student = new Student(studentNum, 1, user3, professor, major, sqlDate);
+                        Student student = new Student(studentNum, 1, user3, professor, majorList.get(professorMajor), sqlDate);
                         Situation situation = new Situation(student, Status_type.재학, new java.sql.Date(new Date().getTime()), null);
                         em.persist(situation);
 
@@ -357,6 +361,8 @@ public class InitDb {
                     }
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
+                } finally {
+                    professorMajor++;
                 }
             }
             // 장학금
