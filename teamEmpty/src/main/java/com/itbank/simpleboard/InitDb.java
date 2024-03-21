@@ -155,30 +155,30 @@ public class InitDb {
             em.persist(c10Major3);
             em.persist(c10Major4);
 
-            // makeLectureRoom 돌리면 1동 당 5개의 강의실 생김
-            // 계산 기준 학과 * 3 해서 많은 쪽으로
+            // makeLectureRoom 돌리면 1동 당 10개의 강의실 생김
+            // 계산 기준 학과 * 7 해서 반올림
             // Map을 반환하는 거 삭제 => 강의에 사람도 넣어야 하는데 사람 만드는게 다른 메서드라서 어차피 메서드 분리해야했네
 
-            // c1 6개 학과 20개
+            // c1 6개 학과 40개
             makeLectureRoom(4, college1);
-            // c2 5개 학과 15개
-            makeLectureRoom(3, college2);
-            // c3 4개 학과 15개
+            // c2 5개 학과 40개
+            makeLectureRoom(4, college2);
+            // c3 4개 학과 30개
             makeLectureRoom(3, college3);
-            // c4 1개 학과 5개
+            // c4 1개 학과 10개
             makeLectureRoom(1, college4);
-            // c5 1개 학과 5개
+            // c5 1개 학과 10개
             makeLectureRoom(1, college5);
-            // c6 6개 학과 20개
+            // c6 6개 학과 40개
             makeLectureRoom(4, college6);
-            // c7 4개 학과 15개
+            // c7 4개 학과 30개
             makeLectureRoom(3, college7);
-            // c8 3개 학과 15개
-            makeLectureRoom(3, college8);
-            // c9 8개 학과 25개
-            makeLectureRoom(5, college9);
+            // c8 3개 학과 20개
+            makeLectureRoom(2, college8);
+            // c9 8개 학과 60개
+            makeLectureRoom(6, college9);
             // c10 2개 학과 10개
-            makeLectureRoom(2, college10);
+            makeLectureRoom(1, college10);
         }
 
         private void makeLectureRoom(int dong, College college) {
@@ -187,7 +187,7 @@ public class InitDb {
             String[] roomNum = {"1", "2", "3", "4", "5", "6", "7"};
             ArrayList<String> makeRoom = new ArrayList<>();
             for (int i = 1; i <= dong; i++) {
-                while (makeRoom.size() < 5) {
+                while (makeRoom.size() < 10) {
                     int floorRan = ran.nextInt(floor.length);
                     int roomRan = ran.nextInt(roomNum.length);
                     String room = i + " " + floor[floorRan] + "0" + roomNum[roomRan] + "호";
@@ -702,7 +702,7 @@ public class InitDb {
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
                 lectureTmp = new Lecture(m2CultureName.get(i), m2CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.선택교양,
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
                         c1m2Professor.get(professorIndex), 30, "2024년 1학기",
                         1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
                 em.persist(lectureTmp);
@@ -1011,7 +1011,7 @@ public class InitDb {
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
                 lectureTmp = new Lecture(m3CultureName.get(i), m3CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.선택교양,
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
                         c1m3Professor.get(professorIndex), 30, "2024년 1학기",
                         1, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
                 em.persist(lectureTmp);
@@ -1064,7 +1064,7 @@ public class InitDb {
                 int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
                 Lecture lectureTmp = null;
                 lectureTmp = new Lecture(m4CultureName.get(i), m4CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.선택교양,
+                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
                         c1m4Professor.get(professorIndex), 30, "2024년 1학기",
                         1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
                 em.persist(lectureTmp);

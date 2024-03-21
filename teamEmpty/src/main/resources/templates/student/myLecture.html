@@ -19,10 +19,10 @@
                 <label>강의 타입 :
                     <select name="type" th:default="'강의 형태'" class="form-select" id="type">
                         <option th:text="'강의 형태'" value=""></option>
+                        <option th:text="'전공 탐색'" th:value="전공탐색"></option>
                         <option th:text="'전공 필수'" th:value="전공필수"></option>
                         <option th:text="'전공 선택'" th:value="전공선택"></option>
-                        <option th:text="'필수 교양'" th:value="필수교양"></option>
-                        <option th:text="'선택 교양'" th:value="선택교양"></option>
+                        <option th:text="'교양'" th:value="교양"></option>
                     </select>
                 </label>
                 <label>기간 :
