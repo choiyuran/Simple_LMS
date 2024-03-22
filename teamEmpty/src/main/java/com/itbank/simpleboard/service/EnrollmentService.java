@@ -69,13 +69,17 @@ public class EnrollmentService {
     }
 
     private Map<String, List<LocalTime[]>> getStudentSchedule(DateTimeFormatter timeFormatter, Student student) {
+        // 수강신청했던 강의리스트를 받아와서
         List<Enrollment> enrollmentList = enrollmentRepository.findByStudent(student);
 
+        // schedule에 받는데 key는 요일 String이다.
         Map<String, List<LocalTime[]>> schedule = new HashMap<>();
+
+        // 수강신청내역을 받아와서
         for (Enrollment e : enrollmentList) {
             String[] days = e.getLecture().getDay().split(",");
-            String[] starts = e.getLecture().getStart().split(",");
-            String[] ends = e.getLecture().getEnd().split(",");
+            String[] starts = e.getLecture().getStart().split(","); // 수업 시작 시간
+            String[] ends = e.getLecture().getEnd().split(",");     // 수업 종료시간
 
             for (int i = 0; i < days.length; i++) {
                 LocalTime[] timeRange = parseTimeRange(timeFormatter, starts[i], ends[i]);

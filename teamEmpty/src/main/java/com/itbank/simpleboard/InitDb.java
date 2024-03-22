@@ -3,6 +3,7 @@ package com.itbank.simpleboard;
 import com.itbank.simpleboard.component.HashComponent;
 import com.itbank.simpleboard.entity.*;
 import lombok.RequiredArgsConstructor;
+import nonapi.io.github.classgraph.json.JSONUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.*;
 public class InitDb {
     private final InitService initService;
     private static long count;
+
     @PostConstruct
     public void init() {
         try {
@@ -27,7 +29,6 @@ public class InitDb {
             initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.insertCalendar(); // 학사 일정
             initService.insertNotice(); // 공지사항
-            initService.generateDummyData(); // user (교수, 학생, 교직원) - 등록금
             initService.c1addLecture();
             /*            initService.dbInit4(); // 안씀; */
         } catch (Exception e) {
@@ -273,15 +274,15 @@ public class InitDb {
                 em.persist(user2);
 
                 User user3 = new User(hashComponent.getHash(realPassword3, randomSalt3), randomSalt3, generateRandomName(), randomResidentNumber3, generateRandomKoreanAddress(), generateRandomPhoneNumber(), generateRandomString(8) + i + "@example.com", User_role.학생, sqlCreatedAt);
-                user3.setUser_id(studentNum+"");
+                user3.setUser_id(studentNum + "");
                 em.persist(user3);
 
 
-                if(count == 0){
+                if (count == 0) {
                     count = em.createQuery("SELECT COUNT(e) FROM Major e", Long.class).getSingleResult();
                 }
                 Random random = new Random();
-                Long majorId = Math.abs(random.nextLong()) % count + 1L;; // 1부터 n까지의 랜덤값 생성
+                Long majorId = Math.abs(random.nextLong()) % count + 1L; // 1부터 n까지의 랜덤값 생성
                 Major major = em.find(Major.class, majorId);
 
 
@@ -500,6 +501,116 @@ public class InitDb {
             return LocalDate.ofEpochDay(randomDay);
         }
 
+        public void randomTimeLectureRoom(List<Professor> professorList, Major major, List<LectureRoom> lectureRoomList, List<String> lectureName, List<String> lectureIntro) {
+            Random ran = new Random();
+            for (int i = 0; i < lectureName.size(); i++) {
+                List<String> dayList = new ArrayList<>(List.of("월", "화", "수", "목", "금"));
+                List<String> startList = new ArrayList<>(List.of("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"));
+                List<String> endList = new ArrayList<>(List.of("11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"));
+
+                String randomDay = "";
+                String randomStart = "";
+                String randomEnd = "";
+                int iterran = ran.nextInt(2) + 2; // 2 또는 3
+                for (int j = 0; j < iterran; j++) {
+                    if (dayList.size() > 0 && startList.size() > 0 && endList.size() > 0) {
+                        StringBuilder sb = new StringBuilder(randomDay);
+                        StringBuilder sb2 = new StringBuilder(randomStart);
+                        StringBuilder sb3 = new StringBuilder(randomEnd);
+                        int randay = ran.nextInt(dayList.size());
+                        sb.append(dayList.get(randay) + ",");
+                        dayList.remove(randay);
+                        int randomIndex = ran.nextInt(startList.size());
+                        sb2.append(startList.get(randomIndex) + ",");
+                        sb3.append(endList.get(randomIndex) + ",");
+                        startList.remove(randomIndex);
+                        endList.remove(randomIndex);
+                        randomDay = sb.toString();
+                        randomStart = sb2.toString();
+                        randomEnd = sb3.toString();
+                    }
+                }
+
+                if (!randomDay.isEmpty()) randomDay = randomDay.substring(0, randomDay.length() - 1);
+                if (!randomStart.isEmpty()) randomStart = randomStart.substring(0, randomStart.length() - 1);
+                if (!randomEnd.isEmpty()) randomEnd = randomEnd.substring(0, randomEnd.length() - 1);
+
+                if (!professorList.isEmpty() && !lectureRoomList.isEmpty()) {
+                    int professorIndex = ran.nextInt(professorList.size());
+                    int lectureRoomIndex = ran.nextInt(lectureRoomList.size());
+                    Lecture lectureTmp = null;
+                    if (lectureName.get(i).contains("(탐)")) {
+                        String replace = lectureName.get(i).replace("(탐)", "");
+                        lectureTmp = new Lecture(replace, lectureIntro.get(i),
+                                ran.nextInt(3) + 1, randomDay, randomStart, randomEnd, Lecture_Type.전공탐색,
+                                professorList.get(professorIndex), 30, "2024년 1학기",
+                                ran.nextInt(3) + 1, null, major, lectureRoomList.get(lectureRoomIndex));
+                    } else if (lectureName.get(i).contains("(필)")) {
+                        String replace = lectureName.get(i).replace("(필)", "");
+                        lectureTmp = new Lecture(replace, lectureIntro.get(i),
+                                ran.nextInt(3) + 1, randomDay, randomStart, randomEnd, Lecture_Type.전공필수,
+                                professorList.get(professorIndex), 30, "2024년 1학기",
+                                ran.nextInt(3) + 1, null, major, lectureRoomList.get(lectureRoomIndex));
+                    } else {
+                        lectureTmp = new Lecture(lectureName.get(i), lectureIntro.get(i),
+                                ran.nextInt(3) + 1, randomDay, randomStart, randomEnd, Lecture_Type.전공선택,
+                                professorList.get(professorIndex), 30, "2024년 1학기",
+                                ran.nextInt(3) + 1, null, major, lectureRoomList.get(lectureRoomIndex));
+                    }
+                    em.persist(lectureTmp); // Lecture가 DB에 insert
+                }
+            }
+        }
+
+        public void randomTimeCultureRoom(List<Professor> professorList, Major major, List<LectureRoom> lectureRoomList, List<String> lectureName, List<String> lectureIntro) {
+            Random ran = new Random();
+            for (int i = 0; i < lectureName.size(); i++) {
+                List<String> dayList = new ArrayList<>(List.of("월", "화", "수", "목", "금"));
+                List<String> startList = new ArrayList<>(List.of("09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"));
+                List<String> endList = new ArrayList<>(List.of("11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"));
+
+                String randomDay = "";
+                String randomStart = "";
+                String randomEnd = "";
+                int iterran = ran.nextInt(2) + 2; // 2 또는 3
+                for (int j = 0; j < iterran; j++) {
+                    if (dayList.size() > 0 && startList.size() > 0 && endList.size() > 0) {
+                        StringBuilder sb = new StringBuilder(randomDay);
+                        StringBuilder sb2 = new StringBuilder(randomStart);
+                        StringBuilder sb3 = new StringBuilder(randomEnd);
+                        int randay = ran.nextInt(dayList.size());
+                        sb.append(dayList.get(randay) + ",");
+                        dayList.remove(randay);
+                        int randomIndex = ran.nextInt(startList.size());
+                        sb2.append(startList.get(randomIndex) + ",");
+                        sb3.append(endList.get(randomIndex) + ",");
+                        startList.remove(randomIndex);
+                        endList.remove(randomIndex);
+                        randomDay = sb.toString();
+                        randomStart = sb2.toString();
+                        randomEnd = sb3.toString();
+                    }
+                }
+
+                if (!randomDay.isEmpty()) randomDay = randomDay.substring(0, randomDay.length() - 1);
+                if (!randomStart.isEmpty()) randomStart = randomStart.substring(0, randomStart.length() - 1);
+                if (!randomEnd.isEmpty()) randomEnd = randomEnd.substring(0, randomEnd.length() - 1);
+
+                if (!professorList.isEmpty() && !lectureRoomList.isEmpty()) {
+                    int professorIndex = ran.nextInt(professorList.size());
+                    int lectureRoomIndex = ran.nextInt(lectureRoomList.size());
+                    Lecture lectureTmp = null;
+
+                    String replace = lectureName.get(i);
+                    lectureTmp = new Lecture(replace, lectureIntro.get(i),
+                            ran.nextInt(3) + 1, randomDay, randomStart, randomEnd, Lecture_Type.교양,
+                            professorList.get(professorIndex), 30, "2024년 1학기",
+                            ran.nextInt(3) + 1, null, major, lectureRoomList.get(lectureRoomIndex));
+                    em.persist(lectureTmp); // Lecture가 DB에 insert
+                }
+            }
+        }
+
         public void c1addLecture() {
             // college1(인문대학)에 해당하는 학과의 강의 삽입
             // college1에는 6개의 학과가 있음
@@ -519,8 +630,6 @@ public class InitDb {
             List<Major> c1Major = em.createQuery("select m from Major m where m.college.idx = :cidx order by m.idx", Major.class).setParameter("cidx", collegeList.get(0).getIdx()).getResultList();
             // 해당 전공의 교수 목록을 불러온다. 아래 구문은 collegeList의 첫 대학의 첫 전공으로 되어있다
             List<Professor> c1m1Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(0).getIdx()).getResultList();
-
-            Random ran = new Random();
 
             // c1m1
             List<String> m1LectureName = new ArrayList<>();
@@ -622,31 +731,32 @@ public class InitDb {
             m1LectureName.add("K문학의 이해");
             m1LectureIntro.add("‘K-문학’이란 최근 세계에서 관심 대상으로 떠오르는 한국문학을 말한다. 2000년대 들어 한국문학은 세계의 관심 대상이 되었다. 작가 한강이 2016년 맨부커상 인터내셔널 부문을 수상했다. 2016년에는 작가 윤고은이 대거상을 수상하기도 했다. 소설뿐만 아니라 김소연, 김혜순 등 시인들도 세계의 주목을 받고 있다. 한국 영화가 세계의 각광을 받는 데는 시나리오의 힘이 아주 컸다고도 말할 수 있다. 이에 ‘K-문학’의 작가와 작품을 통하여 학생들이 동시대 한국문학을 넓게 이해할 수 있도록 한다.");
 
-            for (int i = 0; i < m1LectureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m1Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m1LectureName.get(i).contains("(탐)")) {
-                    String replace = m1LectureName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
-                }
-                else if (m1LectureName.get(i).contains("(필)")) {
-                    String replace = m1LectureName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m1Professor, c1Major.get(0), c1LectureRoom, m1LectureName, m1LectureIntro);
+//            for (int i = 0; i < m1LectureName.size(); i++) {
+//                int professorIndex = ran.nextInt(c1m1Professor.size());
+//                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
+//                Lecture lectureTmp = null;
+//                if (m1LectureName.get(i).contains("(탐)")) {
+//                    String replace = m1LectureName.get(i).replace("(탐)", "");
+//                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
+//                            3, "월,화", "09:00,11:00", "11:00,13:00", Lecture_Type.전공탐색,
+//                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+//                            1, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+//                }
+//                else if (m1LectureName.get(i).contains("(필)")) {
+//                    String replace = m1LectureName.get(i).replace("(필)", "");
+//                    lectureTmp = new Lecture(replace, m1LectureIntro.get(i),
+//                            3, "월,화", "09:00,11:00", "11:00,13:00", Lecture_Type.전공필수,
+//                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+//                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+//                } else {
+//                    lectureTmp = new Lecture(m1LectureName.get(i), m1LectureIntro.get(i),
+//                            3, "월,화", "09:00,11:00", "11:00,13:00", Lecture_Type.전공선택,
+//                            c1m1Professor.get(professorIndex), 30, "2024년 1학기",
+//                            2, null, c1Major.get(0), c1LectureRoom.get(lectureRoomIndex));
+//                }
+//                em.persist(lectureTmp);
+//            }
 
             // c1m2
             List<Professor> c1m2Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(1).getIdx()).getResultList();
@@ -705,16 +815,7 @@ public class InitDb {
             m2CultureName.add("중국인의 언어와 문화");
             m2CultureIntro.add("본 강좌는 현재의 중국(대륙) 및 중국어권(대만, 홍콩 그리고 세계 각 지역의 화교사회)에 대해 그들의 언어와 문화적 특징을 살펴보고, 아울러 중국어와 계통상으로 유사하거나, 비록 계통은 같지 않지만 지대한 영향을 주고 받은 한국어, 일본어 등과 비교하는 것을 목적으로 한다. 한국을 포함해 전 세계에서 중국어에 대해 관심을 보이고 있다. 그렇지만 그러한 중국어에 대해 공시적, 통시적, 그리고 문화적 배경을 토대로 언어적 특징을 제시한 과목은 거의 존재하지 않았다. 이 때문에 중국어 학습은 그들의 깊고 풍부한 문화적 배경이 배제된 상황에서 이루어져 무미건조한 것이 되었다. 본 강좌는 이러한 점을 극복하고 중국인이라는 사람을 기준으로, 그들이 사용하고 있는 언어라는 면에 착안하여 사람이 살면서 보이는 문화적 특징을 가미하여 언어를 설명하고자 한다. 이를 위해 중국어의 기본적 특징을 우선 습득하고, 이를 토대로 중국내의 소수민족의 언어와의 비교, 표준어와 방언의 비교, 한장어계의 비교 및 한국인으로서 중국어를 배울 때 나타나는 특징 등을 골고루 적용하여 중국어에 대한 이해의 폭을 넓히고자 한다.");
 
-            for (int i = 0; i < m2CultureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m2Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                lectureTmp = new Lecture(m2CultureName.get(i), m2CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
-                        c1m2Professor.get(professorIndex), 30, "2024년 1학기",
-                        1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
-                em.persist(lectureTmp);
-            }
+            randomTimeCultureRoom(c1m2Professor, c1Major.get(1), c1LectureRoom, m2CultureName, m2CultureIntro);
 
             List<String> m2MajorName = new ArrayList<>();
             List<String> m2MajorIntro = new ArrayList<>();
@@ -824,30 +925,7 @@ public class InitDb {
             m2MajorName.add("중국어문학논문쓰기");
             m2MajorIntro.add("이 강좌에서는 중국어문학 논문의 작성에 필요한 역량을 다룬다. 연구주제의 설정, 논문체제의 구성, 연구방법의 모색, 연구대상의 설정 및 분석 등 학술논문 작성에 필요한 기본적 소양과 실제적인 기술을 익힌다. 또한 사고를 논리적으로 전개하는 역량과 정합적으로 표현하는 역량을 배양한다.");
 
-            for (int i = 0; i < m2MajorName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m2Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m2MajorName.get(i).contains("(탐)")) {
-                    String replace = m2MajorName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m2MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
-                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
-                } else if (m2MajorName.get(i).contains("(필)")) {
-                    String replace = m2MajorName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m2MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m2MajorName.get(i), m2MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m2Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(1), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m2Professor, c1Major.get(1), c1LectureRoom, m2MajorName, m2MajorIntro);
 
             // c1m3
             List<Professor> c1m3Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(2).getIdx()).getResultList();
@@ -969,30 +1047,7 @@ public class InitDb {
             m3MajorName.add("영문학특강 2");
             m3MajorIntro.add("영문학에 대한 전통적 접근법으로 쉽게 포괄되지 않는 특정 주제, 쟁점, 방법론을 집중적으로 다룬다. 매 학기 다른 주제가 제공되며, 분석적/창의적 사고와 글쓰기에 중점을 둔다. 영어 전용 과목이다.");
 
-            for (int i = 0; i < m3MajorName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m3Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m3MajorName.get(i).contains("(탐)")) {
-                    String replace = m3MajorName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m3MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
-                            c1m3Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
-                } else if (m3MajorName.get(i).contains("(필)")) {
-                    String replace = m3MajorName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m3MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m3Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m3MajorName.get(i), m3MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m3Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m3Professor, c1Major.get(2), c1LectureRoom, m3MajorName, m3MajorIntro);
 
             List<String> m3CultureName = new ArrayList<>();
             List<String> m3CultureIntro = new ArrayList<>();
@@ -1028,16 +1083,7 @@ public class InitDb {
             m3CultureName.add("영미문화 읽기");
             m3CultureIntro.add("영미권의 대표적인 사상가, 문필가, 예술가들의 산문을 영어로 읽어보는 수업이다. 고전에서부터 최근 글에 이르기까지 정선된 명산문을 읽음으로써 영미 문화를 깊이있게 이해하는 것을 목표로 한다. 역사, 개인과 사회, 정의, 사랑, 죽음, 환경, 교육 등 중요한 주제들에 대해 다양한 시대에 걸쳐 어떤 생각들을 해 왔으며 이들이 현재와 어떤 관련성이 있는지를 고찰하게 될 것이다. 다양한 장르와 스타일의 글들을 꼼꼼히 읽어 영어 독해능력을 향상시키는 것도 이 강의의 목표이다.");
 
-            for (int i = 0; i < m3CultureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m3Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                lectureTmp = new Lecture(m3CultureName.get(i), m3CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
-                        c1m3Professor.get(professorIndex), 30, "2024년 1학기",
-                        1, null, c1Major.get(2), c1LectureRoom.get(lectureRoomIndex));
-                em.persist(lectureTmp);
-            }
+            randomTimeCultureRoom(c1m3Professor, c1Major.get(2), c1LectureRoom, m3CultureName, m3CultureIntro);
 
             // c1m4
             List<Professor> c1m4Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(3).getIdx()).getResultList();
@@ -1081,16 +1127,7 @@ public class InitDb {
             m4CultureName.add("문학과 공연예술");
             m4CultureIntro.add("본 강의에서는 문학 작품과, 그것을 토대로 창작된 다양한 공연예술 작품에 대한 비판적 분석 및 이해를 도모하고자 한다. 문학 텍스트에 대한 분석을 토대로 오페라, 발레극, 뮤지컬 등 각 공연예술 장르의 특성에 따라 어떤 변용과 창작이 행해지는지를 살펴봄으로써 문학과 공연예술의 관계에 대한 총체적 이해, 문학 작품을 토대로 한 다양한 공연예술 창작의 가능성까지를 탐구해보고자 한다.");
 
-            for (int i = 0; i < m4CultureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m4Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                lectureTmp = new Lecture(m4CultureName.get(i), m4CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
-                        c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                        1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
-                em.persist(lectureTmp);
-            }
+            randomTimeCultureRoom(c1m4Professor, c1Major.get(3), c1LectureRoom, m4CultureName, m4CultureIntro);
 
             List<String> m4MajorName = new ArrayList<>();
             List<String> m4MajorIntro = new ArrayList<>();
@@ -1170,30 +1207,7 @@ public class InitDb {
             m4MajorName.add("중세프랑스문학");
             m4MajorIntro.add("11세기부터 15세기 말까지의 중세불문학 작품을 선별하여 다룬다. 무훈시와 트루바두르의 시가, 소설, 연극 등 다양한 장르의 작품을 통해 중세불문학의 문학사적 의의 및 특성, 변화양상을 포괄적으로 이해하는 것을 목표로 한다. 텍스트는 중세프랑스어와 현대프랑스어 대역본을 사용한다.");
 
-            for (int i = 0; i < m4MajorName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m4Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m4MajorName.get(i).contains("(탐)")) {
-                    String replace = m4MajorName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m4MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
-                            c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
-                } else if (m4MajorName.get(i).contains("(필)")) {
-                    String replace = m4MajorName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m4MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m4MajorName.get(i), m4MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m4Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(3), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m4Professor, c1Major.get(3), c1LectureRoom, m4MajorName, m4MajorIntro);
 
             // c1m5
             List<Professor> c1m5Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(4).getIdx()).getResultList();
@@ -1237,16 +1251,7 @@ public class InitDb {
             m5CultureName.add("이중언어사용");
             m5CultureIntro.add("본 강좌는 이중언어사용 현상의 언어학, 심리언어학, 신경언어학, 사회언어학적, 교육적 측면을 소개하는 것을 목표로 한다. ‘이중언어사용’의 정의와 측정, 이중언어 아동의 발달, 이중언어사용자의 언어 접촉 현상, 이중언어사용의 심리언어학적·신경언어학적 기초 지식, 이중/다중언어 사회의 사회언어학적 양상, 이중언어사용자의 교육과 언어 정책의 쟁점 등을 다룬다.");
 
-            for (int i = 0; i < m5CultureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m5Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                lectureTmp = new Lecture(m5CultureName.get(i), m5CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
-                        c1m5Professor.get(professorIndex), 30, "2024년 1학기",
-                        1, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
-                em.persist(lectureTmp);
-            }
+            randomTimeCultureRoom(c1m5Professor, c1Major.get(4), c1LectureRoom, m5CultureName, m5CultureIntro);
 
             List<String> m5MajorName = new ArrayList<>();
             List<String> m5MajorIntro = new ArrayList<>();
@@ -1347,30 +1352,7 @@ public class InitDb {
             m5MajorName.add("언어데이터과학");
             m5MajorIntro.add("본 교과목에서는 언어학을 위한 데이터과학의 방법론과 기술을 학습한다. 언어 데이터를 수집, 정제, 정리, 저장, 관리, 요약, 분석하고 데이터 프로덕트를 만드는 방법론을 살펴봄으로써 데이터를 다루는 전과정을 이해할 수 있도록 한다. 이와 함께 실질적인 소프트웨어 도구와 기술을 익히고 예제를 통해 그 실제 응용을 경험함으로써 기술을 활용할 수 있는 능력을 배양한다. 언어학 이론과 컴퓨터 프로그래밍에 기본 지식을 갖춘 전공자들에게 고급 기법을 소개하고 종합적인 응용을 경험할 수 있도록 하는 것을 목표로 한다. 이 수업에서 학습하는 방법론과 기술은 컴퓨터언어학, 자연언어처리와 같은 직접 관련 분야에 한정되지 않고 언어학의 다양한 분야의 데이터 분석을 위해 유용한 것으로 선정될 것이다.");
 
-            for (int i = 0; i < m5MajorName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m5Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m5MajorName.get(i).contains("(탐)")) {
-                    String replace = m5MajorName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m5MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
-                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
-                } else if (m5MajorName.get(i).contains("(필)")) {
-                    String replace = m5MajorName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m5MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m5MajorName.get(i), m5MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m5Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(4), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m5Professor, c1Major.get(4), c1LectureRoom, m5MajorName, m5MajorIntro);
 
             // c1m6
             List<Professor> c1m6Professor = em.createQuery("select p from Professor p where p.major.idx = :midx", Professor.class).setParameter("midx", c1Major.get(5).getIdx()).getResultList();
@@ -1435,16 +1417,7 @@ public class InitDb {
             m6CultureName.add("서양철학의 고전");
             m6CultureIntro.add("이 과목은 세계, 자연, 인간, 사회를 바라보는 포괄적이고 근본적인 관점을 제시하는 서양철학의 대표적인 고전 작품들을 다루며, 스스로의 힘으로 철학적 고전을 읽고 서양철학의 주요한 논제들과 개념들을 이해할 수 있는 수강생들의 역량을 함양하는 데에 목적을 둔다. 학생들은 철학적 고전 텍스트의 의미와 가치를 탐구함으로써, 어떻게 철학적 성찰과 논쟁을 통해 일상생활 속의 다양한 문제들에 비판적으로 참여할 수 있는지를 배우게 될 것이다.");
 
-            for (int i = 0; i < m6CultureName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m6Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                lectureTmp = new Lecture(m6CultureName.get(i), m6CultureIntro.get(i),
-                        3, "월, 화", "09:00", "11:00", Lecture_Type.교양,
-                        c1m6Professor.get(professorIndex), 30, "2024년 1학기",
-                        1, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
-                em.persist(lectureTmp);
-            }
+            randomTimeCultureRoom(c1m6Professor, c1Major.get(5), c1LectureRoom, m6CultureName, m6CultureIntro);
 
             List<String> m6MajorName = new ArrayList<>();
             List<String> m6MajorIntro = new ArrayList<>();
@@ -1551,30 +1524,8 @@ public class InitDb {
             m6MajorName.add("역사철학");
             m6MajorIntro.add("역사가 철학적 관심의 대상이 된 것은 오래이나, 특히 근대 이후 역사가 고유한 의미에서 철학적 관심의 대상이 되며 동시에 철학은 역사화 된다. 이러한 인식에 입각하여 이 교과목은 역사에 대한 철학적 접근유형을 체계적으로 고찰하고 역사를 파악하는 다양한 방법론의 특성을 탐구함으로써 인간 존재와 세계의 근본적인 역사적 성격을 해명한다.");
 
-            for (int i = 0; i < m6MajorName.size(); i++) {
-                int professorIndex = ran.nextInt(c1m6Professor.size());
-                int lectureRoomIndex = ran.nextInt(c1LectureRoom.size());
-                Lecture lectureTmp = null;
-                if (m6MajorName.get(i).contains("(탐)")) {
-                    String replace = m6MajorName.get(i).replace("(탐)", "");
-                    lectureTmp = new Lecture(replace, m6MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공탐색,
-                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
-                            1, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
-                } else if (m6MajorName.get(i).contains("(필)")) {
-                    String replace = m6MajorName.get(i).replace("(필)", "");
-                    lectureTmp = new Lecture(replace, m6MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공필수,
-                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
-                } else {
-                    lectureTmp = new Lecture(m6MajorName.get(i), m6MajorIntro.get(i),
-                            3, "월, 화", "09:00", "11:00", Lecture_Type.전공선택,
-                            c1m6Professor.get(professorIndex), 30, "2024년 1학기",
-                            2, null, c1Major.get(5), c1LectureRoom.get(lectureRoomIndex));
-                }
-                em.persist(lectureTmp);
-            }
+            randomTimeLectureRoom(c1m6Professor, c1Major.get(5), c1LectureRoom, m6MajorName, m6MajorIntro);
+
         }
 
 
