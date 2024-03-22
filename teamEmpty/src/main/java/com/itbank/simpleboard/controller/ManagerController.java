@@ -329,12 +329,19 @@ public class ManagerController {
     }
 
     @PostMapping("/lectureAdd")         // 강의 등록
-    public String lectureAdd(RegisterlectureDto param) {
+    public String lectureAdd(RegisterlectureDto param, RedirectAttributes ra) {
         Lecture lecture = managerService.addLecture(param);
-        if(lecture == null) {
-            return "redirect:/manager/lectureAdd";
+        if(lecture != null) {
+            ra.addFlashAttribute("msg", "강의등록 되었습니다.");
+            ra.addFlashAttribute("title", "강의등록 성공");
+            ra.addFlashAttribute("icon", "success");
+            return "redirect:/lectureList";
+        } else {
+            ra.addFlashAttribute("msg", "강의실과 강의시간이 겹칩니다.");
+            ra.addFlashAttribute("title", "강의등록 실패");
+            ra.addFlashAttribute("icon", "error");
         }
-        return "redirect:/lectureList";
+        return "redirect:/manager/lectureAdd";
     }
 
     @ResponseBody
@@ -356,6 +363,8 @@ public class ManagerController {
     public ModelAndView lectureUpdate(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("manager/updateLecture");
         Lecture lecture = managerService.selectOneLecture(idx);
+        College college = collegeService.findByMajorIdx(lecture.getMajor().getIdx());
+        String location = college.getLocation();
         List<Major> majorList = managerService.selectAllMajor();
 
         // 해당 교수의 user_idx로 user의 정보를 찾음
@@ -365,16 +374,24 @@ public class ManagerController {
         mav.addObject("majorList", majorList);
         mav.addObject("lecture", lecture);
         mav.addObject("professor_name", professor_name);
+        mav.addObject("location", location);
         return mav;
     }
 
     @PostMapping("/lectureUpdate/{idx}")                // 강의 수정
-    public String lectureUpdate(@PathVariable("idx") Long idx, RegisterlectureDto param) {
-        Lecture lecture = managerService.updateLecture(param);
-        if(lecture == null) {
-            return "redirect:/manager/lectureUpdate" + idx;
+    public String lectureUpdate(@PathVariable("idx") Long lectureIdx, RegisterlectureDto param, RedirectAttributes ra) {
+        Lecture lecture = managerService.updateLecture(param, lectureIdx);
+        if(lecture != null) {
+            ra.addFlashAttribute("msg", "강의가 수정되었습니다.");
+            ra.addFlashAttribute("title", "강의수정 성공");
+            ra.addFlashAttribute("icon", "success");
+            return "redirect:/viewLecture/" + lectureIdx;
+        } else {
+            ra.addFlashAttribute("msg", "강의실과 강의시간이 겹칩니다.");
+            ra.addFlashAttribute("title", "강의수정 실패");
+            ra.addFlashAttribute("icon", "error");
         }
-        return "redirect:/viewLecture/" + idx;
+        return "redirect:/manager/lectureUpdate/" + lectureIdx;
     }
 
     @GetMapping("/lectureDelete/{idx}")             // 강의 삭제

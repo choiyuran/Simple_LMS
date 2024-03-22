@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RegisterlectureDto {
-    private Long idx;
     private String name;
     private String intro;
     private Integer credit;

@@ -178,7 +178,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return queryFactory
                 .select(new QProfessorUserDto(
                         professor.professor_idx,
-                        professor.user.idx,
                         professor.hireDate,
                         QUser.user.user_name
                 ))
@@ -255,7 +254,6 @@ public class ProfessorRepositoryCustomImpl implements ProfessorRepositoryCustom 
         return queryFactory
                 .select(new QProfessorUserDto(
                         professor.professor_idx,
-                        professor.user.idx,
                         professor.hireDate,
                         professor.user.user_name
                 ))

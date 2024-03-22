@@ -163,7 +163,6 @@ public class ExcelFormService {
 
                                 List<ProfessorUserDto> professorList = professorRepository.findByMajorAndUserUserNameContainingDto(mInfo,professorName);
 
-
                                 String professorInfo = getString(professorList);
                                 student.setProfessor(professorInfo);
                                 log.info(" case 9 professorInfo" + professorInfo);
