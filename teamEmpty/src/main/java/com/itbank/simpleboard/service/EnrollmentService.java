@@ -109,7 +109,9 @@ public class EnrollmentService {
 
             if (schedule.containsKey(days[i])) {
                 for (LocalTime[] timeRange : schedule.get(days[i])) {
-                    if ((startTime.isBefore(timeRange[1]) && endTime.isAfter(timeRange[0]))) {
+                    // 시작 시간 또는 끝 시간이 다른 시간 범위 내에 포함되는 경우
+                    // 또는 시작 시간과 끝 시간이 다른 시간 범위의 시작 시간 또는 끝 시간과 정확히 일치하는 경우 중복으로 판별
+                    if (!startTime.isAfter(timeRange[1]) || !endTime.isBefore(timeRange[0])) {
                         return true;
                     }
                 }
