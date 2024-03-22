@@ -27,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,16 +78,16 @@ public class ManagerService {
     }
 
     public Page<ManagerDTO> searchManager(HashMap<String, Object> map, Pageable pageable) {
-        String searchType = (String)map.get("searchType");
-        String searchValue = (String)map.get("searchValue");
+        String searchType = (String) map.get("searchType");
+        String searchValue = (String) map.get("searchValue");
         String searchValueKey = "";
-        if(searchType.equals("name")) {
-           if(searchValue != null) {
-               for(int i = 0; i < searchValue.length(); i++) {
-                   searchValueKey += searchValue.charAt(i);
-                   searchValueKey += "%";
-               }
-           }
+        if (searchType.equals("name")) {
+            if (searchValue != null) {
+                for (int i = 0; i < searchValue.length(); i++) {
+                    searchValueKey += searchValue.charAt(i);
+                    searchValueKey += "%";
+                }
+            }
         }
         map.put("searchValue", searchValueKey);
         return managerRepository.findBySearchType(map, pageable);
@@ -131,6 +133,16 @@ public class ManagerService {
 
     @Transactional
     public Lecture addLecture(RegisterlectureDto param) {
+        LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx()).get();
+
+        // 겹치는지 체크
+        List<Lecture> lectureList = lectureRepository.findByLectureRoom(lectureRoom);
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        Map<String, List<LocalTime[]>> schedule = getLectureRoomSchedule(timeFormatter, lectureRoom);
+        if (checkScheduleConflict(timeFormatter, param, schedule)) {
+            return null;
+        }
+
         StringBuilder day = new StringBuilder();
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
@@ -147,7 +159,6 @@ public class ManagerService {
         }
         Professor professor = professorRepository.findById(param.getProfessor_idx()).get();
         Major major = majorRepository.findById(param.getMajor_idx()).get();
-        LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx()).get();
 
         Lecture lecture = new Lecture(
                 param.getName(),
@@ -167,15 +178,87 @@ public class ManagerService {
         return lectureRepository.save(lecture);
     }
 
+
+    private LocalTime[] parseTimeRange(DateTimeFormatter timeFormatter, String start, String end) {
+        LocalTime startTime = LocalTime.parse(start, timeFormatter);
+        LocalTime endTime = LocalTime.parse(end, timeFormatter);
+
+        return new LocalTime[]{startTime, endTime};
+    }
+
+    private Map<String, List<LocalTime[]>> getLectureRoomSchedule(DateTimeFormatter timeFormatter, LectureRoom lectureRoom) {
+        List<Lecture> lectureList = lectureRepository.findByLectureRoom(lectureRoom);
+        Map<String, List<LocalTime[]>> schedule = new HashMap<>();
+        for (Lecture l : lectureList) {
+            String[] days = l.getDay().split(",");
+            String[] starts = l.getStart().split(",");
+            String[] ends = l.getEnd().split(",");
+
+            for (int i = 0; i < days.length; i++) {
+                LocalTime[] timeRange = parseTimeRange(timeFormatter, starts[i], ends[i]);
+                schedule.computeIfAbsent(days[i], k -> new ArrayList<>()).add(timeRange);
+            }
+        }
+        return schedule;
+    }
+
+    private Map<String, List<LocalTime[]>> getLectureRoomScheduleUpdate(DateTimeFormatter timeFormatter, LectureRoom lectureRoom, Long lectureIdx) {
+        List<Lecture> lectureList = lectureRepository.findByLectureRoom(lectureRoom).stream()
+                .filter(l -> !l.getIdx().equals(lectureIdx)) // lectureIdx와 일치하지 않는 객체만 선택
+                .collect(Collectors.toList());
+
+        Map<String, List<LocalTime[]>> schedule = new HashMap<>();
+        for (Lecture l : lectureList) {
+            String[] days = l.getDay().split(",");
+            String[] starts = l.getStart().split(",");
+            String[] ends = l.getEnd().split(",");
+
+            for (int i = 0; i < days.length; i++) {
+                LocalTime[] timeRange = parseTimeRange(timeFormatter, starts[i], ends[i]);
+                schedule.computeIfAbsent(days[i], k -> new ArrayList<>()).add(timeRange);
+            }
+        }
+        return schedule;
+    }
+
+    private boolean checkScheduleConflict(DateTimeFormatter timeFormatter, RegisterlectureDto param, Map<String, List<LocalTime[]>> schedule) {
+        for (int i = 0; i < param.getDay().length; i++) {
+            LocalTime startTime = LocalTime.parse(param.getStart()[i], timeFormatter);
+            LocalTime endTime = LocalTime.parse(param.getEnd()[i], timeFormatter);
+            if (schedule.containsKey(param.getDay()[i])) {
+                for (LocalTime[] timeRange : schedule.get(param.getDay()[i])) {
+                    // startTime이 timeRange[1] 이전이 아니거나(즉, 동일하거나 늦음),
+                    // endTime이 timeRange[0] 이후가 아닌 경우(즉, 동일하거나 이르면) 겹치는 것으로 간주
+                    if (!(startTime.isAfter(timeRange[1]) && endTime.isBefore(timeRange[0]))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkScheduleConflictUpdate(DateTimeFormatter timeFormatter, String[] day, String start, String end, Map<String, List<LocalTime[]>> schedule) {
+        for (int i = 0; i < day.length; i++) {
+            LocalTime startTime = LocalTime.parse(start.split(",")[i], timeFormatter);
+            LocalTime endTime = LocalTime.parse(end.split(",")[i], timeFormatter);
+            if (schedule.containsKey(day[i])) {
+                for (LocalTime[] timeRange : schedule.get(day[i])) {
+                    if (!(startTime.isAfter(timeRange[1]) && endTime.isBefore(timeRange[0]))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public Lecture selectOneLecture(Long idx) {
         return lectureRepository.findById(idx).get();
     }
 
     @Transactional
-    public Lecture updateLecture(RegisterlectureDto param) {
-        log.info("service : " + param.toString());
-        Lecture lecture = lectureRepository.findById(param.getIdx()).get();
-
+    public Lecture updateLecture(RegisterlectureDto param, Long lectureIdx) {
         StringBuilder day = new StringBuilder();
         StringBuilder start = new StringBuilder();
         StringBuilder end = new StringBuilder();
@@ -186,7 +269,6 @@ public class ManagerService {
                 day.append(",");
             }
         }
-
         for (int i = 0; i < param.getStart().length; i++) {
             if (param.getStart()[i] != null) {
                 start.append(param.getStart()[i]);
@@ -199,14 +281,21 @@ public class ManagerService {
                 }
             }
         }
-
         Professor professor = professorRepository.findById(param.getProfessor_idx())
                 .orElseThrow(() -> new NoSuchElementException("Professor with id " + param.getProfessor_idx() + " not found."));
         Major major = majorRepository.findById(param.getMajor_idx())
                 .orElseThrow(() -> new NoSuchElementException("Major with id " + param.getMajor_idx() + " not found."));
         LectureRoom lectureRoom = lectureRoomRepository.findById(param.getLectureRoom_idx())
                 .orElseThrow(() -> new NoSuchElementException("LectureRoom with id " + param.getLectureRoom_idx() + " not found."));
+        // 겹치는지 체크
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("H:mm");
+        Map<String, List<LocalTime[]>> schedule = getLectureRoomScheduleUpdate(timeFormatter, lectureRoom, lectureIdx);
+        log.info("수정 schedule : " + schedule);
+        if (checkScheduleConflictUpdate(timeFormatter, param.getDay(), start.toString(), end.toString(), schedule)) {
+            return null;
+        }
 
+        Lecture lecture = lectureRepository.findById(lectureIdx).get();
         lecture.setName(param.getName());
         lecture.setIntro(param.getIntro());
         lecture.setCredit(param.getCredit());
@@ -420,8 +509,8 @@ public class ManagerService {
                 Student student = studentRepository.save(s);
                 situationRepository.save(situation);
                 situationRecordRepository.save(situationRecord);
-                Payments payments = new Payments(student,globalVariable.getGlobalSememster());
-                Payments savedPayments =  paymentsRepository.save(payments);
+                Payments payments = new Payments(student, globalVariable.getGlobalSememster());
+                Payments savedPayments = paymentsRepository.save(payments);
 
                 log.info("savedPayments : " + savedPayments);
 
@@ -466,10 +555,10 @@ public class ManagerService {
     }
 
     public Page<ProfessorListDto> searchByMajorAndProfessorAndLeave(HashMap<String, Object> map, Pageable pageable) {
-        String name = (String)map.get("name");
+        String name = (String) map.get("name");
         String namekey = "";
-        if(name != null) {
-            for(int i = 0; i < name.length(); i++) {
+        if (name != null) {
+            for (int i = 0; i < name.length(); i++) {
                 namekey += name.charAt(i);
                 namekey += "%";
             }
@@ -539,10 +628,10 @@ public class ManagerService {
     }
 
     public Page<StudentListDto> selectAllStudent(HashMap<String, Object> map, Pageable pageable) {
-        String name = (String)map.get("name");
+        String name = (String) map.get("name");
         String namekey = "";
-        if(name != null) {
-            for(int i = 0; i < name.length(); i++) {
+        if (name != null) {
+            for (int i = 0; i < name.length(); i++) {
                 namekey += name.charAt(i);
                 namekey += "%";
             }

@@ -2,7 +2,10 @@ package com.itbank.simpleboard.service;
 
 import com.itbank.simpleboard.component.GlobalVariable;
 import com.itbank.simpleboard.dto.LectureDto;
+import com.itbank.simpleboard.entity.Enrollment;
 import com.itbank.simpleboard.entity.Lecture;
+import com.itbank.simpleboard.entity.LectureRoom;
+import com.itbank.simpleboard.entity.Student;
 import com.itbank.simpleboard.repository.student.LectureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,7 +54,6 @@ public class LectureService {
         return lectureRepository.getLectureListDtos(searchType,keyword, pageable);
     }
 
-
     @Transactional
     public String planUpload(MultipartFile plan, Long lectureIdx) {
         String stringPlan = null;
@@ -70,4 +74,5 @@ public class LectureService {
         }
         return stringPlan;
     }
+
 }
