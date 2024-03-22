@@ -150,6 +150,8 @@
 
                 let startTimeInput = document.createElement('input');
                 startTimeInput.type = 'time';
+                startTimeInput.min = '09:00';
+                startTimeInput.max = '16:00';
                 startTimeInput.className = 'form-control';
                 startTimeInput.name = 'start[' + count + ']';  // 이름에 인덱스 번호 부여
 
@@ -166,6 +168,8 @@
 
                 let endTimeInput = document.createElement('input');
                 endTimeInput.type = 'time';
+                endTimeInput.min = '10:00';
+                endTimeInput.max = '19:00';
                 endTimeInput.className = 'form-control';
                 endTimeInput.name = 'end[' + count + ']';  // 이름에 인덱스 번호 부여
 

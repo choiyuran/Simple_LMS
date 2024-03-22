@@ -152,6 +152,8 @@
 
         let startTimeInput = document.createElement('input');
         startTimeInput.type = 'time';
+        startTimeInput.min = '09:00';
+        startTimeInput.max = '16:00';
         startTimeInput.className = 'form-control';
         startTimeInput.name = 'start[' + (index + 1) + ']'; // 수정된 부분
 
@@ -170,6 +172,8 @@
 
         let endTimeInput = document.createElement('input');
         endTimeInput.type = 'time';
+        endTimeInput.min = '10:00';
+        endTimeInput.max = '19:00';
         endTimeInput.className = 'form-control';
         endTimeInput.name = 'end[' + (index + 1) + ']'; // 수정된 부분
 
