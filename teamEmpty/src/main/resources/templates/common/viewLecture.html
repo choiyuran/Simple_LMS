@@ -125,13 +125,11 @@
             </tr>
         </table>
 
-        <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}"><a
-                th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">수정</a></button>
+        <a th:href="@{'/manager/lectureUpdate/' + ${lecture.idx}}">
+            <button class="btn btn-warning" th:if="${session.user.user.role.toString() == '교직원'}">수정</button></a>
 
         <button class="btn btn-danger" onclick="confirmDelete(event)"
-                th:if="${session.user.user.role.toString() == '교직원'}">
-            삭제
-        </button>
+                th:if="${session.user.user.role.toString() == '교직원'}">삭제</button>
 
         <button class="btn btn-outline-secondary" onclick="Url()">목록으로</button>
 

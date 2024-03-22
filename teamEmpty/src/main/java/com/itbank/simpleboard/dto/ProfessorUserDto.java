@@ -13,8 +13,7 @@ public class ProfessorUserDto {
     private Date hireDate;
 
     @QueryProjection
-    public ProfessorUserDto(Long user_idx, Long professor_idx, Date hireDate, String name) {
-        this.user_idx = user_idx;
+    public ProfessorUserDto(Long professor_idx, Date hireDate, String name) {
         this.professor_idx = professor_idx;
         this.hireDate = hireDate;
         this.name = name;

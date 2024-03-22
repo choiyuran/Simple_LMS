@@ -36,7 +36,7 @@
                 <span class="input-group-text" style="width: 20%;">강의실</span>
                 <select class="form-control" id="lectureRoom_idx" name="lectureRoom_idx">
                     <!-- 강의실 목록이 여기에 채워짐 -->
-                    <option th:text="${lecture.lectureRoom.room}"
+                    <option th:text="${location+lecture.lectureRoom.room}"
                             th:value="${lecture.lectureRoom.idx}"></option>
                 </select>
             </div>
@@ -97,11 +97,11 @@
 
             <div class="input-group input-group-sm mb-3 w-100">
                 <span class="input-group-text" style="width: 20%;">강의 타입</span>
-                <select class="form-control" name="type" th:selected="${lecture.type}">
-                    <option value="전공탐색">전공탐색</option>
-                    <option value="전공필수">전공필수</option>
-                    <option value="전공선택">전공선택</option>
-                    <option value="교양">교양</option>
+                <select class="form-control" name="type">
+                    <option value="전공필수" th:selected="${lecture.type == '전공필수'}">전공필수</option>
+                    <option value="전공선택" th:selected="${lecture.type == '전공선택'}">전공선택</option>
+                    <option value="전공탐색" th:selected="${lecture.type == '전공탐색'}">전공탐색</option>
+                    <option value="교양" th:selected="${lecture.type == '교양'}">교양</option>
                 </select>
             </div>
 
@@ -123,8 +123,8 @@
 
 
             <div class="w-50 m-auto text-center">
-                <button class="btn btn-outline-secondary" style="margin-right: 10px;">등록</button>
-                <a href="/lectureList"><button class="btn btn-outline-secondary" type="button">취소</button></a>
+                <button class="btn btn-facebook" style="margin-right: 10px;">등록</button>
+                <a href="/lectureList"><button class="btn btn-danger" type="button">취소</button></a>
             </div>
         </div>
     </form>
@@ -261,7 +261,7 @@
                     $.each(data.lecturerooms, function(index, lectureroom) {
                         $('#lectureRoom_idx').append($('<option>', {
                             value: lectureroom.idx,
-                            text: lectureroom.room,
+                            text: data.college.location+lectureroom.room,
                         }));
                     });
 
