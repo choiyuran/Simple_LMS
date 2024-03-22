@@ -229,7 +229,7 @@ public class ManagerService {
                 for (LocalTime[] timeRange : schedule.get(param.getDay()[i])) {
                     // startTime이 timeRange[1] 이전이 아니거나(즉, 동일하거나 늦음),
                     // endTime이 timeRange[0] 이후가 아닌 경우(즉, 동일하거나 이르면) 겹치는 것으로 간주
-                    if (!(startTime.isAfter(timeRange[1]) || endTime.isBefore(timeRange[0]))) {
+                    if (!(startTime.isAfter(timeRange[1]) && endTime.isBefore(timeRange[0]))) {
                         return true;
                     }
                 }
@@ -244,7 +244,7 @@ public class ManagerService {
             LocalTime endTime = LocalTime.parse(end.split(",")[i], timeFormatter);
             if (schedule.containsKey(day[i])) {
                 for (LocalTime[] timeRange : schedule.get(day[i])) {
-                    if (!(startTime.isAfter(timeRange[1]) || endTime.isBefore(timeRange[0]))) {
+                    if (!(startTime.isAfter(timeRange[1]) && endTime.isBefore(timeRange[0]))) {
                         return true;
                     }
                 }
