@@ -6,7 +6,7 @@
 </head>
 <body>
 <header th:insert="layout/studentHeader :: header"></header>
-<div class="container mt-3">
+<div class="container mt-3 min-height">
     <h2 id="gradeTitle" class="my-5" th:text="${session.user.user.user_name+'님의 '+ '전체' + '성적'}"
         th:data-user-name="${session.user.user.user_name}"></h2>
     <form id="SemesterSearchForm">

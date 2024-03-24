@@ -6,7 +6,7 @@
 <header th:insert="layout/studentHeader :: header"></header>
 <main>
     <input type="hidden" th:value="${param.page}" th:default="0">
-    <div class="container mt-5">
+    <div class="container mt-5 min-height">
         <h2 th:text="${session.user.user.user_name}+'님의 수강 목록'"></h2>
         <div class="w-100 d-flex">
             <form id="MyLectureSearchForm" method="POST" class="form-group w-100 d-inline-block">
