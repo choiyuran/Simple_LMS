@@ -49,12 +49,12 @@ public class ManagerController {
 
     // 전역 학기 바꾸기
     @GetMapping("/changeGlobalSemester")
-    public String changeGlobalSemester(HttpSession session, RedirectAttributes ra, Model model){
-        if(session.getAttribute("user") instanceof ManagerLoginDto){
+    public String changeGlobalSemester(HttpSession session, RedirectAttributes ra, Model model) {
+        if (session.getAttribute("user") instanceof ManagerLoginDto) {
             log.info("현재 학기는 : " + globalVariable.getGlobalSememster());
             model.addAttribute("globalSemester", globalVariable.getGlobalSememster());
             return "manager/changeGlobalSemester";
-        }else{
+        } else {
             ra.addFlashAttribute("msg", "관리자 로그인 하세요!!");
             ra.addFlashAttribute("icon", "error");
             ra.addFlashAttribute("title", "관리자 인증 에러");
@@ -64,15 +64,15 @@ public class ManagerController {
 
     // 변경 - 모든 재학 학생에 대해서 등록금 납부 컬럼(납부일 null)인 테이블
     @PostMapping("/changeGlobalSemester")
-    public String changeGlobalSemesterPro(String semester, HttpSession session, RedirectAttributes ra){
+    public String changeGlobalSemesterPro(String semester, HttpSession session, RedirectAttributes ra) {
 
-        if(session.getAttribute("user") instanceof ManagerLoginDto){
+        if (session.getAttribute("user") instanceof ManagerLoginDto) {
             globalVariable.setGlobalSememster(semester);
-            ra.addFlashAttribute("msg","현재 학기가 수정되었습니다.");
+            ra.addFlashAttribute("msg", "현재 학기가 수정되었습니다.");
             ra.addFlashAttribute("icon", "success");
             ra.addFlashAttribute("title", "현재학기 수정");
-        }else{
-            ra.addFlashAttribute("msg","교직원만 접근 가능합니다.");
+        } else {
+            ra.addFlashAttribute("msg", "교직원만 접근 가능합니다.");
             ra.addFlashAttribute("icon", "error");
             ra.addFlashAttribute("title", "현재 학기 수정");
             return "redirect:/login";
@@ -85,7 +85,7 @@ public class ManagerController {
     public String calendarAdd(Model model, HttpSession session) {
         model.addAttribute("academicCalendarDto", new AcademicCalendarDto());
         Object user = session.getAttribute("user");
-        if(user instanceof ManagerLoginDto) {
+        if (user instanceof ManagerLoginDto) {
             ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarAddForm";
         }
@@ -107,7 +107,7 @@ public class ManagerController {
         model.addAttribute("academicCalendarDto", academicCalendarDto);
 
         Object user = session.getAttribute("user");
-        if(user instanceof ManagerLoginDto) {
+        if (user instanceof ManagerLoginDto) {
             ManagerLoginDto manager = (ManagerLoginDto) user;
             return "manager/calendarEditForm";
         }
@@ -250,7 +250,7 @@ public class ManagerController {
     @PostMapping("/registerMajor")              // 학과 등록
     public String registerMajor(MajorDto major) {
         Major addMajor = managerService.addMajor(major);
-        if(addMajor != null) {
+        if (addMajor != null) {
             return "redirect:/manager/majorList";
         }
         return "manager/registerMajor";
@@ -264,7 +264,7 @@ public class ManagerController {
         Page<Major> list = null;
 
         // 학과명과 단과대학 이름 둘 다 검색어가 있는 경우
-        if (collegeIdx != null  && majorName != null && !majorName.isEmpty()) {
+        if (collegeIdx != null && majorName != null && !majorName.isEmpty()) {
             list = managerService.searchByCollegeAndMajor(collegeIdx, majorName, pageable);
         }
         // 단과대학 이름만 검색어가 있는 경우
@@ -280,7 +280,7 @@ public class ManagerController {
             list = managerService.selectAllMajorPaging(pageable);
         }
 
-        if(list == null) {
+        if (list == null) {
             list = Page.empty();
         }
         mav.addObject("list", list);
@@ -307,7 +307,7 @@ public class ManagerController {
     public String majorUpdate(@PathVariable("idx") Long idx, MajorDto param) {
         param.setIdx(idx);
         Major major = managerService.majorUpdate(param);
-        if(major != null) {
+        if (major != null) {
             return "redirect:/manager/majorList";
         }
         return "redirect:/manager/majorView/" + idx;
@@ -331,7 +331,7 @@ public class ManagerController {
     @PostMapping("/lectureAdd")         // 강의 등록
     public String lectureAdd(RegisterlectureDto param, RedirectAttributes ra) {
         Lecture lecture = managerService.addLecture(param);
-        if(lecture != null) {
+        if (lecture != null) {
             ra.addFlashAttribute("msg", "강의등록 되었습니다.");
             ra.addFlashAttribute("title", "강의등록 성공");
             ra.addFlashAttribute("icon", "success");
@@ -381,7 +381,7 @@ public class ManagerController {
     @PostMapping("/lectureUpdate/{idx}")                // 강의 수정
     public String lectureUpdate(@PathVariable("idx") Long lectureIdx, RegisterlectureDto param, RedirectAttributes ra) {
         Lecture lecture = managerService.updateLecture(param, lectureIdx);
-        if(lecture != null) {
+        if (lecture != null) {
             ra.addFlashAttribute("msg", "강의가 수정되었습니다.");
             ra.addFlashAttribute("title", "강의수정 성공");
             ra.addFlashAttribute("icon", "success");
@@ -440,7 +440,7 @@ public class ManagerController {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String start = sdf.format(situation.getStart_date());
-        if(situation.getEnd_date() != null) {
+        if (situation.getEnd_date() != null) {
             String end = sdf.format(situation.getEnd_date());
             mav.addObject("end", end);
         }
@@ -453,7 +453,7 @@ public class ManagerController {
     public String studentSituationUpdate(@PathVariable("idx") Long idx,
                                          @PathVariable("student_idx") Long student_idx,
                                          SituationStuDto param, String start, String end) throws ParseException {
-        if(param.getStatus() == null) {
+        if (param.getStatus() == null) {
             return "redirect:/manager/studentSituationView/" + idx;
         }
         param.setIdx(idx);
@@ -464,8 +464,8 @@ public class ManagerController {
         param.setStart_date(sqldate);
 
         // status가 군휴학 또는 일반휴학일 때만 end_date를 설정
-        if(param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
-            if(end != null && !end.isEmpty()) {
+        if (param.getStatus().name().equals("군휴학") || param.getStatus().name().equals("일반휴학")) {
+            if (end != null && !end.isEmpty()) {
                 Date end_date = sdf.parse(end);
                 java.sql.Date sqldate2 = new java.sql.Date(end_date.getTime());
                 param.setEnd_date(sqldate2);
@@ -499,8 +499,8 @@ public class ManagerController {
 
         Page<ProfessorListDto> professorList = managerService.searchByMajorAndProfessorAndLeave(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-        name = (String)map.get("name");
-        name =  name.replace("%", "");
+        name = (String) map.get("name");
+        name = name.replace("%", "");
         map.put("name", name);
         mav.addObject("majorList", majorList);
         mav.addObject("professorList", professorList);
@@ -513,7 +513,7 @@ public class ManagerController {
         ModelAndView mav = new ModelAndView("redirect:/manager/professorList");
         ProfessorListDto professor = managerService.selectOneProfessor(idx);
         List<Major> majorList = managerService.selectAllMajor();
-        if(professor != null) {
+        if (professor != null) {
             mav.addObject("professor", professor);
             mav.addObject("majorList", majorList);
             mav.setViewName("manager/professorView");
@@ -538,7 +538,7 @@ public class ManagerController {
     public String professorDel(@PathVariable("idx") Long idx,
                                @PathVariable("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate) {
         HashMap<String, Object> map = new HashMap<>();
-        if(leaveDate != null) {
+        if (leaveDate != null) {
             map.put("leaveDate", leaveDate);
             map.put(("idx"), idx);
         }
@@ -555,13 +555,13 @@ public class ManagerController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("major_idx", major_idx);
         map.put("name", name);
-        map.put("todayRegistered",todayRegistered);
+        map.put("todayRegistered", todayRegistered);
 
         Page<StudentListDto> studentList = managerService.selectAllStudent(map, pageable);
         List<Major> majorList = managerService.selectAllMajor();
-        name =  (String)map.get("name");
+        name = (String) map.get("name");
         name = name.replace("%", "");
-        map.put("name",name);
+        map.put("name", name);
         mav.addObject("map", map);
         mav.addObject("majorList", majorList);
         mav.addObject("studentList", studentList);
@@ -576,18 +576,18 @@ public class ManagerController {
         String Semester = globalVariable.getGlobalSememster();
         List<Scholarship> scholarshipList = scholarShipService.findAllByContainSemester(Semester);
         List<Scholarship> scholarShipAwardList = scholarShipAwardService.findByStudentIdx(idx);
-        if(student != null) {
+        if (student != null) {
             mav.addObject("awardList", scholarShipAwardList);
             mav.addObject("student", student);
             mav.addObject("majorList", majorList);
-            mav.addObject("scholarshipList",scholarshipList);
+            mav.addObject("scholarshipList", scholarshipList);
             mav.setViewName("manager/studentView");
         }
         return mav;
     }
 
     @PostMapping("/studentUpdateByManager/{idx}")               // 학생 정보 수정
-    public String studentUpdateByManager(@PathVariable("idx")Long idx, @ModelAttribute StudentListDto param) {
+    public String studentUpdateByManager(@PathVariable("idx") Long idx, @ModelAttribute StudentListDto param) {
         param.setIdx(idx);
         Student student = managerService.studentUpdateByManager(param);
         return "redirect:/manager/studentList";
@@ -597,7 +597,7 @@ public class ManagerController {
     public ModelAndView managerView(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("redirect:/manager/managerList");
         ManagerDTO manager = managerService.selectOneManager(idx);
-        if(manager != null) {
+        if (manager != null) {
             mav.addObject("manager", manager);
             mav.setViewName("manager/managerView");
         }
@@ -623,7 +623,7 @@ public class ManagerController {
     public String managerDel(@PathVariable("idx") Long idx,
                              @PathVariable("leaveDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date leaveDate) {
         Map<String, Object> map = new HashMap<>();
-        if(leaveDate != null) {
+        if (leaveDate != null) {
             map.put("idx", idx);
             map.put("leaveDate", leaveDate);
             Manager manager = managerService.managerDel(map);
@@ -657,7 +657,7 @@ public class ManagerController {
     public ModelAndView noticeUpdate(@PathVariable("idx") Long idx) {
         ModelAndView mav = new ModelAndView("manager/noticeUpdate");
         Notice notice = noticeService.selectOne(idx);
-        if(notice != null) {
+        if (notice != null) {
             mav.addObject("notice", notice);
         }
         return mav;
@@ -697,7 +697,7 @@ public class ManagerController {
         if (condition.getUsername() == null || condition.getUsername().isEmpty()) {
             model.addAttribute("list", null);
             return "manager/checkTuitionPayments";
-        }else{
+        } else {
             List<CheckTuitionPaymentDto> tuitionPayments = managerService.getCheckTuitionPayment(condition);
             model.addAttribute("list", tuitionPayments);
         }
@@ -731,8 +731,8 @@ public class ManagerController {
         Object login = session.getAttribute("user");
         if (login instanceof ManagerLoginDto) {
             List<EvaluateFormDto> evaluation = managerService.getEvaluation(idx);
+            model.addAttribute("lecture", lectureService.selectOne(idx));
             if (evaluation != null) {
-                model.addAttribute("lecture", lectureService.selectOne(idx));
                 model.addAttribute("evaluation", evaluation);
                 model.addAttribute("total", managerService.countTotalQ1Q2Q3(evaluation));
             }
@@ -742,19 +742,19 @@ public class ManagerController {
     }
 
     @PostMapping("/giveScholarship")
-    public String giveScholarship(Long stuIdx, Long scholarshipIdx, RedirectAttributes ra){
-        if(stuIdx != null && scholarshipIdx != null) {
+    public String giveScholarship(Long stuIdx, Long scholarshipIdx, RedirectAttributes ra) {
+        if (stuIdx != null && scholarshipIdx != null) {
             Scholarship_Award scholarshipAward = scholarShipAwardService.save(stuIdx, scholarshipIdx);
-            ra.addFlashAttribute("msg","장학금 수여 완료");
+            ra.addFlashAttribute("msg", "장학금 수여 완료");
             ra.addFlashAttribute("icon", "success");
             ra.addFlashAttribute("title", "장학금 수여 확인");
-        }else{
-            ra.addFlashAttribute("msg","장학금 수여 실패");
+        } else {
+            ra.addFlashAttribute("msg", "장학금 수여 실패");
             ra.addFlashAttribute("icon", "error");
             ra.addFlashAttribute("title", "장학금 수여 확인");
             return "redirect:/manager/studentList";
         }
-        return "redirect:/manager/studentView/"+stuIdx;
+        return "redirect:/manager/studentView/" + stuIdx;
     }
 
     @GetMapping("/scholarshipList")             // 장학금 목록
