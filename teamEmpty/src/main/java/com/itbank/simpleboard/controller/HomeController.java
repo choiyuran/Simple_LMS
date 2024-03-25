@@ -143,11 +143,7 @@ public class HomeController {
     public String modifyCheck(HttpSession session) {
         String url = "redirect:/login";
         Object login = session.getAttribute("user");
-        if (login instanceof ProfessorDto) {
-            url = "common/modifyCheck";
-        } else if (login instanceof ManagerLoginDto) {
-            url = "common/modifyCheck";
-        } else if (login instanceof StudentDto) {
+        if (login != null) {
             url = "common/modifyCheck";
         }
         return url;
