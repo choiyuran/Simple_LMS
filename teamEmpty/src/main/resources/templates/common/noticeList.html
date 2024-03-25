@@ -92,7 +92,6 @@
 
             <li class="page-item"
                 th:if="${noticeList.hasNext && noticeList.totalPages - 1 >= ((noticeList.number / 5) + 1) * 5}">
-
                 <a th:href="@{/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
                     <button class="page-link" th:text="'>>'"></button>
                 </a>
