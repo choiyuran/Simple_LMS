@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!-- 전체 강의 리스트 -->
-<th:block th:switch="${session.user.user.role.toString()}">
-    <th:block th:case="'교수'">
-        <head th:insert="layout/professorHeader :: head"></head>
-    </th:block>
-    <th:block th:case="'교직원'">
-        <head th:insert="layout/managerHeader :: head"></head>
-    </th:block>
-</th:block>
-<style>
-    th[order] {
-        cursor: pointer;
-    }
-</style>
+<!--<th:block th:switch="${session.user.user.role.toString()}">-->
+<!--    <th:block th:case="'교수'">-->
+<!--        <head th:insert="layout/professorHeader :: head"></head>-->
+<!--    </th:block>-->
+<!--    <th:block th:case="'교직원'">-->
+<!--        <head th:insert="layout/managerHeader :: head"></head>-->
+<!--    </th:block>-->
+<!--</th:block>-->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        th[order] {
+            cursor: pointer;
+        }
+    </style>
+</head>
 <body>
-<th:block th:switch="${session.user.user.role.toString()}">
-    <th:block th:case="'교수'">
-        <header th:insert="layout/professorHeader :: header"></header>
-    </th:block>
-    <th:block th:case="'교직원'">
-        <header th:insert="layout/managerHeader :: header"></header>
-    </th:block>
-</th:block>
+<!--<th:block th:switch="${session.user.user.role.toString()}">-->
+<!--    <th:block th:case="'교수'">-->
+<!--        <header th:insert="layout/professorHeader :: header"></header>-->
+<!--    </th:block>-->
+<!--    <th:block th:case="'교직원'">-->
+<!--        <header th:insert="layout/managerHeader :: header"></header>-->
+<!--    </th:block>-->
+<!--</th:block>-->
 <main class="min-height">
     <div class="container mt-4 mb-5">
         <h2>전체 강의 목록</h2>
@@ -330,13 +334,13 @@
     thList.forEach(th => th.onclick = sortHandler)
 </script>
 
-<th:block th:switch="${session.user.user.role.toString()}">
-    <th:block th:case="'교수'">
-        <footer th:insert="layout/professorHeader :: footer"></footer>
-    </th:block>
-    <th:block th:case="'교직원'">
-        <footer th:insert="layout/managerHeader :: footer"></footer>
-    </th:block>
-</th:block>
+<!--<th:block th:switch="${session.user.user.role.toString()}">-->
+<!--    <th:block th:case="'교수'">-->
+<!--        <footer th:insert="layout/professorHeader :: footer"></footer>-->
+<!--    </th:block>-->
+<!--    <th:block th:case="'교직원'">-->
+<!--        <footer th:insert="layout/managerHeader :: footer"></footer>-->
+<!--    </th:block>-->
+<!--</th:block>-->
 </body>
 </html>
