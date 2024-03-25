@@ -1,37 +1,43 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <!--내 강의 평가-->
-<head th:insert="layout/professorHeader :: head"></head>
-<style>
-    .q4Content, .q5Content {
-        display: none;
-    }
-    .evaluationRow {
-        border: 1px solid black;
-        padding: 5px;
-        margin: 10px;
-        border-radius: 5px;
-    }
-    .evaluationContent {
-        border: 1px solid grey;
-        padding: 5px;
-        width: 98%;
-        border-radius: 5px;
-    }
-    #pagination_p4, #pagination_p5 {
-        margin-top: 5px;
-    }
-    .even {
-        display: flex;
-        justify-content: space-evenly;
-    }
-    .evaluationRow > h5 {
-        width: 98%;
-    }
-</style>
+<!--<head th:insert="layout/professorHeader :: head"></head>-->
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .q4Content, .q5Content {
+            display: none;
+        }
+        .evaluationRow {
+            border: 1px solid black;
+            padding: 5px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .evaluationContent {
+            border: 1px solid grey;
+            padding: 5px;
+            width: 98%;
+            border-radius: 5px;
+        }
+        #pagination_p4, #pagination_p5 {
+            margin-top: 5px;
+        }
+        .even {
+            display: flex;
+            justify-content: space-evenly;
+        }
+        .evaluationRow > h5 {
+            width: 98%;
+        }
+    </style>
+</head>
+
 <body>
-<header th:insert="layout/professorHeader :: header"></header>
+<!--<header th:insert="layout/professorHeader :: header"></header>-->
 <main>
+    <h2>test</h2>
 <!--    <div class="container mt-5 mb-2 min-height">-->
 <!--        <h2 th:text="${lecture.name + ' 강의 평가내역'}"></h2>-->
 <!--        <span th:text="'강의 학기 : ' + ${lecture.semester}"></span>-->
@@ -99,57 +105,57 @@
 <!--        </div>-->
 <!--    </div>-->
 </main>
-<script>
-    let currentPage_q4 = 1;
-    let currentPage_q5 = 1;
-    const itemsPerPage = 5;
-    const q4Contents = document.querySelectorAll('.q4Content');
-    const q5Contents = document.querySelectorAll('.q5Content');
+<!--<script>-->
+<!--    let currentPage_q4 = 1;-->
+<!--    let currentPage_q5 = 1;-->
+<!--    const itemsPerPage = 5;-->
+<!--    const q4Contents = document.querySelectorAll('.q4Content');-->
+<!--    const q5Contents = document.querySelectorAll('.q5Content');-->
 
-    function showItems(contentType) {
-        const contents = (contentType === 'q4') ? q4Contents : q5Contents;
-        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;
-        let maxPage;
-        if (contents.length === 0 || currentPage === 0) {
-            maxPage = 1;
-        } else {
-            maxPage = Math.ceil(contents.length / itemsPerPage);
-        }
+<!--    function showItems(contentType) {-->
+<!--        const contents = (contentType === 'q4') ? q4Contents : q5Contents;-->
+<!--        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;-->
+<!--        let maxPage;-->
+<!--        if (contents.length === 0 || currentPage === 0) {-->
+<!--            maxPage = 1;-->
+<!--        } else {-->
+<!--            maxPage = Math.ceil(contents.length / itemsPerPage);-->
+<!--        }-->
 
-        const currentPageElement = document.getElementById(`currentPage_${contentType}`);
-        currentPageElement.textContent = `${currentPage} / ${maxPage}`;
+<!--        const currentPageElement = document.getElementById(`currentPage_${contentType}`);-->
+<!--        currentPageElement.textContent = `${currentPage} / ${maxPage}`;-->
 
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
+<!--        const startIndex = (currentPage - 1) * itemsPerPage;-->
+<!--        const endIndex = startIndex + itemsPerPage;-->
 
-        contents.forEach((content, index) => {
-            content.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';
-        });
-    }
+<!--        contents.forEach((content, index) => {-->
+<!--            content.style.display = (index >= startIndex && index < endIndex) ? 'block' : 'none';-->
+<!--        });-->
+<!--    }-->
 
-    function previousPage(contentType) {
-        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;
-        if (currentPage > 1) {
-            (contentType === 'q4') ? currentPage_q4-- : currentPage_q5--;
-            showItems(contentType);
-        }
-    }
+<!--    function previousPage(contentType) {-->
+<!--        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;-->
+<!--        if (currentPage > 1) {-->
+<!--            (contentType === 'q4') ? currentPage_q4&#45;&#45; : currentPage_q5&#45;&#45;;-->
+<!--            showItems(contentType);-->
+<!--        }-->
+<!--    }-->
 
-    function nextPage(contentType) {
-        const contents = (contentType === 'q4') ? q4Contents : q5Contents;
-        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;
-        const maxPage = Math.ceil(contents.length / itemsPerPage);
+<!--    function nextPage(contentType) {-->
+<!--        const contents = (contentType === 'q4') ? q4Contents : q5Contents;-->
+<!--        const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;-->
+<!--        const maxPage = Math.ceil(contents.length / itemsPerPage);-->
 
-        if (currentPage < maxPage) {
-            (contentType === 'q4') ? currentPage_q4++ : currentPage_q5++;
-            showItems(contentType);
-        }
-    }
+<!--        if (currentPage < maxPage) {-->
+<!--            (contentType === 'q4') ? currentPage_q4++ : currentPage_q5++;-->
+<!--            showItems(contentType);-->
+<!--        }-->
+<!--    }-->
 
-    // Show initial items
-    showItems('q4');
-    showItems('q5');
-</script>
-<footer th:insert="layout/professorHeader :: footer"></footer>
+<!--    // Show initial items-->
+<!--    showItems('q4');-->
+<!--    showItems('q5');-->
+<!--</script>-->
+<!--<footer th:insert="layout/professorHeader :: footer"></footer>-->
 </body>
 </html>
