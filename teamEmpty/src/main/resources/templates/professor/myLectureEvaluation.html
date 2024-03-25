@@ -2,42 +2,36 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <!--내 강의 평가-->
 <head th:insert="layout/professorHeader :: head"></head>
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <style>
-        .q4Content, .q5Content {
-            display: none;
-        }
-        .evaluationRow {
-            border: 1px solid black;
-            padding: 5px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-        .evaluationContent {
-            border: 1px solid grey;
-            padding: 5px;
-            width: 98%;
-            border-radius: 5px;
-        }
-        #pagination_p4, #pagination_p5 {
-            margin-top: 5px;
-        }
-        .even {
-            display: flex;
-            justify-content: space-evenly;
-        }
-        .evaluationRow > h5 {
-            width: 98%;
-        }
-    </style>
-</head>
-
+<style>
+    .q4Content, .q5Content {
+        display: none;
+    }
+    .evaluationRow {
+        border: 1px solid black;
+        padding: 5px;
+        margin: 10px;
+        border-radius: 5px;
+    }
+    .evaluationContent {
+        border: 1px solid grey;
+        padding: 5px;
+        width: 98%;
+        border-radius: 5px;
+    }
+    #pagination_p4, #pagination_p5 {
+        margin-top: 5px;
+    }
+    .even {
+        display: flex;
+        justify-content: space-evenly;
+    }
+    .evaluationRow > h5 {
+        width: 98%;
+    }
+</style>
 <body>
-<!--<header th:insert="layout/professorHeader :: header"></header>-->
+<header th:insert="layout/professorHeader :: header"></header>
 <main>
-    <h2>test</h2>
     <div class="container mt-5 mb-2 min-height">
         <h2 th:text="${lecture.name + ' 강의 평가내역'}"></h2>
         <span th:text="'강의 학기 : ' + ${lecture.semester}"></span>
@@ -45,31 +39,31 @@
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">강의 내용이 강의 계획서대로 진행되었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 전체적으로 우수하다고 평가한다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q2']['4'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q2']['4'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 통하여 많은 지식을 얻었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q3']['4'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q3']['4'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">

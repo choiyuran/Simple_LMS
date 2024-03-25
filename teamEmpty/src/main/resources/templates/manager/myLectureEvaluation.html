@@ -39,31 +39,31 @@
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">강의 내용이 강의 계획서대로 진행되었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 전체적으로 우수하다고 평가한다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q2']['4'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q2']['4'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 통하여 많은 지식을 얻었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
-                <span>C : <span th:text="${total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total['q3']['4'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
+                <span>C : <span th:text="${total != null && total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q3']['4'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
