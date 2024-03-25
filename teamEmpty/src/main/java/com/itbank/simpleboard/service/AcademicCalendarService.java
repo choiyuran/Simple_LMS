@@ -24,6 +24,10 @@ public class AcademicCalendarService {
         return academicCalendarRepository.findTop5ByOrderByIdxDesc();
     }
 
+    public List<AcademicCalendar> find12CalendarAll() {
+        return academicCalendarRepository.findByOrderByIdxDesc();
+    }
+
     // 학사 일정 추가
     @Transactional
     public AcademicCalendar addCalendar(AcademicCalendarDto calendarDto) {

@@ -308,7 +308,7 @@ public class HomeController {
 
     @GetMapping("/calendar") // 전체 학사일정 조회
     public String calendar(Model model) {
-        List<AcademicCalendar> calendar = academicCalendarService.findCalendarAll();
+        List<AcademicCalendar> calendar = academicCalendarService.find12CalendarAll();
         // Thymeleaf에서 편리하게 사용할 수 있도록 데이터 정리
         Map<Integer, List<AcademicCalendar>> calendarByMonth = calendar.stream()
                 .collect(Collectors.groupingBy(cal -> cal.getStart_date().getMonthValue()));
@@ -359,6 +359,6 @@ public class HomeController {
         model.addAttribute("evaluationStatus", evaluationStatus);
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
-        return "common/lectureList";
+        return "/common/lectureList";
     }
 }
