@@ -705,7 +705,7 @@ public class ManagerController {
     }
 
     @GetMapping("/lectureEvaluation")               // 강의 평가 여부 설정
-    public ModelAndView lectureEvaluation(LectureSearchConditionDto condition,
+    public ModelAndView lectureEvaluation(@ModelAttribute LectureSearchConditionDto condition,
                                           @PageableDefault(size = 10) Pageable pageable) {
         ModelAndView mav = new ModelAndView("common/lectureList");
         String evaluationStatus = managerService.lectureEvaluation();
@@ -720,6 +720,7 @@ public class ManagerController {
         mav.addObject("MajorList", professorService.getMajorNameList(condition));
         mav.addObject("GradeList", professorService.getGradeList(condition));
         mav.addObject("YearList", yearList);
+        mav.addObject("condition", condition);
         mav.addObject("LectureList", LectureList);
         mav.addObject("evaluationStatus", evaluationStatus);
         return mav;
