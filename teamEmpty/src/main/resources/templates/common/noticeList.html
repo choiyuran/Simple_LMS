@@ -59,44 +59,43 @@
         <ul class="pagination">
             <li class="page-item" th:if="${noticeList.hasPrevious && ((noticeList.number / 5) - 1) * 5 >= 0}">
                 <a th:href="@{/noticeList(page=${((noticeList.number / 5) - 1) * 5})}">
-                    <a th:href="@{/noticeList(page=${((noticeList.number / 5) - 1) * 5})}">
-                        <button class="page-link" th:text="'<<'"></button>
-                    </a>
+                    <button class="page-link" th:text="'<<'"></button>
+                </a>
             </li>
 
             <li class="page-item" th:if="${noticeList.hasPrevious}">
+
                 <a th:href="@{/noticeList(page=${noticeList.number - 1})}">
-                    <a th:href="@{/noticeList(page=${noticeList.number - 1})}">
-                        <button class="page-link" th:text="'<'"></button>
-                    </a>
+                    <button class="page-link" th:text="'<'"></button>
+                </a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, noticeList.totalPages - 1)}"
                 th:if="${i / 5 == noticeList.number / 5}">
+
                 <a th:href="@{/noticeList(page=${i})}">
-                    <a th:href="@{/noticeList(page=${i})}">
-                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
-                                th:if="${noticeList.number == i}" th:text="${i + 1}"></button>
-                    </a>
-                    <a th:href="@{/noticeList(page=${i})}">
-                        <a th:href="@{/noticeList(page=${i})}">
-                            <button class="page-link" th:unless="${noticeList.number == i}" th:text="${i + 1}"></button>
-                        </a>
+                    <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                            th:if="${noticeList.number == i}" th:text="${i + 1}"></button>
+                </a>
+
+                <a th:href="@{/noticeList(page=${i})}">
+                    <button class="page-link" th:unless="${noticeList.number == i}" th:text="${i + 1}"></button>
+                </a>
             </li>
 
             <li class="page-item" th:if="${noticeList.hasNext}">
+
                 <a th:href="@{/noticeList(page=${noticeList.number + 1})}">
-                    <a th:href="@{/noticeList(page=${noticeList.number + 1})}">
-                        <button class="page-link" th:text="'>'"></button>
-                    </a>
+                    <button class="page-link" th:text="'>'"></button>
+                </a>
             </li>
 
             <li class="page-item"
                 th:if="${noticeList.hasNext && noticeList.totalPages - 1 >= ((noticeList.number / 5) + 1) * 5}">
+
                 <a th:href="@{/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
-                    <a th:href="@{/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
-                        <button class="page-link" th:text="'>>'"></button>
-                    </a>
+                    <button class="page-link" th:text="'>>'"></button>
+                </a>
             </li>
         </ul>
     </div>
