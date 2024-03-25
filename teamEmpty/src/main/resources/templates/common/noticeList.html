@@ -32,12 +32,13 @@
             <th>제목</th>
             <th>등록일</th>
             <th>조회수</th>
-            <th colspan="2" th:if="${session.user.user.role.toString() == '교직원'}">교직원 권한</th>
+            <th colspan="2" th:if="${session.user.user.role.toString() == '교직원'}"></th>
         </tr>
 
         <tr th:each="row : ${noticeList}">
             <td th:text="${row.idx}"></td>
-            <td class="w-50"><a th:href="@{'/manager/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
+            <td class="w-75"><a th:href="@{'/manager/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
+            <td class="w-75"><a th:href="@{'/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
             <td th:text="${row.wdate}"></td>
             <td th:text="${row.viewCount}"></td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">
@@ -58,38 +59,44 @@
         <ul class="pagination">
             <li class="page-item" th:if="${noticeList.hasPrevious && ((noticeList.number / 5) - 1) * 5 >= 0}">
                 <a th:href="@{/manager/noticeList(page=${((noticeList.number / 5) - 1) * 5})}">
-                    <button class="page-link" th:text="'<<'"></button>
-                </a>
+                    <a th:href="@{/noticeList(page=${((noticeList.number / 5) - 1) * 5})}">
+                        <button class="page-link" th:text="'<<'"></button>
+                    </a>
             </li>
 
             <li class="page-item" th:if="${noticeList.hasPrevious}">
                 <a th:href="@{/manager/noticeList(page=${noticeList.number - 1})}">
-                    <button class="page-link" th:text="'<'"></button>
-                </a>
+                    <a th:href="@{/noticeList(page=${noticeList.number - 1})}">
+                        <button class="page-link" th:text="'<'"></button>
+                    </a>
             </li>
 
             <li class="page-item" th:each="i : ${#numbers.sequence(0, noticeList.totalPages - 1)}"
                 th:if="${i / 5 == noticeList.number / 5}">
                 <a th:href="@{/manager/noticeList(page=${i})}">
-                    <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
-                            th:if="${noticeList.number == i}" th:text="${i + 1}"></button>
-                </a>
-                <a th:href="@{/manager/noticeList(page=${i})}">
-                    <button class="page-link" th:unless="${noticeList.number == i}" th:text="${i + 1}"></button>
-                </a>
+                    <a th:href="@{/noticeList(page=${i})}">
+                        <button class="page-link" disabled style="background-color: rgba(128, 128, 128, 0.5)"
+                                th:if="${noticeList.number == i}" th:text="${i + 1}"></button>
+                    </a>
+                    <a th:href="@{/manager/noticeList(page=${i})}">
+                        <a th:href="@{/noticeList(page=${i})}">
+                            <button class="page-link" th:unless="${noticeList.number == i}" th:text="${i + 1}"></button>
+                        </a>
             </li>
 
             <li class="page-item" th:if="${noticeList.hasNext}">
                 <a th:href="@{/manager/noticeList(page=${noticeList.number + 1})}">
-                    <button class="page-link" th:text="'>'"></button>
-                </a>
+                    <a th:href="@{/noticeList(page=${noticeList.number + 1})}">
+                        <button class="page-link" th:text="'>'"></button>
+                    </a>
             </li>
 
             <li class="page-item"
                 th:if="${noticeList.hasNext && noticeList.totalPages - 1 >= ((noticeList.number / 5) + 1) * 5}">
                 <a th:href="@{/manager/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
-                    <button class="page-link" th:text="'>>'"></button>
-                </a>
+                    <a th:href="@{/noticeList(page=${((noticeList.number / 5) + 1) * 5})}">
+                        <button class="page-link" th:text="'>>'"></button>
+                    </a>
             </li>
         </ul>
     </div>
