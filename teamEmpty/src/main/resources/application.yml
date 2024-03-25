@@ -10,11 +10,14 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true

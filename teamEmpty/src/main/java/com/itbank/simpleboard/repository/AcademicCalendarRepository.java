@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface AcademicCalendarRepository extends JpaRepository<AcademicCalendar, Long> {
     List<AcademicCalendar> findTop5ByOrderByIdxDesc();
+    List<AcademicCalendar> findByOrderByIdxDesc();
 }
