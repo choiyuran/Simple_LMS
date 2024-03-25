@@ -73,9 +73,9 @@ public class ProfessorController {
         Object login = session.getAttribute("user");
         if (login instanceof ProfessorDto) {
             List<EvaluateFormDto> evaluation = professorService.getEvaluation(idx);
+            model.addAttribute("lecture", lectureService.selectOne(idx));
             if (evaluation != null) {
                 model.addAttribute("evaluation", evaluation);
-                model.addAttribute("lecture", lectureService.selectOne(idx));
                 model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
             }
             return "/professor/myLectureEvaluation";
