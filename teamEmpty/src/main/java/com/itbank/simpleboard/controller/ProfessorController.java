@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDate;
@@ -69,18 +70,20 @@ public class ProfessorController {
     }
 
     @GetMapping("/viewEvaluation/{idx}")    // 내 강의 평가 보기
-    public String viewEvaluation(@PathVariable("idx") Long idx, Model model, HttpSession session) {
+    public ModelAndView viewEvaluation(@PathVariable("idx") Long idx, HttpSession session) {
+        ModelAndView mav = new ModelAndView("redirect:/login");
         Object login = session.getAttribute("user");
         if (login instanceof ProfessorDto) {
             List<EvaluateFormDto> evaluation = professorService.getEvaluation(idx);
-            model.addAttribute("lecture", lectureService.selectOne(idx));
+            mav.addObject("lecture", lectureService.selectOne(idx));
             if (evaluation != null && !evaluation.isEmpty()) {
-                model.addAttribute("evaluation", evaluation);
-                model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
+                mav.addObject("evaluation", evaluation);
+                mav.addObject("total", professorService.countTotalQ1Q2Q3(evaluation));
             }
-            return "professor/myLectureEvaluation";
+            mav.setViewName("professor/myLectureEvaluation");
+            return mav;
         }
-        return "redirect:/login";
+        return mav;
     }
 
     @GetMapping("/home")    // 교수 홈으로 이동
