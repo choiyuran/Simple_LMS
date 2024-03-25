@@ -74,7 +74,7 @@ public class ProfessorController {
         if (login instanceof ProfessorDto) {
             List<EvaluateFormDto> evaluation = professorService.getEvaluation(idx);
             model.addAttribute("lecture", lectureService.selectOne(idx));
-            if (evaluation != null) {
+            if (evaluation != null && !evaluation.isEmpty()) {
                 model.addAttribute("evaluation", evaluation);
                 model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
             }
