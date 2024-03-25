@@ -7,48 +7,49 @@
 <body>
 <header th:insert="layout/studentHeader :: header"></header>
 
-<div class="title mt-5">
-    <h2>등록금 납부 고지서</h2>
-</div>
+<main class="min-height">
+    <div class="title mt-5">
+        <h2>등록금 납부 고지서</h2>
+    </div>
 
-<div class="info">
-    <table class="tuition_table">
-        <tr>
-            <th class="tuition_th">대학</th>
-            <td class="tuition_td">센텀 대학교</td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">학과명</th>
-            <td class="tuition_td" th:text="${tuition.name}"></td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">학번</th>
-            <td class="tuition_td" th:text="${tuition.student_num}"></td>
-        </tr>
-        <tr>
-            <th class="tuition_th">이름</th>
-            <td class="tuition_td" th:text="${session.user.user.getUser_name()}"></td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">납부일자</th>
-            <td class="tuition_td" th:text="${tuition.date}"></td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">등록금</th>
-            <td class="tuition_td" th:text="${tuition.tuition}"></td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">장학금</th>
-            <td class="tuition_td" th:if="${tuition.price != null}" th:text="${tuition.price}"></td>
-            <td class="tuition_td" th:if="${tuition.price == null}" th:text="0"></td>
-        </tr>
-        <tr th:each="tuition : ${tuitionDataList}">
-            <th class="tuition_th">총 납입금</th>
-            <td class="tuition_td" th:text="${tuition.tuition - (tuition.price != null ? tuition.price : 0)}"></td>
-        </tr>
-    </table>
-</div>
-
+    <div class="info">
+        <table class="tuition_table">
+            <tr>
+                <th class="tuition_th">대학</th>
+                <td class="tuition_td">센텀 대학교</td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">학과명</th>
+                <td class="tuition_td" th:text="${tuition.name}"></td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">학번</th>
+                <td class="tuition_td" th:text="${tuition.student_num}"></td>
+            </tr>
+            <tr>
+                <th class="tuition_th">이름</th>
+                <td class="tuition_td" th:text="${session.user.user.getUser_name()}"></td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">납부일자</th>
+                <td class="tuition_td" th:text="${tuition.date}"></td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">등록금</th>
+                <td class="tuition_td" th:text="${tuition.tuition}"></td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">장학금</th>
+                <td class="tuition_td" th:if="${tuition.price != null}" th:text="${tuition.price}"></td>
+                <td class="tuition_td" th:if="${tuition.price == null}" th:text="0"></td>
+            </tr>
+            <tr th:each="tuition : ${tuitionDataList}">
+                <th class="tuition_th">총 납입금</th>
+                <td class="tuition_td" th:text="${tuition.tuition - (tuition.price != null ? tuition.price : 0)}"></td>
+            </tr>
+        </table>
+    </div>
+</main>
 
 <footer th:insert="layout/studentHeader :: footer"></footer>
 </body>
