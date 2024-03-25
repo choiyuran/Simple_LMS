@@ -95,7 +95,7 @@
         </div>
 
         <div class="my-2 w-75 mx-auto">
-            <button class="btn btn-primary" onclick="javascript:history.go(-1)">돌아가기</button>
+            <button class="btn btn-primary" onclick="history.go(-1)">돌아가기</button>
         </div>
     </div>
 </main>
@@ -109,7 +109,12 @@
     function showItems(contentType) {
         const contents = (contentType === 'q4') ? q4Contents : q5Contents;
         const currentPage = (contentType === 'q4') ? currentPage_q4 : currentPage_q5;
-        const maxPage = Math.ceil(contents.length / itemsPerPage);
+        let maxPage;
+        if (contents.length === 0 || currentPage === 0) {
+            maxPage = 1;
+        } else {
+            maxPage = Math.ceil(contents.length / itemsPerPage);
+        }
 
         const currentPageElement = document.getElementById(`currentPage_${contentType}`);
         currentPageElement.textContent = `${currentPage} / ${maxPage}`;
