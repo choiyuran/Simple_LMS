@@ -78,7 +78,7 @@ public class ProfessorController {
                 model.addAttribute("evaluation", evaluation);
                 model.addAttribute("total", professorService.countTotalQ1Q2Q3(evaluation));
             }
-            return "/professor/myLectureEvaluation";
+            return "professor/myLectureEvaluation";
         }
         return "redirect:/login";
     }

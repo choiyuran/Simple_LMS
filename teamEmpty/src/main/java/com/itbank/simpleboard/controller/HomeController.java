@@ -355,6 +355,6 @@ public class HomeController {
         model.addAttribute("evaluationStatus", evaluationStatus);
         long endTime = System.currentTimeMillis();
         log.info("ProfessorController.lectureList(Get) 실행 시간: {} 밀리초", endTime - startTime);
-        return "/common/lectureList";
+        return "common/lectureList";
     }
 }

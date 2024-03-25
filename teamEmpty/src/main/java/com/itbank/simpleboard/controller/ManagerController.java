@@ -736,7 +736,7 @@ public class ManagerController {
                 model.addAttribute("evaluation", evaluation);
                 model.addAttribute("total", managerService.countTotalQ1Q2Q3(evaluation));
             }
-            return "/manager/myLectureEvaluation";
+            return "manager/myLectureEvaluation";
         }
         return "redirect:/login";
     }
@@ -776,14 +776,14 @@ public class ManagerController {
         model.addAttribute("yearList", yearList);
         model.addAttribute("quarterList", quarterList);
         model.addAttribute("dto", dto);
-        return "/manager/scholarshipList";
+        return "manager/scholarshipList";
     }
 
     @GetMapping("/registerScholarship")
     public String registerScholarship(Model model) {
         String year = globalVariable.getGlobalSememster().split("년")[0];
         model.addAttribute("year", year);
-        return "/manager/registerScholarship";
+        return "manager/registerScholarship";
     }
 
     @PostMapping("/registerScholarship")
