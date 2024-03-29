@@ -531,207 +531,108 @@
 
 <br>
 
-## 8. 💪  트러블 슈팅
-
 - **FrontEnd**
 
-    <aside>
+  🍃 **ThymeLeaf 문제 해결 사례**
 
-  🍃 **ThymeLeaf**
+  | 문제 상황                                  | 해결 방법                                                    |
+  |--------------------------------------------|--------------------------------------------------------------|
+  | Header에 이미지를 띄우는 과정에서 ThymeLeaf 예외 발생 | `StudentDto`에 `null` 값을 가지는 `img` 필드 추가 |
+  | 학과 목록에 페이징 적용 후, 검색 결과가 없다는 문구를 띄워주는 부분에서 타임리프 예외 발생 | `th:if` 조건을 리스트가 `null`이거나 `isEmpty()` 비어있는지 확인하도록 수정 |
+  | `th:if` 조건으로 `null` 체크를 진행할 때, 검색 결과가 없을 경우 `null` 예외가 뜨는 문제 | `list = Page.empty()` 로 빈 페이지를 담아서 반환해주는 방법으로 해결 |
 
-  | 문제 상황 | Header에 이미지를 띄우는 과정에서 ThymeLeaf 예외 발생 |
-            | --- | --- |
-  | 원인 | ${session.user.img}를 사용하여 이미지 이름을 받아왔는데, StudentDto에는 img라는 필드가 없어서 예외가 발생했던 것 |
-  | 해결 | StudentDto에 null 값을 가지는 img 필드 추가 |
+  📤 **Redirection 문제 해결 사례**
 
-  | 문제 상황 | 학과 목록에 페이징 적용 후, 검색 결과가 없다는 문구를 띄워주는 부분에서 타임리프 예외 발생 |  |
-            | --- | --- | --- |
-  | 원인 | 페이징을 적용하면서 전달 받는 리스트가 List<Major>에서 Page<Major>로 변경되어서 list.size()라는 조건을 사용할 수 없어졌기 때문 |  |
-  | 해결 | th:if 조건을 리스트가 null이거나 isEmpty() 비어있는지 확인하도록 수정 |  |
+  | 문제 상황                             | 해결 방법                                                    |
+  |---------------------------------------|--------------------------------------------------------------|
+  | 비밀번호 찾기 관련 ajax를 실행하면 로그인 페이지가 새로고침 됨 | `MvcConfig`에 실행하려는 ajax 주소를 화이트리스트로 등록 |
 
-  | 문제 상황 | th:if 조건으로 null 체크를 진행할 때, 검색 결과가 없을 경우 null 예외가 뜨는 문제 |
-            | --- | --- |
-  | 원인 | 페이징을 적용했기 떄문에 Page객체 타입으로 반환되는 구조로 바뀌었기 때문에 리스트처럼 사용하기 힘들어졌음 |
-  | 해결 | controller에서 list가 null인 경우를 반환하게 되면 에러가 발생했기 때문에 list = Page.empty() 로 빈페이지를 담아서 반환해주는 방법으로 해결 |
-    </aside>
+  🔍 **Search 문제 해결 사례**
 
-    <aside>
-
-  📤 **Redirection**
-
-  | 문제 상황 | 비밀번호 찾기 관련 ajax를 실행하면 로그인 페이지가 새로고침 됨 |
-            | --- | --- |
-  | 원인 | MvcConfig에서 로그인이 되어있지 않으면 로그인 페이지로 이동되도록 interceptor가 걸려있었기 때문 |
-  | 해결 | MbcConfig에 실행하려는 ajax 주소를 화이트리스트로 등록 |
-    </aside>
-
-    <aside>
-
-  🔍 **Search**
-
-  | 문제 상황 | 페이지가 넘어갔을 때 체크 박스를 포함한 검색을 다시 시도하면 검색어가 초기화 되는 문제 |
-            | --- | --- |
-  | 원인 | 페이지 로딩 시와 목록으로 버튼을 클릭 시, 검색어가 초기화 되게 해놓은 스크립트 코드가 원인 |
-  | 해결 | 목록으로 버튼을 클릭할 시에만 검색 조건이 초기화 되게 설정 |
-
-  | 문제 상황 | 다른 페이지로 이동 후 해당 페이지를 새로 로딩해도 검색했던 검색어가 input과 select에 그대로 남아있는 문제발생 |
-            | --- | --- |
-  | 원인 | 페이지 로딩 시에는 검색어를 초기화 하지 않게 코드를 작성했기 때문에 localStorage에 남아있던 검색어가 자동으로 채워져 있음 |
-  | 해결 | localStorage를 사용하지 않고, @GetMapping을 사용한 검색 방식으로 수정하여 controller에서 넘어온 검색어 파라미터 값이 존재하면 value로 다시 넘기도록 수정, 체크박스는 스크립트와 함께 사용 |
-    </aside>
+  | 문제 상황                                   | 해결 방법                                                    |
+  |---------------------------------------------|--------------------------------------------------------------|
+  | 페이지가 넘어갔을 때 체크 박스를 포함한 검색을 다시 시도하면 검색어가 초기화 되는 문제 | 목록으로 버튼을 클릭할 시에만 검색 조건이 초기화 되게 설정 |
+  | 다른 페이지로 이동 후 해당 페이지를 새로 로딩해도 검색했던 검색어가 input과 select에 그대로 남아있는 문제발생 | `@GetMapping`을 사용한 검색 방식으로 수정하여 controller에서 넘어온 검색어 파라미터 값이 존재하면 value로 다시 넘기도록 수정 |
 
 - **BackEnd**
 
-    <aside>
+  ⚙ **Entity 문제 해결 사례**
 
-  ⚙ **Entity**
+  | 문제 상황                                 | 해결 방법                                                    |
+  |-------------------------------------------|--------------------------------------------------------------|
+  | `User` 엔티티의 `userid`와 주민번호에 Unique 제약 조건이 걸리지 않는 문제 | `@Column(length=xx)`을 추가하여 크기 제한을 추가 |
+  | `Professor`와 `Manager` 엔티티의 퇴사 여부가 전부 1로 들어가 있는 문제 | 퇴사 여부 필드에 `@Enumerated(EnumType.STRING)` 작성 |
+  | 공지사항을 작성할 때, 공지사항의 내용이 길어지면 예외가 발생 | `content` 필드에 `@Lob`을 사용하여 자료형에 맞게 BLOB 또는 CLOB으로 변경 |
 
-  | 문제 상황 | User 엔티티의 userid와 주민번호에 Unique 제약 조건이 걸리지 않는 문제 |
-            | --- | --- |
-  | 원인 | unique 키를 사용하면 최대 크기가 1,000Byte인 반면, String 타입을 사용하면 1,000Byte 이상을 사용할 수 있기 때문에 예외가 발생 |
-  | 해결 | @Column(length=xx)을 추가하여 크기 제한을 추가하였음 |
+  ⌛ **Running Time 문제 해결 사례**
 
-  | 문제 상황 | Professor와 Manager 엔티티의 퇴사 여부가 전부 1로 들어가 있는 문제 |
-            | --- | --- |
-  | 원인 | 퇴사 여부는 YesOrNo라는 ENUM타입을 사용하는데, ENUM 타입의 문자열을 사용하는 어노테이션을 사용하지 않았기 때문 |
-  | 해결 | 퇴사 여부 필드에 @Enumerated(EnumType.STRING) 작성 |
+  | 문제 상황                                 | 해결 방법                                                    |
+  |-------------------------------------------|--------------------------------------------------------------|
+  | `lectureList`의 로딩 시간이 너무 오래 걸리는 문제 | `LectureList`를 받아오고, 해당 List에 존재하는 `Major`들을 받아오는 방식으로 수정 |
+  | ID와 Password를 입력하지 않고 로그인 시도 시 `NullPointerException` 발생 | `String.isEmpty()`를 사용하여 ID와 Password가 비어있지 않을 때만 기존 로그인 메서드를 실행 |
 
-  | 문제 상황 | 공지사항을 작성할 때, 공지사항의 내용이 길어지면 예외가 발생 |
-            | --- | --- |
-  | 원인 | Notice 엔티티의 content 필드가 String 타입으로 되어있기 때문에 DB에서 varchar(255)의 크기를 가지게 되었고, 255Byte를 넘어가는 내용을 작성하면 예외가 발생 |
-  | 해결 | content 필드에 @Lob을 사용하여 자료형에 맞게 BLOB 또는 CLOB으로 변경되도록 수정 |
-    </aside>
+  **Convert 문제 해결 사례**
 
-    <aside>
-
-  ⌛ **Running Time**
-
-  | 문제 상황 | lectureList의 로딩 시간이 너무 오래 걸리는 문제 |
-            | --- | --- |
-  | 원인 | 강의 목록과 학과 목록을 각각 쿼리를 날리다 보니 실행 시간이 증가한 것으로 확인 |
-  | 해결 | LectureList를 받아오고, 해당 List에 존재하는 Major들을 받아오는 방식으로 수정 |
-
-  | 문제 상황 | ID와 Password를 입력하지 않고 로그인 시도 시 NullPointerException 발생 |
-            | --- | --- |
-  | 원인 | 로그인 메서드에서 ID와 Password가 빈 값인지 확인하는 조건이 없었기 때문 |
-  | 해결 | String.isEmpty()를 사용하여 ID와 Password가 비어있지 않을 때만 기존 로그인 메서드를 실행하고, 둘 중 하나라도 비어있다면 다시 Login 페이지로 포워딩하도록 수정 |
-
-  | 문제 상황 | 이번 학기에 등록하지 않아도 등록금을 납부해야 하는 문제 |
-            | --- | --- |
-  | 원인 | 휴학인경우에는 등록금을 납부하지 않아도 되기 때문에 이에 따른 조건 처리를 해줘야 한다. |
-  | 해결 | 처음 학생을 등록할 때 payments 테이블에 모든 학생을 insert하고, 현재 학기 전역변수를 생성 후 값이 바뀔 때마다 payments 테이블에 모든 재학 중인 학생을 insert 한다. |
-    </aside>
-
-    <aside>
-
-  **Convert**
-
-  | 문제 상황 | AcademicalCalendar Entity를 DTO로 변환하는 과정에서, 날짜에 null이 들어가는 문제 |
-            | --- | --- |
-  | 원인 | Entity에는 Date 타입, DTO에는 LocalDate 타입이라 변환 과정에서 null이 들어갔던  |
-  | 해결 | Entity의 타입을 LocalDate타입으로 수정 |
-
-  | 문제 상황 | DB에서 가져온 시작일, 종료일을 View 페이지로 전달 시 예외 발생 |
-            | --- | --- |
-  | 원인 | SimpleDateFormat을 사용하여 시작일과 종료일을 String 타입으로 변환 후 전달하는데, 변환 과정에서 null 체크를 진행하지 않아 예외가 발생한 것 |
-  | 해결 | Parcing 대상에 값이 존재하는지 확인하는 Null 체크 구문 작성 |
-
-  | 문제 상황 | Session에서 user를 받아온 후, ManagerLoginDto로 다운캐스팅을 하기 위해 UserDTO에 있는 role에 접근하는 과정에서 예외 발생 |
-            | --- | --- |
-  | 원인 | user라는 이름으로 ManagerLoginDto, PforessorDto, StudentDto가 들어가 있고, 해당 DTO 내부에 UserDTO가 존재하기 때문에 이중으로 다운캐스팅 되어야 하는 것이 원인 |
-  | 해결 | user를 Object로 받아온 후, 조건문을 사용하여 각 DTO로 다운캐스팅이 되는지 확인 후 다운캐스팅을 진행 |
+  | 문제 상황 | 설명 |
+  | --- | --- |
+  | **AcademicalCalendar Entity를 DTO로 변환하는 과정에서, 날짜에 null이 들어가는 문제** | **원인:** Entity에는 Date 타입, DTO에는 LocalDate 타입이라 변환 과정에서 null이 들어갔던<br>**해결:** Entity의 타입을 LocalDate타입으로 수정 |
+  | **DB에서 가져온 시작일, 종료일을 View 페이지로 전달 시 예외 발생** | **원인:** SimpleDateFormat을 사용하여 시작일과 종료일을 String 타입으로 변환 후 전달하는데, 변환 과정에서 null 체크를 진행하지 않아 예외가 발생한 것<br>**해결:** Parsing 대상에 값이 존재하는지 확인하는 Null 체크 구문 작성 |
+  | **Session에서 user를 받아온 후, ManagerLoginDto로 다운캐스팅을 하기 위해 UserDTO에 있는 role에 접근하는 과정에서 예외 발생** | **원인:** user라는 이름으로 ManagerLoginDto, ProfessorDto, StudentDto가 들어가 있고, 해당 DTO 내부에 UserDTO가 존재하기 때문에 이중으로 다운캐스  팅 되어야 하는 것이 원인<br>**해결:** user를 Object로 받아온 후, 조건문을 사용하여 각 DTO로 다운캐스팅이 되는지 확인 후 다운캐스팅을 진행 |
 
     ```java
+
     Object user = session.getAttribute("user");
     if (user instanceof ManagerLoginDto) {
         ManagerLoginDto manager = (ManagerLoginDto) user;
     }
+
     ```
 
-    </aside>
-
-    <aside>
 
   **Insert**
 
-  | 문제 상황 | Fetch API방식을 이용해서 교수, 교직원 등록 시 서버에 데이터 저장은 되지만, 클라이언트 측으로 응답이 가지 않음 : Completed 500 INTERNAL_SERVER_ERROR |
-            | --- | --- |
-  | 원인 | CORS이슈, 서버 응답 처리, 네트워크 문제, 요청 헤더 설정, 요청 본문 데이터, 서버 측 로깅 등 다양한 원인 중 명확한 이유를 찾지 못함 |
-  | 해결 | jQuery의 $.ajax() 함수를 사용하여 비동기적으로 서버에 요청을 보낸 후 서버 응답에 대한 처리를 success와 error 콜백 함수로 처리. 서버 응답이 JSON 형식인 경우 해당 데이터를 처리하고, 추가적인 로직을 수행 |
-
-  | 문제 상황 | 성적을 입력하고 제출하면 서버에서 NullPointerException 발생 |
-            | --- | --- |
-  | 원인 | 자바스크립트에서 enrollment_idx를 전달하지 못한 상태에서, map.get("enrollment_idx");을 통해 받으려고 했기 때문 |
-  | 해결 | enrollment_idx를 받아오지 못한 원인이 List를 받아오는 과정에 있다고 판단하여 ProfessorRepositoryCustomImpl을 확인하였고, enrollment_idx를 받아오는 구문이 삭제된 것을 발견하여 다시 작성 |
-    </aside>
-
-    <aside>
+  | 문제 상황 | 설명 |
+  | --- | --- |
+  | **Fetch API 방식을 이용해서 교수, 교직원 등록 시 서버에 데이터 저장은 되지만, 클라이언트 측으로 응답이 가지 않음: Completed 500 INTERNAL_SERVER_ERROR** | **원인:** CORS 이슈, 서버 응답 처리, 네트워크 문제, 요청 헤더 설정, 요청 본문 데이터, 서버 측 로깅 등 다양한 원인 중 명확한 이유를 찾지 못함<br>**해결:** jQuery의 `$.ajax()` 함수를 사용하여 비동기적으로 서버에 요청을 보낸 후 서버 응답에 대한 처리를 success와 error 콜백 함수로 처리. 서버 응답이 JSON 형식인 경우 해당 데이터를 처리하고, 추가적인 로직을 수행 |
+  | **성적을 입력하고 제출하면 서버에서 NullPointerException 발생** | **원인:** 자바스크립트에서 `enrollment_idx`를 전달하지 못한 상태에서, `map.get("enrollment_idx");`을 통해 받으려고 했기 때문<br>**해결:** `enrollment_idx`를 받아오지 못한 원인이 List를 받아오는 과정에 있다고 판단하여 ProfessorRepositoryCustomImpl을 확인하였고, `enrollment_idx`를 받아오는 구문이 삭제된 것을 발견하여 다시 작성 |
 
   **Modify**
 
-  | 문제 상황 | 강의 수정을 진행하는 중 form으로 데이터를 넘기면 null이 들어감 |
-            | --- | --- |
-  | 원인 | 요일, 시작 시간과 끝 시간을 String 배열로 받았기 때문에, 데이터가 존재하지 않으면 배열도 존재하지 않기 때문에 null이 들어간 것 |
-  | 해결 | 입력 받은 String배열의 길이만큼 반복하여 null이 아닌 값만 새로 생성한 StringBuilder에 담아서 DB 데이터를 수정 |
-
-  | 문제 상황 | 이미 입력된 성적을 수정할 때 update가 아닌 insert 되는 문제 |
-            | --- | --- |
-  | 원인 | Service에서 Grade 엔티티를 새로 생성하고 save 메서드를 사용했기 때문 |
-  | 해결 | enrollment_idx를 통해 Grade 테이블에 작성된 성적이 있는지 확인한 후, 있다면 해당 엔티티를 수정하고, 없다면 새로운 Grade 객체를 생성하여 DB에 넣도록 작성 |
-
-  </aside>
-
-    <aside>
+  | 문제 상황 | 설명 |
+  | --- | --- |
+  | **강의 수정을 진행하는 중 form으로 데이터를 넘기면 null이 들어감** | **원인:** 요일, 시작 시간과 끝 시간을 String 배열로 받았기 때문에, 데이터가 존재하지 않으면 배열도 존재하지 않기 때문에 null이 들어간 것<br>**해결:** 입력 받은 String배열의 길이만큼 반복하여 null이 아닌 값만 새로 생성한 StringBuilder에 담아서 DB 데이터를 수정 |
+  | 이미 입력된 성적을 수정할 때 update가 아닌 insert 되는 문제 | Service에서 Grade 엔티티를 새로 생성하고 save 메서드를 사용했기 때문                              | enrollment_idx를 통해 Grade 테이블에 작성된 성적이 있는지 확인한 후, 있다면 해당 엔티티를 수정하고, 없다면 새로운 Grade 객체를 생성하여 DB에 넣도록 작성 |
 
   **QueryDSL**
 
-  | 문제 상황 | 강의 평가 중복 |
-            | --- | --- |
-  | 원인 | QueryDSL의 innerJoin에서 조인문의 오류로 문제 발생 |
-  | 해결 | 복잡한 innerJoin을 정리하고 수강신청 EnrollmentDTO 강의평가가 없는 경우의 리스트를 새로 받아 반복문으로 비교해서 중복을 제거했다. |
 
-  | 문제 상황 | QueryDSL을 사용하여 ProfessorDTO를 받아오는 과정에서 major 이름을 college 이름으로 받아오는 문제                                                                                                                            |
-            | --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-  | 원인 | ProfessorDTO에는 MajorDTO가 존재하고, MajorDTO에는 name과 college_name이라는 필드가 존재한다. ProfessorDTO 내부에서 MajorDTO를 생성할 때 Entity에서 같은 필드명을 사용하는 name이 문제가 되어 major.name이 아닌 major.college.name이 들어간 것이 원인으로 추측 |
-  | 해결 | MajorDTO에 데이터 받아올 때 college 관련 필드들은 as를 사용하여 필드 이름을 직접 연결하여 해결                                                                                                                                   |
-
-  | 문제 상황 | 성적 조회를 위해 GradeLectureDto를 가져오면서 InvalidPathException: Invalid path: 'grade.score' 발생 |
-      | --- | --- |
-  | 원인 | 해당 메서드의 from을 QLecture.lecture로 작성하였는데, Lecture 엔티티에는 grade 라는 필드가 존재하지 않고, Grade 엔티티와 연결할 조인문을 작성하지 않았기 때문 |
-  | 해결 | from을 QLecture.lecture 그대로 사용하는 대신, Grade와 연결해 줄 Enrollment와 조인해주고, Enrollment를 사용하여 Grade의 값을 받아오도록 수정 |
-
-  | 문제 상황 | 강의목록 불러오는 과정에서 eq(null) is not allowed. Use isNull() instead; 라는 에러 메시지 출력 |
-            | --- | --- |
-  | 원인 | where 조건을 작성하기 위해 eq 메서드를 사용할 때, 검색 조건 매개변수에 대한 null체크를 진행하지 않았기 때문에 발생한 문제 |
-  | 해결 | eq 메서드를 사용하기 전, null 체크를 진행하 null이 아닐 때는 eq 비교를, null일 때는 null을 반환하도록 메서드 작성 |
+  | 문제 상황 | 설명 |
+  | --- | --- |
+  | 강의 평가 중복                                   | QueryDSL의 innerJoin에서 조인문의 오류로 문제 발생                                               | 복잡한 innerJoin을 정리하고 수강신청 EnrollmentDTO 강의평가가 없는 경우의 리스트를 새로 받아 반복문으로 비교해서 중복을 제거했다.                     |
+  | QueryDSL을 사용하여 ProfessorDTO를 받아오는 과정에서 major 이름을 college 이름으로 받아오는 문제 | ProfessorDTO에는 MajorDTO가 존재하고, MajorDTO에는 name과 college_name이라는 필드가 존재한다. ProfessorDTO 내부에서 MajorDTO를 생성할 때 Entity에서 같은 필드명을 사용하는 name이 문제가 되어 major.name이 아닌 major.college.name이 들어간 것이 원인으로 추측 | MajorDTO에 데이터 받아올 때 college 관련 필드들은 as를 사용하여 필드 이름을 직접 연결하여 해결 |
+  | 성적 조회를 위해 GradeLectureDto를 가져오면서 InvalidPathException: Invalid path: 'grade.score' 발생 | 해당 메서드의 from을 QLecture.lecture로 작성하였는데, Lecture 엔티티에는 grade 라는 필드가 존재하지 않고, Grade 엔티티와 연결할 조인문을 작성하지 않았기 때문 | from을 QLecture.lecture 그대로 사용하는 대신, Grade와 연결해 줄 Enrollment와 조인해주고, Enrollment를 사용하여 Grade의 값을 받아오도록 수정 |
+  | 강의목록 불러오는 과정에서 eq(null) is not allowed. Use isNull() instead; 라는 에러 메시지 출력 | where 조건을 작성하기 위해 eq 메서드를 사용할 때, 검색 조건 매개변수에 대한 null체크를 진행하지 않았기 때문에 발생한 문제 | eq 메서드를 사용하기 전, null 체크를 진행하 null이 아닐 때는 eq 비교를, null일 때는 null을 반환하도록 메서드 작성 |
+  | @PageableDefault (sort=”idx”) 어노테이션이 적용되지 않음 | QueryDSL을 사용하는 경우에는 QueryDSL이 어노테이션 보다 우선시 되어서  @PageableDefault (sort=”idx”) 어노테이션이 적용되지 않음 | QueryDSL에서 내림차순으로 가져올 수 있도록 OrderBy 적용 |
+  | 로그인 시 “학번 기억하기”에 체크가 되어있지 않으면 예외 페이지로 이동하는 문제 | “학번 기억하기”의 값을 @RequestParam으로 가져올 때, Required가 기본값 true로 설정되어 있었기 때문 | @RequestParam의 Required를 false로 설정하고, 값이 없으면 조건문에 들어갈 때 예외가 발생하기 때문에 defaultValue를 “false”로 설정 |
 
     ```java
   
-    BooleanExpression studentIdxCondition = condition.getStudentIdx() != null ?
+     BooleanExpression studentIdxCondition = condition.getStudentIdx() != null ?
                     enrollment.student.idx.eq(condition.getStudentIdx()) : null;
     
-    BooleanExpression semesterCondition = condition.getSemester() != null ?
+     BooleanExpression semesterCondition = condition.getSemester() != null ?
                     enrollment.lecture.semester.eq(condition.getSemester()) : null;
   
     ```
-
-  | 문제 상황 | @PageableDefault (sort=”idx”) 어노테이션이 적용되지 않음 |
-            | --- | --- |
-  | 원인 | QueryDSL을 사용하는 경우에는 QueryDSL이 어노테이션 보다 우선시 되어서  @PageableDefault (sort=”idx”) 어노테이션이 적용되지 않음 |
-  | 해결 | QueryDSL에서 내림차순으로 가져올 수 있도록 OrderBy 적용 |
-
-  </aside>
-
-    <aside>
-
+  
+  
   🍪 **쿠키**
 
   | 문제 상황 | 로그인 시 “학번 기억하기”에 체크가 되어있지 않으면 예외 페이지로 이동하는 문제 |
-        | --- | --- |
+  | --- | --- |
   | 원인 | “학번 기억하기”의 값을 @RequestParam으로 가져올 때, Required가 기본값 ture로 설정되어 있었기 때문 |
   | 해결 | @RequestParam의 Required를 false로 설정하고, 값이 없으면 조건문에 들어갈 때 예외가 발생하기 때문에 defaultValue를 “false”로 설정 |
 
-    </aside>
 
 <br>
 
