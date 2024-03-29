@@ -56,7 +56,7 @@
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="/student/situation">휴학신청/복학신청</a></li>
                                             <li><a class="dropdown-item" href="/student/enroll">수강신청</a></li>
-                                            <li><a class="dropdown-item" href="/student/paymentTuition">등록금 납부</a></li>
+                                            <li><a class="dropdown-item" th:href="${'/student/paymentTuition/'+session.user.idx}">등록금 납부</a></li>
                                             <li><a class="dropdown-item" href="/student/paymentsList">등록금 납부내역 조회</a>
                                             </li>
                                             <li><a class="dropdown-item" href="/student/gradeList">내 성적 조회</a></li>
