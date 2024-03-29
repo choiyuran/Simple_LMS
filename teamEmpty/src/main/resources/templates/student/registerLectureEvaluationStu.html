@@ -33,14 +33,14 @@
     }
 
     .check {
-        width: 640px;
+        width: 75%;
         margin: auto;
         margin-top: 20px;
         margin-bottom: 30px;
     }
 
     .check2 {
-        width: 640px;
+        width: 75%;
         margin: auto;
         margin-top: 20px;
         margin-bottom: 10px;
@@ -69,7 +69,7 @@
     </pre>
     </div>
 
-    <table class="m-auto">
+    <table class="w-75 my-3">
         <tr>
             <th class="title">전공</th>
             <td class="content"><input class="form-control" th:value="${dto.getMajorName()}" readonly/></td>
@@ -86,7 +86,7 @@
     </table>
 
     <form method="post">
-        <div class="check m-auto">
+        <div class="check">
             <div class="radio-title">
                 강의 내용이 강의 계획서대로 진행되었다.
             </div>
@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <div class="check m-auto">
+        <div class="check">
             <div class="radio-title">
                 나는 이 수업을 전체적으로 우수하다고 평가한다.
             </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <div class="check m-auto">
+        <div class="check">
             <div class="radio-title">
                 나는 이 수업을 통하여 많은 지식을 얻었다.
             </div>
@@ -174,7 +174,7 @@
         </div>
 
 
-        <div class="check m-auto">
+        <div class="check">
             <div class="radio-title">
                 개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
             </div>
@@ -183,16 +183,16 @@
             </div>
         </div>
 
-        <div class="check2 m-auto">
+        <div class="check2">
             <div class="radio-title">
-                개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.
+                학업평가는 강의내용이 적절히 반영되어 과목의 이해정도를 잘 평가하였는가?
             </div>
             <div>
                 <textarea rows="5" cols="80" name="q5" required></textarea>
             </div>
         </div>
 
-        <div class="w-50 m-auto d-flex justify-content-between">
+        <div class="me-5 d-flex w-75 mt-3 justify-content-between">
             <button type="submit" class="btn btn-outline-secondary">제출하기</button>
             <button type="button" class="btn btn-outline-secondary">취소</button>
         </div>

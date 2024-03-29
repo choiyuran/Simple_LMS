@@ -81,7 +81,7 @@
         </div>
 
         <div class="evaluationRow mt-4 w-75 mx-auto">
-            <h5 class="mx-auto mb-2 mt-1">개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</h5>
+            <h5 class="mx-auto mb-2 mt-1">학업평가는 강의내용이 적절히 반영되어 과목의 이해정도를 잘 평가하였는가?</h5>
             <div class="evaluationContent mx-auto">
                 <th:block th:each="row, status : ${evaluation}" th:if="${evaluation != null}">
                     <div class="q5Content my-1" th:text="${status.index + 1 + ' : ' + row.q5}"></div>
