@@ -37,7 +37,7 @@
 
         <tr th:each="row : ${noticeList}">
             <td th:text="${row.idx}"></td>
-            <td class="w-75"><a th:href="@{'/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
+            <td class="w-50"><a th:href="@{'/noticeView/' + ${row.idx}}" th:text="${row.title}"></a></td>
             <td th:text="${row.wdate}"></td>
             <td th:text="${row.viewCount}"></td>
             <td th:if="${session.user.user.role.toString() == '교직원'}">

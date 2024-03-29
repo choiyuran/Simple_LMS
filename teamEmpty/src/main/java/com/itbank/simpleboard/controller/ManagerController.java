@@ -671,13 +671,13 @@ public class ManagerController {
         map.put("title", title);
         map.put("content", content);
         Notice notice = noticeService.noticeUpdate(map);
-        return "redirect:/manager/noticeView/" + idx;
+        return "redirect:/noticeView/" + idx;
     }
 
     @GetMapping("/noticeDel/{idx}")           // 공지 사항 삭제
     public String noticeDel(@PathVariable("idx") Long idx) {
         noticeService.noticeDel(idx);
-        return "redirect:/manager/noticeList";
+        return "redirect:/noticeList";
     }
 
     @GetMapping("/managerModify")           // 교직원 개인 정보 수정
