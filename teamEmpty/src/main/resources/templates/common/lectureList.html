@@ -8,6 +8,9 @@
     <th:block th:case="'교직원'">
         <head th:insert="layout/managerHeader :: head"></head>
     </th:block>
+    <th:block th:case="'학생'">
+        <head th:insert="layout/studentHeader :: head"></head>
+    </th:block>
 </th:block>
 <style>
     th[order] {
@@ -21,6 +24,9 @@
     </th:block>
     <th:block th:case="'교직원'">
         <header th:insert="layout/managerHeader :: header"></header>
+    </th:block>
+    <th:block th:case="'학생'">
+        <header th:insert="layout/studentHeader :: header"></header>
     </th:block>
 </th:block>
 <main class="min-height">
@@ -337,6 +343,9 @@
     </th:block>
     <th:block th:case="'교직원'">
         <footer th:insert="layout/managerHeader :: footer"></footer>
+    </th:block>
+    <th:block th:case="'학생'">
+        <footer th:insert="layout/studentHeader :: footer"></footer>
     </th:block>
 </th:block>
 </body>
