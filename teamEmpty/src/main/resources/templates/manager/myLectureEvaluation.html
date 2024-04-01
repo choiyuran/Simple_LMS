@@ -28,6 +28,9 @@
     .evaluationRow > h5 {
         width: 98%;
     }
+    .min-height2 {
+        min-height: 156px;
+    }
 </style>
 <body>
 <header th:insert="layout/managerHeader :: header"></header>
@@ -39,34 +42,34 @@
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">강의 내용이 강의 계획서대로 진행되었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total != null && total['q1']['1'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total != null && total['q1']['2'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q1']['1'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q1']['2'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total != null && total['q1']['3'] != null ? total['q1']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total != null && total['q1']['4'] != null ? total['q1']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total != null && total['q1']['5'] != null ? total['q1']['5'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q1']['4'] != null ? total['q1']['2'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q1']['5'] != null ? total['q1']['1'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 전체적으로 우수하다고 평가한다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total != null && total['q2']['1'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total != null && total['q2']['2'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q2']['1'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q2']['2'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total != null && total['q2']['3'] != null ? total['q2']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total != null && total['q2']['4'] != null ? total['q2']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total != null && total['q2']['5'] != null ? total['q2']['5'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q2']['4'] != null ? total['q2']['2'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q2']['5'] != null ? total['q2']['1'] : 0} + '명 '"></span></span>
             </div>
         </div>
         <div class="evaluationRow mt-4 w-75 mx-auto">
             <h5 class="mx-auto mb-2 mt-1">나는 이 수업을 통하여 많은 지식을 얻었다.</h5>
             <div class="evaluationContent even mx-auto">
-                <span>A : <span th:text="${total != null && total['q3']['1'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
-                <span>B : <span th:text="${total != null && total['q3']['2'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
+                <span>A : <span th:text="${total != null && total['q3']['1'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
+                <span>B : <span th:text="${total != null && total['q3']['2'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
                 <span>C : <span th:text="${total != null && total['q3']['3'] != null ? total['q3']['3'] : 0} + '명 '"></span></span>
-                <span>D : <span th:text="${total != null && total['q3']['4'] != null ? total['q3']['4'] : 0} + '명 '"></span></span>
-                <span>E : <span th:text="${total != null && total['q3']['5'] != null ? total['q3']['5'] : 0} + '명 '"></span></span>
+                <span>D : <span th:text="${total != null && total['q3']['4'] != null ? total['q3']['2'] : 0} + '명 '"></span></span>
+                <span>E : <span th:text="${total != null && total['q3']['5'] != null ? total['q3']['1'] : 0} + '명 '"></span></span>
             </div>
         </div>
-        <div class="evaluationRow mt-4 w-75 mx-auto">
+        <div class="evaluationRow mt-4 w-75 mx-auto min-height2">
             <h5 class="mx-auto mb-2 mt-1">개선 사항 및 교수님께 하고 싶은 말이 있다면 적어주시기 바랍니다.</h5>
             <div class="evaluationContent mx-auto">
                 <th:block th:each="row, status : ${evaluation}" th:if="${evaluation != null}">
@@ -80,7 +83,7 @@
             </div>
         </div>
 
-        <div class="evaluationRow mt-4 w-75 mx-auto">
+        <div class="evaluationRow mt-4 w-75 mx-auto min-height2">
             <h5 class="mx-auto mb-2 mt-1">학업평가는 강의내용이 적절히 반영되어 과목의 이해정도를 잘 평가하였는가?</h5>
             <div class="evaluationContent mx-auto">
                 <th:block th:each="row, status : ${evaluation}" th:if="${evaluation != null}">
