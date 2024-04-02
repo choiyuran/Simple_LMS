@@ -77,7 +77,7 @@
 **🥇BackEnd Data Flow**
 <aside>
 
-  <img src="https://file.notion.so/f/f/d30c61fd-9e67-4d46-a438-d67a6d54a06f/3857f0c3-3caa-4cfa-bdbd-a6734a58e651/Untitled.png?id=5c7cf7e6-7506-4b70-b2ce-487f5805f3f8&table=block&spaceId=d30c61fd-9e67-4d46-a438-d67a6d54a06f&expirationTimestamp=1711792800000&signature=qc9xwQhSwHb2brbKOHQJNWyxZI2AeZqRRAWyXctVPP0&downloadName=Untitled.png"/>
+![Untitled](https://github.com/choiyuran/Simple_LMS/assets/44068819/a05fca9d-70ee-4469-be8a-60c98f8e5a6b)
   
 </aside>
 
