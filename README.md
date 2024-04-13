@@ -19,7 +19,8 @@
 - Test ID : 24000004
 - Test PW : 9416473
 
-<br>
+### 프로젝트 상세 설명 문서 링크
+- ### [Notion  👈](https://pebble-melody-78b.notion.site/LMS_Project-e7234c6b890f4e6da95cb00f93315cd9?pvs=4)
 
 ## 목차
 
